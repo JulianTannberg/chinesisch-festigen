@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sprechen · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <div class="topbar">
+      <a class="back" id="back">← Kapitel</a>
+      <div class="kicker" id="kicker">Sprechen</div>
+    </div>
+    <h1 id="title">Sprechen</h1>
+    <p class="subtitle">Der Prompt nutzt den Schülerdialog des Kapitels. ChatGPT übernimmt Rolle A, du übst Rolle B.</p>
+
+    <section class="card">
+      <div id="dialogPreview" class="dialog" style="margin-bottom:16px;"></div>
+
+      <div class="small" style="margin-bottom:8px;">Prompt zum Kopieren:</div>
+      <textarea class="promptBox" id="prompt" readonly></textarea>
+
+      <div class="toolbar">
+        <button id="copyBtn" type="button">Prompt kopieren</button>
+        <button id="openBtn" type="button">ChatGPT öffnen</button>
+        <span class="small" id="copyStatus"></span>
+      </div>
+    </section>
+  </main>
+
+<script src="topics.js"></script>
+<script>
+function qs(name, fallback="01"){
+  const p = new URLSearchParams(location.search);
+  return (p.get(name) || fallback).padStart(2,"0");
+}
+function getTopic(){
+  const id = qs("id");
+  return (window.CF_TOPICS || []).find(t => t.id === id) || window.CF_TOPICS[0];
+}
+function applyTheme(topic){
+  document.documentElement.style.setProperty("--chapter-bg", topic.accent);
+  document.documentElement.style.setProperty("--accent", topic.accent);
+  document.documentElement.style.setProperty("--chapter-text", topic.textColor || "#ffffff");
+  document.title = `${topic.id}. ${topic.title} · Chinesisch festigen`;
+}
+function escapeHtml(s){
+  return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+</script>
+
+<script>
+const topic = getTopic();
+applyTheme(topic);
+document.getElementById("back").href = `kapitel.html?id=${topic.id}`;
+document.getElementById("kicker").textContent = `Kapitel ${topic.id} · Sprechen`;
+document.getElementById("title").textContent = `${topic.id}. ${topic.title} · Sprechen`;
+
+function buildPrompt(){
+  const lines = topic.studentDialog || [];
+  const dialogText = lines.length
+    ? lines.map(l => `${l.speaker || "Rolle"}: ${l.zh}`).join("\n")
+    : "[Hier fehlt noch der Schülerdialog dieses Kapitels.]";
+  const dialogTitle = topic.studentDialogTitle || `Kapitel ${topic.id} – ${topic.title}`;
+  const dialogNote = topic.studentDialogNote ? `\nHINWEIS ZUM DIALOG:\n${topic.studentDialogNote}\n` : "";
+
+  return `Du bist mein chinesischer Gesprächspartner und Sprachtrainer (Putonghua).
+
+Ziel:
+Ich übe den Schülerdialog aus Kapitel ${topic.id} „${topic.title}“ allein mit dir.
+Lernen steht über Unterhaltung.
+
+AKTIVES NIVEAU:
+HSK2 / frühes HSK3, aber Erklärungen bitte auf Deutsch.
+
+MODUS:
+Geführter Dialog.
+Du übernimmst NUR Rolle A.
+Ich übernehme Rolle B.
+
+DIALOGTITEL:
+${dialogTitle}${dialogNote}
+DIALOGGRUNDLAGE:
+${dialogText}
+
+REGELN:
+- Beginne sofort auf Chinesisch mit der ersten Zeile von Rolle A.
+- Warte nach jeder Dialogzeile auf meine Antwort.
+- Bleibe sehr nah am Schülerdialog.
+- Wenn bei Rolle B mehrere Antwortvarianten stehen, akzeptiere die passende Variante und führe dann sinnvoll mit Rolle A weiter.
+- Korrigiere maximal EINEN Hauptfehler pro Antwort.
+- Erkläre Fehler kurz auf Deutsch.
+- Gib danach eine natürliche chinesische Korrektur.
+- Bitte mich danach, den korrigierten Satz zu wiederholen.
+- Sei tolerant bei kleinen Abweichungen, wenn meine Antwort inhaltlich passt.
+- Pinyin nur, wenn ich ausdrücklich darum bitte.
+- Keine langen Grammatikerklärungen.
+- Keine neuen schwierigen Wörter außerhalb des Kapitels.`;
+}
+document.getElementById("prompt").value = buildPrompt();
+
+const preview = document.getElementById("dialogPreview");
+const lines = topic.studentDialog || [];
+if(topic.studentDialogTitle){
+  const title = document.createElement("div");
+  title.className = "sectionTitle";
+  title.textContent = topic.studentDialogTitle;
+  preview.appendChild(title);
+}
+if(topic.studentDialogNote){
+  const note = document.createElement("div");
+  note.className = "small";
+  note.style.marginBottom = "10px";
+  note.textContent = topic.studentDialogNote;
+  preview.appendChild(note);
+}
+if(lines.length === 0){
+  preview.innerHTML = `<div class="empty">Für dieses Kapitel ist noch kein Schülerdialog eingetragen.</div>`;
+}else{
+  lines.forEach(l => {
+    const row = document.createElement("div");
+    row.className = "bubbleRow left";
+    row.innerHTML = `
+      <div class="speechBubble" style="background:rgba(255,255,255,.18);color:var(--chapter-text)">
+        <div class="speaker">${escapeHtml(l.speaker || "")}</div>
+        <div class="speechText">${escapeHtml(l.zh || "")}</div>
+        ${l.pinyin ? `<div class="speechPinyin">${escapeHtml(l.pinyin)}</div>` : ""}
+        ${l.de ? `<div class="speechDe">${escapeHtml(l.de)}</div>` : ""}
+      </div>
+    `;
+    preview.appendChild(row);
+  });
+}
+
+document.getElementById("copyBtn").onclick = async () => {
+  const txt = document.getElementById("prompt").value;
+  try{
+    await navigator.clipboard.writeText(txt);
+  }catch(e){
+    const el = document.getElementById("prompt");
+    el.focus();
+    el.select();
+    document.execCommand("copy");
+  }
+  document.getElementById("copyStatus").textContent = "Kopiert.";
+  setTimeout(() => document.getElementById("copyStatus").textContent = "", 1300);
+};
+document.getElementById("openBtn").onclick = () => {
+  window.open("https://chat.openai.com/", "_blank", "noopener");
+};
+</script>
+</body>
+</html>

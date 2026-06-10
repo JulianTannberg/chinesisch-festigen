@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Schreiben · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <div class="topbar">
+      <a class="back" id="back">← Kapitel</a>
+      <div class="kicker" id="kicker">Schreiben</div>
+    </div>
+    <h1 id="title">Schreiben</h1>
+    <p class="subtitle">Schreibe die chinesischen Zeichen. Hilfe erscheint erst nach einer falschen Antwort. Die Lernserie zählt kapitelübergreifend.</p>
+
+    <section class="card" id="quizCard">
+      <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Schreibvokabeln eingetragen.</div>
+
+      <div id="quiz">
+        <div class="small">Übersetze ins Chinesische:</div>
+        <div class="quizPrompt" id="prompt">–</div>
+
+        <div class="inputRow">
+          <input id="answer" lang="zh" inputmode="text" type="text" placeholder="Chinesische Zeichen eingeben …" autocomplete="off" spellcheck="false" />
+          <button id="actionBtn" type="button" disabled>Prüfen</button>
+        </div>
+
+        <div class="toolbar">
+          <button id="showSolution" type="button" disabled>Hilfe / Lösung anzeigen</button>
+          <button id="restartBtn" type="button">Neu starten</button>
+        </div>
+
+        <div id="feedback" class="feedback neutral"></div>
+
+        <div id="solutionBox" class="solutionBox">
+          <div class="small">Richtige Lösung:</div>
+          <div class="zh" id="solutionText">–</div>
+          <div class="pinyin" id="pinyinText">–</div>
+        </div>
+
+        <div class="small">Fortschritt aktuelle Runde: <span id="posCounter">–</span></div>
+        <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
+
+        <div class="stats">
+          <div class="stat"><div class="statK">Runde</div><div class="statV" id="sRound">1</div></div>
+          <div class="stat"><div class="statK">Erstversuche</div><div class="statV" id="sAnswered">0</div></div>
+          <div class="stat"><div class="statK">Direkt richtig</div><div class="statV" id="sCorrect">0</div></div>
+          <div class="stat"><div class="statK">Quote</div><div class="statV" id="sRate">0%</div></div>
+          <div class="stat"><div class="statK">Serie</div><div class="statV" id="sStreak">0</div></div>
+        </div>
+      </div>
+
+      <div class="finish" id="finish">
+        <div class="confetti">🎉 ✨ 🏆 ✨ 🎉</div>
+        <p class="finishTitle">Geschafft!</p>
+        <p class="finishText" id="finishText">Du hast alle Wörter gemeistert.</p>
+        <div class="toolbar" style="justify-content:center;margin-top:18px;">
+          <button id="finishRestart" type="button">Noch einmal üben</button>
+          <a class="miniBtn" id="finishBack">Zurück zum Kapitel</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script src="topics.js"></script>
+<script>
+function qs(name, fallback="01"){
+  const p = new URLSearchParams(location.search);
+  return (p.get(name) || fallback).padStart(2,"0");
+}
+function getTopic(){
+  const id = qs("id");
+  return (window.CF_TOPICS || []).find(t => t.id === id) || window.CF_TOPICS[0];
+}
+function applyTheme(topic){
+  document.documentElement.style.setProperty("--chapter-bg", topic.accent);
+  document.documentElement.style.setProperty("--accent", topic.accent);
+  document.documentElement.style.setProperty("--chapter-text", topic.textColor || "#ffffff");
+  document.title = `${topic.id}. ${topic.title} · Chinesisch festigen`;
+}
+function escapeHtml(s){
+  return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+</script>
+
+<script>
+const topic = getTopic();
+applyTheme(topic);
+document.getElementById("back").href = `kapitel.html?id=${topic.id}`;
+document.getElementById("finishBack").href = `kapitel.html?id=${topic.id}`;
+document.getElementById("kicker").textContent = `Kapitel ${topic.id} · Schreiben`;
+document.getElementById("title").textContent = `${topic.id}. ${topic.title} · Schreiben`;
+
+const vocab = (topic.vocab || []).filter(v => v.zh && v.de);
+const $ = id => document.getElementById(id);
+const normalize = s => String(s ?? "").trim().replace(/\s+/g,"");
+const shuffle = arr => {
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+};
+
+let globalStreak = parseInt(localStorage.getItem("cf_global_streak") || "0", 10);
+let bestStreak = parseInt(localStorage.getItem("cf_best_streak") || "0", 10);
+
+let wrongSet = new Set();
+let order = shuffle([...Array(vocab.length).keys()]);
+let idx = 0;
+let round = 1;
+let answered = 0;
+let correct = 0;
+let firstCheckDone = false;
+let hasWrongAttempt = false;
+let usedHelp = false;
+let actionMode = "check";
+
+function current(){
+  const vocabIndex = order[idx];
+  return {...vocab[vocabIndex], vocabIndex};
+}
+function setFeedback(kind, text){
+  $("feedback").className = `feedback ${kind}`;
+  $("feedback").textContent = text || "";
+}
+function setInputState(state){
+  $("answer").classList.remove("correct","wrong");
+  if(state) $("answer").classList.add(state);
+}
+function saveStreak(){
+  if(globalStreak > bestStreak) bestStreak = globalStreak;
+  localStorage.setItem("cf_global_streak", String(globalStreak));
+  localStorage.setItem("cf_best_streak", String(bestStreak));
+}
+function updateStats(){
+  $("sRound").textContent = round;
+  $("sAnswered").textContent = answered;
+  $("sCorrect").textContent = correct;
+  $("sRate").textContent = answered ? Math.round(correct/answered*100) + "%" : "0%";
+  $("sStreak").textContent = globalStreak;
+  const total = order.length;
+  $("posCounter").textContent = total ? `${Math.min(idx+1,total)}/${total}` : "–";
+  $("progressFill").style.width = total ? `${Math.round(idx/total*100)}%` : "0%";
+}
+function isCorrect(input, card){
+  return normalize(input) === normalize(card.zh);
+}
+function render(){
+  updateStats();
+  $("finish").classList.remove("show");
+  $("quiz").style.display = "";
+  if(vocab.length === 0){
+    $("quiz").style.display = "none";
+    $("empty").style.display = "block";
+    return;
+  }
+  if(idx >= order.length){
+    if(wrongSet.size > 0){
+      round++;
+      order = shuffle([...wrongSet]);
+      idx = 0;
+      setFeedback("neutral", "Die falschen Wörter kommen jetzt noch einmal.");
+      render();
+      return;
+    }
+    $("quiz").style.display = "none";
+    $("finish").classList.add("show");
+    $("finishText").innerHTML = `Du hast alle Wörter dieses Kapitels gemeistert.<br>Aktuelle Lernserie: <strong>${globalStreak}</strong> · Beste Serie: <strong>${bestStreak}</strong>`;
+    return;
+  }
+  const card = current();
+  $("prompt").textContent = card.de;
+  $("answer").value = "";
+  $("answer").disabled = false;
+  $("answer").focus();
+  $("solutionText").textContent = card.zh;
+  $("pinyinText").textContent = card.pinyin || "";
+  $("solutionBox").style.display = "none";
+  $("showSolution").disabled = true;
+  $("actionBtn").disabled = true;
+  $("actionBtn").textContent = "Prüfen";
+  actionMode = "check";
+  firstCheckDone = false;
+  hasWrongAttempt = false;
+  usedHelp = false;
+  setInputState(null);
+  setFeedback("neutral", "");
+}
+function check(){
+  const card = current();
+  const val = $("answer").value;
+  if(!normalize(val)) return;
+  const ok = isCorrect(val, card);
+
+  if(!firstCheckDone){
+    answered++;
+    firstCheckDone = true;
+    if(ok){
+      correct++;
+      globalStreak++;
+    }else{
+      globalStreak = 0;
+    }
+    saveStreak();
+  }
+
+  if(ok){
+    setInputState("correct");
+    actionMode = "next";
+    $("actionBtn").textContent = "Weiter";
+    $("actionBtn").disabled = false;
+
+    if(!hasWrongAttempt && !usedHelp){
+      wrongSet.delete(card.vocabIndex);
+      setFeedback("ok", "Richtig. Weiter geht es.");
+    }else{
+      wrongSet.add(card.vocabIndex);
+      setFeedback("ok", "Jetzt richtig. Dieses Wort kommt zur Sicherheit noch einmal.");
+    }
+  }else{
+    hasWrongAttempt = true;
+    wrongSet.add(card.vocabIndex);
+    setInputState("wrong");
+    $("showSolution").disabled = false;
+    actionMode = "check";
+    $("actionBtn").textContent = "Prüfen";
+    setFeedback("bad", "Noch nicht richtig. Du kannst es verbessern oder dir die Hilfe ansehen.");
+  }
+  updateStats();
+}
+function next(){
+  idx++;
+  render();
+}
+$("answer").addEventListener("input", () => {
+  setInputState(null);
+  $("actionBtn").disabled = normalize($("answer").value).length === 0;
+});
+$("answer").addEventListener("keydown", e => {
+  if(e.key === "Enter"){
+    e.preventDefault();
+    if($("actionBtn").disabled) return;
+    actionMode === "check" ? check() : next();
+  }
+});
+$("actionBtn").addEventListener("click", () => {
+  actionMode === "check" ? check() : next();
+});
+$("showSolution").addEventListener("click", () => {
+  usedHelp = true;
+  $("solutionBox").style.display = "block";
+});
+function restart(){
+  wrongSet = new Set();
+  order = shuffle([...Array(vocab.length).keys()]);
+  idx = 0;
+  round = 1;
+  answered = 0;
+  correct = 0;
+  render();
+}
+$("restartBtn").onclick = restart;
+$("finishRestart").onclick = restart;
+render();
+</script>
+</body>
+</html>
