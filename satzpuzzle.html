@@ -88,7 +88,13 @@ function personalizePuzzle(p){
     tokens: ["我", "叫", zhName, "。"]
   };
 }
-const puzzles = (topic.sentencePuzzles || []).map(personalizePuzzle);
+function buildPuzzles(){
+  return cfSentenceTaskList(topic, {maxChars: 22})
+    .map(personalizePuzzle)
+    .map(p => ({...p, tokens: (Array.isArray(p.tokens) && p.tokens.length) ? p.tokens : cfHanziTokens(p.zh)}))
+    .filter(p => p.zh && p.de && Array.isArray(p.tokens) && p.tokens.length > 0);
+}
+const puzzles = buildPuzzles();
 let idx = 0;
 let bank = [];
 let answer = [];

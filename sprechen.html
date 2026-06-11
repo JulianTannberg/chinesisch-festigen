@@ -172,15 +172,7 @@ function makeNameFlexible(task){
   return task;
 }
 function buildTasks(topic){
-  const fromExplicit = (topic.speechSentences || []).filter(x => x && x.de && x.zh).map(makeNameFlexible);
-  if(fromExplicit.length) return fromExplicit;
-
-  const fromPuzzle = (topic.sentencePuzzles || []).filter(x => x && x.de && x.zh).map(makeNameFlexible);
-  if(fromPuzzle.length) return fromPuzzle;
-
-  return (topic.storyDialog || [])
-    .filter(x => x && x.de && x.zh && normalizeZh(x.zh).length <= 16)
-    .map(x => makeNameFlexible({de:x.de, zh:x.zh, pinyin:x.pinyin || ""}));
+  return cfSentenceTaskList(topic, {maxChars: 18}).map(makeNameFlexible);
 }
 const tasks = buildTasks(topic);
 

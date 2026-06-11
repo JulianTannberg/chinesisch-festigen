@@ -129,3 +129,16 @@ dynamischer Tracking-Dienst).
 - Neu: `uebung.html` mit den drei Übungsarten Hören → Hanzi, Chinesisch → Deutsch und Deutsch → Chinesisch.
 - Satz-Puzzle und Lückenspiel lesen Wortkarten beim Antippen/Einsetzen vor; bei richtiger Lösung wird der ganze Satz gesprochen.
 - Das bisherige Hanzi-Writer-Nachzeichnen bleibt als Strich-Spiel über `schreiben.html?id=01&tab=trace` erreichbar.
+
+## Fehlerbehebung: „Keine Sätze hinterlegt“
+
+Diese korrigierte Version sammelt Übungssätze robuster aus allen bekannten Feldern in `topics.js`:
+
+- `practiceSentences`
+- `speechSentences`
+- `sentencePuzzles`
+- `studentDialog`
+- `storyDialog`
+- teilweise `gapExercises`
+
+Wichtig: `topics.js` enthält die eigentlichen Kapitel, Vokabeln und Sätze. Diese Datei muss im Projekt erhalten bleiben. Wenn der ganze Ordner ersetzt wird und `topics.js` fehlt, können die Seiten keine Inhalte anzeigen.

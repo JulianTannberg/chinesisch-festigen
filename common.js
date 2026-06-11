@@ -8,7 +8,8 @@ function qs(name, fallback="01"){
 
 function getTopic(){
   const id = qs("id");
-  return (window.CF_TOPICS || []).find(t => t.id === id) || window.CF_TOPICS[0];
+  const list = window.CF_TOPICS || [];
+  return list.find(t => t.id === id) || list[0] || {id, title:"Kapitel", short:"", accent:"#03172B", textColor:"#FFFFFF", vocab:[], understandingVocab:[], storyDialog:[], studentDialog:[], sentencePuzzles:[], speechSentences:[], practiceSentences:[], gapExercises:[]};
 }
 
 function escapeHtml(s){
@@ -189,4 +190,52 @@ function cfImeInstructions(){
     ],
     note: "Die genaue Bezeichnung hängt vom Gerät und der Tastatur-App ab."
   };
+}
+
+
+// Sammelt Übungssätze robust aus allen bekannten Feldern.
+// Wichtig, weil ältere topics.js-Dateien je nach Seite storyDialog, studentDialog,
+// sentencePuzzles oder speechSentences verwenden.
+function cfSentenceTaskList(topic, options={}){
+  const maxChars = Number(options.maxChars) || 0;
+  const out = [];
+  function addItem(x, source){
+    if(!x) return;
+    const zh = String(x.zh || x.solution || "").trim();
+    const de = String(x.de || x.displayDe || "").trim();
+    if(!zh || !de) return;
+    out.push({
+      ...x,
+      zh,
+      de,
+      pinyin: x.pinyin || "",
+      source: source || x.source || ""
+    });
+  }
+  function addList(list, source){ (list || []).forEach(x => addItem(x, source)); }
+
+  addList(topic.practiceSentences, "practiceSentences");
+  addList(topic.speechSentences, "speechSentences");
+  addList(topic.sentencePuzzles, "sentencePuzzles");
+  addList(topic.studentDialog, "studentDialog");
+  addList(topic.storyDialog, "storyDialog");
+  (topic.gapExercises || []).forEach(g => addItem({zh:g.solution || g.zh, pinyin:g.pinyin || "", de:g.de || ""}, "gapExercises"));
+
+  const seen = new Set();
+  const unique = out.filter(x => {
+    const key = cfStripPunctuation(x.zh) + "|" + String(x.de).toLowerCase().trim();
+    if(seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  if(!maxChars) return unique;
+  const short = unique.filter(x => cfStripPunctuation(x.zh).length <= maxChars);
+  // Wenn die alte Datenstruktur keine kurzen Sätze enthält, lieber längere Sätze nehmen
+  // statt fälschlich "keine Sätze" anzuzeigen.
+  return short.length ? short : unique;
+}
+
+function cfHanziTokens(text){
+  return [...cfStripPunctuation(text || "")].filter(ch => /[\u4e00-\u9fff]/.test(ch));
 }

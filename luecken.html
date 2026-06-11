@@ -95,7 +95,7 @@ function buildAutoGaps(topic){
     .sort((a,b) => b.cleanZh.length - a.cleanZh.length);
 
   const choicePool = vocabPool.map(v => v.displayZh);
-  const lines = [...(topic.storyDialog || [])];
+  const lines = cfSentenceTaskList(topic, {maxChars: 22});
   const auto = [];
 
   lines.forEach(line => {

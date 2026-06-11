@@ -124,12 +124,7 @@ function personalizeSentence(x){
   return x;
 }
 function buildTasks(){
-  const explicit = (topic.practiceSentences || []).filter(x => x.zh && x.de);
-  const puzzle = (topic.sentencePuzzles || []).filter(x => x.zh && x.de);
-  const speech = (topic.speechSentences || []).filter(x => x.zh && x.de);
-  const dialog = (topic.storyDialog || []).filter(x => x.zh && x.de && cfStripPunctuation(x.zh).length <= 18);
-  return cfUnique([...explicit, ...puzzle, ...speech, ...dialog].map(x => JSON.stringify(personalizeSentence(x))))
-    .map(x => JSON.parse(x));
+  return cfSentenceTaskList(topic, {maxChars: 20}).map(personalizeSentence);
 }
 const tasks = buildTasks();
 let idx = 0;
