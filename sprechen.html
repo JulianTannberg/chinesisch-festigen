@@ -30,7 +30,7 @@
     <section class="panel active" id="panel-satz">
       <section class="card speechCheckCard">
         <div id="unsupported" class="empty" style="display:none;">
-          Die Spracherkennung ist in diesem Browser nicht verfügbar. Probiere es mit Chrome oder Safari und öffne die Seite über HTTPS, zum Beispiel über GitHub Pages.
+          Die automatische Browser-Spracherkennung ist hier nicht zuverlässig verfügbar. Du kannst den Satz trotzdem unten in das Eingabefeld diktieren oder tippen.
         </div>
 
         <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Sprechsätze eingetragen.</div>
@@ -53,6 +53,16 @@
 
           <div class="small">Erkannt:</div>
           <div class="speakTranscript" id="transcript">Noch nichts aufgenommen.</div>
+
+          <div class="manualSpeakBox" id="manualSpeakBox">
+            <label for="manualAnswer">Oder hier den chinesischen Satz tippen bzw. mit der Gerätediktierfunktion einsprechen:</label>
+            <div class="inputRow">
+              <input id="manualAnswer" lang="zh" inputmode="text" type="text" placeholder="Hanzi eingeben …" autocomplete="off" spellcheck="false" />
+              <button id="manualCheckBtn" type="button" disabled>Prüfen</button>
+            </div>
+            <div class="manualSpeakHint" id="manualSpeakHint"></div>
+          </div>
+
           <div class="feedback neutral" id="feedback"></div>
           <div class="small" id="micHint"></div>
 
@@ -135,7 +145,7 @@ let correct = 0;
 let micPrepared = false;
 let failedAttempts = 0;
 let attemptIndex = -1;
-let countdownTimer = null;
+
 
 function normalizeZh(s){
   return String(s || "")
@@ -196,9 +206,11 @@ function current(){ return tasks[idx]; }
 function renderSpeechSentence(){
   $("finish").classList.remove("show");
   if(!Recognition){
-    $("game").style.display = "none";
     $("unsupported").style.display = "block";
-    return;
+    $("recordBtn").disabled = true;
+  }else{
+    $("unsupported").style.display = "none";
+    $("recordBtn").disabled = false;
   }
   if(!tasks.length){
     $("game").style.display = "none";
@@ -221,6 +233,12 @@ function renderSpeechSentence(){
   $("counter").textContent = `Satz ${idx+1} von ${tasks.length}`;
   $("germanPrompt").textContent = t.displayDe || t.de || "";
   $("transcript").textContent = "Noch nichts aufgenommen.";
+  $("manualAnswer").value = "";
+  $("manualCheckBtn").disabled = true;
+  const device = cfDetectDevice();
+  $("manualSpeakHint").textContent = device.isIOS
+    ? "iPhone/iPad: In dieses Feld tippen und die Mikrofon-/Diktierfunktion der Tastatur nutzen. Das ist zuverlässiger als die Web-Spracherkennung."
+    : "Dieses Feld ist auch als Ersatz gedacht, wenn die Aufnahme nichts erkennt.";
   $("expectedZh").textContent = t.zh || "";
   $("expectedPinyin").textContent = t.pinyin || "";
   $("expectedDe").textContent = t.displayDe || t.de || "";
@@ -247,8 +265,8 @@ function createRecognition(task){
     if(event.error === "not-allowed"){
       setFeedback("bad", "Mikrofonzugriff wurde nicht erlaubt. Öffne die Seite am besten über GitHub Pages/HTTPS oder localhost, nicht direkt als Datei.");
     }else if(event.error === "no-speech"){
-      setFeedback("bad", "Ich habe noch nichts gehört. Drück auf Aufnehmen, warte den Countdown ab und sprich erst bei „Jetzt sprechen“.");
-      setMicHint("Tipp: Nach dem Klick gibt es 3 Sekunden Vorbereitungszeit.");
+      setFeedback("bad", "Ich habe noch nichts gehört. Drück auf Aufnehmen und sprich erst, wenn „Jetzt sprechen“ erscheint.");
+      setMicHint("Tipp: Du kannst den Satz auch unten diktieren oder tippen.");
     }else{
       setFeedback("bad", "Das hat nicht geklappt. Versuch es noch einmal.");
     }
@@ -287,31 +305,16 @@ async function startRecording(){
   recognition = createRecognition(t);
   recording = true;
   $("recordBtn").classList.add("recording");
-  setFeedback("neutral", "Mach dich bereit. Die Aufnahme startet gleich.");
-
-  let left = 3;
-  $("recordBtn").textContent = `Start in ${left}`;
-  $("transcript").textContent = "Noch nicht sprechen …";
-  clearInterval(countdownTimer);
-  countdownTimer = setInterval(() => {
-    left -= 1;
-    if(left > 0){
-      $("recordBtn").textContent = `Start in ${left}`;
-      return;
-    }
-    clearInterval(countdownTimer);
-    countdownTimer = null;
-    $("recordBtn").textContent = "Höre zu …";
-    $("transcript").textContent = "Jetzt sprechen.";
-    setFeedback("neutral", "Jetzt langsam und deutlich sprechen.");
-    try{ recognition.start(); }
-    catch(e){
-      recording = false;
-      $("recordBtn").classList.remove("recording");
-      $("recordBtn").textContent = "Aufnehmen";
-      setFeedback("bad", "Die Aufnahme konnte nicht gestartet werden. Versuch es noch einmal.");
-    }
-  }, 1000);
+  $("recordBtn").textContent = "Höre zu …";
+  $("transcript").textContent = "Jetzt sprechen.";
+  setFeedback("neutral", "Jetzt langsam und deutlich sprechen.");
+  try{ recognition.start(); }
+  catch(e){
+    recording = false;
+    $("recordBtn").classList.remove("recording");
+    $("recordBtn").textContent = "Aufnehmen";
+    setFeedback("bad", "Die Aufnahme konnte nicht gestartet werden. Versuch es noch einmal oder nutze das Eingabefeld.");
+  }
 }
 function checkTranscript(alternatives, task){
   const heardNorms = alternatives.map(normalizeZh).filter(Boolean);
@@ -325,7 +328,7 @@ function checkTranscript(alternatives, task){
   }
 
   if(ok){
-    correct++;
+    if(failedAttempts === 0 && $("nextBtn").disabled) correct++;
     failedAttempts = 0;
     setFeedback("ok", task.acceptMode === "woJiaoName" ? "Richtig erkannt: 我叫… passt. Dein eigener Name ist in Ordnung." : "Richtig erkannt. Gut gesprochen.");
     $("nextBtn").disabled = false;
@@ -358,6 +361,17 @@ function speakZh(text, rate = 0.9){
 }
 function nextSpeechSentence(){ idx++; renderSpeechSentence(); }
 function restartSpeechSentence(){ idx=0; correct=0; localStorage.removeItem(stateKey()); renderSpeechSentence(); }
+
+$("manualAnswer").addEventListener("input", () => {
+  $("manualCheckBtn").disabled = normalizeZh($("manualAnswer").value).length === 0;
+});
+$("manualAnswer").addEventListener("keydown", e => {
+  if(e.key === "Enter"){
+    e.preventDefault();
+    if(!$("manualCheckBtn").disabled) checkTranscript([$("manualAnswer").value], current());
+  }
+});
+$("manualCheckBtn").addEventListener("click", () => checkTranscript([$("manualAnswer").value], current()));
 
 $("recordBtn").addEventListener("click", startRecording);
 $("hearBtn").addEventListener("click", () => speakZh(current()?.zh || ""));

@@ -31,11 +31,31 @@
       </a>
       <a class="modeCard" id="writeLink">
         <p class="modeTitle">Schreiben</p>
-        <p class="modeText">Vokabeln aktiv schreiben, Fehler wiederholen und die Lernserie halten.</p>
+        <p class="modeText">Hanzi aktiv tippen. Mit Gerätehinweis für chinesische Tastatur.</p>
+      </a>
+      <a class="modeCard" id="traceLearnLink">
+        <p class="modeTitle">Nachzeichnen</p>
+        <p class="modeText">Vokabelkarten, Pinyin erkennen, Bedeutung wählen und das Zeichen Schritt für Schritt lernen.</p>
       </a>
       <a class="modeCard" id="speakLink">
         <p class="modeTitle">Sprechen</p>
-        <p class="modeText">Sätze auf Chinesisch sprechen oder den Schülerdialog mit KI üben.</p>
+        <p class="modeText">Sätze sprechen oder per Tastatur/Diktierfunktion eingeben; daneben KI-Dialog üben.</p>
+      </a>
+    </section>
+
+    <h2 class="groupTitle">Üben</h2>
+    <section class="grid">
+      <a class="modeCard" id="practiceHearHanziLink">
+        <p class="modeTitle">Chinesisch hören → Hanzi</p>
+        <p class="modeText">Du hörst einen Satz und baust ihn aus durcheinanderstehenden Hanzi zusammen.</p>
+      </a>
+      <a class="modeCard" id="practiceZhDeLink">
+        <p class="modeTitle">Chinesisch → Deutsch</p>
+        <p class="modeText">Ordne deutsche Wortkarten in der passenden Reihenfolge.</p>
+      </a>
+      <a class="modeCard" id="practiceDeZhLink">
+        <p class="modeTitle">Deutsch → Chinesisch</p>
+        <p class="modeText">Baue den chinesischen Satz aus Hanzi-Karten, mit zusätzlichen Ablenkern.</p>
       </a>
     </section>
 
@@ -51,11 +71,15 @@
       </a>
       <a class="modeCard" id="puzzleLink">
         <p class="modeTitle">Satz-Puzzle</p>
-        <p class="modeText">Wortkarten schieben und chinesische Sätze zusammensetzen.</p>
+        <p class="modeText">Wortkarten schieben, hören und chinesische Sätze zusammensetzen.</p>
       </a>
       <a class="modeCard" id="gapLink">
         <p class="modeTitle">Lückenspiel</p>
-        <p class="modeText">Das passende Wort für die Lücke auswählen.</p>
+        <p class="modeText">Das passende Wort für die Lücke auswählen und anhören.</p>
+      </a>
+      <a class="modeCard" id="traceGameLink">
+        <p class="modeTitle">Strich-Spiel</p>
+        <p class="modeText">Das bisherige Hanzi-Writer-Nachzeichnen als Spielmodus.</p>
       </a>
     </section>
 
@@ -76,10 +100,15 @@
   document.getElementById("hearLink").href = `hoeren.html?id=${topic.id}`;
   document.getElementById("writeLink").href = `schreiben.html?id=${topic.id}`;
   document.getElementById("speakLink").href = `sprechen.html?id=${topic.id}`;
+  document.getElementById("traceLearnLink").href = `nachzeichnen.html?id=${topic.id}`;
+  document.getElementById("practiceHearHanziLink").href = `uebung.html?id=${topic.id}&mode=hear-hanzi`;
+  document.getElementById("practiceZhDeLink").href = `uebung.html?id=${topic.id}&mode=zh-de`;
+  document.getElementById("practiceDeZhLink").href = `uebung.html?id=${topic.id}&mode=de-zh`;
   document.getElementById("flashLink").href = `flashkarten.html?id=${topic.id}`;
   document.getElementById("memoryLink").href = `memory.html?id=${topic.id}`;
   document.getElementById("puzzleLink").href = `satzpuzzle.html?id=${topic.id}`;
   document.getElementById("gapLink").href = `luecken.html?id=${topic.id}`;
+  document.getElementById("traceGameLink").href = `schreiben.html?id=${topic.id}&tab=trace`;
 </script>
 </body>
 </html>

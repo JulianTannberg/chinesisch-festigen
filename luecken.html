@@ -204,7 +204,10 @@ function render(){
     b.type = "button";
     b.className = "choiceBtn";
     b.textContent = choice;
-    b.addEventListener("click", () => choose(choice, b));
+    b.addEventListener("click", () => {
+      cfSpeakZh(choice, {rate:0.82});
+      choose(choice, b);
+    });
     c.appendChild(b);
   });
   save();
@@ -218,6 +221,7 @@ function choose(choice, btn){
     btn.classList.add("correctChoice");
     correct++;
     setFeedback("ok", "Richtig!");
+    cfSpeakZh(g.solution || g.answer, {rate:0.82});
   }else{
     btn.classList.add("wrongChoice");
     document.querySelectorAll(".choiceBtn").forEach(b => { if(b.textContent === g.answer) b.classList.add("correctChoice"); });

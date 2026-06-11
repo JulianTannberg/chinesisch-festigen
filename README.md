@@ -118,3 +118,14 @@ Kapitelübersicht.
 
 QR-Code im Buch am besten auf `…/start.html` zeigen lassen (statischer QR-Code, kein
 dynamischer Tracking-Dienst).
+
+## Update nach Webapp-Test
+
+- Die obere Kicker-Zeile („Chinesisch festigen“ / „Kapitel …“) wird in der Oberfläche ausgeblendet.
+- `sprechen.html` startet die Aufnahme ohne 3-Sekunden-Pause. Zusätzlich gibt es ein Eingabefeld, damit iPhone/iPad über Tastatur-Diktat oder Hanzi-Tastatur genutzt werden können.
+- `schreiben.html` startet jetzt standardmäßig im Reiter „Tippen“ und zeigt dort eine geräteabhängige Hilfe zur chinesischen Eingabe. Der Hinweis kann ausgeblendet und später wieder geöffnet werden.
+- Die Kapitelseite ist nun in drei Bereiche gegliedert: Lernen, Üben und Spielen.
+- Neu: `nachzeichnen.html` als Lern-Nachzeichnen mit Vokabelkarte, Pinyin-Auswahl, Deutsch-Auswahl und drei Schreibstufen.
+- Neu: `uebung.html` mit den drei Übungsarten Hören → Hanzi, Chinesisch → Deutsch und Deutsch → Chinesisch.
+- Satz-Puzzle und Lückenspiel lesen Wortkarten beim Antippen/Einsetzen vor; bei richtiger Lösung wird der ganze Satz gesprochen.
+- Das bisherige Hanzi-Writer-Nachzeichnen bleibt als Strich-Spiel über `schreiben.html?id=01&tab=trace` erreichbar.

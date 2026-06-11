@@ -150,14 +150,26 @@
     <p class="subtitle">Mit dem Finger nachzeichnen oder tippen – such dir oben aus, wie du übst.</p>
 
     <div class="tabbar writeTabs">
-      <button class="tab active" data-tab="trace" type="button">Nachzeichnen</button>
-      <button class="tab" data-tab="type" type="button">Tippen</button>
+      <button class="tab active" data-tab="type" type="button">Tippen</button>
+      <button class="tab" data-tab="trace" type="button">Strich-Spiel</button>
     </div>
 
     <!-- ============ PANEL: TIPPEN (dein bestehendes Quiz) ============ -->
-    <section class="panel" id="panel-type">
+    <section class="panel active" id="panel-type">
       <section class="card" id="quizCard">
         <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Schreibvokabeln eingetragen.</div>
+
+        <div id="imeHelp" class="imeHelp" style="display:none;">
+          <div class="imeHelpHeader">
+            <div>
+              <h2 id="imeHelpTitle">Hanzi schreiben</h2>
+              <ol id="imeHelpSteps"></ol>
+              <p class="small" id="imeHelpNote" style="margin:8px 0 0;"></p>
+            </div>
+            <button id="imeHelpClose" class="imeHelpClose" type="button">Ausblenden</button>
+          </div>
+        </div>
+        <button id="imeHelpOpen" class="miniBtn imeHelpOpen" type="button" style="display:none;">Hanzi-Eingabe-Hilfe anzeigen</button>
 
         <div id="quiz">
           <div class="modeSwitch" aria-label="Übungsrichtung auswählen">
@@ -210,7 +222,7 @@
     </section>
 
     <!-- ============ PANEL: NACHZEICHNEN (Hanzi Writer) ============ -->
-    <section class="panel active" id="panel-trace">
+    <section class="panel" id="panel-trace">
       <section class="card">
         <div id="traceEmpty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Vokabeln zum Nachzeichnen eingetragen.</div>
 
@@ -262,14 +274,48 @@ document.getElementById("finishBack").href = `kapitel.html?id=${topic.id}`;
 document.getElementById("kicker").textContent = `Kapitel ${topic.id} · Schreiben`;
 document.getElementById("title").textContent = `${topic.id}. ${topic.title} · Schreiben`;
 
+function renderImeHelp(){
+  const info = cfImeInstructions();
+  const hiddenKey = `cf_ime_help_hidden_${cfDetectDevice().type}`;
+  const help = document.getElementById("imeHelp");
+  const open = document.getElementById("imeHelpOpen");
+  if(!help || !open) return;
+  document.getElementById("imeHelpTitle").textContent = info.title;
+  document.getElementById("imeHelpSteps").innerHTML = (info.steps || []).map(step => `<li>${escapeHtml(step)}</li>`).join("");
+  document.getElementById("imeHelpNote").textContent = info.note || "";
+  const hidden = localStorage.getItem(hiddenKey) === "1";
+  help.style.display = hidden ? "none" : "block";
+  open.style.display = hidden ? "inline-flex" : "none";
+  document.getElementById("imeHelpClose").onclick = () => {
+    localStorage.setItem(hiddenKey, "1");
+    help.style.display = "none";
+    open.style.display = "inline-flex";
+  };
+  open.onclick = () => {
+    localStorage.removeItem(hiddenKey);
+    help.style.display = "block";
+    open.style.display = "none";
+  };
+}
+renderImeHelp();
+
 /* ===== Reiter-Umschaltung ===== */
 const tabs = [...document.querySelectorAll(".tab")];
-tabs.forEach(tab => tab.addEventListener("click", () => {
-  tabs.forEach(t => t.classList.toggle("active", t === tab));
+function activateWriteTab(name, updateUrl=false){
+  const next = name === "trace" ? "trace" : "type";
+  tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === next));
   document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-  document.getElementById(`panel-${tab.dataset.tab}`).classList.add("active");
-  if(tab.dataset.tab === "trace") ensureTraceInit();
-}));
+  document.getElementById(`panel-${next}`).classList.add("active");
+  if(next === "trace") ensureTraceInit();
+  if(updateUrl){
+    const params = new URLSearchParams(location.search);
+    params.set("id", topic.id);
+    if(next === "trace") params.set("tab", "trace");
+    else params.delete("tab");
+    history.replaceState(null, "", `${location.pathname}?${params.toString()}`);
+  }
+}
+tabs.forEach(tab => tab.addEventListener("click", () => activateWriteTab(tab.dataset.tab, true)));
 
 /* ============================================================
    TEIL 1: TIPPEN  (unverändert aus deiner schreiben.html)
@@ -1034,8 +1080,9 @@ $("traceAuto").addEventListener("change", e => {
   localStorage.setItem(`cf_trace_auto_${topic.id}`, autoNext ? "1" : "0");
 });
 
-// Nachzeichnen ist jetzt der erste Reiter.
-ensureTraceInit();
+// Standard: Schreiben/Tippen. Das alte Nachzeichnen ist als Strich-Spiel über ?tab=trace erreichbar.
+const initialWriteTab = (new URLSearchParams(location.search).get("tab") === "trace") ? "trace" : "type";
+activateWriteTab(initialWriteTab);
 </script>
 </body>
 </html>

@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Üben · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#03172B" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Chinesisch" />
+</head>
+<body>
+  <main class="app practiceApp">
+    <div class="topbar">
+      <a class="back" id="back">← Kapitel</a>
+      <div class="kicker" id="kicker">Üben</div>
+    </div>
+    <h1 id="title">Üben</h1>
+    <p class="subtitle" id="subtitle">Sätze zusammensetzen – mit zusätzlichen Ablenkern, damit nicht nur die Reihenfolge geübt wird.</p>
+
+    <section class="card">
+      <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Übungssätze eingetragen.</div>
+      <div id="game">
+        <div class="puzzleTopline">
+          <div class="small" id="counter">Satz –</div>
+          <button id="restartBtn" type="button">Von vorne starten</button>
+        </div>
+
+        <div class="promptMini" id="promptLabel">Aufgabe:</div>
+        <div class="practicePrompt" id="prompt">–</div>
+        <div class="toolbar" id="audioToolbar" style="display:none;">
+          <button id="playPromptBtn" type="button">▶ Satz anhören</button>
+        </div>
+
+        <div class="answerBuild empty" id="answerZone" aria-label="Antwortbereich"></div>
+        <div class="tokenBank" id="tokenBank" aria-label="Kartenbank"></div>
+
+        <div class="manualSpeakBox" id="speakBox" style="display:none;">
+          <label for="spokenCheck">Sprich den chinesischen Satz zusätzlich selbst. Als Ersatz kannst du ihn hier diktieren oder tippen:</label>
+          <div class="inputRow">
+            <input id="spokenCheck" lang="zh" inputmode="text" type="text" placeholder="Optional: Hanzi eingeben …" autocomplete="off" spellcheck="false" />
+            <button id="spokenCheckBtn" type="button" disabled>Gesprochen prüfen</button>
+          </div>
+          <div class="manualSpeakHint">Das ist eine Zusatzkontrolle. Die Sortieraufgabe funktioniert auch ohne diese Eingabe.</div>
+        </div>
+
+        <div class="toolbar">
+          <button id="checkBtn" type="button" disabled>Prüfen</button>
+          <button id="undoBtn" type="button">Letzte Karte zurück</button>
+          <button id="resetBtn" type="button">Satz zurücksetzen</button>
+        </div>
+        <div class="feedback neutral" id="feedback"></div>
+
+        <div class="solutionBox" id="solutionBox">
+          <div class="small">Lösung:</div>
+          <div class="zh" id="solutionZh">–</div>
+          <div class="pinyin" id="solutionPinyin">–</div>
+          <div class="de" id="solutionDe">–</div>
+        </div>
+
+        <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
+      </div>
+
+      <div class="finish" id="finish">
+        <p class="finishTitle">Übung geschafft!</p>
+        <p class="finishText" id="finishText">Du hast alle Sätze gebaut.</p>
+        <div class="toolbar" style="justify-content:center;margin-top:18px;">
+          <button id="finishRestart" type="button">Noch einmal üben</button>
+          <a class="miniBtn" id="finishBack">Zurück zum Kapitel</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script src="topics.js"></script>
+<script src="common.js"></script>
+<script src="profile.js"></script>
+<script>
+const topic = getTopic();
+applyTheme(topic, "Üben");
+const $ = id => document.getElementById(id);
+$("back").href = `kapitel.html?id=${topic.id}`;
+$("finishBack").href = `kapitel.html?id=${topic.id}`;
+
+const params = new URLSearchParams(location.search);
+const mode = params.get("mode") || "hear-hanzi";
+const modeInfo = {
+  "hear-hanzi": {
+    title:"Chinesisch hören → Hanzi",
+    label:"Höre den Satz und baue ihn aus Hanzi:",
+    subtitle:"Du hörst einen chinesischen Satz. Unten stehen die passenden Hanzi – aber auch zusätzliche Ablenker.",
+    answerKind:"zh",
+    promptKind:"audio"
+  },
+  "zh-de": {
+    title:"Chinesisch → Deutsch",
+    label:"Baue die deutsche Bedeutung in der richtigen Reihenfolge:",
+    subtitle:"Du siehst den chinesischen Satz und ordnest deutsche Wortkarten. Es gibt mehr Karten als nötig.",
+    answerKind:"de",
+    promptKind:"zh"
+  },
+  "de-zh": {
+    title:"Deutsch → Chinesisch",
+    label:"Baue den chinesischen Satz aus Hanzi:",
+    subtitle:"Du siehst Deutsch und baust den chinesischen Satz. Danach kannst du ihn zusätzlich sprechen.",
+    answerKind:"zh",
+    promptKind:"de"
+  }
+}[mode] || null;
+
+$("title").textContent = `${topic.id}. ${topic.title} · ${modeInfo.title}`;
+$("subtitle").textContent = modeInfo.subtitle;
+$("kicker").textContent = `Kapitel ${topic.id} · Üben`;
+
+function personalizeSentence(x){
+  if(!x) return x;
+  const name = window.CF_PROFILE?.getName?.() || "";
+  if(name && cfStripPunctuation(x.zh) === "我叫苏然"){
+    return {...x, zh:`我叫${name}。`, pinyin:`Wǒ jiào ${name}.`, de:`Ich heiße ${name}.`};
+  }
+  return x;
+}
+function buildTasks(){
+  const explicit = (topic.practiceSentences || []).filter(x => x.zh && x.de);
+  const puzzle = (topic.sentencePuzzles || []).filter(x => x.zh && x.de);
+  const speech = (topic.speechSentences || []).filter(x => x.zh && x.de);
+  const dialog = (topic.storyDialog || []).filter(x => x.zh && x.de && cfStripPunctuation(x.zh).length <= 18);
+  return cfUnique([...explicit, ...puzzle, ...speech, ...dialog].map(x => JSON.stringify(personalizeSentence(x))))
+    .map(x => JSON.parse(x));
+}
+const tasks = buildTasks();
+let idx = 0;
+let tokenId = 0;
+let answer = [];
+let bank = [];
+
+function zhTokens(t){
+  return [...cfStripPunctuation(t.zh || "")].filter(ch => /[\u4e00-\u9fff]/.test(ch));
+}
+function deTokens(t){
+  return String(t.de || "").replace(/[.!?。！？]/g, "").split(/\s+/).filter(Boolean);
+}
+function distractorZh(currentTokens){
+  const used = new Set(currentTokens);
+  const pool = [];
+  [...(topic.vocab || []), ...(topic.understandingVocab || [])].forEach(v => {
+    [...String(v.zh || v.writeZh || "")].forEach(ch => {
+      if(/[\u4e00-\u9fff]/.test(ch) && !used.has(ch)) pool.push(ch);
+    });
+  });
+  return shuffle(cfUnique(pool)).slice(0, Math.min(8, Math.max(4, Math.ceil(currentTokens.length * .45))));
+}
+function distractorDe(currentTokens){
+  const used = new Set(currentTokens.map(x => x.toLowerCase()));
+  const pool = [];
+  tasks.forEach(t => deTokens(t).forEach(w => { if(!used.has(w.toLowerCase())) pool.push(w); }));
+  [...(topic.vocab || []), ...(topic.understandingVocab || [])].forEach(v => {
+    String(v.de || "").replace(/[()]/g," ").split(/[\s/;,]+/).filter(Boolean).forEach(w => {
+      if(!used.has(w.toLowerCase())) pool.push(w);
+    });
+  });
+  return shuffle(cfUnique(pool)).slice(0, Math.min(8, Math.max(4, Math.ceil(currentTokens.length * .55))));
+}
+function current(){ return tasks[idx]; }
+function solutionTokens(){
+  const t = current();
+  return modeInfo.answerKind === "zh" ? zhTokens(t) : deTokens(t);
+}
+function makeBank(){
+  tokenId = 0;
+  const sol = solutionTokens();
+  const extras = modeInfo.answerKind === "zh" ? distractorZh(sol) : distractorDe(sol);
+  return shuffle([...sol, ...extras].map(text => ({id:`p${tokenId++}`, text})));
+}
+function render(){
+  $("finish").classList.remove("show");
+  if(!tasks.length){ $("game").style.display="none"; $("empty").style.display="block"; return; }
+  if(idx >= tasks.length){
+    $("game").style.display="none";
+    $("finish").classList.add("show");
+    return;
+  }
+  const t = current();
+  answer = [];
+  bank = makeBank();
+  $("game").style.display="";
+  $("counter").textContent = `Satz ${idx+1} von ${tasks.length}`;
+  $("promptLabel").textContent = modeInfo.label;
+  $("audioToolbar").style.display = modeInfo.promptKind === "audio" ? "flex" : "none";
+  $("speakBox").style.display = mode === "de-zh" ? "block" : "none";
+  $("spokenCheck").value = "";
+  $("spokenCheckBtn").disabled = true;
+  if(modeInfo.promptKind === "audio"){
+    $("prompt").textContent = "▶ Höre den Satz an und baue ihn unten nach.";
+    setTimeout(() => cfSpeakZh(t.zh, {rate:0.82}), 250);
+  }else if(modeInfo.promptKind === "zh"){
+    $("prompt").textContent = t.zh || "";
+  }else{
+    $("prompt").textContent = t.de || "";
+  }
+  $("solutionZh").textContent = t.zh || "";
+  $("solutionPinyin").textContent = t.pinyin || "";
+  $("solutionDe").textContent = t.de || "";
+  $("solutionBox").style.display = "none";
+  $("progressFill").style.width = `${Math.round(idx / tasks.length * 100)}%`;
+  setFeedback("neutral", "");
+  renderTokens();
+}
+function setFeedback(kind, text){
+  const el = $("feedback");
+  el.className = `feedback ${kind}`;
+  el.textContent = text || "";
+}
+function makeButton(token, from){
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "tokenChip";
+  b.textContent = token.text;
+  b.draggable = true;
+  b.dataset.id = token.id;
+  b.dataset.from = from;
+  b.addEventListener("click", () => from === "bank" ? moveToAnswer(token.id) : moveToBank(token.id));
+  b.addEventListener("dragstart", e => e.dataTransfer.setData("text/plain", JSON.stringify({id:token.id, from})));
+  return b;
+}
+function renderTokens(){
+  const az = $("answerZone");
+  const tb = $("tokenBank");
+  az.innerHTML = "";
+  tb.innerHTML = "";
+  az.classList.toggle("empty", answer.length === 0);
+  answer.forEach(t => az.appendChild(makeButton(t, "answer")));
+  bank.forEach(t => tb.appendChild(makeButton(t, "bank")));
+  $("checkBtn").disabled = answer.length === 0;
+}
+function moveToAnswer(id){
+  const i = bank.findIndex(t => t.id === id);
+  if(i < 0) return;
+  const moved = bank.splice(i,1)[0];
+  answer.push(moved);
+  if(modeInfo.answerKind === "zh") cfSpeakZh(moved.text, {rate:0.82});
+  setFeedback("neutral", "");
+  renderTokens();
+}
+function moveToBank(id){
+  const i = answer.findIndex(t => t.id === id);
+  if(i < 0) return;
+  bank.push(answer.splice(i,1)[0]);
+  renderTokens();
+}
+function setupDrop(target){
+  target.addEventListener("dragover", e => e.preventDefault());
+  target.addEventListener("drop", e => {
+    e.preventDefault();
+    try{
+      const data = JSON.parse(e.dataTransfer.getData("text/plain"));
+      if(target.id === "answerZone" && data.from === "bank") moveToAnswer(data.id);
+      if(target.id === "tokenBank" && data.from === "answer") moveToBank(data.id);
+    }catch(err){}
+  });
+}
+function check(){
+  const attempt = answer.map(t => t.text).join(modeInfo.answerKind === "de" ? " " : "");
+  const solution = solutionTokens().join(modeInfo.answerKind === "de" ? " " : "");
+  if(attempt === solution){
+    setFeedback("ok", "Richtig. Der ganze Satz wird vorgelesen.");
+    cfSpeakZh(current().zh || "", {rate:0.82});
+    $("solutionBox").style.display = "block";
+    setTimeout(() => { idx++; render(); }, 1500);
+  }else{
+    setFeedback("bad", "Noch nicht richtig. Es sind auch Ablenker dabei – nimm nur die passenden Karten.");
+    $("solutionBox").style.display = "block";
+  }
+}
+function undo(){ if(answer.length){ bank.push(answer.pop()); renderTokens(); } }
+function resetSentence(){ answer = []; bank = makeBank(); setFeedback("neutral", ""); $("solutionBox").style.display="none"; renderTokens(); }
+function restart(){ idx = 0; render(); }
+function normalizeZhLocal(s){ return cfStripPunctuation(s).replace(/[妳]/g,"你"); }
+
+$("playPromptBtn").addEventListener("click", () => cfSpeakZh(current()?.zh || "", {rate:0.82}));
+$("checkBtn").addEventListener("click", check);
+$("undoBtn").addEventListener("click", undo);
+$("resetBtn").addEventListener("click", resetSentence);
+$("restartBtn").addEventListener("click", restart);
+$("finishRestart").addEventListener("click", restart);
+$("spokenCheck").addEventListener("input", () => $("spokenCheckBtn").disabled = normalizeZhLocal($("spokenCheck").value).length === 0);
+$("spokenCheckBtn").addEventListener("click", () => {
+  const ok = normalizeZhLocal($("spokenCheck").value) === normalizeZhLocal(current()?.zh || "");
+  setFeedback(ok ? "ok" : "bad", ok ? "Gesprochen bzw. diktiert passt." : "Das passt noch nicht ganz zum chinesischen Satz.");
+});
+setupDrop($("answerZone"));
+setupDrop($("tokenBank"));
+render();
+</script>
+</body>
+</html>

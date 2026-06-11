@@ -107,14 +107,29 @@ function setFeedback(kind, text){
   el.className = `feedback ${kind}`;
   el.textContent = text || "";
 }
-function makeTokens(tokens){
+function puzzleDistractors(p){
+  const solutionTexts = new Set((p.tokens || []).map(t => String(t)));
+  const candidates = [];
+  [...(topic.vocab || []), ...(topic.understandingVocab || [])].forEach(v => {
+    const text = String(v.zh || v.writeZh || "").trim();
+    if(!text) return;
+    if(text.length <= 3 && !solutionTexts.has(text)) candidates.push(text);
+    [...text].forEach(ch => {
+      if(/[\u4e00-\u9fff]/.test(ch) && !solutionTexts.has(ch)) candidates.push(ch);
+    });
+  });
+  const unique = cfUnique(candidates).filter(x => !solutionTexts.has(x));
+  return shuffle(unique).slice(0, Math.min(5, Math.max(2, Math.ceil((p.tokens || []).length / 2))));
+}
+function makeTokens(tokens, p){
   tokenId = 0;
-  return shuffle(tokens.map(t => ({id:`t${tokenId++}`, text:t})));
+  const extras = puzzleDistractors(p || {});
+  return shuffle([...tokens, ...extras].map(t => ({id:`t${tokenId++}`, text:t, extra:extras.includes(t)})));
 }
 function current(){ return puzzles[idx]; }
 function startSentence(){
   const p = current();
-  bank = makeTokens(p.tokens || []);
+  bank = makeTokens(p.tokens || [], p);
   answer = [];
   $("solutionBox").style.display = "none";
   setFeedback("neutral", "");
@@ -171,7 +186,9 @@ function renderTokens(){
 function moveToAnswer(id){
   const i = bank.findIndex(t => t.id === id);
   if(i < 0) return;
-  answer.push(bank.splice(i,1)[0]);
+  const moved = bank.splice(i,1)[0];
+  answer.push(moved);
+  cfSpeakZh(moved.text, {rate:0.8});
   setFeedback("neutral", "");
   $("solutionBox").style.display = "none";
   renderTokens();
@@ -200,7 +217,8 @@ function check(){
   const solution = (p.tokens || []).join("");
   if(attempt === solution){
     setFeedback("ok", "Richtig! Sehr gut gebaut.");
-    setTimeout(() => { idx++; startSentence(); }, 650);
+    cfSpeakZh(p.zh || solution, {rate:0.82});
+    setTimeout(() => { idx++; startSentence(); }, 1300);
   }else{
     setFeedback("bad", "Noch nicht richtig. Schau genau auf die Reihenfolge.");
     $("solutionBox").style.display = "block";
