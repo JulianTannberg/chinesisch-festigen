@@ -606,3 +606,85 @@ input.wrong{border-color:var(--bad);background:rgba(239,68,68,.18)}
 .memoryCard.zhCard .memoryText{
   font-size:clamp(30px, 7vw, 48px);
 }
+
+
+/* Lückenspiel: deutscher Satz als Bedeutungshilfe */
+.gapGerman{
+  font-size:clamp(18px, 4vw, 28px);
+  line-height:1.25;
+  font-weight:850;
+  margin:8px 0 10px;
+  color:var(--chapter-text);
+  opacity:.92;
+}
+
+/* Satz sprechen */
+.speechCheckCard{
+  display:grid;
+  gap:14px;
+}
+.speakGerman{
+  font-size:clamp(24px, 6vw, 42px);
+  line-height:1.18;
+  font-weight:950;
+  margin:4px 0 2px;
+}
+.speakExpected{
+  display:none;
+  border:1px dashed var(--stroke);
+  border-radius:16px;
+  background:rgba(255,255,255,.08);
+  padding:12px;
+}
+.speakExpected.show{display:block;}
+.speakTranscript{
+  min-height:54px;
+  border:1px solid var(--stroke);
+  border-radius:16px;
+  background:rgba(255,255,255,.08);
+  padding:12px;
+}
+.recordBtn.recording{
+  background:rgba(239,68,68,.22);
+  outline:2px solid rgba(239,68,68,.55);
+}
+.speakResult.ok{color:#86efac;font-weight:850;}
+.speakResult.bad{color:#fecaca;font-weight:850;}
+
+
+/* Benutzername / Profil */
+.profileCard{
+  background:var(--card);
+  border:1px solid var(--stroke);
+  border-radius:20px;
+  box-shadow:0 10px 30px var(--shadow);
+  backdrop-filter:blur(8px);
+  padding:14px;
+  margin:14px 0 20px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:12px;
+  align-items:center;
+}
+.profileTitle{font-weight:850;font-size:17px;margin-bottom:3px;}
+.profileText{margin:0;color:var(--muted);font-size:13px;line-height:1.35;}
+.profileForm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+.profileInput{
+  width:min(220px, 100%);
+  min-height:42px;
+  border-radius:14px;
+  border:1px solid var(--stroke);
+  background:var(--input-bg);
+  color:var(--chapter-text);
+  padding:10px 12px;
+  font:inherit;
+  outline:none;
+}
+.profileInput::placeholder{color:rgba(255,255,255,.55);}
+.profileStatus{grid-column:1 / -1;color:var(--muted);font-size:12px;}
+@media (max-width:720px){
+  .profileCard{grid-template-columns:1fr;}
+  .profileForm{justify-content:stretch;}
+  .profileInput{flex:1 1 160px;}
+  .profileForm button{flex:1 1 auto;}
+}

@@ -22,6 +22,7 @@
           <div class="small" id="counter">Aufgabe –</div>
           <button id="restartBtn" type="button">Von vorne starten</button>
         </div>
+        <div class="gapGerman" id="gapGerman">–</div>
         <div class="gapSentence" id="sentence">–</div>
         <div class="choiceGrid" id="choices"></div>
         <div class="feedback neutral" id="feedback"></div>
@@ -48,6 +49,7 @@
   </main>
 
 <script src="topics.js"></script>
+<script src="profile.js"></script>
 <script>
 function qs(name, fallback="01"){
   const p = new URLSearchParams(location.search);
@@ -145,7 +147,21 @@ function prepareGaps(topic){
   return uniqueBy([...manual, ...auto], g => `${g.prompt}|${g.answer}`);
 }
 
-const gaps = prepareGaps(topic);
+function personalizeGap(g){
+  const name = window.CF_PROFILE?.getName?.() || "";
+  if(!name) return g;
+  const solutionNorm = stripPunctuation(g.solution || "");
+  if(!solutionNorm.includes("我叫苏然")) return g;
+  const replaceText = s => String(s || "").replaceAll("苏然", name).replaceAll("Su Ran", name).replaceAll("Sū Rán", name);
+  return {
+    ...g,
+    prompt: replaceText(g.prompt),
+    solution: replaceText(g.solution),
+    pinyin: replaceText(g.pinyin),
+    de: replaceText(g.de)
+  };
+}
+const gaps = prepareGaps(topic).map(personalizeGap);
 let idx = 0;
 let correct = 0;
 let locked = false;
@@ -178,6 +194,9 @@ function render(){
   const g = gaps[idx];
   $("game").style.display="";
   $("counter").textContent = `Aufgabe ${idx+1} von ${gaps.length}`;
+  const german = String(g.de || "").trim();
+  $("gapGerman").textContent = german;
+  $("gapGerman").style.display = german ? "block" : "none";
   $("sentence").innerHTML = (g.prompt || "").replace("___", '<span class="gapBlank">___</span>');
   $("solutionZh").textContent = g.solution || "";
   $("solutionPinyin").textContent = g.pinyin || "";

@@ -13,11 +13,14 @@
     </div>
     <h1>Kapitelübersicht</h1>
     <p class="subtitle">Wähle ein Kapitel. Danach findest du Hören, Schreiben und Sprechen passend zum Thema.</p>
+    <div id="profileMount"></div>
     <section class="grid" id="chapterGrid"></section>
   </main>
 
   <script src="topics.js"></script>
+  <script src="profile.js"></script>
   <script>
+    window.CF_PROFILE?.mount("profileMount");
     const grid = document.getElementById("chapterGrid");
     (window.CF_TOPICS || []).forEach(t => {
       const a = document.createElement("a");

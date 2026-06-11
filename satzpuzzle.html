@@ -54,6 +54,7 @@
   </main>
 
 <script src="topics.js"></script>
+<script src="profile.js"></script>
 <script>
 function qs(name, fallback="01"){
   const p = new URLSearchParams(location.search);
@@ -87,7 +88,23 @@ $("finishBack").href = `kapitel.html?id=${topic.id}`;
 $("kicker").textContent = `Kapitel ${topic.id} · Satz-Puzzle`;
 $("title").textContent = `${topic.id}. ${topic.title} · Satz-Puzzle`;
 
-const puzzles = topic.sentencePuzzles || [];
+function normalizeZh(s){
+  return String(s || "").replace(/[\s。！？!?，,、；;：:·.]/g, "").trim();
+}
+function personalizePuzzle(p){
+  if(normalizeZh(p.zh) !== "我叫苏然") return p;
+  const name = window.CF_PROFILE?.getName?.() || "";
+  const deName = name || "…";
+  const zhName = name || "……";
+  return {
+    ...p,
+    de: name ? `Ich heiße ${name}.` : "Ich heiße … .",
+    zh: `我叫 ${zhName}。`,
+    pinyin: `Wǒ jiào ${deName}.`,
+    tokens: ["我", "叫", zhName, "。"]
+  };
+}
+const puzzles = (topic.sentencePuzzles || []).map(personalizePuzzle);
 let idx = 0;
 let bank = [];
 let answer = [];

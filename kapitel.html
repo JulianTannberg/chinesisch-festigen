@@ -14,6 +14,7 @@
     </div>
     <h1 id="title">Kapitel</h1>
     <p class="subtitle" id="short"></p>
+    <div id="profileMount"></div>
 
     <h2 class="groupTitle">Lernen</h2>
     <section class="grid">
@@ -28,6 +29,10 @@
       <a class="modeCard" id="speakLink">
         <p class="modeTitle">Sprechen</p>
         <p class="modeText">Den Schülerdialog mit KI als Gesprächspartner üben.</p>
+      </a>
+      <a class="modeCard" id="sayLink">
+        <p class="modeTitle">Sätze sprechen</p>
+        <p class="modeText">Deutsche Sätze sehen, auf Chinesisch sprechen und vom Browser prüfen lassen.</p>
       </a>
     </section>
 
@@ -53,6 +58,7 @@
   </main>
 
 <script src="topics.js"></script>
+<script src="profile.js"></script>
 <script>
 function qs(name, fallback="01"){
   const p = new URLSearchParams(location.search);
@@ -76,12 +82,14 @@ function escapeHtml(s){
 <script>
   const topic = getTopic();
   applyTheme(topic);
+  window.CF_PROFILE?.mount("profileMount");
   document.getElementById("kicker").textContent = `Kapitel ${topic.id}`;
   document.getElementById("title").textContent = `${topic.id}. ${topic.title}`;
   document.getElementById("short").textContent = topic.short;
   document.getElementById("hearLink").href = `hoeren.html?id=${topic.id}`;
   document.getElementById("writeLink").href = `schreiben.html?id=${topic.id}`;
   document.getElementById("speakLink").href = `sprechen.html?id=${topic.id}`;
+  document.getElementById("sayLink").href = `sprechsatz.html?id=${topic.id}`;
   document.getElementById("flashLink").href = `flashkarten.html?id=${topic.id}`;
   document.getElementById("memoryLink").href = `memory.html?id=${topic.id}`;
   document.getElementById("puzzleLink").href = `satzpuzzle.html?id=${topic.id}`;

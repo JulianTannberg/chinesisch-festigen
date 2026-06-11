@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sätze sprechen · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <div class="topbar">
+      <a class="back" id="back">← Kapitel</a>
+      <div class="kicker" id="kicker">Sätze sprechen</div>
+    </div>
+    <h1 id="title">Sätze sprechen</h1>
+    <p class="subtitle">Lies den deutschen Satz, sprich ihn auf Chinesisch und lass prüfen, was der Browser verstanden hat. Bei Namenssätzen wird dein gespeicherter Name eingesetzt; geprüft wird nur die Struktur 我叫… .</p>
+
+    <section class="card speechCheckCard">
+      <div id="unsupported" class="empty" style="display:none;">
+        Die Spracherkennung ist in diesem Browser nicht verfügbar. Probiere es mit Chrome oder Safari und öffne die Seite über HTTPS, zum Beispiel über GitHub Pages.
+      </div>
+
+      <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Sprechsätze eingetragen.</div>
+
+      <div id="game">
+        <div class="puzzleTopline">
+          <div class="small" id="counter">Satz –</div>
+          <button id="restartBtn" type="button">Von vorne starten</button>
+        </div>
+
+        <div class="promptMini">Sag auf Chinesisch:</div>
+        <div class="speakGerman" id="germanPrompt">–</div>
+
+        <div class="toolbar">
+          <button id="recordBtn" class="recordBtn" type="button">Aufnehmen</button>
+          <button id="hearBtn" type="button">Lösung anhören</button>
+          <button id="showBtn" type="button">Lösung zeigen</button>
+          <button id="nextBtn" type="button" disabled>Weiter</button>
+        </div>
+
+        <div class="small">Erkannt:</div>
+        <div class="speakTranscript" id="transcript">Noch nichts aufgenommen.</div>
+        <div class="feedback neutral" id="feedback"></div>
+        <div class="small" id="micHint"></div>
+
+        <div class="speakExpected" id="expectedBox">
+          <div class="small">Erwarteter Satz:</div>
+          <div class="zh" id="expectedZh">–</div>
+          <div class="pinyin" id="expectedPinyin">–</div>
+          <div class="de" id="expectedDe">–</div>
+        </div>
+
+        <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
+      </div>
+
+      <div class="finish" id="finish">
+        <p class="finishTitle">Sätze geschafft!</p>
+        <p class="finishText" id="finishText">Du hast alle Sätze gesprochen.</p>
+        <div class="toolbar" style="justify-content:center;margin-top:18px;">
+          <button id="finishRestart" type="button">Noch einmal üben</button>
+          <a class="miniBtn" id="finishBack">Zurück zum Kapitel</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script src="topics.js"></script>
+<script src="profile.js"></script>
+<script>
+function qs(name, fallback="01"){
+  const p = new URLSearchParams(location.search);
+  return (p.get(name) || fallback).padStart(2,"0");
+}
+function getTopic(){
+  const id = qs("id");
+  return (window.CF_TOPICS || []).find(t => t.id === id) || window.CF_TOPICS[0];
+}
+function applyTheme(topic){
+  document.documentElement.style.setProperty("--chapter-bg", topic.accent);
+  document.documentElement.style.setProperty("--accent", topic.accent);
+  document.documentElement.style.setProperty("--chapter-text", topic.textColor || "#ffffff");
+  document.title = `${topic.id}. ${topic.title} · Sätze sprechen`;
+}
+</script>
+<script>
+const topic = getTopic();
+applyTheme(topic);
+const $ = id => document.getElementById(id);
+$("back").href = `kapitel.html?id=${topic.id}`;
+$("finishBack").href = `kapitel.html?id=${topic.id}`;
+$("kicker").textContent = `Kapitel ${topic.id} · Sätze sprechen`;
+$("title").textContent = `${topic.id}. ${topic.title} · Sätze sprechen`;
+
+const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+let recording = false;
+let idx = 0;
+let correct = 0;
+let micPrepared = false;
+
+function normalizeZh(s){
+  return String(s || "")
+    .replace(/[\s。！？!?，,、；;：:·.]/g, "")
+    .replace(/[妳]/g, "你")
+    .trim();
+}
+function exerciseName(){ return window.CF_PROFILE?.getName?.() || ""; }
+function makeNameFlexible(task){
+  const zhNorm = normalizeZh(task.zh);
+  if(zhNorm === "我叫苏然"){
+    const name = exerciseName();
+    const deName = name || "…";
+    const zhName = name || "……";
+    return {
+      ...task,
+      de: `Ich heiße ${deName}.`,
+      displayDe: name ? `Ich heiße ${name}.` : "Ich heiße … (deinen Namen einsetzen).",
+      zh: `我叫 ${zhName}。`,
+      pinyin: `Wǒ jiào ${deName}.`,
+      acceptMode: "woJiaoName"
+    };
+  }
+  return task;
+}
+function buildTasks(topic){
+  const fromExplicit = (topic.speechSentences || []).filter(x => x && x.de && x.zh).map(makeNameFlexible);
+  if(fromExplicit.length) return fromExplicit;
+
+  const fromPuzzle = (topic.sentencePuzzles || []).filter(x => x && x.de && x.zh).map(makeNameFlexible);
+  if(fromPuzzle.length) return fromPuzzle;
+
+  return (topic.storyDialog || [])
+    .filter(x => x && x.de && x.zh && normalizeZh(x.zh).length <= 16)
+    .map(x => makeNameFlexible({de:x.de, zh:x.zh, pinyin:x.pinyin || ""}));
+}
+const tasks = buildTasks(topic);
+
+function stateKey(){ return `cf_speak_sentence_state_v1_${topic.id}`; }
+function save(){ localStorage.setItem(stateKey(), JSON.stringify({idx, correct, savedAt:Date.now()})); }
+function load(){
+  try{
+    const s = JSON.parse(localStorage.getItem(stateKey()) || "{}");
+    idx = Math.max(0, Math.min(Number(s.idx)||0, tasks.length));
+    correct = Math.max(0, Number(s.correct)||0);
+  }catch(e){ idx = 0; correct = 0; }
+}
+function setFeedback(kind, text){
+  const el = $("feedback");
+  el.className = `feedback ${kind}`;
+  el.textContent = text || "";
+}
+function setMicHint(text){
+  const el = $("micHint");
+  if(el) el.textContent = text || "";
+}
+function current(){ return tasks[idx]; }
+function render(){
+  $("finish").classList.remove("show");
+  if(!Recognition){
+    $("game").style.display = "none";
+    $("unsupported").style.display = "block";
+    return;
+  }
+  if(!tasks.length){
+    $("game").style.display = "none";
+    $("empty").style.display = "block";
+    return;
+  }
+  if(idx >= tasks.length){
+    $("game").style.display = "none";
+    $("finish").classList.add("show");
+    $("finishText").innerHTML = `Direkt erkannt: <strong>${correct}</strong> von <strong>${tasks.length}</strong>`;
+    save();
+    return;
+  }
+  const t = current();
+  $("game").style.display = "";
+  $("counter").textContent = `Satz ${idx+1} von ${tasks.length}`;
+  $("germanPrompt").textContent = t.displayDe || t.de || "";
+  $("transcript").textContent = "Noch nichts aufgenommen.";
+  $("expectedZh").textContent = t.zh || "";
+  $("expectedPinyin").textContent = t.pinyin || "";
+  $("expectedDe").textContent = t.displayDe || t.de || "";
+  $("expectedBox").classList.remove("show");
+  $("nextBtn").disabled = true;
+  setFeedback("neutral", "");
+  setMicHint(micPrepared ? "Mikrofon ist vorbereitet." : "");
+  $("progressFill").style.width = `${Math.round(idx / tasks.length * 100)}%`;
+  save();
+}
+function createRecognition(task){
+  const r = new Recognition();
+  r.lang = "zh-CN";
+  r.interimResults = false;
+  r.maxAlternatives = 3;
+  r.onresult = (event) => {
+    const alternatives = Array.from(event.results[0] || []).map(a => a.transcript || "").filter(Boolean);
+    const heard = alternatives[0] || "";
+    $("transcript").textContent = heard || "Nichts erkannt.";
+    checkTranscript(alternatives, task);
+  };
+  r.onerror = (event) => {
+    $("transcript").textContent = "Nicht erkannt.";
+    if(event.error === "not-allowed"){
+      setFeedback("bad", "Mikrofonzugriff wurde nicht erlaubt. Öffne die Seite am besten über GitHub Pages/HTTPS oder localhost, nicht direkt als Datei.");
+    }else{
+      setFeedback("bad", "Das hat nicht geklappt. Versuch es noch einmal.");
+    }
+  };
+  r.onend = () => {
+    recording = false;
+    $("recordBtn").classList.remove("recording");
+    $("recordBtn").textContent = "Aufnehmen";
+  };
+  return r;
+}
+async function prepareMicrophoneOnce(){
+  if(micPrepared) return true;
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    micPrepared = true;
+    return true;
+  }
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    stream.getTracks().forEach(track => track.stop());
+    micPrepared = true;
+    setMicHint("Mikrofon ist vorbereitet.");
+    return true;
+  }catch(e){
+    setMicHint("Mikrofon konnte nicht vorbereitet werden.");
+    setFeedback("bad", "Mikrofonzugriff wurde nicht erlaubt.");
+    return false;
+  }
+}
+async function startRecording(){
+  if(!Recognition || recording) return;
+  const okMic = await prepareMicrophoneOnce();
+  if(!okMic) return;
+  const t = current();
+  recognition = createRecognition(t);
+  recording = true;
+  $("recordBtn").classList.add("recording");
+  $("recordBtn").textContent = "Höre zu …";
+  $("transcript").textContent = "Sprich jetzt.";
+  setFeedback("neutral", "");
+
+  try{ recognition.start(); }
+  catch(e){
+    recording = false;
+    $("recordBtn").classList.remove("recording");
+    $("recordBtn").textContent = "Aufnehmen";
+  }
+}
+function checkTranscript(alternatives, task){
+  const heardNorms = alternatives.map(normalizeZh).filter(Boolean);
+  let ok = false;
+
+  if(task.acceptMode === "woJiaoName"){
+    // Bei Namen wird bewusst nur die Struktur 我叫... geprüft. Der eigene Name darf anders erkannt werden.
+    ok = heardNorms.some(h => h.includes("我叫"));
+  }else{
+    const accepted = [task.zh, ...(task.accept || [])].map(normalizeZh).filter(Boolean);
+    ok = heardNorms.some(h => accepted.some(a => h === a || h.includes(a) || a.includes(h)));
+  }
+
+  if(ok){
+    correct++;
+    setFeedback("ok", task.acceptMode === "woJiaoName" ? "Richtig erkannt: 我叫… passt. Dein eigener Name ist in Ordnung." : "Richtig erkannt. Gut gesprochen.");
+    $("nextBtn").disabled = false;
+  }else{
+    setFeedback("bad", task.acceptMode === "woJiaoName" ? "Noch nicht erkannt. Wichtig ist: 我叫 + dein Name." : "Noch nicht erkannt. Sprich langsam und deutlich oder zeig dir die Lösung an.");
+    $("expectedBox").classList.add("show");
+    $("nextBtn").disabled = false;
+  }
+  save();
+}
+function speak(text){
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "zh-CN";
+  u.rate = 0.9;
+  const voices = speechSynthesis.getVoices();
+  const zhVoice = voices.find(v => (v.lang || "").toLowerCase().startsWith("zh"));
+  if(zhVoice) u.voice = zhVoice;
+  speechSynthesis.speak(u);
+}
+function next(){ idx++; render(); }
+function restart(){ idx=0; correct=0; localStorage.removeItem(stateKey()); render(); }
+
+$("recordBtn").addEventListener("click", startRecording);
+$("hearBtn").addEventListener("click", () => speak(current()?.zh || ""));
+$("showBtn").addEventListener("click", () => $("expectedBox").classList.toggle("show"));
+$("nextBtn").addEventListener("click", next);
+$("restartBtn").addEventListener("click", restart);
+$("finishRestart").addEventListener("click", restart);
+if(window.speechSynthesis) speechSynthesis.onvoiceschanged = () => {};
+load();
+render();
+</script>
+</body>
+</html>
