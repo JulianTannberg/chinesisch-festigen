@@ -119,26 +119,28 @@ Kapitelübersicht.
 QR-Code im Buch am besten auf `…/start.html` zeigen lassen (statischer QR-Code, kein
 dynamischer Tracking-Dienst).
 
-## Update nach Webapp-Test
+## Änderungen Etappe 1 (Testfeedback)
 
-- Die obere Kicker-Zeile („Chinesisch festigen“ / „Kapitel …“) wird in der Oberfläche ausgeblendet.
-- `sprechen.html` startet die Aufnahme ohne 3-Sekunden-Pause. Zusätzlich gibt es ein Eingabefeld, damit iPhone/iPad über Tastatur-Diktat oder Hanzi-Tastatur genutzt werden können.
-- `schreiben.html` startet jetzt standardmäßig im Reiter „Tippen“ und zeigt dort eine geräteabhängige Hilfe zur chinesischen Eingabe. Der Hinweis kann ausgeblendet und später wieder geöffnet werden.
-- Die Kapitelseite ist nun in drei Bereiche gegliedert: Lernen, Üben und Spielen.
-- Neu: `nachzeichnen.html` als Lern-Nachzeichnen mit Vokabelkarte, Pinyin-Auswahl, Deutsch-Auswahl und drei Schreibstufen.
-- Neu: `uebung.html` mit den drei Übungsarten Hören → Hanzi, Chinesisch → Deutsch und Deutsch → Chinesisch.
-- Satz-Puzzle und Lückenspiel lesen Wortkarten beim Antippen/Einsetzen vor; bei richtiger Lösung wird der ganze Satz gesprochen.
-- Das bisherige Hanzi-Writer-Nachzeichnen bleibt als Strich-Spiel über `schreiben.html?id=01&tab=trace` erreichbar.
+- Kicker-Zeilen („Chinesisch festigen“ / „Kapitel XX · …“) oben entfernt; der Zurück-Link bleibt.
+- Sprechen: 3-Sekunden-Countdown entfernt, Aufnahme startet sofort.
+- Sprechen auf iPhone/iPad: Statt Aufnahme-Button erscheint ein Eingabefeld mit Hinweis auf das Tastatur-Diktat (Mikrofon auf der Tastatur, chinesische Tastatur nötig). Geprüft wird der diktierte/getippte Text.
+- Schreiben → Tippen: Wegklickbarer Hinweis, wie man die chinesische Tastatur einrichtet (iPhone, iPad, Android, Windows, Mac; Gerät wird automatisch erkannt, manuell umschaltbar). Nach dem Ausblenden erscheint unten ein kleiner Link zum Wiederöffnen.
+- Satz-Puzzle: Wortkarten werden beim Einfügen vorgelesen; bei richtiger Prüfung wird der ganze Satz vorgelesen. Es liegen jetzt 3 zusätzliche Karten dabei, die nicht in den Satz gehören.
+- Lückenspiel: Angeklicktes Wort wird vorgelesen; bei richtiger Wahl anschließend der ganze Satz.
+- Service-Worker-Version: cf-v3.
 
-## Fehlerbehebung: „Keine Sätze hinterlegt“
+## Änderungen Etappe 2
 
-Diese korrigierte Version sammelt Übungssätze robuster aus allen bekannten Feldern in `topics.js`:
-
-- `practiceSentences`
-- `speechSentences`
-- `sentencePuzzles`
-- `studentDialog`
-- `storyDialog`
-- teilweise `gapExercises`
-
-Wichtig: `topics.js` enthält die eigentlichen Kapitel, Vokabeln und Sätze. Diese Datei muss im Projekt erhalten bleiben. Wenn der ganze Ordner ersetzt wird und `topics.js` fehlt, können die Seiten keine Inhalte anzeigen.
+- **Zeichen lernen** (Schreiben, erster Reiter): Alle Vokabeln als Karten. Pro Wort 5 Schritte:
+  1) Anhören + Pinyin wählen, 2) Bedeutung wählen (ohne Audio),
+  3) Zeichnen mit Vorlage und vorgezeigten Strichen (2 Durchgänge, Fehler stoppen nicht),
+  4) Zeichnen ohne Vorlage, Striche werden weiter vorgezeigt (2 Durchgänge),
+  5) Aus dem Kopf – Hilfe-Strich erst nach 2 Fehlern, Zeichen erscheint nicht mehr im Hintergrund.
+  Gelernte Wörter werden mit ✓ markiert (pro Kapitel in localStorage, zurücksetzbar).
+- **Nachzeichnen** (das bisherige mit Anfänger/Mit Zeichen/Profi) ist nach „Spielen“ umgezogen: `zeichnen.html`.
+- **Neuer Bereich „Üben“** auf der Kapitelseite (zwischen Lernen und Spielen), Seite `ueben.html` mit drei Modi (`?mode=`):
+  - `hoeren`: Satz nur anhören (normal/langsam) und aus Hanzi-Karten bauen, mit 4 zusätzlichen falschen Zeichen.
+  - `zhde`: Chinesischen Satz lesen, deutsche Übersetzung aus Wortkarten bauen, mit 4 zusätzlichen Wörtern.
+  - `dezh`: Deutschen Satz auf Chinesisch bauen, ebenfalls mit Extra-Karten; auf Geräten mit Spracherkennung kann der Satz alternativ gesprochen werden (auf iPhone/iPad ausgeblendet).
+  Alle Sätze stammen aus dem Story-Dialog des Kapitels.
+- Service-Worker-Version: cf-v4.

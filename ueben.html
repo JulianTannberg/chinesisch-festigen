@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Üben · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#03172B" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Chinesisch" />
+  <style>
+    .listenRow{
+      display:flex; align-items:center; justify-content:center;
+      gap:12px; margin:12px 0;
+    }
+    .bigPlay{
+      width:74px; height:74px; border-radius:50%;
+      font-size:28px; padding:0;
+      background:var(--card-strong);
+      outline:2px solid rgba(255,255,255,.26);
+    }
+    .theme-light .bigPlay{ outline:2px solid rgba(11,27,46,.24); }
+    .zhPrompt{
+      font-size:clamp(24px, 6vw, 34px); font-weight:850;
+      text-align:center; margin:8px 0; line-height:1.4;
+    }
+    .speakRow{ margin-top:6px; }
+  </style>
+</head>
+<body>
+  <main class="app puzzleApp">
+    <div class="topbar">
+      <a class="back" id="back">← Kapitel</a>
+    </div>
+    <h1 id="title">Üben</h1>
+    <p class="subtitle" id="subtitle"></p>
+
+    <section class="card">
+      <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Dialogsätze eingetragen.</div>
+      <div id="game">
+        <div class="puzzleTopline">
+          <div class="small" id="counter">Satz –</div>
+          <button id="restartBtn" type="button">Von vorne starten</button>
+        </div>
+
+        <!-- Hören-Modus -->
+        <div id="listenBlock" style="display:none;">
+          <div class="promptMini" style="text-align:center;">Hör dir den Satz an und baue ihn aus den Hanzi zusammen:</div>
+          <div class="listenRow">
+            <button id="bigPlayBtn" class="bigPlay" type="button" aria-label="Satz anhören">▶</button>
+            <button id="slowPlayBtn" type="button">Langsam anhören</button>
+          </div>
+        </div>
+
+        <!-- Text-Aufgabe (zhde / dezh) -->
+        <div id="textBlock" style="display:none;">
+          <div class="promptMini" id="promptMini">–</div>
+          <div class="zhPrompt" id="zhPrompt" style="display:none;"></div>
+          <div class="puzzlePrompt" id="dePrompt" style="display:none;">–</div>
+          <div class="toolbar" id="zhPlayRow" style="display:none;">
+            <button id="zhPlayBtn" type="button">Satz anhören</button>
+          </div>
+        </div>
+
+        <div class="dropZone" id="answerZone" aria-label="Antwortbereich"></div>
+        <div class="tokenBank" id="tokenBank" aria-label="Wortkarten"></div>
+
+        <div class="toolbar">
+          <button id="checkBtn" type="button">Prüfen</button>
+          <button id="undoBtn" type="button">Letzte Karte zurück</button>
+          <button id="resetBtn" type="button">Satz zurücksetzen</button>
+        </div>
+
+        <div class="toolbar speakRow" id="speakRow" style="display:none;">
+          <button id="speakBtn" class="recordBtn" type="button">🎤 Stattdessen sprechen</button>
+          <span class="small" id="speakHeard"></span>
+        </div>
+
+        <div class="feedback neutral" id="feedback"></div>
+        <div class="solutionBox" id="solutionBox">
+          <div class="small">Lösung:</div>
+          <div class="zh" id="solutionZh">–</div>
+          <div class="pinyin" id="solutionPinyin">–</div>
+          <div class="de" id="solutionDe">–</div>
+        </div>
+        <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
+      </div>
+
+      <div class="finish" id="finish">
+        <p class="finishTitle">Übung geschafft!</p>
+        <p class="finishText" id="finishText">Du hast alle Sätze gebaut.</p>
+        <div class="toolbar" style="justify-content:center;margin-top:18px;">
+          <button id="finishRestart" type="button">Noch einmal üben</button>
+          <a class="miniBtn" id="finishBack">Zurück zum Kapitel</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script src="topics.js"></script>
+<script src="common.js"></script>
+<script>
+const topic = getTopic();
+const $ = id => document.getElementById(id);
+
+const MODES = {
+  hoeren: {
+    name: "Chinesisch hören",
+    subtitle: "Hör dir den Satz an und setze ihn aus Hanzi-Karten zusammen. Es liegen auch Zeichen dabei, die nicht in den Satz gehören."
+  },
+  zhde: {
+    name: "Chinesisch → Deutsch",
+    subtitle: "Lies den chinesischen Satz und baue die deutsche Übersetzung aus den Wortkarten. Es liegen auch Wörter dabei, die nicht gebraucht werden."
+  },
+  dezh: {
+    name: "Deutsch → Chinesisch",
+    subtitle: "Baue den deutschen Satz auf Chinesisch aus den Hanzi-Karten zusammen – es liegen auch Zeichen dabei, die nicht gebraucht werden."
+  }
+};
+const params = new URLSearchParams(location.search);
+let MODE = params.get("mode") || "hoeren";
+if(!MODES[MODE]) MODE = "hoeren";
+
+applyTheme(topic, `Üben: ${MODES[MODE].name}`);
+$("back").href = `kapitel.html?id=${topic.id}`;
+$("finishBack").href = `kapitel.html?id=${topic.id}`;
+$("title").textContent = `${topic.id}. ${topic.title} · ${MODES[MODE].name}`;
+$("subtitle").textContent = MODES[MODE].subtitle;
+
+function stripZh(s){
+  return String(s || "").replace(/[\s。！？!?，,、；;：:·.…—–-]/g, "");
+}
+function deWords(s){
+  return String(s || "")
+    .replace(/[„“”"]/g, "")
+    .replace(/[.,!?;:]/g, "")
+    .split(/\s+/)
+    .filter(Boolean);
+}
+
+// Aufgaben aus allen Dialogzeilen des Kapitels
+const tasks = (topic.storyDialog || [])
+  .filter(l => l.zh && l.de)
+  .map(l => ({
+    zh: String(l.zh).trim(),
+    pinyin: l.pinyin || "",
+    de: String(l.de).trim(),
+    zhChars: [...stripZh(l.zh)],
+    deTokens: deWords(l.de)
+  }))
+  .filter(t => t.zhChars.length > 0 && t.deTokens.length > 0);
+
+// Distraktoren-Pools
+const zhCharPool = [...new Set(
+  [...(topic.vocab || []), ...(topic.understandingVocab || [])]
+    .flatMap(v => [...stripZh(v.zh)])
+)];
+const deWordPool = [...new Set(tasks.flatMap(t => t.deTokens))];
+
+function buildTokens(task){
+  if(MODE === "zhde"){
+    const inSentence = new Set(task.deTokens.map(w => w.toLowerCase()));
+    const extras = shuffle(deWordPool.filter(w => !inSentence.has(w.toLowerCase()))).slice(0, 4);
+    return [...task.deTokens, ...extras];
+  }
+  const inSentence = new Set(task.zhChars);
+  const extras = shuffle(zhCharPool.filter(c => !inSentence.has(c))).slice(0, 4);
+  return [...task.zhChars, ...extras];
+}
+function solutionString(task){
+  return MODE === "zhde" ? task.deTokens.join(" ") : task.zhChars.join("");
+}
+function attemptString(){
+  return MODE === "zhde"
+    ? answer.map(t => t.text).join(" ")
+    : answer.map(t => t.text).join("");
+}
+
+let idx = 0;
+let bank = [];
+let answer = [];
+let tokenId = 0;
+let solvedBySpeech = false;
+
+function stateKey(){ return `cf_ueben_${MODE}_v1_${topic.id}`; }
+function save(){ localStorage.setItem(stateKey(), JSON.stringify({idx, savedAt: Date.now()})); }
+function load(){
+  try{
+    const s = JSON.parse(localStorage.getItem(stateKey()) || "{}");
+    idx = Math.max(0, Math.min(Number(s.idx) || 0, tasks.length));
+  }catch(e){ idx = 0; }
+}
+function setFeedback(kind, text){
+  const el = $("feedback");
+  el.className = `feedback ${kind}`;
+  el.textContent = text || "";
+}
+function current(){ return tasks[idx]; }
+function makeTokens(list){
+  tokenId = 0;
+  return shuffle(list.map(t => ({id: `t${tokenId++}`, text: t})));
+}
+function startTask(){
+  const t = current();
+  bank = makeTokens(buildTokens(t));
+  answer = [];
+  solvedBySpeech = false;
+  $("solutionBox").style.display = "none";
+  $("speakHeard").textContent = "";
+  setFeedback("neutral", "");
+  render();
+}
+function render(){
+  $("finish").classList.remove("show");
+  if(!tasks.length){ $("game").style.display = "none"; $("empty").style.display = "block"; return; }
+  if(idx >= tasks.length){
+    $("game").style.display = "none";
+    $("finish").classList.add("show");
+    save();
+    return;
+  }
+  $("game").style.display = "";
+  const t = current();
+  $("counter").textContent = `Satz ${idx + 1} von ${tasks.length}`;
+
+  $("listenBlock").style.display = MODE === "hoeren" ? "" : "none";
+  $("textBlock").style.display = MODE === "hoeren" ? "none" : "";
+  if(MODE === "zhde"){
+    $("promptMini").textContent = "Übersetze diesen Satz ins Deutsche:";
+    $("zhPrompt").style.display = "";
+    $("zhPrompt").textContent = t.zh;
+    $("dePrompt").style.display = "none";
+    $("zhPlayRow").style.display = "";
+  }else if(MODE === "dezh"){
+    $("promptMini").textContent = "Baue diesen Satz auf Chinesisch:";
+    $("zhPrompt").style.display = "none";
+    $("dePrompt").style.display = "";
+    $("dePrompt").textContent = t.de;
+    $("zhPlayRow").style.display = "none";
+  }
+
+  $("solutionZh").textContent = t.zh;
+  $("solutionPinyin").textContent = t.pinyin;
+  $("solutionDe").textContent = t.de;
+  $("progressFill").style.width = `${Math.round(idx / tasks.length * 100)}%`;
+  renderTokens();
+  save();
+}
+function tokenButton(token, from){
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "wordToken";
+  b.draggable = true;
+  b.textContent = token.text;
+  b.dataset.id = token.id;
+  b.addEventListener("click", () => from === "bank" ? moveToAnswer(token.id) : moveToBank(token.id));
+  b.addEventListener("dragstart", e => {
+    e.dataTransfer.setData("text/plain", JSON.stringify({id: token.id, from}));
+  });
+  return b;
+}
+function renderTokens(){
+  const answerZone = $("answerZone");
+  const tokenBank = $("tokenBank");
+  answerZone.innerHTML = "";
+  tokenBank.innerHTML = "";
+  if(answer.length === 0){
+    const ph = document.createElement("div");
+    ph.className = "dropHint";
+    ph.textContent = "Karten hierhin schieben oder antippen";
+    answerZone.appendChild(ph);
+  }
+  answer.forEach(t => answerZone.appendChild(tokenButton(t, "answer")));
+  bank.forEach(t => tokenBank.appendChild(tokenButton(t, "bank")));
+  $("checkBtn").disabled = answer.length === 0;
+}
+function moveToAnswer(id){
+  const i = bank.findIndex(t => t.id === id);
+  if(i < 0) return;
+  const t = bank.splice(i, 1)[0];
+  answer.push(t);
+  if(cfHasCJK(t.text)) cfSpeakZh(t.text);
+  setFeedback("neutral", "");
+  $("solutionBox").style.display = "none";
+  renderTokens();
+}
+function moveToBank(id){
+  const i = answer.findIndex(t => t.id === id);
+  if(i < 0) return;
+  bank.push(answer.splice(i, 1)[0]);
+  setFeedback("neutral", "");
+  renderTokens();
+}
+function handleDrop(target){
+  target.addEventListener("dragover", e => e.preventDefault());
+  target.addEventListener("drop", e => {
+    e.preventDefault();
+    try{
+      const data = JSON.parse(e.dataTransfer.getData("text/plain"));
+      if(target.id === "answerZone" && data.from === "bank") moveToAnswer(data.id);
+      if(target.id === "tokenBank" && data.from === "answer") moveToBank(data.id);
+    }catch(err){}
+  });
+}
+function taskSolved(viaSpeech){
+  const t = current();
+  setFeedback("ok", viaSpeech ? "Richtig gesprochen! 很好！" : "Richtig! Sehr gut gebaut.");
+  $("solutionBox").style.display = "block";
+  cfSpeakZh(t.zh);
+  setTimeout(() => { idx++; startTask(); }, viaSpeech ? 1400 : 1100);
+}
+function check(){
+  const t = current();
+  if(attemptString() === solutionString(t)){
+    taskSolved(false);
+  }else{
+    setFeedback("bad", "Noch nicht richtig. Schau genau auf die Reihenfolge – und ob alle Karten gebraucht werden.");
+    $("solutionBox").style.display = "block";
+  }
+}
+function undo(){ if(answer.length){ bank.push(answer.pop()); renderTokens(); } }
+function restartAll(){ idx = 0; localStorage.removeItem(stateKey()); startTask(); }
+
+/* Sprechen (nur Deutsch → Chinesisch, nur wenn der Browser es kann) */
+const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+if(MODE === "dezh" && Recognition){
+  $("speakRow").style.display = "";
+  let listening = false;
+  $("speakBtn").addEventListener("click", () => {
+    if(listening) return;
+    const t = current();
+    const r = new Recognition();
+    r.lang = "zh-CN";
+    r.interimResults = false;
+    r.maxAlternatives = 3;
+    listening = true;
+    $("speakBtn").textContent = "Höre zu …";
+    $("speakBtn").classList.add("recording");
+    r.onresult = event => {
+      const alts = Array.from(event.results[0] || []).map(a => a.transcript || "").filter(Boolean);
+      const heard = alts[0] || "";
+      $("speakHeard").textContent = heard ? `Erkannt: ${heard}` : "Nichts erkannt.";
+      const target = stripZh(t.zh);
+      const ok = alts.some(a => {
+        const h = stripZh(a);
+        return h === target || h.includes(target) || target.includes(h) && h.length >= Math.max(2, target.length - 1);
+      });
+      if(ok) taskSolved(true);
+      else setFeedback("bad", "Noch nicht erkannt. Sprich langsam und deutlich oder baue den Satz mit den Karten.");
+    };
+    r.onerror = () => { $("speakHeard").textContent = "Nicht erkannt."; };
+    r.onend = () => {
+      listening = false;
+      $("speakBtn").textContent = "🎤 Stattdessen sprechen";
+      $("speakBtn").classList.remove("recording");
+    };
+    try{ r.start(); }catch(e){ listening = false; }
+  });
+}
+
+$("bigPlayBtn").addEventListener("click", () => cfSpeakZh(current()?.zh || "", {rate:0.9}));
+$("slowPlayBtn").addEventListener("click", () => cfSpeakZh(current()?.zh || "", {rate:0.6}));
+$("zhPlayBtn").addEventListener("click", () => cfSpeakZh(current()?.zh || "", {rate:0.9}));
+handleDrop($("answerZone"));
+handleDrop($("tokenBank"));
+$("checkBtn").addEventListener("click", check);
+$("undoBtn").addEventListener("click", undo);
+$("resetBtn").addEventListener("click", startTask);
+$("restartBtn").addEventListener("click", restartAll);
+$("finishRestart").addEventListener("click", restartAll);
+
+load();
+if(tasks.length && idx < tasks.length) startTask(); else render();
+</script>
+</body>
+</html>

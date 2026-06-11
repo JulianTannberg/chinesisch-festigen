@@ -17,10 +17,9 @@
   <main class="app puzzleApp">
     <div class="topbar">
       <a class="back" id="back">← Kapitel</a>
-      <div class="kicker" id="kicker">Satz-Puzzle</div>
     </div>
     <h1 id="title">Satz-Puzzle</h1>
-    <p class="subtitle">Schiebe die Wortkarten in die richtige Reihenfolge. Antippen funktioniert auch.</p>
+    <p class="subtitle">Schiebe die passenden Wortkarten in die richtige Reihenfolge – es liegen auch Karten dabei, die nicht in den Satz gehören. Antippen funktioniert auch.</p>
 
     <section class="card">
       <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Satz-Puzzles eingetragen.</div>
@@ -69,7 +68,6 @@ applyTheme(topic, "Satz-Puzzle");
 const $ = id => document.getElementById(id);
 $("back").href = `kapitel.html?id=${topic.id}`;
 $("finishBack").href = `kapitel.html?id=${topic.id}`;
-$("kicker").textContent = `Kapitel ${topic.id} · Satz-Puzzle`;
 $("title").textContent = `${topic.id}. ${topic.title} · Satz-Puzzle`;
 
 function normalizeZh(s){
@@ -88,13 +86,18 @@ function personalizePuzzle(p){
     tokens: ["我", "叫", zhName, "。"]
   };
 }
-function buildPuzzles(){
-  return cfSentenceTaskList(topic, {maxChars: 22})
-    .map(personalizePuzzle)
-    .map(p => ({...p, tokens: (Array.isArray(p.tokens) && p.tokens.length) ? p.tokens : cfHanziTokens(p.zh)}))
-    .filter(p => p.zh && p.de && Array.isArray(p.tokens) && p.tokens.length > 0);
+const puzzles = (topic.sentencePuzzles || []).map(personalizePuzzle);
+
+// Zusätzliche (falsche) Wortkarten aus dem Kapitelwortschatz
+function buildDistractors(p, count = 3){
+  const solution = (p.tokens || []).join("");
+  const pool = [...new Set(
+    [...(topic.vocab || []), ...(topic.understandingVocab || [])]
+      .map(v => String(v.zh || "").replace(/[\s。！？!?，,、；;：:·.]/g, ""))
+      .filter(w => w && cfHasCJK(w) && w.length <= 3 && !solution.includes(w))
+  )];
+  return shuffle(pool).slice(0, count);
 }
-const puzzles = buildPuzzles();
 let idx = 0;
 let bank = [];
 let answer = [];
@@ -113,29 +116,14 @@ function setFeedback(kind, text){
   el.className = `feedback ${kind}`;
   el.textContent = text || "";
 }
-function puzzleDistractors(p){
-  const solutionTexts = new Set((p.tokens || []).map(t => String(t)));
-  const candidates = [];
-  [...(topic.vocab || []), ...(topic.understandingVocab || [])].forEach(v => {
-    const text = String(v.zh || v.writeZh || "").trim();
-    if(!text) return;
-    if(text.length <= 3 && !solutionTexts.has(text)) candidates.push(text);
-    [...text].forEach(ch => {
-      if(/[\u4e00-\u9fff]/.test(ch) && !solutionTexts.has(ch)) candidates.push(ch);
-    });
-  });
-  const unique = cfUnique(candidates).filter(x => !solutionTexts.has(x));
-  return shuffle(unique).slice(0, Math.min(5, Math.max(2, Math.ceil((p.tokens || []).length / 2))));
-}
-function makeTokens(tokens, p){
+function makeTokens(tokens){
   tokenId = 0;
-  const extras = puzzleDistractors(p || {});
-  return shuffle([...tokens, ...extras].map(t => ({id:`t${tokenId++}`, text:t, extra:extras.includes(t)})));
+  return shuffle(tokens.map(t => ({id:`t${tokenId++}`, text:t})));
 }
 function current(){ return puzzles[idx]; }
 function startSentence(){
   const p = current();
-  bank = makeTokens(p.tokens || [], p);
+  bank = makeTokens([...(p.tokens || []), ...buildDistractors(p)]);
   answer = [];
   $("solutionBox").style.display = "none";
   setFeedback("neutral", "");
@@ -192,9 +180,9 @@ function renderTokens(){
 function moveToAnswer(id){
   const i = bank.findIndex(t => t.id === id);
   if(i < 0) return;
-  const moved = bank.splice(i,1)[0];
-  answer.push(moved);
-  cfSpeakZh(moved.text, {rate:0.8});
+  const t = bank.splice(i,1)[0];
+  answer.push(t);
+  if(cfHasCJK(t.text)) cfSpeakZh(t.text);
   setFeedback("neutral", "");
   $("solutionBox").style.display = "none";
   renderTokens();
@@ -223,8 +211,8 @@ function check(){
   const solution = (p.tokens || []).join("");
   if(attempt === solution){
     setFeedback("ok", "Richtig! Sehr gut gebaut.");
-    cfSpeakZh(p.zh || solution, {rate:0.82});
-    setTimeout(() => { idx++; startSentence(); }, 1300);
+    cfSpeakZh(p.zh);
+    setTimeout(() => { idx++; startSentence(); }, 900);
   }else{
     setFeedback("bad", "Noch nicht richtig. Schau genau auf die Reihenfolge.");
     $("solutionBox").style.display = "block";

@@ -17,7 +17,6 @@
   <main class="app flashApp">
     <div class="topbar">
       <a class="back" id="back">← Kapitel</a>
-      <div class="kicker" id="kicker">Flashkarten</div>
     </div>
     <h1 id="title">Flashkarten</h1>
     <p class="subtitle">Vokabeln als Karten üben. Erst überlegen, dann aufdecken. Die Richtung kannst du jederzeit wechseln.</p>
@@ -84,7 +83,6 @@ applyTheme(topic, "Flashkarten");
 const $ = id => document.getElementById(id);
 $("back").href = `kapitel.html?id=${topic.id}`;
 $("finishBack").href = `kapitel.html?id=${topic.id}`;
-$("kicker").textContent = `Kapitel ${topic.id} · Flashkarten`;
 $("title").textContent = `${topic.id}. ${topic.title} · Flashkarten`;
 
 const vocab = (topic.vocab || []).filter(v => v.zh && v.de);

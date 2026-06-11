@@ -17,7 +17,6 @@
   <main class="app">
     <div class="topbar">
       <a class="back" href="index.html">← Kapitelübersicht</a>
-      <div class="kicker" id="kicker">Kapitel</div>
     </div>
     <h1 id="title">Kapitel</h1>
     <p class="subtitle" id="short"></p>
@@ -31,36 +30,36 @@
       </a>
       <a class="modeCard" id="writeLink">
         <p class="modeTitle">Schreiben</p>
-        <p class="modeText">Hanzi aktiv tippen. Mit Gerätehinweis für chinesische Tastatur.</p>
-      </a>
-      <a class="modeCard" id="traceLearnLink">
-        <p class="modeTitle">Nachzeichnen</p>
-        <p class="modeText">Vokabelkarten, Pinyin erkennen, Bedeutung wählen und das Zeichen Schritt für Schritt lernen.</p>
+        <p class="modeText">Vokabeln aktiv schreiben, Fehler wiederholen und die Lernserie halten.</p>
       </a>
       <a class="modeCard" id="speakLink">
         <p class="modeTitle">Sprechen</p>
-        <p class="modeText">Sätze sprechen oder per Tastatur/Diktierfunktion eingeben; daneben KI-Dialog üben.</p>
+        <p class="modeText">Sätze auf Chinesisch sprechen oder den Schülerdialog mit KI üben.</p>
       </a>
     </section>
 
     <h2 class="groupTitle">Üben</h2>
     <section class="grid">
-      <a class="modeCard" id="practiceHearHanziLink">
-        <p class="modeTitle">Chinesisch hören → Hanzi</p>
-        <p class="modeText">Du hörst einen Satz und baust ihn aus durcheinanderstehenden Hanzi zusammen.</p>
+      <a class="modeCard" id="uebenHoerenLink">
+        <p class="modeTitle">Chinesisch hören</p>
+        <p class="modeText">Einen Satz anhören und aus durcheinander liegenden Hanzi zusammenbauen.</p>
       </a>
-      <a class="modeCard" id="practiceZhDeLink">
+      <a class="modeCard" id="uebenZhDeLink">
         <p class="modeTitle">Chinesisch → Deutsch</p>
-        <p class="modeText">Ordne deutsche Wortkarten in der passenden Reihenfolge.</p>
+        <p class="modeText">Den chinesischen Satz lesen und die deutsche Übersetzung aus Wortkarten bauen.</p>
       </a>
-      <a class="modeCard" id="practiceDeZhLink">
+      <a class="modeCard" id="uebenDeZhLink">
         <p class="modeTitle">Deutsch → Chinesisch</p>
-        <p class="modeText">Baue den chinesischen Satz aus Hanzi-Karten, mit zusätzlichen Ablenkern.</p>
+        <p class="modeText">Den deutschen Satz auf Chinesisch zusammensetzen – oder gleich sprechen.</p>
       </a>
     </section>
 
     <h2 class="groupTitle">Spielen</h2>
     <section class="grid">
+      <a class="modeCard" id="traceGameLink">
+        <p class="modeTitle">Nachzeichnen</p>
+        <p class="modeText">Zeichen Strich für Strich nachzeichnen – mit drei Schwierigkeitsstufen.</p>
+      </a>
       <a class="modeCard" id="flashLink">
         <p class="modeTitle">Flashkarten</p>
         <p class="modeText">Vokabeln als Karten üben, aufdecken und schwierige Wörter wiederholen.</p>
@@ -71,15 +70,11 @@
       </a>
       <a class="modeCard" id="puzzleLink">
         <p class="modeTitle">Satz-Puzzle</p>
-        <p class="modeText">Wortkarten schieben, hören und chinesische Sätze zusammensetzen.</p>
+        <p class="modeText">Wortkarten schieben und chinesische Sätze zusammensetzen.</p>
       </a>
       <a class="modeCard" id="gapLink">
         <p class="modeTitle">Lückenspiel</p>
-        <p class="modeText">Das passende Wort für die Lücke auswählen und anhören.</p>
-      </a>
-      <a class="modeCard" id="traceGameLink">
-        <p class="modeTitle">Strich-Spiel</p>
-        <p class="modeText">Das bisherige Hanzi-Writer-Nachzeichnen als Spielmodus.</p>
+        <p class="modeText">Das passende Wort für die Lücke auswählen.</p>
       </a>
     </section>
 
@@ -94,21 +89,19 @@
   applyTheme(topic, "Chinesisch festigen");
   window.CF_PROFILE?.mountSetup("profileSetupMount");
   window.CF_PROFILE?.mountEdit("profileEditMount");
-  document.getElementById("kicker").textContent = `Kapitel ${topic.id}`;
   document.getElementById("title").textContent = `${topic.id}. ${topic.title}`;
   document.getElementById("short").textContent = topic.short;
   document.getElementById("hearLink").href = `hoeren.html?id=${topic.id}`;
   document.getElementById("writeLink").href = `schreiben.html?id=${topic.id}`;
   document.getElementById("speakLink").href = `sprechen.html?id=${topic.id}`;
-  document.getElementById("traceLearnLink").href = `nachzeichnen.html?id=${topic.id}`;
-  document.getElementById("practiceHearHanziLink").href = `uebung.html?id=${topic.id}&mode=hear-hanzi`;
-  document.getElementById("practiceZhDeLink").href = `uebung.html?id=${topic.id}&mode=zh-de`;
-  document.getElementById("practiceDeZhLink").href = `uebung.html?id=${topic.id}&mode=de-zh`;
+  document.getElementById("uebenHoerenLink").href = `ueben.html?id=${topic.id}&mode=hoeren`;
+  document.getElementById("uebenZhDeLink").href = `ueben.html?id=${topic.id}&mode=zhde`;
+  document.getElementById("uebenDeZhLink").href = `ueben.html?id=${topic.id}&mode=dezh`;
+  document.getElementById("traceGameLink").href = `zeichnen.html?id=${topic.id}`;
   document.getElementById("flashLink").href = `flashkarten.html?id=${topic.id}`;
   document.getElementById("memoryLink").href = `memory.html?id=${topic.id}`;
   document.getElementById("puzzleLink").href = `satzpuzzle.html?id=${topic.id}`;
   document.getElementById("gapLink").href = `luecken.html?id=${topic.id}`;
-  document.getElementById("traceGameLink").href = `schreiben.html?id=${topic.id}&tab=trace`;
 </script>
 </body>
 </html>

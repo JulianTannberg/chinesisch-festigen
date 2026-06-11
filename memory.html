@@ -17,7 +17,6 @@
   <main class="app memoryApp">
     <div class="topbar">
       <a class="back" id="back">← Kapitel</a>
-      <div class="kicker" id="kicker">Memory</div>
     </div>
     <h1 id="title">Memory</h1>
     <p class="subtitle">Finde die Paare aus Hanzi und deutscher Bedeutung. Pro Runde werden nur einige Karten genommen, damit es übersichtlich bleibt.</p>
@@ -63,7 +62,6 @@ applyTheme(topic, "Memory");
 const $ = id => document.getElementById(id);
 $("back").href = `kapitel.html?id=${topic.id}`;
 $("finishBack").href = `kapitel.html?id=${topic.id}`;
-$("kicker").textContent = `Kapitel ${topic.id} · Memory`;
 $("title").textContent = `${topic.id}. ${topic.title} · Memory`;
 
 const vocab = (topic.vocab || []).filter(v => v.zh && v.de);

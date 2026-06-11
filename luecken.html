@@ -17,7 +17,6 @@
   <main class="app gapApp">
     <div class="topbar">
       <a class="back" id="back">← Kapitel</a>
-      <div class="kicker" id="kicker">Lückenspiel</div>
     </div>
     <h1 id="title">Lückenspiel</h1>
     <p class="subtitle">Wähle das passende Wort für die Lücke. Die Aufgaben werden aus den eingetragenen Lücken und aus den Dialogsätzen des Kapitels gebildet.</p>
@@ -64,7 +63,6 @@ applyTheme(topic, "Lückenspiel");
 const $ = id => document.getElementById(id);
 $("back").href = `kapitel.html?id=${topic.id}`;
 $("finishBack").href = `kapitel.html?id=${topic.id}`;
-$("kicker").textContent = `Kapitel ${topic.id} · Lückenspiel`;
 $("title").textContent = `${topic.id}. ${topic.title} · Lückenspiel`;
 
 function shuffle(array){
@@ -95,7 +93,7 @@ function buildAutoGaps(topic){
     .sort((a,b) => b.cleanZh.length - a.cleanZh.length);
 
   const choicePool = vocabPool.map(v => v.displayZh);
-  const lines = cfSentenceTaskList(topic, {maxChars: 22});
+  const lines = [...(topic.storyDialog || [])];
   const auto = [];
 
   lines.forEach(line => {
@@ -204,10 +202,7 @@ function render(){
     b.type = "button";
     b.className = "choiceBtn";
     b.textContent = choice;
-    b.addEventListener("click", () => {
-      cfSpeakZh(choice, {rate:0.82});
-      choose(choice, b);
-    });
+    b.addEventListener("click", () => choose(choice, b));
     c.appendChild(b);
   });
   save();
@@ -217,11 +212,12 @@ function choose(choice, btn){
   locked = true;
   const g = gaps[idx];
   document.querySelectorAll(".choiceBtn").forEach(b => b.disabled = true);
+  if(cfHasCJK(choice)) cfSpeakZh(choice);
   if(choice === g.answer){
     btn.classList.add("correctChoice");
     correct++;
     setFeedback("ok", "Richtig!");
-    cfSpeakZh(g.solution || g.answer, {rate:0.82});
+    if(g.solution) cfSpeakZh(g.solution, {queue:true});
   }else{
     btn.classList.add("wrongChoice");
     document.querySelectorAll(".choiceBtn").forEach(b => { if(b.textContent === g.answer) b.classList.add("correctChoice"); });

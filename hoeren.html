@@ -17,7 +17,6 @@
   <main class="app listenApp" id="listenApp">
     <div class="topbar">
       <a class="back" id="back">← Kapitel</a>
-      <div class="kicker" id="kicker">Hören</div>
     </div>
     <h1 id="title">Hören</h1>
     <p class="subtitle">Tippe Vokabeln oder Sprechblasen an. Zuerst siehst du nur Chinesisch; Pinyin und Deutsch kannst du bei Bedarf einblenden.</p>
@@ -56,7 +55,6 @@
 const topic = getTopic();
 applyTheme(topic, "Chinesisch festigen");
 document.getElementById("back").href = `kapitel.html?id=${topic.id}`;
-document.getElementById("kicker").textContent = `Kapitel ${topic.id} · Hören`;
 document.getElementById("title").textContent = `${topic.id}. ${topic.title} · Hören`;
 
 const listenApp = document.getElementById("listenApp");

@@ -14,22 +14,11 @@
 
   <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7/dist/hanzi-writer.min.js"></script>
   <style>
-    /* Nur fürs Nachzeichnen – fügt sich in dein bestehendes Theme ein */
-    .traceWrap{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:14px;
-    }
-    .traceInfo{ text-align:center; min-height:54px; }
-    .traceInfo .zhBig{ font-size:24px; font-weight:850; opacity:.55; letter-spacing:4px; }
-    .traceInfo .pinyin{ font-size:20px; font-weight:700; opacity:.95; }
-    .traceInfo .de{ font-size:15px; opacity:.8; }
+    /* Zeichen lernen (5 Schritte) */
     #traceTarget{
       background:#fff;
       border-radius:18px;
       box-shadow:0 10px 30px var(--shadow);
-      /* Hilfslinien: exakt mittiges Kreuz */
       background-image:
         linear-gradient(to right, transparent calc(50% - 0.75px), rgba(0,0,0,.13) calc(50% - 0.75px), rgba(0,0,0,.13) calc(50% + 0.75px), transparent calc(50% + 0.75px)),
         linear-gradient(to bottom, transparent calc(50% - 0.75px), rgba(0,0,0,.13) calc(50% - 0.75px), rgba(0,0,0,.13) calc(50% + 0.75px), transparent calc(50% + 0.75px));
@@ -39,137 +28,128 @@
       touch-action:none;
       width:280px;
       height:280px;
+      position:relative;
+      overflow:hidden;
     }
-    #traceTarget{ position:relative; overflow:hidden; }
-    #traceTarget .traceLayer{
-      position:absolute;
-      inset:0;
-      width:280px;
-      height:280px;
-    }
+    #traceTarget .traceLayer{ position:absolute; inset:0; width:280px; height:280px; }
     #traceQuizLayer{ z-index:1; }
     #traceHintLayer{ z-index:2; pointer-events:none; }
-    .traceStatus{ min-height:26px; font-weight:800; font-size:16px; }
+    .traceStatus{ min-height:26px; font-weight:800; font-size:16px; text-align:center; }
     .traceStatus.ok{ color:#86efac; }
     .traceStatus.bad{ color:#fecaca; }
-    .traceBtns{ display:flex; gap:10px; width:100%; max-width:300px; }
-    .traceBtns button{ flex:1; min-height:48px; }
-    .traceBtns .primary{ background:var(--card-strong); outline:2px solid rgba(255,255,255,.28); }
-    .traceNav{
-      display:flex; align-items:center; justify-content:space-between;
-      width:100%; max-width:300px;
-    }
-    .traceNav button{
-      width:50px; height:50px; border-radius:50%; font-size:22px; padding:0;
-    }
-    .traceCounter{ font-size:14px; color:var(--muted); }
-    .autoRow{
-      display:flex; align-items:center; gap:8px; font-size:14px; color:var(--muted);
-      margin-top:2px;
-    }
-    .autoRow input{ width:18px; height:18px; }
 
     .writeTabs{ grid-template-columns:1fr 1fr; }
     @media(max-width:640px){
-      .writeTabs{ grid-template-columns:1fr 1fr; }
       .writeTabs .tab{ min-height:46px; font-size:14px; padding:8px 6px; }
     }
-    .traceLevelSwitch{
+
+    .learnGrid{
       display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:8px;
-      width:100%;
-      max-width:560px;
-      margin:0 0 4px;
+      grid-template-columns:repeat(auto-fill, minmax(108px, 1fr));
+      gap:10px;
+      margin:10px 0;
     }
-    .traceLevelSwitch button{
-      min-height:44px;
-      padding:9px 8px;
-      font-size:13px;
-      line-height:1.2;
-      white-space:normal;
-    }
-    .traceLevelSwitch button.active{
-      background:var(--card-strong);
-      outline:2px solid rgba(255,255,255,.28);
-    }
-    .traceHelpText{
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.35;
-      text-align:center;
-      max-width:560px;
-      min-height:34px;
-      margin-bottom:4px;
-    }
-    .traceWordGuide{
+    .learnCard{
+      position:relative;
+      min-height:78px;
+      border-radius:14px;
+      font-size:26px;
+      font-weight:850;
       display:flex;
-      flex-wrap:wrap;
+      align-items:center;
       justify-content:center;
-      gap:7px;
-      margin:0 0 8px;
-      max-width:560px;
+      padding:10px 8px;
+      line-height:1.2;
+      word-break:keep-all;
     }
-    .traceWordGuide .traceSyllable{
-      min-width:48px;
-      padding:7px 10px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.16);
-      background:rgba(255,255,255,.06);
-      color:var(--text);
-      font-size:14px;
-      font-weight:800;
-      text-align:center;
-      line-height:1.15;
+    .learnCard.done{ outline:2px solid rgba(134,239,172,.75); }
+    .theme-light .learnCard.done{ outline:2px solid #15803d; }
+    .learnCard .doneMark{
+      position:absolute; top:4px; right:8px;
+      font-size:14px; color:#86efac;
     }
-    .traceWordGuide .traceSyllable.done{
-      opacity:.55;
+    .theme-light .learnCard .doneMark{ color:#15803d; }
+
+    .learnSteps{
+      display:flex; flex-wrap:wrap; gap:6px;
+      justify-content:center; margin:4px 0 14px;
     }
-    .traceWordGuide .traceSyllable.active{
-      background:var(--card-strong);
-      outline:2px solid rgba(255,255,255,.30);
-      opacity:1;
-      transform:translateY(-1px);
+    .learnSteps span{
+      font-size:12px; font-weight:750;
+      padding:5px 10px; border-radius:999px;
+      border:1px solid var(--stroke); color:var(--muted);
     }
-    .traceWordGuide .traceSyllable small{
-      display:block;
-      margin-top:2px;
-      color:var(--muted);
-      font-size:10px;
-      font-weight:700;
+    .learnSteps span.activeStep{
+      background:var(--card-strong); color:var(--chapter-text);
+      outline:1px solid var(--stroke);
     }
+    .learnSteps span.doneStep{ opacity:.5; }
+
+    .learnHead{
+      display:flex; align-items:center; justify-content:center;
+      gap:16px; margin:10px 0 4px;
+    }
+    .learnHanzi{ font-size:clamp(44px, 12vw, 68px); font-weight:850; line-height:1.1; }
+    .playBtn{
+      width:54px; height:54px; border-radius:50%;
+      font-size:20px; padding:0; flex:0 0 auto;
+    }
+    .learnMeta{ text-align:center; margin-bottom:8px; }
+    .learnMeta .pinyin{ font-size:20px; font-weight:700; }
+    .learnMeta .de{ font-size:15px; color:var(--muted); }
+
+    .learnChoices{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));
+      gap:10px;
+      margin:12px 0;
+    }
+    .learnChoices button{
+      min-height:54px; font-size:17px; font-weight:750;
+      border-radius:14px; white-space:normal; line-height:1.25;
+    }
+    .learnChoices button.correctChoice{ outline:3px solid #4ade80; }
+    .learnChoices button.wrongChoice{ outline:3px solid #f87171; opacity:.65; }
+
+    .traceArea{
+      display:flex; flex-direction:column;
+      align-items:center; gap:10px; margin:8px 0;
+    }
+    .learnRoundInfo{ font-size:13px; color:var(--muted); text-align:center; }
   </style>
 </head>
 <body>
   <main class="app">
     <div class="topbar">
       <a class="back" id="back">← Kapitel</a>
-      <div class="kicker" id="kicker">Schreiben</div>
     </div>
     <h1 id="title">Schreiben</h1>
-    <p class="subtitle">Mit dem Finger nachzeichnen oder tippen – such dir oben aus, wie du übst.</p>
+    <p class="subtitle">Lerne jedes Zeichen Schritt für Schritt – hören, Pinyin, Bedeutung, zeichnen – oder übe das Tippen.</p>
 
     <div class="tabbar writeTabs">
-      <button class="tab active" data-tab="type" type="button">Tippen</button>
-      <button class="tab" data-tab="trace" type="button">Strich-Spiel</button>
+      <button class="tab active" data-tab="learn" type="button">Zeichen lernen</button>
+      <button class="tab" data-tab="type" type="button">Tippen</button>
     </div>
 
     <!-- ============ PANEL: TIPPEN (dein bestehendes Quiz) ============ -->
-    <section class="panel active" id="panel-type">
+    <section class="panel" id="panel-type">
+      <section class="card" id="imeHint" style="display:none;">
+        <strong>Chinesisch tippen einrichten</strong>
+        <div class="osSwitch imeSwitch" id="imeSwitch" aria-label="Gerät auswählen">
+          <button type="button" data-dev="iphone">iPhone</button>
+          <button type="button" data-dev="ipad">iPad</button>
+          <button type="button" data-dev="android">Android</button>
+          <button type="button" data-dev="windows">Windows</button>
+          <button type="button" data-dev="mac">Mac</button>
+        </div>
+        <p class="small" id="imeHintText" style="line-height:1.6;"></p>
+        <div class="toolbar">
+          <button id="imeHintClose" type="button">Verstanden, ausblenden</button>
+        </div>
+      </section>
+
       <section class="card" id="quizCard">
         <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Schreibvokabeln eingetragen.</div>
-
-        <div id="imeHelp" class="imeHelp" style="display:none;">
-          <div class="imeHelpHeader">
-            <div>
-              <h2 id="imeHelpTitle">Hanzi schreiben</h2>
-              <ol id="imeHelpSteps"></ol>
-              <p class="small" id="imeHelpNote" style="margin:8px 0 0;"></p>
-            </div>
-            <button id="imeHelpClose" class="imeHelpClose" type="button">Ausblenden</button>
-          </div>
-        </div>
-        <button id="imeHelpOpen" class="miniBtn imeHelpOpen" type="button" style="display:none;">Hanzi-Eingabe-Hilfe anzeigen</button>
 
         <div id="quiz">
           <div class="modeSwitch" aria-label="Übungsrichtung auswählen">
@@ -219,45 +199,54 @@
           </div>
         </div>
       </section>
+      <p class="imeReopenRow" id="imeReopenRow" style="display:none;">
+        <button class="linkBtn" id="imeHintReopen" type="button">Chinesische Tastatur einrichten – Anleitung anzeigen</button>
+      </p>
     </section>
 
     <!-- ============ PANEL: NACHZEICHNEN (Hanzi Writer) ============ -->
-    <section class="panel" id="panel-trace">
+    <section class="panel active" id="panel-learn">
       <section class="card">
-        <div id="traceEmpty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Vokabeln zum Nachzeichnen eingetragen.</div>
+        <div id="learnEmpty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Vokabeln eingetragen.</div>
 
-        <div class="traceWrap" id="traceWrap">
-          <div class="traceLevelSwitch" aria-label="Schwierigkeit beim Nachzeichnen">
-            <button id="traceLevelBeginner" type="button">Anfänger</button>
-            <button id="traceLevelGuided" type="button">Mit Zeichen</button>
-            <button id="traceLevelPro" type="button">Profi</button>
+        <div id="learnGridWrap">
+          <p class="small" style="margin-top:0;">Tippe ein Wort an und lerne es Schritt für Schritt: anhören, Pinyin erkennen, Bedeutung wählen und in drei Stufen zeichnen.</p>
+          <div class="learnGrid" id="learnGrid"></div>
+          <div class="toolbar">
+            <button id="learnResetDone" type="button">Gelernt-Markierungen zurücksetzen</button>
           </div>
-          <div class="traceHelpText" id="traceHelpText"></div>
+        </div>
 
-          <div class="traceInfo">
-            <div class="traceWordGuide" id="traceWordGuide"></div>
-            <div class="pinyin" id="tracePinyin">–</div>
-            <div class="de" id="traceDe">–</div>
-          </div>
-
-          <div id="traceTarget"></div>
-
-          <div class="traceStatus" id="traceStatus">&nbsp;</div>
-
-          <div class="traceBtns">
-            <button id="traceShow" type="button">Zeig mir</button>
-            <button id="traceStart" type="button" class="primary">Neu üben</button>
+        <div id="learnView" style="display:none;">
+          <div class="puzzleTopline">
+            <button id="learnExit" type="button">← Wortübersicht</button>
+            <div class="small" id="learnStepLabel">Schritt 1 von 5</div>
           </div>
 
-          <div class="autoRow">
-            <input type="checkbox" id="traceAuto" />
-            <label for="traceAuto">Nach jedem Wort automatisch weiter</label>
+          <div class="learnSteps" id="learnSteps"></div>
+
+          <div class="learnHead">
+            <div class="learnHanzi" id="learnHanzi">–</div>
+            <button id="learnPlay" class="playBtn" type="button" aria-label="Anhören">▶</button>
+          </div>
+          <div class="learnMeta" id="learnMeta" style="display:none;">
+            <div class="pinyin" id="learnPinyin"></div>
+            <div class="de" id="learnDe"></div>
           </div>
 
-          <div class="traceNav">
-            <button id="tracePrev" type="button">‹</button>
-            <span class="traceCounter" id="traceCounter">1 / 1</span>
-            <button id="traceNext" type="button">›</button>
+          <div class="small" id="learnQuestion" style="text-align:center;"></div>
+          <div class="learnChoices" id="learnChoices"></div>
+
+          <div class="traceArea" id="learnTraceArea" style="display:none;">
+            <div class="learnRoundInfo" id="learnRoundInfo"></div>
+            <div id="traceTarget"></div>
+          </div>
+
+          <div class="traceStatus" id="learnStatus">&nbsp;</div>
+
+          <div class="toolbar" id="learnDoneBar" style="display:none;justify-content:center;">
+            <button id="learnNextWord" type="button">Nächstes Wort</button>
+            <button id="learnToGrid" type="button">Zur Wortübersicht</button>
           </div>
         </div>
       </section>
@@ -271,51 +260,15 @@ const topic = getTopic();
 applyTheme(topic, "Chinesisch festigen");
 document.getElementById("back").href = `kapitel.html?id=${topic.id}`;
 document.getElementById("finishBack").href = `kapitel.html?id=${topic.id}`;
-document.getElementById("kicker").textContent = `Kapitel ${topic.id} · Schreiben`;
 document.getElementById("title").textContent = `${topic.id}. ${topic.title} · Schreiben`;
-
-function renderImeHelp(){
-  const info = cfImeInstructions();
-  const hiddenKey = `cf_ime_help_hidden_${cfDetectDevice().type}`;
-  const help = document.getElementById("imeHelp");
-  const open = document.getElementById("imeHelpOpen");
-  if(!help || !open) return;
-  document.getElementById("imeHelpTitle").textContent = info.title;
-  document.getElementById("imeHelpSteps").innerHTML = (info.steps || []).map(step => `<li>${escapeHtml(step)}</li>`).join("");
-  document.getElementById("imeHelpNote").textContent = info.note || "";
-  const hidden = localStorage.getItem(hiddenKey) === "1";
-  help.style.display = hidden ? "none" : "block";
-  open.style.display = hidden ? "inline-flex" : "none";
-  document.getElementById("imeHelpClose").onclick = () => {
-    localStorage.setItem(hiddenKey, "1");
-    help.style.display = "none";
-    open.style.display = "inline-flex";
-  };
-  open.onclick = () => {
-    localStorage.removeItem(hiddenKey);
-    help.style.display = "block";
-    open.style.display = "none";
-  };
-}
-renderImeHelp();
 
 /* ===== Reiter-Umschaltung ===== */
 const tabs = [...document.querySelectorAll(".tab")];
-function activateWriteTab(name, updateUrl=false){
-  const next = name === "trace" ? "trace" : "type";
-  tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === next));
+tabs.forEach(tab => tab.addEventListener("click", () => {
+  tabs.forEach(t => t.classList.toggle("active", t === tab));
   document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-  document.getElementById(`panel-${next}`).classList.add("active");
-  if(next === "trace") ensureTraceInit();
-  if(updateUrl){
-    const params = new URLSearchParams(location.search);
-    params.set("id", topic.id);
-    if(next === "trace") params.set("tab", "trace");
-    else params.delete("tab");
-    history.replaceState(null, "", `${location.pathname}?${params.toString()}`);
-  }
-}
-tabs.forEach(tab => tab.addEventListener("click", () => activateWriteTab(tab.dataset.tab, true)));
+  document.getElementById(`panel-${tab.dataset.tab}`).classList.add("active");
+}));
 
 /* ============================================================
    TEIL 1: TIPPEN  (unverändert aus deiner schreiben.html)
@@ -556,17 +509,18 @@ loadState();
 render();
 
 /* ============================================================
-   TEIL 2: NACHZEICHNEN  (Hanzi Writer)
+   TEIL 2: ZEICHEN LERNEN (5 Schritte pro Wort)
+   1) Anhören + Pinyin wählen
+   2) Deutsche Bedeutung wählen (ohne Anhören)
+   3) Zeichnen mit Vorlage: Strich zeigen, Strich nachzeichnen (2×)
+   4) Zeichnen ohne Vorlage, Striche werden weiter vorgezeigt (2×)
+   5) Aus dem Kopf: keine Vorlage, keine Striche;
+      Hilfe-Strich erst nach 2 Fehlversuchen (1×)
    ============================================================ */
-// Nachzeichnen läuft wortweise in der Reihenfolge der Vokabelliste.
-// Schwierigkeitsstufen:
-// Anfänger: Strich für Strich ansehen und direkt danach nachzeichnen.
-// Mit Zeichen: direkt mit Zeichen/Vorlage im Hintergrund schreiben.
-// Profi: ohne Vorlage; nach drei Fehlern erscheint Hilfe mit Zeichen.
-const traceWords = (topic.vocab || [])
+const learnWords = (topic.vocab || [])
   .filter(v => /[\u4e00-\u9fff]/.test(v.zh || ""))
-  .map((v, wordIndex) => ({
-    wordIndex,
+  .map((v, index) => ({
+    index,
     zh: v.writeZh || v.zh || "",
     pinyin: v.writePinyin || v.pinyin || "",
     de: v.writeDe || v.de || "",
@@ -574,515 +528,343 @@ const traceWords = (topic.vocab || [])
   }))
   .filter(w => w.chars.length > 0);
 
-const accentHex = topic.accent || "#03172B";
-const TRACE_LEVELS = {
-  beginner: {
-    label: "Anfänger",
-    help: "Strich für Strich: Erst wird ein Strich gezeigt, dann zeichnest du genau diesen Strich nach.",
-    showOutline: true,
-    showCharacter: false,
-    autoAnimate: false,
-    hintAfter: 1,
-    leniency: 1.25
-  },
-  guided: {
-    label: "Mit Zeichen",
-    help: "Schreibe mit dem Zeichen im Hintergrund. „Zeig mir“ hilft jederzeit.",
-    showOutline: true,
-    showCharacter: true,
-    autoAnimate: false,
-    hintAfter: 2,
-    leniency: 1.15
-  },
-  pro: {
-    label: "Profi",
-    help: "Schreibe ohne Vorlage. Nach drei Fehlern erscheint das Zeichen als Hilfe.",
-    showOutline: false,
-    showCharacter: false,
-    autoAnimate: false,
-    hintAfter: 3,
-    leniency: 1.0
-  }
+const LEARN_DONE_KEY = `cf_learn_done_${topic.id}`;
+let learnDone = new Set();
+try{ learnDone = new Set(JSON.parse(localStorage.getItem(LEARN_DONE_KEY) || "[]")); }catch(e){}
+function saveLearnDone(){ localStorage.setItem(LEARN_DONE_KEY, JSON.stringify([...learnDone])); }
+
+const LEARN_STEPS = ["Hören & Pinyin", "Bedeutung", "Mit Vorlage", "Nur Striche", "Aus dem Kopf"];
+// Konfiguration der drei Zeichen-Stufen (Schritte 3–5)
+const LEARN_TRACE_CFG = {
+  2: { outline: true,  demo: true,  hintAfter: 99, rounds: 2, info: "Mit Vorlage" },
+  3: { outline: false, demo: true,  hintAfter: 99, rounds: 2, info: "Ohne Vorlage, Striche werden gezeigt" },
+  4: { outline: false, demo: false, hintAfter: 2,  rounds: 1, info: "Aus dem Kopf – Hilfe erst nach 2 Fehlern" }
 };
 
-let tWordIndex = 0;
-let tCharPos = 0;
-let tWriter = null;
-let traceInited = false;
-let traceQuizToken = 0;
-let traceLevel = localStorage.getItem(`cf_trace_level_${topic.id}`) || "beginner";
-if(!TRACE_LEVELS[traceLevel]) traceLevel = "beginner";
-let proFallback = false;
-let currentMistakes = 0;
-let traceRepeat = false;
-let beginnerCompletedStrokes = 0;
-let autoNext = localStorage.getItem(`cf_trace_auto_${topic.id}`) !== "0"; // Standard: automatisch weiter
+let lWord = null;
+let lStep = 0;
+let lRound = 1;
+let lChar = 0;
+let lWriter = null;
+let lToken = 0;
+let lLocked = false;
 
-function setTraceStatus(text, kind){
-  const el = $("traceStatus");
+function setLearnStatus(text, kind){
+  const el = $("learnStatus");
   el.textContent = text || "\u00A0";
   el.className = "traceStatus" + (kind ? " " + kind : "");
 }
-function currentTraceWord(){ return traceWords[tWordIndex]; }
-function currentTraceChar(){
-  const word = currentTraceWord();
-  return word ? word.chars[tCharPos] : null;
-}
-const PINYIN_BASES = new Set([
-  "a","ai","an","ang","ao","ba","bai","ban","bang","bao","bei","ben","beng","bi","bian","biao","bie","bin","bing","bo","bu",
-  "ca","cai","can","cang","cao","ce","cen","ceng","cha","chai","chan","chang","chao","che","chen","cheng","chi","chong","chou","chu","chua","chuai","chuan","chuang","chui","chun","chuo","ci","cong","cou","cu","cuan","cui","cun","cuo",
-  "da","dai","dan","dang","dao","de","dei","den","deng","di","dia","dian","diao","die","ding","diu","dong","dou","du","duan","dui","dun","duo",
-  "e","ei","en","eng","er","fa","fan","fang","fei","fen","feng","fo","fou","fu",
-  "ga","gai","gan","gang","gao","ge","gei","gen","geng","gong","gou","gu","gua","guai","guan","guang","gui","gun","guo",
-  "ha","hai","han","hang","hao","he","hei","hen","heng","hong","hou","hu","hua","huai","huan","huang","hui","hun","huo",
-  "ji","jia","jian","jiang","jiao","jie","jin","jing","jiong","jiu","ju","juan","jue","jun",
-  "ka","kai","kan","kang","kao","ke","ken","keng","kong","kou","ku","kua","kuai","kuan","kuang","kui","kun","kuo",
-  "la","lai","lan","lang","lao","le","lei","leng","li","lia","lian","liang","liao","lie","lin","ling","liu","lo","long","lou","lu","lv","luan","lve","lun","luo",
-  "ma","mai","man","mang","mao","me","mei","men","meng","mi","mian","miao","mie","min","ming","miu","mo","mou","mu",
-  "na","nai","nan","nang","nao","ne","nei","nen","neng","ni","nian","niang","niao","nie","nin","ning","niu","nong","nou","nu","nv","nuan","nve","nun","nuo",
-  "o","ou","pa","pai","pan","pang","pao","pei","pen","peng","pi","pian","piao","pie","pin","ping","po","pou","pu",
-  "qi","qia","qian","qiang","qiao","qie","qin","qing","qiong","qiu","qu","quan","que","qun",
-  "ran","rang","rao","re","ren","reng","ri","rong","rou","ru","rua","ruan","rui","run","ruo",
-  "sa","sai","san","sang","sao","se","sen","seng","sha","shai","shan","shang","shao","she","shei","shen","sheng","shi","shou","shu","shua","shuai","shuan","shuang","shui","shun","shuo","si","song","sou","su","suan","sui","sun","suo",
-  "ta","tai","tan","tang","tao","te","teng","ti","tian","tiao","tie","ting","tong","tou","tu","tuan","tui","tun","tuo",
-  "wa","wai","wan","wang","wei","wen","weng","wo","wu",
-  "xi","xia","xian","xiang","xiao","xie","xin","xing","xiong","xiu","xu","xuan","xue","xun",
-  "ya","yan","yang","yao","ye","yi","yin","ying","yo","yong","you","yu","yuan","yue","yun",
-  "za","zai","zan","zang","zao","ze","zei","zen","zeng","zha","zhai","zhan","zhang","zhao","zhe","zhei","zhen","zheng","zhi","zhong","zhou","zhu","zhua","zhuai","zhuan","zhuang","zhui","zhun","zhuo","zi","zong","zou","zu","zuan","zui","zun","zuo"
-]);
-const TONE_MAP = {"ā":"a","á":"a","ǎ":"a","à":"a","ē":"e","é":"e","ě":"e","è":"e","ī":"i","í":"i","ǐ":"i","ì":"i","ō":"o","ó":"o","ǒ":"o","ò":"o","ū":"u","ú":"u","ǔ":"u","ù":"u","ǖ":"v","ǘ":"v","ǚ":"v","ǜ":"v","ü":"v","Ā":"a","Á":"a","Ǎ":"a","À":"a","Ē":"e","É":"e","Ě":"e","È":"e","Ī":"i","Í":"i","Ǐ":"i","Ì":"i","Ō":"o","Ó":"o","Ǒ":"o","Ò":"o","Ū":"u","Ú":"u","Ǔ":"u","Ù":"u","Ǖ":"v","Ǘ":"v","Ǚ":"v","Ǜ":"v","Ü":"v"};
-function stripPinyin(s){
-  return [...String(s || "")].map(ch => TONE_MAP[ch] || ch.toLowerCase()).join("").replace(/[^a-zv]/g, "");
-}
-function splitPinyinToken(token, slots){
-  const raw = String(token || "").trim();
-  if(!raw) return [];
-  if(slots <= 1) return [raw];
-  const chars = [...raw].filter(ch => /[A-Za-zĀÁǍÀĒÉĚÈĪÍǏÌŌÓǑÒŪÚǓÙǕǗǙǛāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜüÜ]/.test(ch));
-  const n = chars.length;
-  const memo = new Map();
-  function rec(pos, left){
-    const key = pos + ":" + left;
-    if(memo.has(key)) return memo.get(key);
-    if(left === 0) return pos === n ? [] : null;
-    for(let end = pos + 1; end <= n; end++){
-      const piece = chars.slice(pos, end).join("");
-      const base = stripPinyin(piece);
-      if(!PINYIN_BASES.has(base)) continue;
-      const rest = rec(end, left - 1);
-      if(rest){
-        const result = [piece, ...rest];
-        memo.set(key, result);
-        return result;
-      }
-    }
-    memo.set(key, null);
-    return null;
-  }
-  return rec(0, slots) || [raw];
-}
-function splitPinyinForChars(pinyin, charCount){
-  const tokens = String(pinyin || "").replace(/[。！？!?，,、；;：:]/g, " ").trim().split(/\s+/).filter(Boolean);
-  if(!charCount) return [];
-  if(tokens.length === charCount) return tokens;
-  if(tokens.length === 0) return Array.from({length: charCount}, (_, i) => `Zeichen ${i + 1}`);
-  const out = [];
-  function rec(tokenIndex, slotsLeft){
-    if(tokenIndex === tokens.length){ return slotsLeft === 0 ? [] : null; }
-    const remainingTokens = tokens.length - tokenIndex - 1;
-    const maxSlots = slotsLeft - remainingTokens;
-    for(let slots = 1; slots <= maxSlots; slots++){
-      const parts = splitPinyinToken(tokens[tokenIndex], slots);
-      if(parts.length !== slots && slots !== 1) continue;
-      const rest = rec(tokenIndex + 1, slotsLeft - parts.length);
-      if(rest) return [...parts, ...rest];
-    }
-    return null;
-  }
-  const parts = rec(0, charCount);
-  if(parts && parts.length === charCount) return parts;
-  return Array.from({length: charCount}, (_, i) => tokens[i] || tokens[tokens.length - 1] || `Zeichen ${i + 1}`);
-}
-function tracePinyinParts(word){
-  if(!word) return [];
-  if(Array.isArray(word.pinyinParts) && word.pinyinParts.length === word.chars.length) return word.pinyinParts;
-  return splitPinyinForChars(word.pinyin || "", word.chars.length);
-}
-function currentTracePinyinPart(){
-  const word = currentTraceWord();
-  const parts = tracePinyinParts(word);
-  return parts[tCharPos] || `Zeichen ${tCharPos + 1}`;
-}
-function renderTraceWordGuide(){
-  const guide = $("traceWordGuide");
-  const word = currentTraceWord();
-  if(!guide || !word){ return; }
-  const parts = tracePinyinParts(word);
-  guide.innerHTML = "";
-  word.chars.forEach((_, i) => {
-    const chip = document.createElement("span");
-    chip.className = "traceSyllable" + (i < tCharPos ? " done" : "") + (i === tCharPos ? " active" : "");
-    chip.innerHTML = `${parts[i] || "–"}<small>${i + 1}/${word.chars.length}</small>`;
-    guide.appendChild(chip);
+function renderLearnGrid(){
+  const grid = $("learnGrid");
+  grid.innerHTML = "";
+  learnWords.forEach(w => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "learnCard" + (learnDone.has(w.zh) ? " done" : "");
+    b.innerHTML = (learnDone.has(w.zh) ? '<span class="doneMark">✓</span>' : "") + escapeHtml(w.zh);
+    b.addEventListener("click", () => startLearnWord(w));
+    grid.appendChild(b);
   });
 }
-function activeTraceConfig(){ return TRACE_LEVELS[traceLevel] || TRACE_LEVELS.beginner; }
-function setTraceCounter(){
-  $("traceCounter").textContent = traceWords.length ? `${tWordIndex + 1} / ${traceWords.length}` : "0 / 0";
+function showLearnGrid(){
+  lToken++;
+  cancelLearnWriter();
+  $("learnView").style.display = "none";
+  $("learnGridWrap").style.display = "";
+  renderLearnGrid();
 }
-function setTraceLevelButtons(){
-  $("traceLevelBeginner").classList.toggle("active", traceLevel === "beginner");
-  $("traceLevelGuided").classList.toggle("active", traceLevel === "guided");
-  $("traceLevelPro").classList.toggle("active", traceLevel === "pro");
-  $("traceHelpText").textContent = activeTraceConfig().help;
-}
-function updateTraceInfo(){
-  const word = currentTraceWord();
-  if(!word) return;
-  renderTraceWordGuide();
-  const part = currentTracePinyinPart();
-  const charText = word.chars.length > 1 ? `Zeichen ${tCharPos + 1}/${word.chars.length}: ${part}` : part;
-  $("tracePinyin").textContent = `${activeTraceConfig().label} · ${charText}`;
-  $("traceDe").textContent = word.de || "";
-  setTraceCounter();
-  setTraceLevelButtons();
-}
-function updateTraceNav(){
-  $("tracePrev").disabled = (tWordIndex === 0);
-  $("traceNext").disabled = (tWordIndex >= traceWords.length - 1);
-}
-function loadTraceWord(){
-  const word = currentTraceWord();
-  if(!word) return;
-  tCharPos = 0;
-  proFallback = false;
-  loadTraceChar();
-  updateTraceNav();
-}
-function traceVisualConfig(){
-  const cfg = activeTraceConfig();
-  const useFallback = traceLevel === "pro" && proFallback;
-  const showGuide = (traceLevel === "guided") || useFallback;
-  if(traceLevel === "beginner"){
-    return {
-      showOutline: cfg.showOutline,
-      showCharacter: false,
-      hintAfter: cfg.hintAfter,
-      leniency: cfg.leniency,
-      strokeColor: accentHex
-    };
+function cancelLearnWriter(){
+  if(lWriter && typeof lWriter.cancelQuiz === "function"){
+    try{ lWriter.cancelQuiz(); }catch(e){}
   }
-  return {
-    showOutline: showGuide ? true : cfg.showOutline,
-    showCharacter: showGuide ? true : cfg.showCharacter,
-    hintAfter: showGuide ? 1 : cfg.hintAfter,
-    leniency: showGuide ? Math.max(cfg.leniency, 1.15) : cfg.leniency,
-    strokeColor: showGuide ? "#111111" : accentHex
-  };
+  lWriter = null;
 }
-function currentStrokeCount(){
-  try{
-    return tWriter?._character?.strokes?.length || tWriter?._character?.strokes?.length || null;
-  }catch(e){ return null; }
+function startLearnWord(w){
+  lWord = w;
+  lStep = 0;
+  $("learnGridWrap").style.display = "none";
+  $("learnView").style.display = "";
+  runLearnStep();
 }
-function strokeNumberFromData(data){
-  if(data && Number.isInteger(data.strokeNum)) return data.strokeNum;
-  if(data && Number.isInteger(data.strokeIndex)) return data.strokeIndex;
-  return null;
+function renderLearnSteps(){
+  const wrap = $("learnSteps");
+  wrap.innerHTML = "";
+  LEARN_STEPS.forEach((name, i) => {
+    const s = document.createElement("span");
+    s.textContent = name;
+    if(i < lStep) s.className = "doneStep";
+    if(i === lStep) s.className = "activeStep";
+    wrap.appendChild(s);
+  });
+  $("learnStepLabel").textContent = `Schritt ${lStep + 1} von ${LEARN_STEPS.length}`;
 }
-function clearBeginnerHint(){
+function buildLearnChoices(kind){
+  const field = kind === "pinyin" ? "pinyin" : "de";
+  const correct = String(lWord[field] || "").trim();
+  const pool = [...new Set(
+    learnWords
+      .filter(w => w.zh !== lWord.zh)
+      .map(w => String(w[field] || "").trim())
+      .filter(x => x && x !== correct)
+  )];
+  const options = shuffle([correct, ...shuffle(pool).slice(0, 3)]);
+  const grid = $("learnChoices");
+  grid.innerHTML = "";
+  lLocked = false;
+  options.forEach(opt => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = opt;
+    b.addEventListener("click", () => {
+      if(lLocked) return;
+      if(opt === correct){
+        lLocked = true;
+        b.classList.add("correctChoice");
+        setLearnStatus("Richtig!", "ok");
+        setTimeout(() => { lStep++; runLearnStep(); }, 700);
+      }else{
+        b.classList.add("wrongChoice");
+        b.disabled = true;
+        setLearnStatus("Noch nicht – versuch es noch einmal.", "bad");
+      }
+    });
+    grid.appendChild(b);
+  });
+}
+function runLearnStep(){
+  lToken++;
+  cancelLearnWriter();
+  renderLearnSteps();
+  setLearnStatus("");
+  $("learnDoneBar").style.display = "none";
+  $("learnChoices").innerHTML = "";
+  $("learnTraceArea").style.display = "none";
+  $("learnMeta").style.display = "none";
+  $("learnHanzi").textContent = lWord.zh;
+
+  if(lStep === 0){
+    $("learnPlay").style.display = "";
+    $("learnQuestion").textContent = "Wie wird das ausgesprochen? Hör es dir an und wähle das passende Pinyin.";
+    buildLearnChoices("pinyin");
+    cfSpeakZh(lWord.zh, {rate:0.85});
+  }else if(lStep === 1){
+    $("learnPlay").style.display = "none";
+    $("learnQuestion").textContent = "Was bedeutet das Wort?";
+    buildLearnChoices("de");
+  }else if(lStep <= 4){
+    $("learnPlay").style.display = "";
+    $("learnQuestion").textContent = "";
+    $("learnMeta").style.display = "";
+    $("learnPinyin").textContent = lWord.pinyin;
+    $("learnDe").textContent = lWord.de;
+    $("learnTraceArea").style.display = "";
+    lRound = 1;
+    lChar = 0;
+    loadLearnChar();
+  }else{
+    finishLearnWord();
+  }
+}
+function learnRoundInfoText(){
+  const cfg = LEARN_TRACE_CFG[lStep];
+  const charPart = lWord.chars.length > 1 ? ` · Zeichen ${lChar + 1}/${lWord.chars.length}` : "";
+  const roundPart = cfg.rounds > 1 ? ` · Durchgang ${lRound}/${cfg.rounds}` : "";
+  return `${cfg.info}${charPart}${roundPart}`;
+}
+function clearLearnHint(){
   const layer = document.getElementById("traceHintLayer");
   if(layer) layer.innerHTML = "";
 }
-function animateOneStroke(strokeIndex, done){
+function animateLearnStroke(strokeIndex, done){
+  const zeichen = lWord.chars[lChar];
   const hintLayer = document.getElementById("traceHintLayer");
-  const zeichen = currentTraceChar();
   if(!hintLayer || !zeichen || typeof HanziWriter === "undefined"){
     if(done) done();
     return;
   }
-  const token = traceQuizToken;
-  clearBeginnerHint();
-  setTraceStatus(`Schau dir Strich ${strokeIndex + 1} an …`, null);
-
+  const token = lToken;
+  clearLearnHint();
+  setLearnStatus(`Schau dir Strich ${strokeIndex + 1} an …`);
   let hintWriter = null;
   try{
     hintWriter = HanziWriter.create("traceHintLayer", zeichen, {
-      width: 280,
-      height: 280,
-      padding: 14,
-      showOutline: false,
-      showCharacter: false,
-      strokeColor: "#111111",
-      radicalColor: "#c0392b",
-      drawingColor: "#111111",
-      drawingWidth: 26
+      width: 280, height: 280, padding: 14,
+      showOutline: false, showCharacter: false,
+      strokeColor: "#111111", radicalColor: "#c0392b",
+      drawingColor: "#111111", drawingWidth: 26
     });
   }catch(e){
     if(done) done();
     return;
   }
-
   const finish = () => {
-    if(token !== traceQuizToken) return;
-    setTraceStatus(`Zeichne Strich ${strokeIndex + 1} nach …`, null);
+    if(token !== lToken) return;
+    setLearnStatus(`Zeichne Strich ${strokeIndex + 1} nach …`);
     setTimeout(() => {
-      if(token === traceQuizToken) clearBeginnerHint();
+      if(token === lToken) clearLearnHint();
       if(done) done();
     }, 120);
   };
-
   let returned = null;
   try{ returned = hintWriter.animateStroke(strokeIndex); }catch(e){ returned = null; }
   if(returned && typeof returned.then === "function") returned.then(finish).catch(finish);
   else setTimeout(finish, 750);
 }
-function loadTraceChar(){
-  const zeichen = currentTraceChar();
-  if(!zeichen) return;
-  traceQuizToken++;
-  updateTraceInfo();
-  currentMistakes = 0;
+function loadLearnChar(){
+  lToken++;
+  const token = lToken;
+  const cfg = LEARN_TRACE_CFG[lStep];
+  const zeichen = lWord.chars[lChar];
+  $("learnRoundInfo").textContent = learnRoundInfoText();
+
   const target = $("traceTarget");
   target.innerHTML = "";
-  const visual = traceVisualConfig();
-  const partLabel = currentTracePinyinPart();
-  const repeatText = traceRepeat ? "Noch einmal: " : "";
-  traceRepeat = false;
-  setTraceStatus(traceLevel === "pro" && !proFallback ? `${repeatText}Schreib ${partLabel} ohne Vorlage …` : `${repeatText}Schreib ${partLabel} …`, null);
+  const quizLayer = document.createElement("div");
+  quizLayer.id = "traceQuizLayer";
+  quizLayer.className = "traceLayer";
+  const hintLayer = document.createElement("div");
+  hintLayer.id = "traceHintLayer";
+  hintLayer.className = "traceLayer";
+  target.appendChild(quizLayer);
+  target.appendChild(hintLayer);
 
-  const writerTargetId = traceLevel === "beginner" ? "traceQuizLayer" : "traceTarget";
-  if(traceLevel === "beginner"){
-    const quizLayer = document.createElement("div");
-    quizLayer.id = "traceQuizLayer";
-    quizLayer.className = "traceLayer";
-    const hintLayer = document.createElement("div");
-    hintLayer.id = "traceHintLayer";
-    hintLayer.className = "traceLayer";
-    target.appendChild(quizLayer);
-    target.appendChild(hintLayer);
-  }
-
-  tWriter = HanziWriter.create(writerTargetId, zeichen, {
-    width: 280,
-    height: 280,
-    padding: 14,
-    showOutline: visual.showOutline,
-    showCharacter: visual.showCharacter,
-    strokeColor: visual.strokeColor,
+  lWriter = HanziWriter.create("traceQuizLayer", zeichen, {
+    width: 280, height: 280, padding: 14,
+    showOutline: cfg.outline,
+    showCharacter: false,
+    strokeColor: topic.accent || "#03172B",
     radicalColor: "#c0392b",
     drawingColor: "#111111",
     drawingWidth: 26,
-    leniency: visual.leniency,
-    showHintAfterMisses: visual.hintAfter
+    leniency: cfg.outline ? 1.25 : 1.1,
+    showHintAfterMisses: cfg.hintAfter
   });
 
-  const cfg = activeTraceConfig();
-  if(traceLevel === "beginner"){
-    setTimeout(startBeginnerStrokeQuiz, 80);
-  }else if(cfg.autoAnimate && !proFallback){
-    runTraceAnimationThenQuiz("Schau dir zuerst die Strichfolge an …");
-  }else{
-    setTimeout(startTraceQuiz, 80);
-  }
-}
-function startBeginnerStrokeQuiz(){
-  if(!tWriter) return;
-  const token = ++traceQuizToken;
-  beginnerCompletedStrokes = 0;
-  currentMistakes = 0;
-  if(tWriter.hideCharacter) tWriter.hideCharacter();
+  let completed = 0;
   const beginQuiz = () => {
-    if(token !== traceQuizToken || !tWriter) return;
-    tWriter.quiz({
+    if(token !== lToken || !lWriter) return;
+    setLearnStatus(cfg.demo ? "Zeichne den Strich nach …" : "Schreib das Zeichen aus dem Kopf …");
+    lWriter.quiz({
       onMistake(){
-        if(token !== traceQuizToken) return;
-        currentMistakes++;
-        setTraceStatus("Nicht ganz – probiere diesen Strich noch einmal.", "bad");
+        if(token !== lToken) return;
+        setLearnStatus("Nicht ganz – probiere den Strich noch einmal.", "bad");
       },
       onCorrectStroke(data){
-        if(token !== traceQuizToken) return;
-        const doneStroke = strokeNumberFromData(data);
-        if(doneStroke !== null) beginnerCompletedStrokes = Math.max(beginnerCompletedStrokes, doneStroke + 1);
-        else beginnerCompletedStrokes++;
-        const total = currentStrokeCount();
-        if(total && beginnerCompletedStrokes < total){
-          const nextStroke = beginnerCompletedStrokes;
-          setTimeout(() => {
-            if(token === traceQuizToken) animateOneStroke(nextStroke);
-          }, 180);
+        if(token !== lToken) return;
+        const n = (data && Number.isInteger(data.strokeNum)) ? data.strokeNum + 1 : completed + 1;
+        completed = Math.max(completed, n);
+        const total = lWriter?._character?.strokes?.length || null;
+        if(cfg.demo && total && completed < total){
+          setTimeout(() => { if(token === lToken) animateLearnStroke(completed); }, 180);
         }else{
-          setTraceStatus("…", null);
+          setLearnStatus("…");
         }
       },
-      onComplete(data){
-        if(token !== traceQuizToken) return;
-        if(data.totalMistakes > 0){
-          traceRepeat = true;
-          setTraceStatus("Dasselbe Zeichen kommt direkt noch einmal.", "bad");
-          setTimeout(() => loadTraceChar(), 750);
-          return;
-        }
-        proFallback = false;
-        if(tCharPos < currentTraceWord().chars.length - 1){
-          tCharPos++;
-          setTimeout(() => loadTraceChar(), 300);
-        }else{
-          finishTraceWord();
-        }
+      onComplete(){
+        if(token !== lToken) return;
+        advanceLearnTrace();
       }
     });
   };
-  animateOneStroke(0, beginQuiz);
+
+  if(cfg.demo) animateLearnStroke(0, beginQuiz);
+  else setTimeout(beginQuiz, 80);
 }
-function startTraceQuiz(){
-  if(!tWriter) return;
-  const token = ++traceQuizToken;
-  tWriter.hideCharacter();
-  const visual = traceVisualConfig();
-  if(visual.showCharacter) tWriter.showCharacter();
-  setTraceStatus(traceLevel === "pro" && !proFallback ? `Schreib ${currentTracePinyinPart()} ohne Vorlage …` : `Schreib ${currentTracePinyinPart()} …`, null);
-  tWriter.quiz({
-    onMistake(){
-      if(token !== traceQuizToken) return;
-      currentMistakes++;
-      if(traceLevel === "pro" && !proFallback && currentMistakes >= 3){
-        proFallback = true;
-        setTraceStatus("Nach drei Fehlern kommt das Zeichen mit Vorlage.", "bad");
-        if(tWriter && typeof tWriter.cancelQuiz === "function") tWriter.cancelQuiz();
-        setTimeout(() => { if(token === traceQuizToken) loadTraceChar(); }, 650);
-        return;
-      }
-      setTraceStatus(traceLevel === "pro" && !proFallback ? "Nicht ganz – versuch es noch einmal." : "Nicht ganz – weiter üben.", "bad");
-    },
-    onCorrectStroke(){ if(token === traceQuizToken) setTraceStatus("…", null); },
-    onComplete(data){
-      if(token !== traceQuizToken) return;
-      if(data.totalMistakes > 0){
-        traceRepeat = true;
-        setTraceStatus("Dasselbe Zeichen kommt direkt noch einmal.", "bad");
-        setTimeout(() => loadTraceChar(), 750);
-        return;
-      }
-      if(traceLevel === "pro" && proFallback){
-        proFallback = false;
-        traceRepeat = true;
-        setTraceStatus("Gut mit Hilfe. Jetzt noch einmal ohne Vorlage.", "ok");
-        setTimeout(() => loadTraceChar(), 850);
-        return;
-      }
-      proFallback = false;
-      if(tCharPos < currentTraceWord().chars.length - 1){
-        tCharPos++;
-        setTimeout(() => loadTraceChar(), 300);
-      }else{
-        finishTraceWord();
-      }
-    }
+function advanceLearnTrace(){
+  const cfg = LEARN_TRACE_CFG[lStep];
+  if(lChar < lWord.chars.length - 1){
+    lChar++;
+    setLearnStatus("Gut! Nächstes Zeichen …", "ok");
+    setTimeout(loadLearnChar, 450);
+    return;
+  }
+  if(lRound < cfg.rounds){
+    lRound++;
+    lChar = 0;
+    setLearnStatus("Und gleich noch einmal …", "ok");
+    setTimeout(loadLearnChar, 600);
+    return;
+  }
+  lStep++;
+  if(lStep <= 4){
+    setLearnStatus("Stufe geschafft!", "ok");
+    setTimeout(runLearnStep, 700);
+  }else{
+    finishLearnWord();
+  }
+}
+function finishLearnWord(){
+  lToken++;
+  cancelLearnWriter();
+  renderLearnSteps();
+  $("learnChoices").innerHTML = "";
+  $("learnTraceArea").style.display = "none";
+  $("learnMeta").style.display = "";
+  $("learnPinyin").textContent = lWord.pinyin;
+  $("learnDe").textContent = lWord.de;
+  $("learnPlay").style.display = "";
+  $("learnQuestion").textContent = "";
+  learnDone.add(lWord.zh);
+  saveLearnDone();
+  setLearnStatus("Wort gelernt! 很好！", "ok");
+  $("learnDoneBar").style.display = "";
+  cfSpeakZh(lWord.zh, {rate:0.85});
+}
+function nextLearnWord(){
+  const startIdx = learnWords.findIndex(w => w.zh === lWord.zh);
+  const after = learnWords.slice(startIdx + 1).find(w => !learnDone.has(w.zh));
+  const any = after || learnWords.find(w => !learnDone.has(w.zh));
+  if(any) startLearnWord(any);
+  else showLearnGrid();
+}
+
+if(learnWords.length === 0){
+  $("learnGridWrap").style.display = "none";
+  $("learnEmpty").style.display = "block";
+}else{
+  renderLearnGrid();
+}
+$("learnPlay").addEventListener("click", () => cfSpeakZh(lWord ? lWord.zh : "", {rate:0.85}));
+$("learnExit").addEventListener("click", showLearnGrid);
+$("learnToGrid").addEventListener("click", showLearnGrid);
+$("learnNextWord").addEventListener("click", nextLearnWord);
+$("learnResetDone").addEventListener("click", () => {
+  learnDone = new Set();
+  saveLearnDone();
+  renderLearnGrid();
+});
+
+/* ===== Hinweis: chinesische Tastatur einrichten ===== */
+(function(){
+  const KEY = "cf_ime_hint_hidden";
+  const TEXTS = {
+    iphone: "iPhone: Einstellungen → Allgemein → Tastatur → Tastaturen → „Neue Tastatur hinzufügen“ → „Chinesisch (vereinfacht)“ → „Pinyin – QWERTY“. Beim Tippen wechselst du mit der Weltkugel-Taste unten links zur chinesischen Tastatur. Dann Pinyin tippen (z. B. nihao) und oben das passende Zeichen antippen.",
+    ipad: "iPad: Einstellungen → Allgemein → Tastatur → Tastaturen → „Neue Tastatur hinzufügen“ → „Chinesisch (vereinfacht)“ → „Pinyin – QWERTY“. Beim Tippen wechselst du mit der Weltkugel-Taste zur chinesischen Tastatur. Dann Pinyin tippen (z. B. nihao) und das passende Zeichen antippen.",
+    android: "Android (Gboard): Beim Tippen auf der Tastatur das Zahnrad öffnen → Sprachen → „Tastatur hinzufügen“ → „Chinesisch (vereinfacht)“ → Pinyin. Danach mit der Weltkugel-Taste wechseln. Bei Hersteller-Tastaturen (z. B. Samsung) heißen die Menüs etwas anders, der Weg über Einstellungen → Sprachen ist aber gleich.",
+    windows: "Windows: Einstellungen → Zeit und Sprache → Sprache & Region → „Sprache hinzufügen“ → „Chinesisch (vereinfacht, China)“. Danach wechselst du mit Windows-Taste + Leertaste zwischen Deutsch und Microsoft-Pinyin. Pinyin tippen und das Zeichen mit Leertaste oder Ziffer übernehmen.",
+    mac: "Mac: Systemeinstellungen → Tastatur → Eingabequellen → „Bearbeiten“ → „+“ → „Chinesisch, vereinfacht – Pinyin“. Wechseln über das Eingabemenü oben in der Menüleiste oder mit ctrl + Leertaste."
+  };
+  const hint = document.getElementById("imeHint");
+  const reopenRow = document.getElementById("imeReopenRow");
+  const textEl = document.getElementById("imeHintText");
+  const buttons = [...document.querySelectorAll("#imeSwitch button")];
+  function showDev(dev){
+    buttons.forEach(b => b.classList.toggle("active", b.dataset.dev === dev));
+    textEl.textContent = TEXTS[dev] || TEXTS.windows;
+  }
+  buttons.forEach(b => b.addEventListener("click", () => showDev(b.dataset.dev)));
+  showDev(cfDetectDevice());
+  function setHidden(hidden){
+    hint.style.display = hidden ? "none" : "";
+    reopenRow.style.display = hidden ? "" : "none";
+  }
+  setHidden(localStorage.getItem(KEY) === "1");
+  document.getElementById("imeHintClose").addEventListener("click", () => {
+    localStorage.setItem(KEY, "1");
+    setHidden(true);
   });
-}
-function finishTraceWord(){
-  if(autoNext){
-    setTraceStatus("Wort geschafft.", "ok");
-    setTimeout(moveToNextTraceWord, 700);
-  }else{
-    setTraceStatus("Wort geschafft. Drücke › für das nächste Wort.", "ok");
-  }
-}
-function moveToNextTraceWord(){
-  if(tWordIndex < traceWords.length - 1){
-    tWordIndex++;
-    loadTraceWord();
-  }else{
-    setTraceStatus("Alle Wörter geschafft!", "ok");
-  }
-}
-function runTraceAnimationThenQuiz(message){
-  if(!tWriter) return;
-  const token = ++traceQuizToken;
-  setTraceStatus(message || "Einmal ansehen …", null);
-  if(tWriter && typeof tWriter.cancelQuiz === "function") tWriter.cancelQuiz();
-  tWriter.showCharacter();
-  let returned = null;
-  try{
-    returned = tWriter.animateCharacter({
-      onComplete(){
-        if(token === traceQuizToken) setTimeout(startTraceQuiz, 250);
-      }
-    });
-  }catch(e){
-    returned = tWriter.animateCharacter();
-  }
-  if(returned && typeof returned.then === "function"){
-    returned.then(() => {
-      if(token === traceQuizToken) setTimeout(startTraceQuiz, 250);
-    });
-  }else{
-    setTimeout(() => { if(token === traceQuizToken) startTraceQuiz(); }, 1800);
-  }
-}
-function showTraceThenPractice(){
-  if(!tWriter) return;
-  if(traceLevel === "beginner"){
-    setTraceStatus("Wir starten dieses Zeichen noch einmal Strich für Strich.", null);
-    setTimeout(loadTraceChar, 250);
-    return;
-  }
-  runTraceAnimationThenQuiz("Einmal ansehen …");
-}
-function ensureTraceInit(){
-  if(traceInited) return;
-  traceInited = true;
-  if(traceWords.length === 0){
-    $("traceWrap").style.display = "none";
-    $("traceEmpty").style.display = "block";
-    return;
-  }
-  $("traceAuto").checked = autoNext;
-  const autoLabel = document.querySelector('label[for="traceAuto"]');
-  if(autoLabel) autoLabel.textContent = "Nach jedem Wort automatisch weiter";
-  setTraceLevelButtons();
-  loadTraceWord();
-}
-
-$("traceLevelBeginner").addEventListener("click", () => setTraceLevel("beginner"));
-$("traceLevelGuided").addEventListener("click", () => setTraceLevel("guided"));
-$("traceLevelPro").addEventListener("click", () => setTraceLevel("pro"));
-function setTraceLevel(level){
-  if(!TRACE_LEVELS[level] || traceLevel === level) return;
-  traceLevel = level;
-  localStorage.setItem(`cf_trace_level_${topic.id}`, traceLevel);
-  proFallback = false;
-  setTraceLevelButtons();
-  if(traceInited) loadTraceChar();
-}
-$("traceShow").addEventListener("click", showTraceThenPractice);
-$("traceStart").addEventListener("click", () => {
-  proFallback = false;
-  loadTraceChar();
-});
-$("traceNext").addEventListener("click", () => {
-  if(tWordIndex < traceWords.length - 1){
-    tWordIndex++;
-    loadTraceWord();
-    updateTraceNav();
-  }
-});
-$("tracePrev").addEventListener("click", () => {
-  if(tWordIndex > 0){
-    tWordIndex--;
-    loadTraceWord();
-    updateTraceNav();
-  }
-});
-$("traceAuto").addEventListener("change", e => {
-  autoNext = e.target.checked;
-  localStorage.setItem(`cf_trace_auto_${topic.id}`, autoNext ? "1" : "0");
-});
-
-// Standard: Schreiben/Tippen. Das alte Nachzeichnen ist als Strich-Spiel über ?tab=trace erreichbar.
-const initialWriteTab = (new URLSearchParams(location.search).get("tab") === "trace") ? "trace" : "type";
-activateWriteTab(initialWriteTab);
+  document.getElementById("imeHintReopen").addEventListener("click", () => setHidden(false));
+})();
 </script>
 </body>
 </html>
