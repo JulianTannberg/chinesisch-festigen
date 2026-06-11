@@ -22,13 +22,13 @@
       background:#fff;
       border-radius:18px;
       box-shadow:0 10px 30px var(--shadow);
-      /* Hilfslinien (Reis-Karo) */
+      /* Hilfslinien: exakt mittiges Kreuz */
       background-image:
-        linear-gradient(rgba(0,0,0,.10) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,0,0,.10) 1px, transparent 1px);
-      background-size:100% 50%, 50% 100%;
+        linear-gradient(to right, transparent calc(50% - 0.75px), rgba(0,0,0,.13) calc(50% - 0.75px), rgba(0,0,0,.13) calc(50% + 0.75px), transparent calc(50% + 0.75px)),
+        linear-gradient(to bottom, transparent calc(50% - 0.75px), rgba(0,0,0,.13) calc(50% - 0.75px), rgba(0,0,0,.13) calc(50% + 0.75px), transparent calc(50% + 0.75px));
+      background-size:100% 100%;
       background-repeat:no-repeat;
-      background-position:center;
+      background-position:center center;
       touch-action:none;
       width:280px;
       height:280px;
