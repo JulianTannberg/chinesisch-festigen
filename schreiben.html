@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Schreiben · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7/dist/hanzi-writer.min.js"></script>
+  <style>
+    /* Nur fürs Nachzeichnen – fügt sich in dein bestehendes Theme ein */
+    .traceWrap{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:14px;
+    }
+    .traceInfo{ text-align:center; min-height:54px; }
+    .traceInfo .zhBig{ font-size:24px; font-weight:850; opacity:.55; letter-spacing:4px; }
+    .traceInfo .pinyin{ font-size:20px; font-weight:700; opacity:.95; }
+    .traceInfo .de{ font-size:15px; opacity:.8; }
+    #traceTarget{
+      background:#fff;
+      border-radius:18px;
+      box-shadow:0 10px 30px var(--shadow);
+      /* Hilfslinien (Reis-Karo) */
+      background-image:
+        linear-gradient(rgba(0,0,0,.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,.10) 1px, transparent 1px);
+      background-size:100% 50%, 50% 100%;
+      background-repeat:no-repeat;
+      background-position:center;
+      touch-action:none;
+      width:280px;
+      height:280px;
+    }
+    .traceStatus{ min-height:26px; font-weight:800; font-size:16px; }
+    .traceStatus.ok{ color:#86efac; }
+    .traceStatus.bad{ color:#fecaca; }
+    .traceBtns{ display:flex; gap:10px; width:100%; max-width:300px; }
+    .traceBtns button{ flex:1; min-height:48px; }
+    .traceBtns .primary{ background:var(--card-strong); outline:2px solid rgba(255,255,255,.28); }
+    .traceNav{
+      display:flex; align-items:center; justify-content:space-between;
+      width:100%; max-width:300px;
+    }
+    .traceNav button{
+      width:50px; height:50px; border-radius:50%; font-size:22px; padding:0;
+    }
+    .traceCounter{ font-size:14px; color:var(--muted); }
+    .autoRow{
+      display:flex; align-items:center; gap:8px; font-size:14px; color:var(--muted);
+      margin-top:2px;
+    }
+    .autoRow input{ width:18px; height:18px; }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="topbar">
+      <a class="back" id="back">← Kapitel</a>
+      <div class="kicker" id="kicker">Schreiben</div>
+    </div>
+    <h1 id="title">Schreiben</h1>
+    <p class="subtitle">Tippen oder mit dem Finger nachzeichnen – such dir oben aus, wie du übst.</p>
+
+    <div class="tabbar">
+      <button class="tab active" data-tab="type" type="button">⌨️ Tippen</button>
+      <button class="tab" data-tab="trace" type="button">✍️ Nachzeichnen</button>
+    </div>
+
+    <!-- ============ PANEL: TIPPEN (dein bestehendes Quiz) ============ -->
+    <section class="panel active" id="panel-type">
+      <section class="card" id="quizCard">
+        <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Schreibvokabeln eingetragen.</div>
+
+        <div id="quiz">
+          <div class="modeSwitch" aria-label="Übungsrichtung auswählen">
+            <button id="modeToZh" type="button" class="active">Deutsch → Chinesisch</button>
+            <button id="modeToDe" type="button">Chinesisch → Deutsch</button>
+          </div>
+
+          <div class="small" id="promptLabel">Übersetze ins Chinesische:</div>
+          <div class="quizPrompt" id="prompt">–</div>
+
+          <div class="inputRow">
+            <input id="answer" lang="zh" inputmode="text" type="text" placeholder="Chinesische Zeichen eingeben …" autocomplete="off" spellcheck="false" />
+            <button id="actionBtn" type="button" disabled>Prüfen</button>
+          </div>
+
+          <div class="toolbar">
+            <button id="showSolution" type="button" disabled>Hilfe / Lösung anzeigen</button>
+            <button id="restartBtn" type="button">Von vorne starten</button>
+          </div>
+
+          <div id="feedback" class="feedback neutral"></div>
+
+          <div id="solutionBox" class="solutionBox">
+            <div class="small" id="solutionLabel">Richtige Lösung:</div>
+            <div class="zh" id="solutionText">–</div>
+            <div class="pinyin" id="pinyinText">–</div>
+          </div>
+
+          <div class="small">Fortschritt aktuelle Runde: <span id="posCounter">–</span></div>
+          <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
+
+          <div class="stats">
+            <div class="stat"><div class="statK">Runde</div><div class="statV" id="sRound">1</div></div>
+            <div class="stat"><div class="statK">Erstversuche</div><div class="statV" id="sAnswered">0</div></div>
+            <div class="stat"><div class="statK">Direkt richtig</div><div class="statV" id="sCorrect">0</div></div>
+            <div class="stat"><div class="statK">Quote</div><div class="statV" id="sRate">0%</div></div>
+            <div class="stat"><div class="statK">Serie</div><div class="statV" id="sStreak">0</div></div>
+          </div>
+        </div>
+
+        <div class="finish" id="finish">
+          <div class="confetti">🎉 ✨ 🏆 ✨ 🎉</div>
+          <p class="finishTitle">Geschafft!</p>
+          <p class="finishText" id="finishText">Du hast alle Wörter gemeistert.</p>
+          <div class="toolbar" style="justify-content:center;margin-top:18px;">
+            <button id="finishRestart" type="button">Noch einmal üben</button>
+            <a class="miniBtn" id="finishBack">Zurück zum Kapitel</a>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ============ PANEL: NACHZEICHNEN (Hanzi Writer) ============ -->
+    <section class="panel" id="panel-trace">
+      <section class="card">
+        <div id="traceEmpty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Vokabeln zum Nachzeichnen eingetragen.</div>
+
+        <div class="traceWrap" id="traceWrap">
+          <div class="traceInfo">
+            <div class="pinyin" id="tracePinyin">–</div>
+            <div class="de" id="traceDe">–</div>
+          </div>
+
+          <div id="traceTarget"></div>
+
+          <div class="traceStatus" id="traceStatus">&nbsp;</div>
+
+          <div class="traceBtns">
+            <button id="traceShow" type="button">Zeig mir</button>
+            <button id="traceStart" type="button" class="primary">Üben</button>
+          </div>
+
+          <div class="autoRow">
+            <input type="checkbox" id="traceAuto" />
+            <label for="traceAuto">Nach jedem Wort automatisch weiter</label>
+          </div>
+
+          <div class="traceNav">
+            <button id="tracePrev" type="button">‹</button>
+            <span class="traceCounter" id="traceCounter">1 / 1</span>
+            <button id="traceNext" type="button">›</button>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+<script src="topics.js"></script>
+<script>
+function qs(name, fallback="01"){
+  const p = new URLSearchParams(location.search);
+  return (p.get(name) || fallback).padStart(2,"0");
+}
+function getTopic(){
+  const id = qs("id");
+  return (window.CF_TOPICS || []).find(t => t.id === id) || window.CF_TOPICS[0];
+}
+function applyTheme(topic){
+  document.documentElement.style.setProperty("--chapter-bg", topic.accent);
+  document.documentElement.style.setProperty("--accent", topic.accent);
+  document.documentElement.style.setProperty("--chapter-text", topic.textColor || "#ffffff");
+  document.title = `${topic.id}. ${topic.title} · Chinesisch festigen`;
+}
+</script>
+
+<script>
+const topic = getTopic();
+applyTheme(topic);
+document.getElementById("back").href = `kapitel.html?id=${topic.id}`;
+document.getElementById("finishBack").href = `kapitel.html?id=${topic.id}`;
+document.getElementById("kicker").textContent = `Kapitel ${topic.id} · Schreiben`;
+document.getElementById("title").textContent = `${topic.id}. ${topic.title} · Schreiben`;
+
+/* ===== Reiter-Umschaltung ===== */
+const tabs = [...document.querySelectorAll(".tab")];
+tabs.forEach(tab => tab.addEventListener("click", () => {
+  tabs.forEach(t => t.classList.toggle("active", t === tab));
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+  document.getElementById(`panel-${tab.dataset.tab}`).classList.add("active");
+  if(tab.dataset.tab === "trace") ensureTraceInit();
+}));
+
+/* ============================================================
+   TEIL 1: TIPPEN  (unverändert aus deiner schreiben.html)
+   ============================================================ */
+const vocab = (topic.vocab || []).filter(v => v.zh && v.de);
+const $ = id => document.getElementById(id);
+const normalizeZh = s => String(s ?? "").trim().replace(/[\s。！？!?，,、；;：:·.]/g, "");
+const normalizeDe = s => String(s ?? "")
+  .toLowerCase()
+  .replace(/[„“”"'()\[\].,;:!?¿¡]/g, " ")
+  .replace(/\s+/g, " ")
+  .trim();
+const rangeIndices = () => [...Array(vocab.length).keys()];
+
+let direction = localStorage.getItem(`cf_write_direction_${topic.id}`) || "toZh";
+let globalStreak = parseInt(localStorage.getItem("cf_global_streak") || "0", 10);
+let bestStreak = parseInt(localStorage.getItem("cf_best_streak") || "0", 10);
+
+let wrongSet = new Set();
+let order = rangeIndices();
+let idx = 0;
+let round = 1;
+let answered = 0;
+let correct = 0;
+let firstCheckDone = false;
+let hasWrongAttempt = false;
+let usedHelp = false;
+let actionMode = "check";
+
+function stateKey(){ return `cf_write_state_v2_${topic.id}_${direction}`; }
+function writeZh(card){ return card.writeZh || card.zh; }
+function writePinyin(card){ return card.writePinyin || card.pinyin || ""; }
+function writeDe(card){ return card.writeDe || card.de || ""; }
+function current(){
+  const vocabIndex = order[idx];
+  return {...vocab[vocabIndex], vocabIndex};
+}
+function germanVariants(card){
+  const base = writeDe(card);
+  const variants = new Set([base]);
+  if(card.deAnswers) card.deAnswers.forEach(x => variants.add(x));
+  const noParen = base.replace(/\([^)]*\)/g, " ").trim();
+  if(noParen) variants.add(noParen);
+  const paren = [...base.matchAll(/\(([^)]*)\)/g)].map(m => m[1].trim()).filter(Boolean);
+  paren.forEach(x => variants.add(x));
+  base.split(/[\/;,]| oder | und /i).map(x => x.trim()).filter(Boolean).forEach(x => variants.add(x));
+  noParen.split(/[\/;,]| oder | und /i).map(x => x.trim()).filter(Boolean).forEach(x => variants.add(x));
+  if(/deutsche\/r/i.test(base)) ["deutsche", "deutscher", "deutsche/r"].forEach(x => variants.add(x));
+  if(/beijinger\/-in/i.test(base)) ["beijinger", "beijingerin", "beijinger/-in"].forEach(x => variants.add(x));
+  return [...variants].map(normalizeDe).filter(Boolean);
+}
+function isCorrect(input, card){
+  if(direction === "toZh") return normalizeZh(input) === normalizeZh(writeZh(card));
+  return germanVariants(card).includes(normalizeDe(input));
+}
+function solutionFor(card){
+  if(direction === "toZh"){
+    return { label:"Richtige Lösung:", main: writeZh(card), sub: writePinyin(card) };
+  }
+  return {
+    label:"Mögliche deutsche Lösung:",
+    main: writeDe(card),
+    sub: `${writeZh(card)}${writePinyin(card) ? " · " + writePinyin(card) : ""}`
+  };
+}
+function saveStreak(){
+  if(globalStreak > bestStreak) bestStreak = globalStreak;
+  localStorage.setItem("cf_global_streak", String(globalStreak));
+  localStorage.setItem("cf_best_streak", String(bestStreak));
+}
+function saveState(){
+  if(!vocab.length) return;
+  const state = {wrong:[...wrongSet], order, idx, round, answered, correct, savedAt:Date.now()};
+  localStorage.setItem(stateKey(), JSON.stringify(state));
+  localStorage.setItem(`cf_write_direction_${topic.id}`, direction);
+}
+function loadState(){
+  wrongSet = new Set();
+  order = rangeIndices();
+  idx = 0; round = 1; answered = 0; correct = 0;
+  firstCheckDone = false; hasWrongAttempt = false; usedHelp = false; actionMode = "check";
+  const raw = localStorage.getItem(stateKey());
+  if(!raw) return;
+  try{
+    const state = JSON.parse(raw);
+    if(Array.isArray(state.order) && state.order.every(i => Number.isInteger(i) && i >= 0 && i < vocab.length)) order = state.order;
+    if(Array.isArray(state.wrong)) wrongSet = new Set(state.wrong.filter(i => Number.isInteger(i) && i >= 0 && i < vocab.length));
+    idx = Math.max(0, Math.min(Number(state.idx) || 0, order.length));
+    round = Math.max(1, Number(state.round) || 1);
+    answered = Math.max(0, Number(state.answered) || 0);
+    correct = Math.max(0, Number(state.correct) || 0);
+  }catch(e){ localStorage.removeItem(stateKey()); }
+}
+function clearState(){ localStorage.removeItem(stateKey()); }
+function setFeedback(kind, text){
+  $("feedback").className = `feedback ${kind}`;
+  $("feedback").textContent = text || "";
+}
+function setInputState(state){
+  $("answer").classList.remove("correct","wrong");
+  if(state) $("answer").classList.add(state);
+}
+function setModeButtons(){
+  $("modeToZh").classList.toggle("active", direction === "toZh");
+  $("modeToDe").classList.toggle("active", direction === "toDe");
+  $("promptLabel").textContent = direction === "toZh" ? "Übersetze ins Chinesische:" : "Übersetze ins Deutsche:";
+  $("answer").lang = direction === "toZh" ? "zh" : "de";
+  $("answer").placeholder = direction === "toZh" ? "Chinesische Zeichen eingeben …" : "Deutsche Bedeutung eingeben …";
+}
+function updateStats(){
+  $("sRound").textContent = round;
+  $("sAnswered").textContent = answered;
+  $("sCorrect").textContent = correct;
+  $("sRate").textContent = answered ? Math.round(correct/answered*100) + "%" : "0%";
+  $("sStreak").textContent = globalStreak;
+  const total = order.length;
+  $("posCounter").textContent = total ? `${Math.min(idx+1,total)}/${total}` : "–";
+  $("progressFill").style.width = total ? `${Math.round(idx/total*100)}%` : "0%";
+}
+function render(){
+  setModeButtons();
+  updateStats();
+  $("finish").classList.remove("show");
+  $("quiz").style.display = "";
+  if(vocab.length === 0){
+    $("quiz").style.display = "none";
+    $("empty").style.display = "block";
+    return;
+  }
+  if(idx >= order.length){
+    if(wrongSet.size > 0){
+      round++;
+      order = [...wrongSet].sort((a,b)=>a-b);
+      idx = 0;
+      saveState();
+      setFeedback("neutral", "Die falschen Wörter kommen jetzt noch einmal.");
+      render();
+      return;
+    }
+    saveState();
+    $("quiz").style.display = "none";
+    $("finish").classList.add("show");
+    $("finishText").innerHTML = `Du hast alle Wörter dieses Kapitels gemeistert.<br>Aktuelle Lernserie: <strong>${globalStreak}</strong> · Beste Serie: <strong>${bestStreak}</strong>`;
+    return;
+  }
+  const card = current();
+  $("prompt").textContent = direction === "toZh" ? writeDe(card) : writeZh(card);
+  $("answer").value = "";
+  $("answer").disabled = false;
+  $("answer").focus();
+  const sol = solutionFor(card);
+  $("solutionLabel").textContent = sol.label;
+  $("solutionText").textContent = sol.main;
+  $("pinyinText").textContent = sol.sub;
+  $("solutionBox").style.display = "none";
+  $("showSolution").disabled = true;
+  $("actionBtn").disabled = true;
+  $("actionBtn").textContent = "Prüfen";
+  actionMode = "check";
+  firstCheckDone = false; hasWrongAttempt = false; usedHelp = false;
+  setInputState(null);
+  setFeedback("neutral", "");
+  saveState();
+}
+function check(){
+  if(idx >= order.length) return;
+  const card = current();
+  const val = $("answer").value;
+  if(direction === "toZh" ? !normalizeZh(val) : !normalizeDe(val)) return;
+  const ok = isCorrect(val, card);
+  if(!firstCheckDone){
+    answered++;
+    firstCheckDone = true;
+    if(ok){ correct++; globalStreak++; } else { globalStreak = 0; }
+    saveStreak();
+  }
+  if(ok){
+    setInputState("correct");
+    actionMode = "next";
+    $("actionBtn").textContent = "Weiter";
+    $("actionBtn").disabled = false;
+    if(!hasWrongAttempt && !usedHelp){
+      wrongSet.delete(card.vocabIndex);
+      setFeedback("ok", "Richtig. Weiter geht es.");
+    }else{
+      wrongSet.add(card.vocabIndex);
+      setFeedback("ok", "Jetzt richtig. Dieses Wort kommt zur Sicherheit noch einmal.");
+    }
+  }else{
+    hasWrongAttempt = true;
+    wrongSet.add(card.vocabIndex);
+    setInputState("wrong");
+    $("showSolution").disabled = false;
+    actionMode = "check";
+    $("actionBtn").textContent = "Prüfen";
+    setFeedback("bad", "Noch nicht richtig. Du kannst es verbessern oder dir die Hilfe ansehen.");
+  }
+  updateStats();
+  saveState();
+}
+function next(){ idx++; saveState(); render(); }
+function restart(){
+  clearState();
+  wrongSet = new Set(); order = rangeIndices();
+  idx = 0; round = 1; answered = 0; correct = 0;
+  render();
+}
+function switchDirection(nextDirection){
+  if(direction === nextDirection) return;
+  saveState();
+  direction = nextDirection;
+  loadState();
+  render();
+}
+$("answer").addEventListener("input", () => {
+  setInputState(null);
+  const val = $("answer").value;
+  $("actionBtn").disabled = direction === "toZh" ? normalizeZh(val).length === 0 : normalizeDe(val).length === 0;
+});
+$("answer").addEventListener("keydown", e => {
+  if(e.key === "Enter"){
+    e.preventDefault();
+    if($("actionBtn").disabled) return;
+    actionMode === "check" ? check() : next();
+  }
+});
+$("actionBtn").addEventListener("click", () => { actionMode === "check" ? check() : next(); });
+$("showSolution").addEventListener("click", () => {
+  usedHelp = true;
+  $("solutionBox").style.display = "block";
+  saveState();
+});
+$("restartBtn").onclick = restart;
+$("finishRestart").onclick = restart;
+$("modeToZh").onclick = () => switchDirection("toZh");
+$("modeToDe").onclick = () => switchDirection("toDe");
+loadState();
+render();
+
+/* ============================================================
+   TEIL 2: NACHZEICHNEN  (Hanzi Writer)
+   ============================================================ */
+// Nur Wörter mit echten Hanzi (keine Satzzeichen/Lücken) zum Nachzeichnen.
+const traceVocab = (topic.vocab || []).filter(v => /[\u4e00-\u9fff]/.test(v.zh || ""));
+
+// Akzentfarbe als Hex für Hanzi Writer (Strichfarbe)
+const accentHex = topic.accent || "#03172B";
+
+let tIndex = 0;
+let tChars = [];        // einzelne Zeichen des aktuellen Worts
+let tCharPos = 0;
+let tWriter = null;
+let traceInited = false;
+let autoNext = localStorage.getItem(`cf_trace_auto_${topic.id}`) === "1";
+
+function setTraceStatus(text, kind){
+  const el = $("traceStatus");
+  el.textContent = text || "\u00A0";
+  el.className = "traceStatus" + (kind ? " " + kind : "");
+}
+function onlyHanzi(s){ return [...String(s)].filter(c => /[\u4e00-\u9fff]/.test(c)); }
+
+function loadTraceWord(){
+  const v = traceVocab[tIndex];
+  tChars = onlyHanzi(v.zh);
+  tCharPos = 0;
+  $("traceCounter").textContent = `${tIndex + 1} / ${traceVocab.length}`;
+  updateTracePinyin();
+  loadTraceChar();
+}
+function updateTracePinyin(){
+  const v = traceVocab[tIndex];
+  let py = v.pinyin || "";
+  if(tChars.length > 1) py += `  (Zeichen ${tCharPos + 1}/${tChars.length})`;
+  $("tracePinyin").textContent = py;
+  $("traceDe").textContent = v.de || "";
+}
+function loadTraceChar(){
+  $("traceTarget").innerHTML = "";
+  setTraceStatus("", null);
+  const zeichen = tChars[tCharPos];
+  tWriter = HanziWriter.create("traceTarget", zeichen, {
+    width: 280,
+    height: 280,
+    padding: 14,
+    showOutline: true,
+    showCharacter: false,
+    strokeColor: accentHex,
+    radicalColor: "#c0392b",
+    drawingColor: "#2b2b33",
+    drawingWidth: 26,
+    leniency: 1.1,
+    showHintAfterMisses: 2
+  });
+}
+function nextTraceCharOrWord(){
+  if(tCharPos < tChars.length - 1){
+    tCharPos++;
+    updateTracePinyin();
+    loadTraceChar();
+  }else{
+    setTraceStatus("✓ Wort geschafft!", "ok");
+    if(autoNext){
+      setTimeout(() => {
+        if(tIndex < traceVocab.length - 1){ tIndex++; loadTraceWord(); updateTraceNav(); }
+      }, 1100);
+    }
+  }
+}
+function updateTraceNav(){
+  $("tracePrev").disabled = (tIndex === 0);
+  $("traceNext").disabled = (tIndex === traceVocab.length - 1);
+}
+function ensureTraceInit(){
+  if(traceInited) return;
+  traceInited = true;
+  if(traceVocab.length === 0){
+    $("traceWrap").style.display = "none";
+    $("traceEmpty").style.display = "block";
+    return;
+  }
+  $("traceAuto").checked = autoNext;
+  loadTraceWord();
+  updateTraceNav();
+}
+
+$("traceShow").addEventListener("click", () => {
+  if(!tWriter) return;
+  setTraceStatus("", null);
+  tWriter.showCharacter();
+  tWriter.animateCharacter();
+});
+$("traceStart").addEventListener("click", () => {
+  if(!tWriter) return;
+  tWriter.hideCharacter();
+  setTraceStatus("Schreib das Zeichen …", null);
+  tWriter.quiz({
+    onMistake(){ setTraceStatus("Nicht ganz – nochmal", "bad"); },
+    onCorrectStroke(){ setTraceStatus("…", null); },
+    onComplete(data){
+      const txt = data.totalMistakes === 0 ? "✓ Perfekt!" : `✓ Richtig (${data.totalMistakes} Korrekturen)`;
+      setTraceStatus(txt, "ok");
+      setTimeout(nextTraceCharOrWord, 850);
+    }
+  });
+});
+$("traceNext").addEventListener("click", () => {
+  if(tIndex < traceVocab.length - 1){ tIndex++; loadTraceWord(); updateTraceNav(); }
+});
+$("tracePrev").addEventListener("click", () => {
+  if(tIndex > 0){ tIndex--; loadTraceWord(); updateTraceNav(); }
+});
+$("traceAuto").addEventListener("change", e => {
+  autoNext = e.target.checked;
+  localStorage.setItem(`cf_trace_auto_${topic.id}`, autoNext ? "1" : "0");
+});
+</script>
+</body>
+</html>
