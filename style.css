@@ -323,3 +323,286 @@ input.wrong{border-color:var(--bad);background:rgba(239,68,68,.18)}
 .modeSwitch{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 14px;}
 .modeSwitch button{min-height:44px;padding:10px 8px;font-size:14px;line-height:1.2;white-space:normal;}
 @media(max-width:360px){.modeSwitch{gap:6px}.modeSwitch button{font-size:12.5px;padding:9px 6px;}}
+
+
+/* Flashkarten-Spiel */
+.flashTopline{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+  margin:6px 0 10px;
+  flex-wrap:wrap;
+}
+.flashCard{
+  width:100%;
+  min-height:300px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  text-align:center;
+  border-radius:24px;
+  border:1px solid var(--stroke);
+  background:rgba(255,255,255,.18);
+  box-shadow:0 16px 50px rgba(0,0,0,.22);
+  padding:22px;
+  position:relative;
+  overflow:hidden;
+}
+.flashCard:hover{background:rgba(255,255,255,.24)}
+.flashCard.revealed{
+  background:rgba(255,255,255,.24);
+  outline:2px solid rgba(255,255,255,.24);
+}
+.flashLabel{
+  font-size:13px;
+  font-weight:850;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.flashMain{
+  font-size:clamp(32px, 8vw, 62px);
+  line-height:1.08;
+  font-weight:950;
+}
+.flashHint{
+  font-size:13px;
+  color:var(--muted);
+}
+.flashBack{
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  border-top:1px solid var(--stroke);
+  width:min(520px,100%);
+  padding-top:16px;
+  margin-top:2px;
+}
+.flashCard.revealed .flashBack{display:flex;}
+.flashZh{
+  font-size:clamp(34px, 8vw, 58px);
+  font-weight:950;
+  line-height:1.08;
+}
+.flashPinyin{font-size:19px;opacity:.86;}
+.flashDe{font-size:18px;opacity:.86;}
+.flashActions{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:10px;
+  margin:14px 0;
+}
+#knownBtn{background:rgba(34,197,94,.20);}
+#againBtn{background:rgba(239,68,68,.18);}
+@media(max-width:520px){
+  .flashCard{min-height:260px;padding:18px;}
+  .flashActions{grid-template-columns:1fr 1fr;}
+  #flipBtn{grid-column:1 / -1;}
+}
+
+/* Gruppierung auf der Kapitelseite */
+.groupTitle{
+  font-size:18px;
+  margin:24px 0 10px;
+  letter-spacing:.02em;
+  color:var(--chapter-text);
+}
+
+/* Memory-Spiel */
+.gameStats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin:0 0 14px;
+}
+.memoryGrid{
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0, 1fr));
+  gap:10px;
+}
+.memoryCard{
+  min-height:112px;
+  border-radius:18px;
+  border:1px solid var(--stroke);
+  background:rgba(255,255,255,.15);
+  color:var(--chapter-text);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  text-align:center;
+  padding:10px;
+  box-shadow:0 8px 24px rgba(0,0,0,.12);
+}
+.memoryCard:hover{background:rgba(255,255,255,.22)}
+.memoryCard.open{background:rgba(255,255,255,.27);outline:2px solid rgba(255,255,255,.18)}
+.memoryCard.matched{background:rgba(34,197,94,.22);outline:2px solid rgba(34,197,94,.50)}
+.memoryFace{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:900}
+.memoryText{font-size:clamp(18px, 4.8vw, 32px);line-height:1.1;font-weight:950;word-break:break-word}
+.memorySub{font-size:13px;opacity:.78}
+@media(max-width:760px){.memoryGrid{grid-template-columns:repeat(3, minmax(0, 1fr));}.memoryCard{min-height:100px}}
+@media(max-width:440px){.memoryGrid{grid-template-columns:repeat(2, minmax(0, 1fr));}.gameStats{grid-template-columns:1fr 1fr}.gameStats .stat:first-child{grid-column:1 / -1}}
+
+/* Satz-Puzzle */
+.puzzleTopline{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:0 0 12px;
+}
+.promptMini{font-size:13px;color:var(--muted);font-weight:800;margin-bottom:4px}
+.puzzlePrompt{
+  font-size:clamp(22px, 6vw, 38px);
+  font-weight:950;
+  line-height:1.15;
+  margin:0 0 16px;
+}
+.dropZone,.tokenBank{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+  min-height:72px;
+  border-radius:18px;
+  padding:12px;
+  border:1px dashed var(--stroke);
+  background:rgba(255,255,255,.08);
+  margin:10px 0;
+}
+.dropZone{background:rgba(255,255,255,.13)}
+.dropHint{font-size:14px;color:var(--muted)}
+.wordToken{
+  min-height:48px;
+  padding:10px 14px;
+  border-radius:14px;
+  border:1px solid var(--stroke);
+  background:rgba(255,255,255,.22);
+  color:var(--chapter-text);
+  font-size:clamp(20px, 5vw, 32px);
+  font-weight:950;
+  cursor:grab;
+  box-shadow:0 8px 20px rgba(0,0,0,.12);
+}
+.wordToken:active{cursor:grabbing;transform:scale(.98)}
+
+/* Lückenspiel */
+.gapSentence{
+  font-size:clamp(28px, 7vw, 48px);
+  line-height:1.2;
+  font-weight:950;
+  margin:10px 0 18px;
+}
+.gapBlank{
+  display:inline-block;
+  min-width:96px;
+  text-align:center;
+  border-bottom:4px solid currentColor;
+  margin:0 4px;
+}
+.choiceGrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(120px,1fr));
+  gap:10px;
+  margin:12px 0;
+}
+.choiceBtn{
+  min-height:58px;
+  font-size:clamp(20px, 5vw, 32px);
+  font-weight:950;
+  border-radius:16px;
+  background:rgba(255,255,255,.17);
+}
+.choiceBtn.correctChoice{background:rgba(34,197,94,.25);outline:2px solid rgba(34,197,94,.56)}
+.choiceBtn.wrongChoice{background:rgba(239,68,68,.24);outline:2px solid rgba(239,68,68,.54)}
+@media(max-width:520px){.choiceGrid{grid-template-columns:1fr 1fr}.wordToken{font-size:24px}}
+
+
+/* Flashkarten: Chinesische Seite bewusst nur Hanzi; Rückseite in Chinesisch→Deutsch mit Deutsch oben */
+.flashBack.toZh .flashPinyin,
+.flashBack.toZh .flashDe{display:none;}
+.flashBack.toDe .flashDe{
+  order:1;
+  font-size:clamp(28px, 6vw, 48px);
+  font-weight:950;
+  line-height:1.1;
+  opacity:1;
+}
+.flashBack.toDe .flashZh{
+  order:2;
+  font-size:clamp(24px, 5vw, 38px);
+  font-weight:900;
+  line-height:1.08;
+  opacity:.92;
+}
+.flashBack.toDe .flashPinyin{
+  order:3;
+  font-size:18px;
+  opacity:.82;
+}
+.flashBack.toDe .flashLabel{order:0;}
+
+/* Ruhigere Oberfläche ohne Symbol-Icons */
+.modeCard{min-height:132px;}
+.modeTitle{margin-top:0;}
+.confetti{display:none;}
+
+/* Flashkarten: Karte selbst ohne Sprachlabel oder Zusatzhinweis */
+.flashCard .flashLabel,
+.flashCard .flashHint{display:none !important;}
+.flashCard:not(.revealed) .flashMain{font-size:clamp(34px, 9vw, 64px);}
+.flashBack.toDe .flashDe{
+  display:block;
+  order:1;
+  font-size:clamp(24px, 6vw, 40px);
+  font-weight:850;
+  opacity:1;
+}
+.flashBack.toDe .flashPinyin{
+  display:block;
+  order:2;
+  margin-top:10px;
+  font-size:clamp(18px, 4.6vw, 26px);
+  opacity:.86;
+}
+.flashBack.toDe .flashZh{display:none !important;}
+.flashBack.toZh .flashZh{
+  display:block;
+  order:1;
+  font-size:clamp(34px, 9vw, 64px);
+  font-weight:850;
+  opacity:1;
+}
+.flashBack.toZh .flashPinyin{
+  display:block;
+  order:2;
+  margin-top:10px;
+  font-size:clamp(18px, 4.6vw, 26px);
+  opacity:.86;
+}
+.flashBack.toZh .flashDe{display:none !important;}
+
+
+/* Memory: Karten ohne Sprachlabel, Ton-Schalter kompakt */
+.compactToolbar{
+  justify-content:flex-end;
+  margin:10px 0 12px;
+}
+#soundToggle.active{
+  background:var(--card-strong);
+  outline:2px solid rgba(255,255,255,.24);
+}
+.memoryText.memoryHidden{
+  opacity:.72;
+  font-size:clamp(24px, 6vw, 42px);
+}
+.memoryCard .memoryFace{display:none !important;}
+.memoryCard.zhCard .memoryText{
+  font-size:clamp(30px, 7vw, 48px);
+}

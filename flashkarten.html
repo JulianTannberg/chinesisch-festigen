@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flashkarten · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app flashApp">
+    <div class="topbar">
+      <a class="back" id="back">← Kapitel</a>
+      <div class="kicker" id="kicker">Flashkarten</div>
+    </div>
+    <h1 id="title">Flashkarten</h1>
+    <p class="subtitle">Vokabeln als Karten üben. Erst überlegen, dann aufdecken. Die Richtung kannst du jederzeit wechseln.</p>
+
+    <section class="card" id="flashCardWrap">
+      <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Flashkarten eingetragen.</div>
+
+      <div id="flashGame">
+        <div class="modeSwitch" aria-label="Übungsrichtung auswählen">
+          <button id="modeToZh" type="button" class="active">Deutsch → Chinesisch</button>
+          <button id="modeToDe" type="button">Chinesisch → Deutsch</button>
+        </div>
+
+        <div class="flashTopline">
+          <div class="small" id="cardCounter">Karte –</div>
+          <div class="small">Gewusst: <strong id="knownCount">0</strong> · Noch üben: <strong id="againCount">0</strong></div>
+        </div>
+
+        <button class="flashCard" id="flashCard" type="button" aria-label="Flashkarte aufdecken">
+          <span class="flashLabel" id="frontLabel"></span>
+          <span class="flashMain" id="frontText">–</span>
+          <span class="flashHint" id="frontHint"></span>
+
+          <span class="flashBack" id="flashBack" aria-hidden="true">
+            <span class="flashLabel" id="backLabel"></span>
+            <span class="flashZh" id="backZh">–</span>
+            <span class="flashPinyin" id="backPinyin">–</span>
+            <span class="flashDe" id="backDe">–</span>
+          </span>
+        </button>
+
+        <div class="flashActions">
+          <button id="flipBtn" type="button">Aufdecken</button>
+          <button id="againBtn" type="button" disabled>Noch üben</button>
+          <button id="knownBtn" type="button" disabled>Gewusst</button>
+        </div>
+
+        <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
+
+        <div class="toolbar">
+          <button id="restartBtn" type="button">Von vorne starten</button>
+          <button id="shuffleBtn" type="button">Mischen</button>
+        </div>
+
+        <p class="small">Tipp: Auf Handy einfach die Karte antippen. Auf dem PC geht auch Leertaste zum Aufdecken.</p>
+      </div>
+
+      <div class="finish" id="finish">
+        <p class="finishTitle">Alle Karten geschafft!</p>
+        <p class="finishText" id="finishText">Du hast alle Vokabeln wiederholt.</p>
+        <div class="toolbar" style="justify-content:center;margin-top:18px;">
+          <button id="finishRestart" type="button">Noch einmal üben</button>
+          <a class="miniBtn" id="finishBack">Zurück zum Kapitel</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script src="topics.js"></script>
+<script>
+function qs(name, fallback="01"){
+  const p = new URLSearchParams(location.search);
+  return (p.get(name) || fallback).padStart(2,"0");
+}
+function getTopic(){
+  const id = qs("id");
+  return (window.CF_TOPICS || []).find(t => t.id === id) || window.CF_TOPICS[0];
+}
+function applyTheme(topic){
+  document.documentElement.style.setProperty("--chapter-bg", topic.accent);
+  document.documentElement.style.setProperty("--accent", topic.accent);
+  document.documentElement.style.setProperty("--chapter-text", topic.textColor || "#ffffff");
+  document.title = `${topic.id}. ${topic.title} · Flashkarten`;
+}
+</script>
+
+<script>
+const topic = getTopic();
+applyTheme(topic);
+const $ = id => document.getElementById(id);
+$("back").href = `kapitel.html?id=${topic.id}`;
+$("finishBack").href = `kapitel.html?id=${topic.id}`;
+$("kicker").textContent = `Kapitel ${topic.id} · Flashkarten`;
+$("title").textContent = `${topic.id}. ${topic.title} · Flashkarten`;
+
+const vocab = (topic.vocab || []).filter(v => v.zh && v.de);
+let direction = localStorage.getItem(`cf_flash_direction_${topic.id}`) || "toZh";
+let order = [];
+let idx = 0;
+let known = 0;
+let again = 0;
+let revealed = false;
+
+function stateKey(){ return `cf_flash_state_v1_${topic.id}_${direction}`; }
+function rangeIndices(){ return [...Array(vocab.length).keys()]; }
+function shuffle(array){
+  const a = array.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function writeZh(card){ return card.writeZh || card.zh; }
+function writePinyin(card){ return card.writePinyin || card.pinyin || ""; }
+function writeDe(card){ return card.writeDe || card.de || ""; }
+function current(){ return vocab[order[idx]]; }
+
+let zhVoice = null;
+function pickZhVoice(){
+  const voices = speechSynthesis.getVoices ? speechSynthesis.getVoices() : [];
+  zhVoice = voices.find(v => (v.lang || "").toLowerCase().startsWith("zh")) || null;
+}
+if("speechSynthesis" in window){
+  pickZhVoice();
+  speechSynthesis.onvoiceschanged = pickZhVoice;
+}
+function speakChinese(card){
+  const text = writeZh(card);
+  if(!text) return;
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "zh-CN";
+    u.rate = 0.85;
+    if(zhVoice) u.voice = zhVoice;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+function saveState(){
+  if(!vocab.length) return;
+  localStorage.setItem(`cf_flash_direction_${topic.id}`, direction);
+  localStorage.setItem(stateKey(), JSON.stringify({order, idx, known, again, revealed:false, savedAt:Date.now()}));
+}
+function loadState(){
+  order = rangeIndices();
+  idx = 0;
+  known = 0;
+  again = 0;
+  revealed = false;
+  const raw = localStorage.getItem(stateKey());
+  if(!raw) return;
+  try{
+    const s = JSON.parse(raw);
+    if(Array.isArray(s.order) && s.order.every(i => Number.isInteger(i) && i >= 0 && i < vocab.length)) order = s.order;
+    idx = Math.max(0, Math.min(Number(s.idx) || 0, order.length));
+    known = Math.max(0, Number(s.known) || 0);
+    again = Math.max(0, Number(s.again) || 0);
+  }catch(e){
+    localStorage.removeItem(stateKey());
+  }
+}
+function clearState(){ localStorage.removeItem(stateKey()); }
+function setModeButtons(){
+  $("modeToZh").classList.toggle("active", direction === "toZh");
+  $("modeToDe").classList.toggle("active", direction === "toDe");
+}
+function updateProgress(){
+  const total = order.length || 0;
+  $("cardCounter").textContent = total ? `Karte ${Math.min(idx + 1, total)} von ${total}` : "Karte –";
+  $("knownCount").textContent = String(known);
+  $("againCount").textContent = String(again);
+  $("progressFill").style.width = total ? `${Math.round(idx / total * 100)}%` : "0%";
+}
+function setRevealed(value){
+  const wasRevealed = revealed;
+  revealed = value;
+  $("flashCard").classList.toggle("revealed", revealed);
+  $("flashBack").setAttribute("aria-hidden", revealed ? "false" : "true");
+  $("flipBtn").textContent = revealed ? "Verbergen" : "Aufdecken";
+  $("knownBtn").disabled = !revealed;
+  $("againBtn").disabled = !revealed;
+  if(revealed && !wasRevealed && idx < order.length){
+    speakChinese(current());
+  }
+}
+function render(){
+  setModeButtons();
+  updateProgress();
+  $("finish").classList.remove("show");
+  $("flashGame").style.display = "";
+  if(!vocab.length){
+    $("flashGame").style.display = "none";
+    $("empty").style.display = "block";
+    return;
+  }
+  if(idx >= order.length){
+    $("flashGame").style.display = "none";
+    $("finish").classList.add("show");
+    $("finishText").innerHTML = `Gewusst: <strong>${known}</strong> · Noch einmal angesehen: <strong>${again}</strong>`;
+    saveState();
+    return;
+  }
+  const card = current();
+  $("frontLabel").textContent = "";
+  $("frontHint").textContent = "";
+  $("backLabel").textContent = "";
+  if(direction === "toZh"){
+    // Vorderseite: nur Deutsch. Rückseite: Hanzi + Pinyin.
+    $("frontText").textContent = writeDe(card);
+    $("flashBack").className = "flashBack toZh";
+    $("backZh").textContent = writeZh(card);
+    $("backPinyin").textContent = writePinyin(card);
+    $("backDe").textContent = "";
+  }else{
+    // Vorderseite: nur Hanzi. Rückseite: nur Deutsch + Pinyin.
+    $("frontText").textContent = writeZh(card);
+    $("flashBack").className = "flashBack toDe";
+    $("backDe").textContent = writeDe(card);
+    $("backPinyin").textContent = writePinyin(card);
+    $("backZh").textContent = "";
+  }
+  setRevealed(false);
+  saveState();
+}
+function nextCard(kind){
+  if(kind === "known") known++;
+  if(kind === "again"){
+    again++;
+    order.push(order[idx]);
+  }
+  idx++;
+  render();
+}
+function restart(shuffleIt=false){
+  clearState();
+  order = shuffleIt ? shuffle(rangeIndices()) : rangeIndices();
+  idx = 0;
+  known = 0;
+  again = 0;
+  revealed = false;
+  render();
+}
+function switchDirection(nextDirection){
+  if(direction === nextDirection) return;
+  saveState();
+  direction = nextDirection;
+  loadState();
+  render();
+}
+
+$("flashCard").addEventListener("click", () => setRevealed(!revealed));
+$("flipBtn").addEventListener("click", () => setRevealed(!revealed));
+$("knownBtn").addEventListener("click", () => nextCard("known"));
+$("againBtn").addEventListener("click", () => nextCard("again"));
+$("restartBtn").addEventListener("click", () => restart(false));
+$("shuffleBtn").addEventListener("click", () => restart(true));
+$("finishRestart").addEventListener("click", () => restart(false));
+$("modeToZh").addEventListener("click", () => switchDirection("toZh"));
+$("modeToDe").addEventListener("click", () => switchDirection("toDe"));
+window.addEventListener("keydown", e => {
+  if(e.key === " " && $("flashGame").style.display !== "none"){
+    e.preventDefault();
+    setRevealed(!revealed);
+  }
+});
+
+loadState();
+render();
+</script>
+</body>
+</html>

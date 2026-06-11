@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lückenspiel · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app gapApp">
+    <div class="topbar">
+      <a class="back" id="back">← Kapitel</a>
+      <div class="kicker" id="kicker">Lückenspiel</div>
+    </div>
+    <h1 id="title">Lückenspiel</h1>
+    <p class="subtitle">Wähle das passende Wort für die Lücke. Die Aufgaben werden aus den eingetragenen Lücken und aus den Dialogsätzen des Kapitels gebildet.</p>
+
+    <section class="card">
+      <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Lücken oder Dialogsätze eingetragen.</div>
+      <div id="game">
+        <div class="puzzleTopline">
+          <div class="small" id="counter">Aufgabe –</div>
+          <button id="restartBtn" type="button">Von vorne starten</button>
+        </div>
+        <div class="gapSentence" id="sentence">–</div>
+        <div class="choiceGrid" id="choices"></div>
+        <div class="feedback neutral" id="feedback"></div>
+        <div class="solutionBox" id="solutionBox">
+          <div class="small">Richtiger Satz:</div>
+          <div class="zh" id="solutionZh">–</div>
+          <div class="pinyin" id="solutionPinyin">–</div>
+          <div class="de" id="solutionDe">–</div>
+        </div>
+        <div class="toolbar">
+          <button id="nextBtn" type="button" disabled>Weiter</button>
+        </div>
+        <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
+      </div>
+      <div class="finish" id="finish">
+        <p class="finishTitle">Lücken geschafft!</p>
+        <p class="finishText" id="finishText">Du hast alle Lücken ausgefüllt.</p>
+        <div class="toolbar" style="justify-content:center;margin-top:18px;">
+          <button id="finishRestart" type="button">Noch einmal spielen</button>
+          <a class="miniBtn" id="finishBack">Zurück zum Kapitel</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script src="topics.js"></script>
+<script>
+function qs(name, fallback="01"){
+  const p = new URLSearchParams(location.search);
+  return (p.get(name) || fallback).padStart(2,"0");
+}
+function getTopic(){
+  const id = qs("id");
+  return (window.CF_TOPICS || []).find(t => t.id === id) || window.CF_TOPICS[0];
+}
+function applyTheme(topic){
+  document.documentElement.style.setProperty("--chapter-bg", topic.accent);
+  document.documentElement.style.setProperty("--accent", topic.accent);
+  document.documentElement.style.setProperty("--chapter-text", topic.textColor || "#ffffff");
+  document.title = `${topic.id}. ${topic.title} · Lückenspiel`;
+}
+</script>
+<script>
+const topic = getTopic();
+applyTheme(topic);
+const $ = id => document.getElementById(id);
+$("back").href = `kapitel.html?id=${topic.id}`;
+$("finishBack").href = `kapitel.html?id=${topic.id}`;
+$("kicker").textContent = `Kapitel ${topic.id} · Lückenspiel`;
+$("title").textContent = `${topic.id}. ${topic.title} · Lückenspiel`;
+
+function shuffle(array){
+  const a = array.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function stripPunctuation(s){
+  return String(s || "").replace(/[。！？!?，,；;：:\s]/g, "");
+}
+function uniqueBy(items, keyFn){
+  const seen = new Set();
+  return items.filter(item => {
+    const key = keyFn(item);
+    if(seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+function buildAutoGaps(topic){
+  const vocabPool = uniqueBy([...(topic.vocab || []), ...(topic.understandingVocab || [])]
+    .filter(v => v && v.zh && stripPunctuation(v.zh).length >= 1)
+    .map(v => ({...v, cleanZh: stripPunctuation(v.zh), displayZh: String(v.zh).trim()})), v => v.cleanZh)
+    .filter(v => v.cleanZh)
+    .sort((a,b) => b.cleanZh.length - a.cleanZh.length);
+
+  const choicePool = vocabPool.map(v => v.displayZh);
+  const lines = [...(topic.storyDialog || [])];
+  const auto = [];
+
+  lines.forEach(line => {
+    const zh = String(line.zh || "").trim();
+    if(!zh) return;
+
+    // Nimm pro Dialogzeile möglichst ein bekanntes Wort. Längere Wörter zuerst,
+    // damit z.B. „北京人“ nicht nur zu „人“ wird.
+    const candidate = vocabPool.find(v => zh.includes(v.cleanZh));
+    if(!candidate) return;
+
+    const targetInSentence = zh.includes(candidate.displayZh) ? candidate.displayZh : candidate.cleanZh;
+    const answer = candidate.displayZh;
+    const prompt = zh.replace(targetInSentence, "___");
+    const answerLen = candidate.cleanZh.length;
+
+    const distractors = choicePool
+      .filter(x => stripPunctuation(x) !== candidate.cleanZh)
+      .filter(x => Math.abs(stripPunctuation(x).length - answerLen) <= 2 || answerLen <= 1)
+      .slice(0, 24);
+
+    const choices = shuffle([answer, ...shuffle(distractors).slice(0, 3)]);
+    if(choices.length < 2) return;
+
+    auto.push({
+      prompt,
+      answer,
+      choices,
+      solution: zh,
+      pinyin: line.pinyin || "",
+      de: line.de || "",
+      source: "dialog"
+    });
+  });
+
+  return uniqueBy(auto, g => `${g.prompt}|${g.answer}`);
+}
+function prepareGaps(topic){
+  const manual = (topic.gapExercises || []).map(g => ({...g, choices: shuffle(g.choices || [])}));
+  const auto = buildAutoGaps(topic);
+  return uniqueBy([...manual, ...auto], g => `${g.prompt}|${g.answer}`);
+}
+
+const gaps = prepareGaps(topic);
+let idx = 0;
+let correct = 0;
+let locked = false;
+
+function stateKey(){ return `cf_gap_state_v1_${topic.id}`; }
+function save(){ localStorage.setItem(stateKey(), JSON.stringify({idx, correct, savedAt:Date.now()})); }
+function load(){
+  try{
+    const s = JSON.parse(localStorage.getItem(stateKey()) || "{}");
+    idx = Math.max(0, Math.min(Number(s.idx)||0, gaps.length));
+    correct = Math.max(0, Number(s.correct)||0);
+  }catch(e){ idx = 0; correct = 0; }
+}
+function setFeedback(kind, text){
+  const el = $("feedback");
+  el.className = `feedback ${kind}`;
+  el.textContent = text || "";
+}
+function render(){
+  $("finish").classList.remove("show");
+  if(!gaps.length){ $("game").style.display="none"; $("empty").style.display="block"; return; }
+  if(idx >= gaps.length){
+    $("game").style.display="none";
+    $("finish").classList.add("show");
+    $("finishText").innerHTML = `Direkt richtig: <strong>${correct}</strong> von <strong>${gaps.length}</strong>`;
+    save();
+    return;
+  }
+  locked = false;
+  const g = gaps[idx];
+  $("game").style.display="";
+  $("counter").textContent = `Aufgabe ${idx+1} von ${gaps.length}`;
+  $("sentence").innerHTML = (g.prompt || "").replace("___", '<span class="gapBlank">___</span>');
+  $("solutionZh").textContent = g.solution || "";
+  $("solutionPinyin").textContent = g.pinyin || "";
+  $("solutionDe").textContent = g.de || "";
+  $("solutionBox").style.display = "none";
+  $("nextBtn").disabled = true;
+  setFeedback("neutral", "");
+  $("progressFill").style.width = `${Math.round(idx / gaps.length * 100)}%`;
+  const c = $("choices");
+  c.innerHTML = "";
+  shuffle(g.choices || []).forEach(choice => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "choiceBtn";
+    b.textContent = choice;
+    b.addEventListener("click", () => choose(choice, b));
+    c.appendChild(b);
+  });
+  save();
+}
+function choose(choice, btn){
+  if(locked) return;
+  locked = true;
+  const g = gaps[idx];
+  document.querySelectorAll(".choiceBtn").forEach(b => b.disabled = true);
+  if(choice === g.answer){
+    btn.classList.add("correctChoice");
+    correct++;
+    setFeedback("ok", "Richtig!");
+  }else{
+    btn.classList.add("wrongChoice");
+    document.querySelectorAll(".choiceBtn").forEach(b => { if(b.textContent === g.answer) b.classList.add("correctChoice"); });
+    setFeedback("bad", `Noch nicht. Richtig ist: ${g.answer}`);
+  }
+  $("solutionBox").style.display = "block";
+  $("nextBtn").disabled = false;
+  save();
+}
+function next(){ idx++; render(); }
+function restart(){ idx = 0; correct = 0; localStorage.removeItem(stateKey()); render(); }
+
+$("nextBtn").addEventListener("click", next);
+$("restartBtn").addEventListener("click", restart);
+$("finishRestart").addEventListener("click", restart);
+load();
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Satz-Puzzle · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app puzzleApp">
+    <div class="topbar">
+      <a class="back" id="back">← Kapitel</a>
+      <div class="kicker" id="kicker">Satz-Puzzle</div>
+    </div>
+    <h1 id="title">Satz-Puzzle</h1>
+    <p class="subtitle">Schiebe die Wortkarten in die richtige Reihenfolge. Antippen funktioniert auch.</p>
+
+    <section class="card">
+      <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Satz-Puzzles eingetragen.</div>
+      <div id="game">
+        <div class="puzzleTopline">
+          <div class="small" id="counter">Satz –</div>
+          <button id="restartBtn" type="button">Von vorne starten</button>
+        </div>
+
+        <div class="promptMini">Baue diesen Satz auf Chinesisch:</div>
+        <div class="puzzlePrompt" id="prompt">–</div>
+
+        <div class="dropZone" id="answerZone" aria-label="Antwortbereich"></div>
+        <div class="tokenBank" id="tokenBank" aria-label="Wortkarten"></div>
+
+        <div class="toolbar">
+          <button id="checkBtn" type="button">Prüfen</button>
+          <button id="undoBtn" type="button">Letzte Karte zurück</button>
+          <button id="resetBtn" type="button">Satz zurücksetzen</button>
+        </div>
+        <div class="feedback neutral" id="feedback"></div>
+        <div class="solutionBox" id="solutionBox">
+          <div class="small">Lösung:</div>
+          <div class="zh" id="solutionZh">–</div>
+          <div class="pinyin" id="solutionPinyin">–</div>
+        </div>
+        <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
+      </div>
+      <div class="finish" id="finish">
+        <p class="finishTitle">Sätze gebaut!</p>
+        <p class="finishText">Du hast alle Satz-Puzzles dieses Kapitels geschafft.</p>
+        <div class="toolbar" style="justify-content:center;margin-top:18px;">
+          <button id="finishRestart" type="button">Noch einmal spielen</button>
+          <a class="miniBtn" id="finishBack">Zurück zum Kapitel</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script src="topics.js"></script>
+<script>
+function qs(name, fallback="01"){
+  const p = new URLSearchParams(location.search);
+  return (p.get(name) || fallback).padStart(2,"0");
+}
+function getTopic(){
+  const id = qs("id");
+  return (window.CF_TOPICS || []).find(t => t.id === id) || window.CF_TOPICS[0];
+}
+function applyTheme(topic){
+  document.documentElement.style.setProperty("--chapter-bg", topic.accent);
+  document.documentElement.style.setProperty("--accent", topic.accent);
+  document.documentElement.style.setProperty("--chapter-text", topic.textColor || "#ffffff");
+  document.title = `${topic.id}. ${topic.title} · Satz-Puzzle`;
+}
+function shuffle(array){
+  const a = array.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+</script>
+<script>
+const topic = getTopic();
+applyTheme(topic);
+const $ = id => document.getElementById(id);
+$("back").href = `kapitel.html?id=${topic.id}`;
+$("finishBack").href = `kapitel.html?id=${topic.id}`;
+$("kicker").textContent = `Kapitel ${topic.id} · Satz-Puzzle`;
+$("title").textContent = `${topic.id}. ${topic.title} · Satz-Puzzle`;
+
+const puzzles = topic.sentencePuzzles || [];
+let idx = 0;
+let bank = [];
+let answer = [];
+let tokenId = 0;
+
+function stateKey(){ return `cf_puzzle_state_v1_${topic.id}`; }
+function save(){ localStorage.setItem(stateKey(), JSON.stringify({idx, savedAt:Date.now()})); }
+function load(){
+  try{
+    const s = JSON.parse(localStorage.getItem(stateKey()) || "{}");
+    idx = Math.max(0, Math.min(Number(s.idx)||0, puzzles.length));
+  }catch(e){ idx = 0; }
+}
+function setFeedback(kind, text){
+  const el = $("feedback");
+  el.className = `feedback ${kind}`;
+  el.textContent = text || "";
+}
+function makeTokens(tokens){
+  tokenId = 0;
+  return shuffle(tokens.map(t => ({id:`t${tokenId++}`, text:t})));
+}
+function current(){ return puzzles[idx]; }
+function startSentence(){
+  const p = current();
+  bank = makeTokens(p.tokens || []);
+  answer = [];
+  $("solutionBox").style.display = "none";
+  setFeedback("neutral", "");
+  render();
+}
+function render(){
+  $("finish").classList.remove("show");
+  if(!puzzles.length){ $("game").style.display="none"; $("empty").style.display="block"; return; }
+  if(idx >= puzzles.length){
+    $("game").style.display="none";
+    $("finish").classList.add("show");
+    save();
+    return;
+  }
+  $("game").style.display="";
+  const p = current();
+  $("counter").textContent = `Satz ${idx+1} von ${puzzles.length}`;
+  $("prompt").textContent = p.de;
+  $("solutionZh").textContent = p.zh;
+  $("solutionPinyin").textContent = p.pinyin || "";
+  $("progressFill").style.width = `${Math.round(idx / puzzles.length * 100)}%`;
+  renderTokens();
+  save();
+}
+function tokenButton(token, from){
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "wordToken";
+  b.draggable = true;
+  b.textContent = token.text;
+  b.dataset.id = token.id;
+  b.dataset.from = from;
+  b.addEventListener("click", () => from === "bank" ? moveToAnswer(token.id) : moveToBank(token.id));
+  b.addEventListener("dragstart", e => {
+    e.dataTransfer.setData("text/plain", JSON.stringify({id:token.id, from}));
+  });
+  return b;
+}
+function renderTokens(){
+  const answerZone = $("answerZone");
+  const tokenBank = $("tokenBank");
+  answerZone.innerHTML = "";
+  tokenBank.innerHTML = "";
+  if(answer.length === 0){
+    const ph = document.createElement("div");
+    ph.className = "dropHint";
+    ph.textContent = "Wortkarten hierhin schieben oder antippen";
+    answerZone.appendChild(ph);
+  }
+  answer.forEach(t => answerZone.appendChild(tokenButton(t, "answer")));
+  bank.forEach(t => tokenBank.appendChild(tokenButton(t, "bank")));
+  $("checkBtn").disabled = answer.length === 0;
+}
+function moveToAnswer(id){
+  const i = bank.findIndex(t => t.id === id);
+  if(i < 0) return;
+  answer.push(bank.splice(i,1)[0]);
+  setFeedback("neutral", "");
+  $("solutionBox").style.display = "none";
+  renderTokens();
+}
+function moveToBank(id){
+  const i = answer.findIndex(t => t.id === id);
+  if(i < 0) return;
+  bank.push(answer.splice(i,1)[0]);
+  setFeedback("neutral", "");
+  renderTokens();
+}
+function handleDrop(target){
+  target.addEventListener("dragover", e => e.preventDefault());
+  target.addEventListener("drop", e => {
+    e.preventDefault();
+    try{
+      const data = JSON.parse(e.dataTransfer.getData("text/plain"));
+      if(target.id === "answerZone" && data.from === "bank") moveToAnswer(data.id);
+      if(target.id === "tokenBank" && data.from === "answer") moveToBank(data.id);
+    }catch(err){}
+  });
+}
+function check(){
+  const p = current();
+  const attempt = answer.map(t => t.text).join("");
+  const solution = (p.tokens || []).join("");
+  if(attempt === solution){
+    setFeedback("ok", "Richtig! Sehr gut gebaut.");
+    setTimeout(() => { idx++; startSentence(); }, 650);
+  }else{
+    setFeedback("bad", "Noch nicht richtig. Schau genau auf die Reihenfolge.");
+    $("solutionBox").style.display = "block";
+  }
+}
+function undo(){ if(answer.length){ bank.push(answer.pop()); renderTokens(); } }
+function resetSentence(){ startSentence(); }
+function restartAll(){ idx = 0; localStorage.removeItem(stateKey()); startSentence(); }
+
+handleDrop($("answerZone"));
+handleDrop($("tokenBank"));
+$("checkBtn").addEventListener("click", check);
+$("undoBtn").addEventListener("click", undo);
+$("resetBtn").addEventListener("click", resetSentence);
+$("restartBtn").addEventListener("click", restartAll);
+$("finishRestart").addEventListener("click", restartAll);
+
+load();
+startSentence();
+</script>
+</body>
+</html>

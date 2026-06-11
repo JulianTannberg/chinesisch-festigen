@@ -425,7 +425,95 @@ window.CF_TOPICS = [
     ],
     "storyDialogTitle": "Ankunft am Bahnhof Beijing Süd",
     "studentDialogTitle": "Begrüßung, Name und Herkunft",
-    "studentDialogNote": "Die Lernenden begrüßen sich, stellen sich vor und fragen nach der Nationalität. Bei Nein wird nach dem richtigen Land gefragt."
+    "studentDialogNote": "Die Lernenden begrüßen sich, stellen sich vor und fragen nach der Nationalität. Bei Nein wird nach dem richtigen Land gefragt.",
+    "sentencePuzzles": [
+      {
+        "de": "Ich heiße Su Ran.",
+        "zh": "我叫苏然。",
+        "pinyin": "Wǒ jiào Sū Rán.",
+        "tokens": ["我", "叫", "苏然", "。"]
+      },
+      {
+        "de": "Wie heißt du?",
+        "zh": "你叫什么名字？",
+        "pinyin": "Nǐ jiào shénme míngzi?",
+        "tokens": ["你", "叫", "什么", "名字", "？"]
+      },
+      {
+        "de": "Bist du aus Beijing?",
+        "zh": "你是北京人吗？",
+        "pinyin": "Nǐ shì Běijīng rén ma?",
+        "tokens": ["你", "是", "北京人", "吗", "？"]
+      },
+      {
+        "de": "Ich komme aus Shanghai.",
+        "zh": "我从上海来。",
+        "pinyin": "Wǒ cóng Shànghǎi lái.",
+        "tokens": ["我", "从", "上海", "来", "。"]
+      },
+      {
+        "de": "Ich bin Deutsche/r.",
+        "zh": "我是德国人。",
+        "pinyin": "Wǒ shì Déguó rén.",
+        "tokens": ["我", "是", "德国人", "。"]
+      },
+      {
+        "de": "Ich bin nicht aus Beijing.",
+        "zh": "我不是北京人。",
+        "pinyin": "Wǒ bú shì Běijīng rén.",
+        "tokens": ["我", "不", "是", "北京人", "。"]
+      }
+    ],
+    "gapExercises": [
+      {
+        "prompt": "你好，我 ___ 苏然。",
+        "answer": "叫",
+        "choices": ["叫", "是", "从", "吗"],
+        "solution": "你好，我叫苏然。",
+        "pinyin": "Nǐ hǎo, wǒ jiào Sū Rán.",
+        "de": "Hallo, ich heiße Su Ran."
+      },
+      {
+        "prompt": "你是北京人 ___ ？",
+        "answer": "吗",
+        "choices": ["吗", "呢", "叫", "来"],
+        "solution": "你是北京人吗？",
+        "pinyin": "Nǐ shì Běijīng rén ma?",
+        "de": "Bist du aus Beijing?"
+      },
+      {
+        "prompt": "我 ___ 上海来。",
+        "answer": "从",
+        "choices": ["从", "是", "叫", "看"],
+        "solution": "我从上海来。",
+        "pinyin": "Wǒ cóng Shànghǎi lái.",
+        "de": "Ich komme aus Shanghai."
+      },
+      {
+        "prompt": "我从上海 ___ 。",
+        "answer": "来",
+        "choices": ["来", "看", "好", "叫"],
+        "solution": "我从上海来。",
+        "pinyin": "Wǒ cóng Shànghǎi lái.",
+        "de": "Ich komme aus Shanghai."
+      },
+      {
+        "prompt": "我是德国人。 ___",
+        "answer": "你呢？",
+        "choices": ["你呢？", "是吗？", "什么？", "不。"],
+        "solution": "我是德国人。你呢？",
+        "pinyin": "Wǒ shì Déguó rén. Nǐ ne?",
+        "de": "Ich bin Deutsche/r. Und du?"
+      },
+      {
+        "prompt": "我 ___ 德国人。",
+        "answer": "是",
+        "choices": ["是", "不", "从", "吗"],
+        "solution": "我是德国人。",
+        "pinyin": "Wǒ shì Déguó rén.",
+        "de": "Ich bin Deutsche/r."
+      }
+    ]
   },
   {
     "id": "02",

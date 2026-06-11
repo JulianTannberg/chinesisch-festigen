@@ -15,21 +15,39 @@
     <h1 id="title">Kapitel</h1>
     <p class="subtitle" id="short"></p>
 
+    <h2 class="groupTitle">Lernen</h2>
     <section class="grid">
       <a class="modeCard" id="hearLink">
-        <div class="modeIcon">🎧</div>
         <p class="modeTitle">Hören</p>
         <p class="modeText">Vokabeln antippen und Dialog/Geschichte mit langsamem Tempo anhören.</p>
       </a>
       <a class="modeCard" id="writeLink">
-        <div class="modeIcon">✍️</div>
         <p class="modeTitle">Schreiben</p>
         <p class="modeText">Vokabeln aktiv schreiben, Fehler wiederholen und die Lernserie halten.</p>
       </a>
       <a class="modeCard" id="speakLink">
-        <div class="modeIcon">🗣️</div>
         <p class="modeTitle">Sprechen</p>
         <p class="modeText">Den Schülerdialog mit KI als Gesprächspartner üben.</p>
+      </a>
+    </section>
+
+    <h2 class="groupTitle">Spielen</h2>
+    <section class="grid">
+      <a class="modeCard" id="flashLink">
+        <p class="modeTitle">Flashkarten</p>
+        <p class="modeText">Vokabeln als Karten üben, aufdecken und schwierige Wörter wiederholen.</p>
+      </a>
+      <a class="modeCard" id="memoryLink">
+        <p class="modeTitle">Memory</p>
+        <p class="modeText">Hanzi und deutsche Bedeutung als Paare finden.</p>
+      </a>
+      <a class="modeCard" id="puzzleLink">
+        <p class="modeTitle">Satz-Puzzle</p>
+        <p class="modeText">Wortkarten schieben und chinesische Sätze zusammensetzen.</p>
+      </a>
+      <a class="modeCard" id="gapLink">
+        <p class="modeTitle">Lückenspiel</p>
+        <p class="modeText">Das passende Wort für die Lücke auswählen.</p>
       </a>
     </section>
   </main>
@@ -64,6 +82,10 @@ function escapeHtml(s){
   document.getElementById("hearLink").href = `hoeren.html?id=${topic.id}`;
   document.getElementById("writeLink").href = `schreiben.html?id=${topic.id}`;
   document.getElementById("speakLink").href = `sprechen.html?id=${topic.id}`;
+  document.getElementById("flashLink").href = `flashkarten.html?id=${topic.id}`;
+  document.getElementById("memoryLink").href = `memory.html?id=${topic.id}`;
+  document.getElementById("puzzleLink").href = `satzpuzzle.html?id=${topic.id}`;
+  document.getElementById("gapLink").href = `luecken.html?id=${topic.id}`;
 </script>
 </body>
 </html>
