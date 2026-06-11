@@ -709,3 +709,11 @@ input.wrong{border-color:var(--bad);background:rgba(239,68,68,.18)}
   opacity:.92;
 }
 .profileMini strong{color:var(--chapter-text);}
+
+
+/* Sprechen: zwei Reiter bleiben nebeneinander */
+.speakTabbar{grid-template-columns:1fr 1fr;}
+@media(max-width:640px){
+  .speakTabbar{grid-template-columns:1fr 1fr; gap:8px;}
+  .speakTabbar .tab{font-size:14px; min-height:44px; padding:8px 6px;}
+}

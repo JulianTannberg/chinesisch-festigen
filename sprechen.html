@@ -13,21 +13,80 @@
       <div class="kicker" id="kicker">Sprechen</div>
     </div>
     <h1 id="title">Sprechen</h1>
-    <p class="subtitle">Der Prompt nutzt nur den Schülerdialog dieses Kapitels. Die KI beginnt zuerst nur mit „你好！“ und startet den Dialog danach langsam.</p>
+    <p class="subtitle">Übe zuerst einzelne Sätze mit Spracherkennung. Daneben kannst du den Schülerdialog als KI-Gespräch starten.</p>
 
-    <section class="card">
-      <div id="dialogPreview" class="dialog" style="margin-bottom:16px;"></div>
+    <div class="tabbar speakTabbar">
+      <button class="tab active" data-tab="satz" type="button">Sätze sprechen</button>
+      <button class="tab" data-tab="ki" type="button">KI sprechen</button>
+    </div>
 
-      <div class="small" style="margin-bottom:8px;">Prompt zum Kopieren:</div>
-      <textarea class="promptBox" id="prompt" readonly></textarea>
+    <section class="panel active" id="panel-satz">
+      <section class="card speechCheckCard">
+        <div id="unsupported" class="empty" style="display:none;">
+          Die Spracherkennung ist in diesem Browser nicht verfügbar. Probiere es mit Chrome oder Safari und öffne die Seite über HTTPS, zum Beispiel über GitHub Pages.
+        </div>
 
-      <div class="toolbar">
-        <button id="copyOpenBtn" type="button">Prompt kopieren & ChatGPT öffnen</button>
-        <button id="copyBtn" type="button">Nur kopieren</button>
-        <button id="openBtn" type="button">Nur ChatGPT öffnen</button>
-        <span class="small" id="copyStatus"></span>
-      </div>
-      <p class="small">Falls ChatGPT den Text nicht automatisch übernimmt: Prompt kopieren, ChatGPT öffnen, in das Nachrichtenfeld einfügen und senden.</p>
+        <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Sprechsätze eingetragen.</div>
+
+        <div id="game">
+          <div class="puzzleTopline">
+            <div class="small" id="counter">Satz –</div>
+            <button id="restartBtn" type="button">Von vorne starten</button>
+          </div>
+
+          <div class="promptMini">Sag auf Chinesisch:</div>
+          <div class="speakGerman" id="germanPrompt">–</div>
+
+          <div class="toolbar">
+            <button id="recordBtn" class="recordBtn" type="button">Aufnehmen</button>
+            <button id="hearBtn" type="button">Lösung anhören</button>
+            <button id="showBtn" type="button">Lösung zeigen</button>
+            <button id="nextBtn" type="button" disabled>Weiter</button>
+          </div>
+
+          <div class="small">Erkannt:</div>
+          <div class="speakTranscript" id="transcript">Noch nichts aufgenommen.</div>
+          <div class="feedback neutral" id="feedback"></div>
+          <div class="small" id="micHint"></div>
+
+          <div class="speakExpected" id="expectedBox">
+            <div class="small">Erwarteter Satz:</div>
+            <div class="zh" id="expectedZh">–</div>
+            <div class="pinyin" id="expectedPinyin">–</div>
+            <div class="de" id="expectedDe">–</div>
+          </div>
+
+          <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
+        </div>
+
+        <div class="finish" id="finish">
+          <p class="finishTitle">Sätze geschafft!</p>
+          <p class="finishText" id="finishText">Du hast alle Sätze gesprochen.</p>
+          <div class="toolbar" style="justify-content:center;margin-top:18px;">
+            <button id="finishRestart" type="button">Noch einmal üben</button>
+            <a class="miniBtn" id="finishBack">Zurück zum Kapitel</a>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section class="panel" id="panel-ki">
+      <section class="card">
+        <p class="small" style="margin-top:0;">Der Prompt nutzt nur den Schülerdialog dieses Kapitels. Die KI beginnt zuerst nur mit „你好！“ und startet den Dialog danach langsam.</p>
+
+        <div id="dialogPreview" class="dialog" style="margin-bottom:16px;"></div>
+
+        <div class="small" style="margin-bottom:8px;">Prompt zum Kopieren:</div>
+        <textarea class="promptBox" id="prompt" readonly></textarea>
+
+        <div class="toolbar">
+          <button id="copyOpenBtn" type="button">Prompt kopieren & ChatGPT öffnen</button>
+          <button id="copyBtn" type="button">Nur kopieren</button>
+          <button id="openBtn" type="button">Nur ChatGPT öffnen</button>
+          <span class="small" id="copyStatus"></span>
+        </div>
+        <p class="small">Falls ChatGPT den Text nicht automatisch übernimmt: Prompt kopieren, ChatGPT öffnen, in das Nachrichtenfeld einfügen und senden.</p>
+      </section>
     </section>
   </main>
 
@@ -46,7 +105,7 @@ function applyTheme(topic){
   document.documentElement.style.setProperty("--chapter-bg", topic.accent);
   document.documentElement.style.setProperty("--accent", topic.accent);
   document.documentElement.style.setProperty("--chapter-text", topic.textColor || "#ffffff");
-  document.title = `${topic.id}. ${topic.title} · Chinesisch festigen`;
+  document.title = `${topic.id}. ${topic.title} · Sprechen`;
 }
 function escapeHtml(s){
   return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -56,10 +115,273 @@ function escapeHtml(s){
 <script>
 const topic = getTopic();
 applyTheme(topic);
-document.getElementById("back").href = `kapitel.html?id=${topic.id}`;
-document.getElementById("kicker").textContent = `Kapitel ${topic.id} · Sprechen`;
-document.getElementById("title").textContent = `${topic.id}. ${topic.title} · Sprechen`;
+const $ = id => document.getElementById(id);
+$("back").href = `kapitel.html?id=${topic.id}`;
+$("finishBack").href = `kapitel.html?id=${topic.id}`;
+$("kicker").textContent = `Kapitel ${topic.id} · Sprechen`;
+$("title").textContent = `${topic.id}. ${topic.title} · Sprechen`;
 
+/* ===== Reiter ===== */
+const tabButtons = [...document.querySelectorAll(".tab")];
+function activateTab(name){
+  tabButtons.forEach(btn => btn.classList.toggle("active", btn.dataset.tab === name));
+  document.querySelectorAll(".panel").forEach(panel => panel.classList.remove("active"));
+  const panel = document.getElementById(`panel-${name}`);
+  if(panel) panel.classList.add("active");
+  const params = new URLSearchParams(location.search);
+  params.set("id", topic.id);
+  if(name === "ki") params.set("tab", "ki");
+  else params.delete("tab");
+  history.replaceState(null, "", `${location.pathname}?${params.toString()}`);
+}
+tabButtons.forEach(btn => btn.addEventListener("click", () => activateTab(btn.dataset.tab)));
+const initialTab = (new URLSearchParams(location.search).get("tab") === "ki") ? "ki" : "satz";
+activateTab(initialTab);
+
+/* ===== Teil 1: Sätze sprechen ===== */
+const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+let recording = false;
+let idx = 0;
+let correct = 0;
+let micPrepared = false;
+let failedAttempts = 0;
+let attemptIndex = -1;
+let countdownTimer = null;
+
+function normalizeZh(s){
+  return String(s || "")
+    .replace(/[\s。！？!?，,、；;：:·.]/g, "")
+    .replace(/[妳]/g, "你")
+    .trim();
+}
+function exerciseName(){ return window.CF_PROFILE?.getName?.() || ""; }
+function makeNameFlexible(task){
+  const zhNorm = normalizeZh(task.zh);
+  if(zhNorm === "我叫苏然"){
+    const name = exerciseName();
+    const deName = name || "…";
+    const zhName = name || "……";
+    return {
+      ...task,
+      de: `Ich heiße ${deName}.`,
+      displayDe: name ? `Ich heiße ${name}.` : "Ich heiße … (deinen Namen einsetzen).",
+      zh: `我叫 ${zhName}。`,
+      pinyin: `Wǒ jiào ${deName}.`,
+      acceptMode: "woJiaoName"
+    };
+  }
+  return task;
+}
+function buildTasks(topic){
+  const fromExplicit = (topic.speechSentences || []).filter(x => x && x.de && x.zh).map(makeNameFlexible);
+  if(fromExplicit.length) return fromExplicit;
+
+  const fromPuzzle = (topic.sentencePuzzles || []).filter(x => x && x.de && x.zh).map(makeNameFlexible);
+  if(fromPuzzle.length) return fromPuzzle;
+
+  return (topic.storyDialog || [])
+    .filter(x => x && x.de && x.zh && normalizeZh(x.zh).length <= 16)
+    .map(x => makeNameFlexible({de:x.de, zh:x.zh, pinyin:x.pinyin || ""}));
+}
+const tasks = buildTasks(topic);
+
+function stateKey(){ return `cf_speak_sentence_state_v1_${topic.id}`; }
+function save(){ localStorage.setItem(stateKey(), JSON.stringify({idx, correct, savedAt:Date.now()})); }
+function load(){
+  try{
+    const s = JSON.parse(localStorage.getItem(stateKey()) || "{}");
+    idx = Math.max(0, Math.min(Number(s.idx)||0, tasks.length));
+    correct = Math.max(0, Number(s.correct)||0);
+  }catch(e){ idx = 0; correct = 0; }
+}
+function setFeedback(kind, text){
+  const el = $("feedback");
+  el.className = `feedback ${kind}`;
+  el.textContent = text || "";
+}
+function setMicHint(text){
+  const el = $("micHint");
+  if(el) el.textContent = text || "";
+}
+function current(){ return tasks[idx]; }
+function renderSpeechSentence(){
+  $("finish").classList.remove("show");
+  if(!Recognition){
+    $("game").style.display = "none";
+    $("unsupported").style.display = "block";
+    return;
+  }
+  if(!tasks.length){
+    $("game").style.display = "none";
+    $("empty").style.display = "block";
+    return;
+  }
+  if(idx >= tasks.length){
+    $("game").style.display = "none";
+    $("finish").classList.add("show");
+    $("finishText").innerHTML = `Direkt erkannt: <strong>${correct}</strong> von <strong>${tasks.length}</strong>`;
+    save();
+    return;
+  }
+  if(attemptIndex !== idx){
+    failedAttempts = 0;
+    attemptIndex = idx;
+  }
+  const t = current();
+  $("game").style.display = "";
+  $("counter").textContent = `Satz ${idx+1} von ${tasks.length}`;
+  $("germanPrompt").textContent = t.displayDe || t.de || "";
+  $("transcript").textContent = "Noch nichts aufgenommen.";
+  $("expectedZh").textContent = t.zh || "";
+  $("expectedPinyin").textContent = t.pinyin || "";
+  $("expectedDe").textContent = t.displayDe || t.de || "";
+  $("expectedBox").classList.remove("show");
+  $("nextBtn").disabled = true;
+  setFeedback("neutral", "");
+  setMicHint(micPrepared ? "Mikrofon ist vorbereitet." : "");
+  $("progressFill").style.width = `${Math.round(idx / tasks.length * 100)}%`;
+  save();
+}
+function createRecognition(task){
+  const r = new Recognition();
+  r.lang = "zh-CN";
+  r.interimResults = false;
+  r.maxAlternatives = 3;
+  r.onresult = (event) => {
+    const alternatives = Array.from(event.results[0] || []).map(a => a.transcript || "").filter(Boolean);
+    const heard = alternatives[0] || "";
+    $("transcript").textContent = heard || "Nichts erkannt.";
+    checkTranscript(alternatives, task);
+  };
+  r.onerror = (event) => {
+    $("transcript").textContent = "Nicht erkannt.";
+    if(event.error === "not-allowed"){
+      setFeedback("bad", "Mikrofonzugriff wurde nicht erlaubt. Öffne die Seite am besten über GitHub Pages/HTTPS oder localhost, nicht direkt als Datei.");
+    }else if(event.error === "no-speech"){
+      setFeedback("bad", "Ich habe noch nichts gehört. Drück auf Aufnehmen, warte den Countdown ab und sprich erst bei „Jetzt sprechen“.");
+      setMicHint("Tipp: Nach dem Klick gibt es 3 Sekunden Vorbereitungszeit.");
+    }else{
+      setFeedback("bad", "Das hat nicht geklappt. Versuch es noch einmal.");
+    }
+  };
+  r.onend = () => {
+    recording = false;
+    $("recordBtn").classList.remove("recording");
+    $("recordBtn").textContent = "Aufnehmen";
+  };
+  return r;
+}
+async function prepareMicrophoneOnce(){
+  if(micPrepared) return true;
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    micPrepared = true;
+    return true;
+  }
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    stream.getTracks().forEach(track => track.stop());
+    micPrepared = true;
+    setMicHint("Mikrofon ist vorbereitet.");
+    return true;
+  }catch(e){
+    setMicHint("Mikrofon konnte nicht vorbereitet werden.");
+    setFeedback("bad", "Mikrofonzugriff wurde nicht erlaubt.");
+    return false;
+  }
+}
+async function startRecording(){
+  if(!Recognition || recording) return;
+  const okMic = await prepareMicrophoneOnce();
+  if(!okMic) return;
+
+  const t = current();
+  recognition = createRecognition(t);
+  recording = true;
+  $("recordBtn").classList.add("recording");
+  setFeedback("neutral", "Mach dich bereit. Die Aufnahme startet gleich.");
+
+  let left = 3;
+  $("recordBtn").textContent = `Start in ${left}`;
+  $("transcript").textContent = "Noch nicht sprechen …";
+  clearInterval(countdownTimer);
+  countdownTimer = setInterval(() => {
+    left -= 1;
+    if(left > 0){
+      $("recordBtn").textContent = `Start in ${left}`;
+      return;
+    }
+    clearInterval(countdownTimer);
+    countdownTimer = null;
+    $("recordBtn").textContent = "Höre zu …";
+    $("transcript").textContent = "Jetzt sprechen.";
+    setFeedback("neutral", "Jetzt langsam und deutlich sprechen.");
+    try{ recognition.start(); }
+    catch(e){
+      recording = false;
+      $("recordBtn").classList.remove("recording");
+      $("recordBtn").textContent = "Aufnehmen";
+      setFeedback("bad", "Die Aufnahme konnte nicht gestartet werden. Versuch es noch einmal.");
+    }
+  }, 1000);
+}
+function checkTranscript(alternatives, task){
+  const heardNorms = alternatives.map(normalizeZh).filter(Boolean);
+  let ok = false;
+
+  if(task.acceptMode === "woJiaoName"){
+    ok = heardNorms.some(h => h.includes("我叫"));
+  }else{
+    const accepted = [task.zh, ...(task.accept || [])].map(normalizeZh).filter(Boolean);
+    ok = heardNorms.some(h => accepted.some(a => h === a || h.includes(a) || a.includes(h)));
+  }
+
+  if(ok){
+    correct++;
+    failedAttempts = 0;
+    setFeedback("ok", task.acceptMode === "woJiaoName" ? "Richtig erkannt: 我叫… passt. Dein eigener Name ist in Ordnung." : "Richtig erkannt. Gut gesprochen.");
+    $("nextBtn").disabled = false;
+  }else{
+    failedAttempts++;
+    $("expectedBox").classList.add("show");
+    $("nextBtn").disabled = false;
+
+    if(failedAttempts === 3){
+      setFeedback("bad", task.acceptMode === "woJiaoName" ? "Noch nicht erkannt. Ich spreche dir die Struktur einmal langsam vor." : "Noch nicht erkannt. Ich spreche dir den Satz einmal langsam vor; danach versuchst du ihn noch einmal.");
+      setTimeout(() => speakZh(task.zh || "", 0.65), 350);
+    }else if(failedAttempts >= 5){
+      setFeedback("bad", "Das ist ein schwieriger Satz. Hör ihn dir langsam an, lies die Lösung und versuch ihn danach noch einmal. Du darfst auch weitergehen.");
+      setTimeout(() => speakZh(task.zh || "", 0.6), 350);
+    }else{
+      setFeedback("bad", task.acceptMode === "woJiaoName" ? "Noch nicht erkannt. Wichtig ist: 我叫 + dein Name." : "Noch nicht erkannt. Sprich langsam und deutlich oder zeig dir die Lösung an.");
+    }
+  }
+  save();
+}
+function speakZh(text, rate = 0.9){
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "zh-CN";
+  u.rate = rate;
+  const voices = speechSynthesis.getVoices();
+  const zhVoice = voices.find(v => (v.lang || "").toLowerCase().startsWith("zh"));
+  if(zhVoice) u.voice = zhVoice;
+  speechSynthesis.speak(u);
+}
+function nextSpeechSentence(){ idx++; renderSpeechSentence(); }
+function restartSpeechSentence(){ idx=0; correct=0; localStorage.removeItem(stateKey()); renderSpeechSentence(); }
+
+$("recordBtn").addEventListener("click", startRecording);
+$("hearBtn").addEventListener("click", () => speakZh(current()?.zh || ""));
+$("showBtn").addEventListener("click", () => $("expectedBox").classList.toggle("show"));
+$("nextBtn").addEventListener("click", nextSpeechSentence);
+$("restartBtn").addEventListener("click", restartSpeechSentence);
+$("finishRestart").addEventListener("click", restartSpeechSentence);
+if(window.speechSynthesis) speechSynthesis.onvoiceschanged = () => {};
+load();
+renderSpeechSentence();
+
+/* ===== Teil 2: KI sprechen ===== */
 function buildPrompt(){
   const lines = topic.studentDialog || [];
   const dialogText = lines.length
@@ -67,6 +389,10 @@ function buildPrompt(){
     : "[Hier fehlt noch der Schülerdialog dieses Kapitels.]";
   const dialogTitle = topic.studentDialogTitle || `Kapitel ${topic.id} – ${topic.title}`;
   const dialogNote = topic.studentDialogNote ? `\nHINWEIS ZUM DIALOG:\n${topic.studentDialogNote}\n` : "";
+  const learnerName = window.CF_PROFILE?.getName?.() || "";
+  const nameBlock = learnerName
+    ? `\nGESPEICHERTER NAME DER LERNENDEN PERSON:\n${learnerName}\nWenn ein Namenssatz geübt wird, darf dieser Name in lateinischen Buchstaben verwendet werden, z. B. 我叫 ${learnerName}。\n`
+    : "\nGESPEICHERTER NAME DER LERNENDEN PERSON:\nEs ist noch kein Name gespeichert. Bei Namenslücken darf die lernende Person einen eigenen Namen einsetzen.\n";
 
   return `Du bist mein chinesischer Gesprächspartner und Sprachtrainer (Putonghua).
 
@@ -120,9 +446,9 @@ PINYIN:
 - Pinyin nur, wenn ich ausdrücklich darum bitte oder wenn du einen Aussprache-/Tonfehler korrigierst.
 - Wenn ich vom Dialog abweiche, führe mich freundlich zurück zu genau diesem Schülerdialog.`;
 }
-document.getElementById("prompt").value = buildPrompt();
+$("prompt").value = buildPrompt();
 
-const preview = document.getElementById("dialogPreview");
+const preview = $("dialogPreview");
 const lines = topic.studentDialog || [];
 if(topic.studentDialogTitle){
   const title = document.createElement("div");
@@ -156,21 +482,21 @@ if(lines.length === 0){
 }
 
 async function copyPrompt(){
-  const txt = document.getElementById("prompt").value;
+  const txt = $("prompt").value;
   try{
     await navigator.clipboard.writeText(txt);
   }catch(e){
-    const el = document.getElementById("prompt");
+    const el = $("prompt");
     el.focus();
     el.select();
     document.execCommand("copy");
   }
-  document.getElementById("copyStatus").textContent = "Kopiert.";
-  setTimeout(() => document.getElementById("copyStatus").textContent = "", 1500);
+  $("copyStatus").textContent = "Kopiert.";
+  setTimeout(() => $("copyStatus").textContent = "", 1500);
 }
-document.getElementById("copyBtn").onclick = copyPrompt;
-document.getElementById("openBtn").onclick = () => window.open("https://chatgpt.com/", "_blank", "noopener");
-document.getElementById("copyOpenBtn").onclick = async () => {
+$("copyBtn").onclick = copyPrompt;
+$("openBtn").onclick = () => window.open("https://chatgpt.com/", "_blank", "noopener");
+$("copyOpenBtn").onclick = async () => {
   await copyPrompt();
   window.open("https://chatgpt.com/", "_blank", "noopener");
 };
