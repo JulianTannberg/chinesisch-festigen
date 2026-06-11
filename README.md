@@ -107,3 +107,14 @@ Die Seite ist als Progressive Web App eingerichtet:
 - Helle Kapitelfarben (z. B. Kapitel 7) bekommen automatisch dunkle Texte, Rahmen und Buttons (`theme-light`).
 - Kapitel ohne Inhalt sind in der Übersicht gesperrt und zeigen „Bald verfügbar“.
 - Memory nutzt auf schmalen Bildschirmen 6 statt 8 Paare.
+
+## Startseite für Buchkäufer (`start.html`)
+
+`start.html` ist die empfohlene Zielseite für den QR-Code im Buch. Sie erkennt automatisch
+das Gerät (iPhone, iPad, Android, Windows) und zeigt die passende Installationsanleitung.
+Über die Schalter lässt sich das Gerät auch manuell umstellen. Buttons führen direkt zu den
+Kapiteln. Wird die Seite bereits als installierte App geöffnet, springt sie direkt zur
+Kapitelübersicht.
+
+QR-Code im Buch am besten auf `…/start.html` zeigen lassen (statischer QR-Code, kein
+dynamischer Tracking-Dienst).
