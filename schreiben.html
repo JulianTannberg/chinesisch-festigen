@@ -95,6 +95,42 @@
       min-height:34px;
       margin-bottom:4px;
     }
+    .traceWordGuide{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:7px;
+      margin:0 0 8px;
+      max-width:560px;
+    }
+    .traceWordGuide .traceSyllable{
+      min-width:48px;
+      padding:7px 10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      font-size:14px;
+      font-weight:800;
+      text-align:center;
+      line-height:1.15;
+    }
+    .traceWordGuide .traceSyllable.done{
+      opacity:.55;
+    }
+    .traceWordGuide .traceSyllable.active{
+      background:var(--card-strong);
+      outline:2px solid rgba(255,255,255,.30);
+      opacity:1;
+      transform:translateY(-1px);
+    }
+    .traceWordGuide .traceSyllable small{
+      display:block;
+      margin-top:2px;
+      color:var(--muted);
+      font-size:10px;
+      font-weight:700;
+    }
   </style>
 </head>
 <body>
@@ -180,6 +216,7 @@
           <div class="traceHelpText" id="traceHelpText"></div>
 
           <div class="traceInfo">
+            <div class="traceWordGuide" id="traceWordGuide"></div>
             <div class="pinyin" id="tracePinyin">–</div>
             <div class="de" id="traceDe">–</div>
           </div>
@@ -540,6 +577,7 @@ let traceLevel = localStorage.getItem(`cf_trace_level_${topic.id}`) || "beginner
 if(!TRACE_LEVELS[traceLevel]) traceLevel = "beginner";
 let proFallback = false;
 let currentMistakes = 0;
+let traceRepeat = false;
 let beginnerCompletedStrokes = 0;
 let autoNext = localStorage.getItem(`cf_trace_auto_${topic.id}`) !== "0"; // Standard: automatisch weiter
 
@@ -552,6 +590,104 @@ function currentTraceWord(){ return traceWords[tWordIndex]; }
 function currentTraceChar(){
   const word = currentTraceWord();
   return word ? word.chars[tCharPos] : null;
+}
+const PINYIN_BASES = new Set([
+  "a","ai","an","ang","ao","ba","bai","ban","bang","bao","bei","ben","beng","bi","bian","biao","bie","bin","bing","bo","bu",
+  "ca","cai","can","cang","cao","ce","cen","ceng","cha","chai","chan","chang","chao","che","chen","cheng","chi","chong","chou","chu","chua","chuai","chuan","chuang","chui","chun","chuo","ci","cong","cou","cu","cuan","cui","cun","cuo",
+  "da","dai","dan","dang","dao","de","dei","den","deng","di","dia","dian","diao","die","ding","diu","dong","dou","du","duan","dui","dun","duo",
+  "e","ei","en","eng","er","fa","fan","fang","fei","fen","feng","fo","fou","fu",
+  "ga","gai","gan","gang","gao","ge","gei","gen","geng","gong","gou","gu","gua","guai","guan","guang","gui","gun","guo",
+  "ha","hai","han","hang","hao","he","hei","hen","heng","hong","hou","hu","hua","huai","huan","huang","hui","hun","huo",
+  "ji","jia","jian","jiang","jiao","jie","jin","jing","jiong","jiu","ju","juan","jue","jun",
+  "ka","kai","kan","kang","kao","ke","ken","keng","kong","kou","ku","kua","kuai","kuan","kuang","kui","kun","kuo",
+  "la","lai","lan","lang","lao","le","lei","leng","li","lia","lian","liang","liao","lie","lin","ling","liu","lo","long","lou","lu","lv","luan","lve","lun","luo",
+  "ma","mai","man","mang","mao","me","mei","men","meng","mi","mian","miao","mie","min","ming","miu","mo","mou","mu",
+  "na","nai","nan","nang","nao","ne","nei","nen","neng","ni","nian","niang","niao","nie","nin","ning","niu","nong","nou","nu","nv","nuan","nve","nun","nuo",
+  "o","ou","pa","pai","pan","pang","pao","pei","pen","peng","pi","pian","piao","pie","pin","ping","po","pou","pu",
+  "qi","qia","qian","qiang","qiao","qie","qin","qing","qiong","qiu","qu","quan","que","qun",
+  "ran","rang","rao","re","ren","reng","ri","rong","rou","ru","rua","ruan","rui","run","ruo",
+  "sa","sai","san","sang","sao","se","sen","seng","sha","shai","shan","shang","shao","she","shei","shen","sheng","shi","shou","shu","shua","shuai","shuan","shuang","shui","shun","shuo","si","song","sou","su","suan","sui","sun","suo",
+  "ta","tai","tan","tang","tao","te","teng","ti","tian","tiao","tie","ting","tong","tou","tu","tuan","tui","tun","tuo",
+  "wa","wai","wan","wang","wei","wen","weng","wo","wu",
+  "xi","xia","xian","xiang","xiao","xie","xin","xing","xiong","xiu","xu","xuan","xue","xun",
+  "ya","yan","yang","yao","ye","yi","yin","ying","yo","yong","you","yu","yuan","yue","yun",
+  "za","zai","zan","zang","zao","ze","zei","zen","zeng","zha","zhai","zhan","zhang","zhao","zhe","zhei","zhen","zheng","zhi","zhong","zhou","zhu","zhua","zhuai","zhuan","zhuang","zhui","zhun","zhuo","zi","zong","zou","zu","zuan","zui","zun","zuo"
+]);
+const TONE_MAP = {"ā":"a","á":"a","ǎ":"a","à":"a","ē":"e","é":"e","ě":"e","è":"e","ī":"i","í":"i","ǐ":"i","ì":"i","ō":"o","ó":"o","ǒ":"o","ò":"o","ū":"u","ú":"u","ǔ":"u","ù":"u","ǖ":"v","ǘ":"v","ǚ":"v","ǜ":"v","ü":"v","Ā":"a","Á":"a","Ǎ":"a","À":"a","Ē":"e","É":"e","Ě":"e","È":"e","Ī":"i","Í":"i","Ǐ":"i","Ì":"i","Ō":"o","Ó":"o","Ǒ":"o","Ò":"o","Ū":"u","Ú":"u","Ǔ":"u","Ù":"u","Ǖ":"v","Ǘ":"v","Ǚ":"v","Ǜ":"v","Ü":"v"};
+function stripPinyin(s){
+  return [...String(s || "")].map(ch => TONE_MAP[ch] || ch.toLowerCase()).join("").replace(/[^a-zv]/g, "");
+}
+function splitPinyinToken(token, slots){
+  const raw = String(token || "").trim();
+  if(!raw) return [];
+  if(slots <= 1) return [raw];
+  const chars = [...raw].filter(ch => /[A-Za-zĀÁǍÀĒÉĚÈĪÍǏÌŌÓǑÒŪÚǓÙǕǗǙǛāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜüÜ]/.test(ch));
+  const n = chars.length;
+  const memo = new Map();
+  function rec(pos, left){
+    const key = pos + ":" + left;
+    if(memo.has(key)) return memo.get(key);
+    if(left === 0) return pos === n ? [] : null;
+    for(let end = pos + 1; end <= n; end++){
+      const piece = chars.slice(pos, end).join("");
+      const base = stripPinyin(piece);
+      if(!PINYIN_BASES.has(base)) continue;
+      const rest = rec(end, left - 1);
+      if(rest){
+        const result = [piece, ...rest];
+        memo.set(key, result);
+        return result;
+      }
+    }
+    memo.set(key, null);
+    return null;
+  }
+  return rec(0, slots) || [raw];
+}
+function splitPinyinForChars(pinyin, charCount){
+  const tokens = String(pinyin || "").replace(/[。！？!?，,、；;：:]/g, " ").trim().split(/\s+/).filter(Boolean);
+  if(!charCount) return [];
+  if(tokens.length === charCount) return tokens;
+  if(tokens.length === 0) return Array.from({length: charCount}, (_, i) => `Zeichen ${i + 1}`);
+  const out = [];
+  function rec(tokenIndex, slotsLeft){
+    if(tokenIndex === tokens.length){ return slotsLeft === 0 ? [] : null; }
+    const remainingTokens = tokens.length - tokenIndex - 1;
+    const maxSlots = slotsLeft - remainingTokens;
+    for(let slots = 1; slots <= maxSlots; slots++){
+      const parts = splitPinyinToken(tokens[tokenIndex], slots);
+      if(parts.length !== slots && slots !== 1) continue;
+      const rest = rec(tokenIndex + 1, slotsLeft - parts.length);
+      if(rest) return [...parts, ...rest];
+    }
+    return null;
+  }
+  const parts = rec(0, charCount);
+  if(parts && parts.length === charCount) return parts;
+  return Array.from({length: charCount}, (_, i) => tokens[i] || tokens[tokens.length - 1] || `Zeichen ${i + 1}`);
+}
+function tracePinyinParts(word){
+  if(!word) return [];
+  if(Array.isArray(word.pinyinParts) && word.pinyinParts.length === word.chars.length) return word.pinyinParts;
+  return splitPinyinForChars(word.pinyin || "", word.chars.length);
+}
+function currentTracePinyinPart(){
+  const word = currentTraceWord();
+  const parts = tracePinyinParts(word);
+  return parts[tCharPos] || `Zeichen ${tCharPos + 1}`;
+}
+function renderTraceWordGuide(){
+  const guide = $("traceWordGuide");
+  const word = currentTraceWord();
+  if(!guide || !word){ return; }
+  const parts = tracePinyinParts(word);
+  guide.innerHTML = "";
+  word.chars.forEach((_, i) => {
+    const chip = document.createElement("span");
+    chip.className = "traceSyllable" + (i < tCharPos ? " done" : "") + (i === tCharPos ? " active" : "");
+    chip.innerHTML = `${parts[i] || "–"}<small>${i + 1}/${word.chars.length}</small>`;
+    guide.appendChild(chip);
+  });
 }
 function activeTraceConfig(){ return TRACE_LEVELS[traceLevel] || TRACE_LEVELS.beginner; }
 function setTraceCounter(){
@@ -566,8 +702,10 @@ function setTraceLevelButtons(){
 function updateTraceInfo(){
   const word = currentTraceWord();
   if(!word) return;
-  const charText = word.chars.length > 1 ? ` · Zeichen ${tCharPos + 1}/${word.chars.length}` : "";
-  $("tracePinyin").textContent = `${word.pinyin || ""}${word.pinyin ? " · " : ""}${activeTraceConfig().label}${charText}`;
+  renderTraceWordGuide();
+  const part = currentTracePinyinPart();
+  const charText = word.chars.length > 1 ? `Zeichen ${tCharPos + 1}/${word.chars.length}: ${part}` : part;
+  $("tracePinyin").textContent = `${activeTraceConfig().label} · ${charText}`;
   $("traceDe").textContent = word.de || "";
   setTraceCounter();
   setTraceLevelButtons();
@@ -671,7 +809,10 @@ function loadTraceChar(){
   const target = $("traceTarget");
   target.innerHTML = "";
   const visual = traceVisualConfig();
-  setTraceStatus(traceLevel === "pro" && !proFallback ? "Schreib das Zeichen ohne Vorlage …" : "Schreib das Zeichen …", null);
+  const partLabel = currentTracePinyinPart();
+  const repeatText = traceRepeat ? "Noch einmal: " : "";
+  traceRepeat = false;
+  setTraceStatus(traceLevel === "pro" && !proFallback ? `${repeatText}Schreib ${partLabel} ohne Vorlage …` : `${repeatText}Schreib ${partLabel} …`, null);
 
   const writerTargetId = traceLevel === "beginner" ? "traceQuizLayer" : "traceTarget";
   if(traceLevel === "beginner"){
@@ -740,7 +881,8 @@ function startBeginnerStrokeQuiz(){
       onComplete(data){
         if(token !== traceQuizToken) return;
         if(data.totalMistakes > 0){
-          setTraceStatus("Das Zeichen kommt direkt noch einmal.", "bad");
+          traceRepeat = true;
+          setTraceStatus("Dasselbe Zeichen kommt direkt noch einmal.", "bad");
           setTimeout(() => loadTraceChar(), 750);
           return;
         }
@@ -762,7 +904,7 @@ function startTraceQuiz(){
   tWriter.hideCharacter();
   const visual = traceVisualConfig();
   if(visual.showCharacter) tWriter.showCharacter();
-  setTraceStatus(traceLevel === "pro" && !proFallback ? "Schreib das Zeichen ohne Vorlage …" : "Schreib das Zeichen …", null);
+  setTraceStatus(traceLevel === "pro" && !proFallback ? `Schreib ${currentTracePinyinPart()} ohne Vorlage …` : `Schreib ${currentTracePinyinPart()} …`, null);
   tWriter.quiz({
     onMistake(){
       if(token !== traceQuizToken) return;
@@ -780,12 +922,14 @@ function startTraceQuiz(){
     onComplete(data){
       if(token !== traceQuizToken) return;
       if(data.totalMistakes > 0){
-        setTraceStatus("Das Zeichen kommt direkt noch einmal.", "bad");
+        traceRepeat = true;
+        setTraceStatus("Dasselbe Zeichen kommt direkt noch einmal.", "bad");
         setTimeout(() => loadTraceChar(), 750);
         return;
       }
       if(traceLevel === "pro" && proFallback){
         proFallback = false;
+        traceRepeat = true;
         setTraceStatus("Gut mit Hilfe. Jetzt noch einmal ohne Vorlage.", "ok");
         setTimeout(() => loadTraceChar(), 850);
         return;
