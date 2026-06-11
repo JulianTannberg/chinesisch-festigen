@@ -13,7 +13,7 @@
       <div class="kicker" id="kicker">Sätze sprechen</div>
     </div>
     <h1 id="title">Sätze sprechen</h1>
-    <p class="subtitle">Lies den deutschen Satz, sprich ihn auf Chinesisch und lass prüfen, was der Browser verstanden hat. Bei Namenssätzen wird dein gespeicherter Name eingesetzt; geprüft wird nur die Struktur 我叫… .</p>
+    <p class="subtitle">Lies den deutschen Satz, sprich ihn auf Chinesisch und lass prüfen, was der Browser verstanden hat. Nach dem Klick hast du 3 Sekunden Zeit zum Bereitmachen. Bei schwierigen Sätzen wird nach mehreren Versuchen langsam vorgesprochen.</p>
 
     <section class="card speechCheckCard">
       <div id="unsupported" class="empty" style="display:none;">
@@ -97,6 +97,9 @@ let recording = false;
 let idx = 0;
 let correct = 0;
 let micPrepared = false;
+let failedAttempts = 0;
+let attemptIndex = -1;
+let countdownTimer = null;
 
 function normalizeZh(s){
   return String(s || "")
@@ -173,6 +176,10 @@ function render(){
     save();
     return;
   }
+  if(attemptIndex !== idx){
+    failedAttempts = 0;
+    attemptIndex = idx;
+  }
   const t = current();
   $("game").style.display = "";
   $("counter").textContent = `Satz ${idx+1} von ${tasks.length}`;
@@ -203,6 +210,9 @@ function createRecognition(task){
     $("transcript").textContent = "Nicht erkannt.";
     if(event.error === "not-allowed"){
       setFeedback("bad", "Mikrofonzugriff wurde nicht erlaubt. Öffne die Seite am besten über GitHub Pages/HTTPS oder localhost, nicht direkt als Datei.");
+    }else if(event.error === "no-speech"){
+      setFeedback("bad", "Ich habe noch nichts gehört. Drück auf Aufnehmen, warte den Countdown ab und sprich erst bei „Jetzt sprechen“.");
+      setMicHint("Tipp: Nach dem Klick gibt es jetzt 3 Sekunden Vorbereitungszeit.");
     }else{
       setFeedback("bad", "Das hat nicht geklappt. Versuch es noch einmal.");
     }
@@ -236,20 +246,36 @@ async function startRecording(){
   if(!Recognition || recording) return;
   const okMic = await prepareMicrophoneOnce();
   if(!okMic) return;
+
   const t = current();
   recognition = createRecognition(t);
   recording = true;
   $("recordBtn").classList.add("recording");
-  $("recordBtn").textContent = "Höre zu …";
-  $("transcript").textContent = "Sprich jetzt.";
-  setFeedback("neutral", "");
+  setFeedback("neutral", "Mach dich bereit. Die Aufnahme startet gleich.");
 
-  try{ recognition.start(); }
-  catch(e){
-    recording = false;
-    $("recordBtn").classList.remove("recording");
-    $("recordBtn").textContent = "Aufnehmen";
-  }
+  let left = 3;
+  $("recordBtn").textContent = `Start in ${left}`;
+  $("transcript").textContent = "Noch nicht sprechen …";
+  clearInterval(countdownTimer);
+  countdownTimer = setInterval(() => {
+    left -= 1;
+    if(left > 0){
+      $("recordBtn").textContent = `Start in ${left}`;
+      return;
+    }
+    clearInterval(countdownTimer);
+    countdownTimer = null;
+    $("recordBtn").textContent = "Höre zu …";
+    $("transcript").textContent = "Jetzt sprechen.";
+    setFeedback("neutral", "Jetzt langsam und deutlich sprechen.");
+    try{ recognition.start(); }
+    catch(e){
+      recording = false;
+      $("recordBtn").classList.remove("recording");
+      $("recordBtn").textContent = "Aufnehmen";
+      setFeedback("bad", "Die Aufnahme konnte nicht gestartet werden. Versuch es noch einmal.");
+    }
+  }, 1000);
 }
 function checkTranscript(alternatives, task){
   const heardNorms = alternatives.map(normalizeZh).filter(Boolean);
@@ -265,20 +291,31 @@ function checkTranscript(alternatives, task){
 
   if(ok){
     correct++;
+    failedAttempts = 0;
     setFeedback("ok", task.acceptMode === "woJiaoName" ? "Richtig erkannt: 我叫… passt. Dein eigener Name ist in Ordnung." : "Richtig erkannt. Gut gesprochen.");
     $("nextBtn").disabled = false;
   }else{
-    setFeedback("bad", task.acceptMode === "woJiaoName" ? "Noch nicht erkannt. Wichtig ist: 我叫 + dein Name." : "Noch nicht erkannt. Sprich langsam und deutlich oder zeig dir die Lösung an.");
+    failedAttempts++;
     $("expectedBox").classList.add("show");
     $("nextBtn").disabled = false;
+
+    if(failedAttempts === 3){
+      setFeedback("bad", task.acceptMode === "woJiaoName" ? "Noch nicht erkannt. Ich spreche dir die Struktur einmal langsam vor." : "Noch nicht erkannt. Ich spreche dir den Satz einmal langsam vor; danach versuchst du ihn noch einmal.");
+      setTimeout(() => speak(task.zh || "", 0.65), 350);
+    }else if(failedAttempts >= 5){
+      setFeedback("bad", "Das ist ein schwieriger Satz. Hör ihn dir langsam an, lies die Lösung und versuch ihn danach noch einmal. Du darfst auch weitergehen.");
+      setTimeout(() => speak(task.zh || "", 0.6), 350);
+    }else{
+      setFeedback("bad", task.acceptMode === "woJiaoName" ? "Noch nicht erkannt. Wichtig ist: 我叫 + dein Name." : "Noch nicht erkannt. Sprich langsam und deutlich oder zeig dir die Lösung an.");
+    }
   }
   save();
 }
-function speak(text){
+function speak(text, rate = 0.9){
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = "zh-CN";
-  u.rate = 0.9;
+  u.rate = rate;
   const voices = speechSynthesis.getVoices();
   const zhVoice = voices.find(v => (v.lang || "").toLowerCase().startsWith("zh"));
   if(zhVoice) u.voice = zhVoice;

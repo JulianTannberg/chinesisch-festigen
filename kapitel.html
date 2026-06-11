@@ -14,7 +14,7 @@
     </div>
     <h1 id="title">Kapitel</h1>
     <p class="subtitle" id="short"></p>
-    <div id="profileMount"></div>
+    <div id="profileSetupMount"></div>
 
     <h2 class="groupTitle">Lernen</h2>
     <section class="grid">
@@ -55,6 +55,8 @@
         <p class="modeText">Das passende Wort für die Lücke auswählen.</p>
       </a>
     </section>
+
+    <div id="profileEditMount" class="bottomProfile"></div>
   </main>
 
 <script src="topics.js"></script>
@@ -82,7 +84,8 @@ function escapeHtml(s){
 <script>
   const topic = getTopic();
   applyTheme(topic);
-  window.CF_PROFILE?.mount("profileMount");
+  window.CF_PROFILE?.mountSetup("profileSetupMount");
+  window.CF_PROFILE?.mountEdit("profileEditMount");
   document.getElementById("kicker").textContent = `Kapitel ${topic.id}`;
   document.getElementById("title").textContent = `${topic.id}. ${topic.title}`;
   document.getElementById("short").textContent = topic.short;

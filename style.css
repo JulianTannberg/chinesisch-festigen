@@ -688,3 +688,24 @@ input.wrong{border-color:var(--bad);background:rgba(239,68,68,.18)}
   .profileInput{flex:1 1 160px;}
   .profileForm button{flex:1 1 auto;}
 }
+
+/* Profil: Setup nur bei fehlendem Namen, danach unten kompakt */
+.bottomProfile{margin-top:22px;}
+.profileMini{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+  color:var(--muted);
+  font-size:13px;
+  padding:10px 0 2px;
+}
+.profileMini button{
+  min-height:34px;
+  padding:7px 10px;
+  border-radius:999px;
+  font-size:13px;
+  opacity:.92;
+}
+.profileMini strong{color:var(--chapter-text);}
