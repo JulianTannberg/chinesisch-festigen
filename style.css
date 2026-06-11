@@ -717,3 +717,59 @@ input.wrong{border-color:var(--bad);background:rgba(239,68,68,.18)}
   .speakTabbar{grid-template-columns:1fr 1fr; gap:8px;}
   .speakTabbar .tab{font-size:14px; min-height:44px; padding:8px 6px;}
 }
+
+/* ===== Helle Kapitelfarben: dunkle Texte, Rahmen und Flächen ===== */
+.theme-light{
+  --card:rgba(11,27,46,.06);
+  --card-strong:rgba(11,27,46,.12);
+  --stroke:rgba(11,27,46,.24);
+  --shadow:rgba(11,27,46,.16);
+  --muted:rgba(11,27,46,.70);
+  --button-bg:rgba(255,255,255,.55);
+  --button-bg-hover:rgba(255,255,255,.80);
+  --input-bg:rgba(255,255,255,.65);
+}
+.theme-light body::before{
+  background:
+    radial-gradient(circle at 15% 10%, rgba(255,255,255,.40), transparent 28%),
+    radial-gradient(circle at 90% 0%, rgba(255,255,255,.30), transparent 24%),
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(11,27,46,.06));
+}
+.theme-light .tab.active{outline:2px solid rgba(11,27,46,.30)}
+.theme-light .vocabCard{background:rgba(255,255,255,.60)}
+.theme-light .vocabCard:hover{background:rgba(255,255,255,.82)}
+.theme-light .empty{background:rgba(255,255,255,.40)}
+.theme-light .solutionBox{background:rgba(255,255,255,.45)}
+.theme-light .progressBar{background:rgba(11,27,46,.10)}
+.theme-light .feedback.ok{color:#15803d}
+.theme-light .feedback.bad{color:#b91c1c}
+.theme-light .traceStatus.ok{color:#15803d}
+.theme-light .traceStatus.bad{color:#b91c1c}
+.theme-light .speakResult.ok{color:#15803d}
+.theme-light .speakResult.bad{color:#b91c1c}
+.theme-light .memoryCard{background:rgba(255,255,255,.55)}
+.theme-light .memoryCard:hover{background:rgba(255,255,255,.78)}
+.theme-light .memoryCard.open{background:rgba(255,255,255,.85);outline:2px solid rgba(11,27,46,.16)}
+.theme-light .wordToken{background:rgba(255,255,255,.70)}
+.theme-light .dropZone,.theme-light .tokenBank{background:rgba(255,255,255,.35)}
+.theme-light .choiceBtn{background:rgba(255,255,255,.60)}
+.theme-light .speakTranscript,.theme-light .speakExpected{background:rgba(255,255,255,.45)}
+.theme-light .promptBox{background:rgba(255,255,255,.55)}
+.theme-light .profileInput::placeholder{color:rgba(11,27,46,.50)}
+.theme-light #soundToggle.active{outline:2px solid rgba(11,27,46,.24)}
+
+/* ===== Gesperrte Kapitel in der Übersicht ===== */
+.chapterCard.locked{opacity:.55;cursor:default}
+.chapterCard.locked:hover{transform:none;background:inherit}
+.soonBadge{
+  display:inline-block;
+  margin-top:auto;
+  align-self:flex-start;
+  font-size:12px;
+  font-weight:850;
+  letter-spacing:.04em;
+  padding:5px 10px;
+  border-radius:999px;
+  border:1px solid currentColor;
+  opacity:.85;
+}

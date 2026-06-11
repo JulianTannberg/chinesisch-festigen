@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Chinesisch festigen</title>
   <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#03172B" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Chinesisch" />
 </head>
 <body>
   <main class="app">
@@ -19,27 +25,27 @@
   </main>
 
   <script src="topics.js"></script>
+  <script src="common.js"></script>
   <script src="profile.js"></script>
   <script>
     window.CF_PROFILE?.mountSetup("profileSetupMount");
     window.CF_PROFILE?.mountEdit("profileEditMount");
     const grid = document.getElementById("chapterGrid");
     (window.CF_TOPICS || []).forEach(t => {
-      const a = document.createElement("a");
-      a.className = "chapterCard";
-      a.href = `kapitel.html?id=${t.id}`;
-      a.style.background = `linear-gradient(135deg, ${t.accent}, rgba(255,255,255,.14))`;
-      a.style.color = t.textColor;
-      a.innerHTML = `
+      const ready = topicHasContent(t);
+      const el = document.createElement(ready ? "a" : "div");
+      el.className = "chapterCard" + (ready ? "" : " locked");
+      if(ready) el.href = `kapitel.html?id=${t.id}`;
+      el.style.background = `linear-gradient(135deg, ${t.accent}, rgba(255,255,255,.14))`;
+      el.style.color = t.textColor;
+      el.innerHTML = `
         <div class="chapterNo">Kapitel ${t.id}</div>
         <div class="chapterTitle">${escapeHtml(t.title)}</div>
         <p class="chapterShort">${escapeHtml(t.short)}</p>
+        ${ready ? "" : `<span class="soonBadge">Bald verfügbar</span>`}
       `;
-      grid.appendChild(a);
+      grid.appendChild(el);
     });
-    function escapeHtml(s){
-      return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-    }
   </script>
 </body>
 </html>

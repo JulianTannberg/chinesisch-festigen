@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Memory · Chinesisch festigen</title>
   <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#03172B" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Chinesisch" />
+
 </head>
 <body>
   <main class="app memoryApp">
@@ -49,33 +56,10 @@
   </main>
 
 <script src="topics.js"></script>
-<script>
-function qs(name, fallback="01"){
-  const p = new URLSearchParams(location.search);
-  return (p.get(name) || fallback).padStart(2,"0");
-}
-function getTopic(){
-  const id = qs("id");
-  return (window.CF_TOPICS || []).find(t => t.id === id) || window.CF_TOPICS[0];
-}
-function applyTheme(topic){
-  document.documentElement.style.setProperty("--chapter-bg", topic.accent);
-  document.documentElement.style.setProperty("--accent", topic.accent);
-  document.documentElement.style.setProperty("--chapter-text", topic.textColor || "#ffffff");
-  document.title = `${topic.id}. ${topic.title} · Memory`;
-}
-function shuffle(array){
-  const a = array.slice();
-  for(let i=a.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
-  }
-  return a;
-}
-</script>
+<script src="common.js"></script>
 <script>
 const topic = getTopic();
-applyTheme(topic);
+applyTheme(topic, "Memory");
 const $ = id => document.getElementById(id);
 $("back").href = `kapitel.html?id=${topic.id}`;
 $("finishBack").href = `kapitel.html?id=${topic.id}`;
@@ -83,7 +67,7 @@ $("kicker").textContent = `Kapitel ${topic.id} · Memory`;
 $("title").textContent = `${topic.id}. ${topic.title} · Memory`;
 
 const vocab = (topic.vocab || []).filter(v => v.zh && v.de);
-const PAIRS_PER_ROUND = 8;
+const PAIRS_PER_ROUND = (window.matchMedia && window.matchMedia("(max-width: 480px)").matches) ? 6 : 8;
 let allOrder = [];
 let roundStart = 0;
 let cards = [];
@@ -194,7 +178,7 @@ function render(){
     const visible = card.open || card.matched;
     b.classList.toggle("zhCard", card.type === "zh");
     b.innerHTML = visible
-      ? `<span class="memoryText">${card.text}</span>`
+      ? `<span class="memoryText">${escapeHtml(card.text)}</span>`
       : `<span class="memoryText memoryHidden">?</span>`;
     b.addEventListener("click", () => flip(card.id));
     grid.appendChild(b);

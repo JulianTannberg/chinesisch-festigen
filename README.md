@@ -90,3 +90,20 @@ Die Datei `profile.js` speichert einen frei gewählten Namen lokal im Browser (`
 ## Benutzername
 
 Der Name wird nur abgefragt, wenn noch kein Name im Browser gespeichert ist. Sobald ein Name gespeichert wurde, verschwindet das große Eingabefeld. Unten auf der Start- und Kapitelseite bleibt nur eine kleine Möglichkeit „Name ändern“.
+
+## PWA (WebApp)
+
+Die Seite ist als Progressive Web App eingerichtet:
+
+- `manifest.webmanifest` – Name, Farben und Icons. Auf dem Handy erscheint „Zum Startbildschirm hinzufügen“; die Seite startet dann im Vollbild wie eine App.
+- `sw.js` – Service Worker, speichert alle Dateien lokal. Die Übungen funktionieren danach auch offline. Ausnahmen: Spracherkennung und Sprachausgabe brauchen Internet. Hanzi-Writer-Zeichendaten werden beim ersten Nachzeichnen mitgespeichert.
+- `icons/` – App-Icons (Ausschnitt aus dem Buchcover, ohne Text).
+- **Wichtig bei Updates:** In `sw.js` die Versionsnummer `CACHE` erhöhen (z. B. `cf-v2`), sonst behalten Geräte alte Dateien.
+- Funktioniert nur über HTTPS (z. B. GitHub Pages oder gehostete Domain), nicht als lokale Datei.
+
+## Weitere Änderungen
+
+- `common.js` – gemeinsame Hilfsfunktionen (vorher in jeder Seite doppelt).
+- Helle Kapitelfarben (z. B. Kapitel 7) bekommen automatisch dunkle Texte, Rahmen und Buttons (`theme-light`).
+- Kapitel ohne Inhalt sind in der Übersicht gesperrt und zeigen „Bald verfügbar“.
+- Memory nutzt auf schmalen Bildschirmen 6 statt 8 Paare.

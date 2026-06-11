@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Schreiben · Chinesisch festigen</title>
   <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#03172B" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Chinesisch" />
+
   <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7/dist/hanzi-writer.min.js"></script>
   <style>
     /* Nur fürs Nachzeichnen – fügt sich in dein bestehendes Theme ein */
@@ -246,26 +253,10 @@
   </main>
 
 <script src="topics.js"></script>
-<script>
-function qs(name, fallback="01"){
-  const p = new URLSearchParams(location.search);
-  return (p.get(name) || fallback).padStart(2,"0");
-}
-function getTopic(){
-  const id = qs("id");
-  return (window.CF_TOPICS || []).find(t => t.id === id) || window.CF_TOPICS[0];
-}
-function applyTheme(topic){
-  document.documentElement.style.setProperty("--chapter-bg", topic.accent);
-  document.documentElement.style.setProperty("--accent", topic.accent);
-  document.documentElement.style.setProperty("--chapter-text", topic.textColor || "#ffffff");
-  document.title = `${topic.id}. ${topic.title} · Chinesisch festigen`;
-}
-</script>
-
+<script src="common.js"></script>
 <script>
 const topic = getTopic();
-applyTheme(topic);
+applyTheme(topic, "Chinesisch festigen");
 document.getElementById("back").href = `kapitel.html?id=${topic.id}`;
 document.getElementById("finishBack").href = `kapitel.html?id=${topic.id}`;
 document.getElementById("kicker").textContent = `Kapitel ${topic.id} · Schreiben`;
