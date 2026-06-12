@@ -124,8 +124,6 @@ function activateTab(name){
   document.querySelectorAll(".panel").forEach(panel => panel.classList.remove("active"));
   const panel = document.getElementById(`panel-${name}`);
   if(panel) panel.classList.add("active");
-  // KI sprechen braucht Scrollen, die Satzübung bleibt fest
-  document.documentElement.classList.toggle("noScroll", name === "satz");
   const params = new URLSearchParams(location.search);
   params.set("id", topic.id);
   if(name === "ki") params.set("tab", "ki");

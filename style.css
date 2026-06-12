@@ -879,3 +879,24 @@ html.noScroll .app .bottomTabs{ margin-top:auto; }
 @media(max-width:440px){
   .memoryCard{ min-height:74px; font-size:15px; }
 }
+
+
+/* ===== Einheitliche Aktionsleiste (Prüfen rechts) ===== */
+.actionBar{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:0 0 12px;
+}
+.actionBar .spacer{ flex:1 1 auto; }
+
+/* ===== Feste Seiten mit Reitern: Tabbar bleibt stehen,
+       nur der aktive Bereich scrollt bei Bedarf innen ===== */
+html.noScroll .app > .tabbar{ flex:0 0 auto; }
+html.noScroll .app > section.panel.active{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}

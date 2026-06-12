@@ -219,14 +219,14 @@
           <div class="small" id="promptLabel">Übersetze ins Chinesische:</div>
           <div class="quizPrompt" id="prompt">–</div>
 
-          <div class="inputRow">
-            <input id="answer" lang="zh" inputmode="text" type="text" placeholder="Chinesische Zeichen eingeben …" autocomplete="off" spellcheck="false" />
+          <div class="actionBar">
+            <button id="showSolution" type="button" disabled>Hilfe / Lösung</button>
+            <span class="spacer"></span>
             <button id="actionBtn" type="button" disabled>Prüfen</button>
           </div>
 
-          <div class="toolbar">
-            <button id="showSolution" type="button" disabled>Hilfe / Lösung anzeigen</button>
-            <button id="restartBtn" type="button">Von vorne starten</button>
+          <div class="inputRow">
+            <input id="answer" lang="zh" inputmode="text" type="text" placeholder="Chinesische Zeichen eingeben …" autocomplete="off" spellcheck="false" />
           </div>
 
           <div id="feedback" class="feedback neutral"></div>
@@ -317,6 +317,7 @@
 <script>
 const topic = getTopic();
 applyTheme(topic, "Chinesisch festigen");
+document.documentElement.classList.add("noScroll");
 document.getElementById("back").href = `kapitel.html?id=${topic.id}`;
 document.getElementById("finishBack").href = `kapitel.html?id=${topic.id}`;
 document.getElementById("title").textContent = `${topic.id}. ${topic.title} · Schreiben`;
@@ -328,10 +329,6 @@ tabs.forEach(tab => tab.addEventListener("click", () => {
   document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
   document.getElementById(`panel-${tab.dataset.tab}`).classList.add("active");
   if(tab.dataset.tab === "trace") ensureTraceInit();
-  // Feste Ansicht nur, solange im Lern-Reiter ein Wort geöffnet ist
-  const fixed = tab.dataset.tab === "trace"
-    || (tab.dataset.tab === "learn" && document.getElementById("learnView").style.display !== "none");
-  document.documentElement.classList.toggle("noScroll", fixed);
 }));
 
 /* ============================================================
@@ -565,7 +562,6 @@ $("showSolution").addEventListener("click", () => {
   $("solutionBox").style.display = "block";
   saveState();
 });
-$("restartBtn").onclick = restart;
 $("finishRestart").onclick = restart;
 $("modeToZh").onclick = () => switchDirection("toZh");
 $("modeToDe").onclick = () => switchDirection("toDe");
@@ -637,7 +633,6 @@ function renderLearnGrid(){
   });
 }
 function showLearnGrid(){
-  document.documentElement.classList.remove("noScroll");
   lToken++;
   cancelLearnWriter();
   $("learnView").style.display = "none";
@@ -654,7 +649,6 @@ function startLearnWord(w){
   lWord = w;
   lStep = 0;
   lWordMistakes = 0;
-  document.documentElement.classList.add("noScroll");
   $("learnGridWrap").style.display = "none";
   $("learnView").style.display = "";
   runLearnStep();

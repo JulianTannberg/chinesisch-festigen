@@ -175,3 +175,12 @@ dynamischer Tracking-Dienst).
 - **Memory:** Runde · Paare · Züge · Ton in einer Kopfzeile. Alles unter den Karten entfernt. 5 Paare (10 Karten) pro Runde; die nächste Runde startet automatisch, bis alle Vokabeln dran waren. Seite ist fest.
 - **Kapitelseite:** Untere Reiter **Lernen / Üben / Spielen** zeigen jeweils nur die drei zugehörigen Karten; Seite ist fest. Der zuletzt gewählte Reiter wird gemerkt.
 - Service-Worker-Version: cf-v7.
+
+## Änderungen Etappe 6
+
+- **Fest jetzt überall** (Lückenspiel und Tippen ergänzt). Auf Seiten mit Reitern (Schreiben, Sprechen) bleiben Reiter und Kopf stehen; nur der aktive Bereich scrollt bei Bedarf innen. „KI sprechen“ bleibt dadurch bedienbar (Inhalt scrollt im Bereich).
+- **Einheitliche Aktionsleiste** über dem Eingabe-/Kartenbereich, Prüfen immer rechts:
+  - Üben (alle 3 Modi): links „▶ Anhören“ (+ „Langsam“ beim Hören) oder „🎤 Stattdessen sprechen“ – rechts „Prüfen“, das bei richtiger Lösung an derselben Stelle zu „Weiter →“ wird. Der große runde Abspielknopf ist durch die einheitliche Leiste ersetzt. Nach der Eingabe verschiebt sich nichts mehr (Lösung erscheint unterhalb im Innenbereich).
+  - Tippen: „Hilfe / Lösung“ links, „Prüfen/Weiter“ rechts – beide über dem Eingabefeld. „Von vorne starten“ entfernt (Neustart wie bei Memory über den Abschluss-Bildschirm).
+  - Lückenspiel: „Weiter →“ oben rechts neben dem Aufgaben-Zähler. „Von vorne starten“ entfernt.
+- Service-Worker-Version: cf-v8.

@@ -24,9 +24,10 @@
     <section class="card">
       <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Lücken oder Dialogsätze eingetragen.</div>
       <div id="game">
-        <div class="puzzleTopline">
+        <div class="actionBar">
           <div class="small" id="counter">Aufgabe –</div>
-          <button id="restartBtn" type="button">Von vorne starten</button>
+          <span class="spacer"></span>
+          <button id="nextBtn" type="button" disabled>Weiter →</button>
         </div>
         <div class="gapGerman" id="gapGerman">–</div>
         <div class="gapSentence" id="sentence">–</div>
@@ -37,9 +38,6 @@
           <div class="zh" id="solutionZh">–</div>
           <div class="pinyin" id="solutionPinyin">–</div>
           <div class="de" id="solutionDe">–</div>
-        </div>
-        <div class="toolbar">
-          <button id="nextBtn" type="button" disabled>Weiter</button>
         </div>
         <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
       </div>
@@ -60,6 +58,7 @@
 <script>
 const topic = getTopic();
 applyTheme(topic, "Lückenspiel");
+document.documentElement.classList.add("noScroll");
 const $ = id => document.getElementById(id);
 $("back").href = `kapitel.html?id=${topic.id}`;
 $("finishBack").href = `kapitel.html?id=${topic.id}`;
@@ -232,7 +231,6 @@ function next(){ idx++; render(); }
 function restart(){ idx = 0; correct = 0; localStorage.removeItem(stateKey()); render(); }
 
 $("nextBtn").addEventListener("click", next);
-$("restartBtn").addEventListener("click", restart);
 $("finishRestart").addEventListener("click", restart);
 load();
 render();
