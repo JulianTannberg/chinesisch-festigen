@@ -115,6 +115,29 @@
   groupButtons.forEach(b => b.addEventListener("click", () => showGroup(b.dataset.group)));
   const savedGroup = localStorage.getItem("cf_kapitel_tab");
   showGroup(["lernen","ueben","spielen"].includes(savedGroup) ? savedGroup : "lernen");
+
+  // Punktestände: Karten anteilig grün füllen + Prozent anzeigen
+  const SCORES = [
+    ["writeLink", "tippen"],
+    ["speakLink", "sprechen"],
+    ["uebenHoerenLink", "ueben_hoeren"],
+    ["uebenZhDeLink", "ueben_zhde"],
+    ["uebenDeZhLink", "ueben_dezh"],
+    ["flashLink", "flash"],
+    ["memoryLink", "memory"],
+    ["gapLink", "luecken"]
+  ];
+  SCORES.forEach(([elId, name]) => {
+    const p = cfGetScore(name, topic.id);
+    if(p === null) return;
+    const el = document.getElementById(elId);
+    if(!el) return;
+    el.style.backgroundImage = `linear-gradient(90deg, rgba(34,197,94,.32) ${p}%, rgba(34,197,94,0) ${p}%)`;
+    const badge = document.createElement("span");
+    badge.className = "scoreBadge";
+    badge.textContent = `${p} %`;
+    el.appendChild(badge);
+  });
 </script>
 </body>
 </html>

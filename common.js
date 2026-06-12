@@ -137,3 +137,18 @@ function cfPlayFeedback(ok){
     osc.connect(gain);
   }catch(e){}
 }
+
+// Punktestand (0–100 %) pro Übung und Kapitel – für die grüne
+// Füllung der Karten auf der Kapitelseite. Kann auch wieder sinken.
+function cfSetScore(name, percent, chapterId){
+  const id = chapterId || (typeof topic !== "undefined" && topic ? topic.id : "00");
+  const p = Math.max(0, Math.min(100, Math.round(Number(percent) || 0)));
+  try{ localStorage.setItem(`cf_score_v1_${id}_${name}`, String(p)); }catch(e){}
+}
+function cfGetScore(name, chapterId){
+  const id = chapterId || (typeof topic !== "undefined" && topic ? topic.id : "00");
+  const raw = localStorage.getItem(`cf_score_v1_${id}_${name}`);
+  if(raw === null) return null;
+  const p = Number(raw);
+  return Number.isFinite(p) ? Math.max(0, Math.min(100, p)) : null;
+}

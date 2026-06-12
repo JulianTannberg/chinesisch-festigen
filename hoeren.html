@@ -19,7 +19,6 @@
       <a class="back" id="back">← Kapitel</a>
     </div>
     <h1 id="title">Hören</h1>
-    <p class="subtitle">Tippe Vokabeln oder Sprechblasen an. Zuerst siehst du nur Chinesisch; Pinyin und Deutsch kannst du bei Bedarf einblenden.</p>
 
     <section class="card">
       <div class="toolbar">
@@ -53,6 +52,7 @@
 <script src="common.js"></script>
 <script>
 const topic = getTopic();
+document.documentElement.classList.add("noScroll");
 applyTheme(topic, "Chinesisch festigen");
 document.getElementById("back").href = `kapitel.html?id=${topic.id}`;
 document.getElementById("title").textContent = `${topic.id}. ${topic.title} · Hören`;

@@ -38,9 +38,9 @@
     <h1 id="title">Üben</h1>
     <p class="subtitle" id="subtitle"></p>
 
-    <section class="card">
+    <section class="card flexCard">
       <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Dialogsätze eingetragen.</div>
-      <div id="game">
+      <div id="game" class="gameFlex">
         <div class="puzzleTopline">
           <div class="small" id="counter">Satz –</div>
         </div>
@@ -49,6 +49,11 @@
           <div class="promptMini" id="promptMini">–</div>
           <div class="zhPrompt" id="zhPrompt" style="display:none;"></div>
           <div class="puzzlePrompt" id="dePrompt" style="display:none;">–</div>
+          <div class="solutionBox compact" id="solutionBox" style="display:none;">
+            <div class="zh" id="solutionZh">–</div>
+            <div class="pinyin" id="solutionPinyin">–</div>
+            <div class="de" id="solutionDe">–</div>
+          </div>
         </div>
 
         <div class="actionBar">
@@ -65,13 +70,9 @@
         <div class="tokenBank" id="tokenBank" aria-label="Wortkarten"></div>
 
         <div class="feedback neutral" id="feedback"></div>
-        <div class="solutionBox" id="solutionBox">
-          <div class="small">Lösung:</div>
-          <div class="zh" id="solutionZh">–</div>
-          <div class="pinyin" id="solutionPinyin">–</div>
-          <div class="de" id="solutionDe">–</div>
+        <div class="cardBottom">
+          <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
         </div>
-        <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
       </div>
 
       <div class="finish" id="finish">
@@ -170,14 +171,26 @@ let bank = [];
 let answer = [];
 let tokenId = 0;
 let solvedBySpeech = false;
+let taskChecked = false;
+let attempted = 0;
+let firstCorrect = 0;
+function recordAttempt(ok){
+  if(taskChecked) return;
+  taskChecked = true;
+  attempted++;
+  if(ok) firstCorrect++;
+  cfSetScore(`ueben_${MODE}`, Math.round(firstCorrect / attempted * 100));
+}
 
 function stateKey(){ return `cf_ueben_${MODE}_v1_${topic.id}`; }
-function save(){ localStorage.setItem(stateKey(), JSON.stringify({idx, savedAt: Date.now()})); }
+function save(){ localStorage.setItem(stateKey(), JSON.stringify({idx, attempted, firstCorrect, savedAt: Date.now()})); }
 function load(){
   try{
     const s = JSON.parse(localStorage.getItem(stateKey()) || "{}");
     idx = Math.max(0, Math.min(Number(s.idx) || 0, tasks.length));
-  }catch(e){ idx = 0; }
+    attempted = Math.max(0, Number(s.attempted) || 0);
+    firstCorrect = Math.max(0, Number(s.firstCorrect) || 0);
+  }catch(e){ idx = 0; attempted = 0; firstCorrect = 0; }
 }
 function setFeedback(kind, text){
   const el = $("feedback");
@@ -194,6 +207,7 @@ function startTask(){
   bank = makeTokens(buildTokens(t));
   answer = [];
   solvedBySpeech = false;
+  taskChecked = false;
   $("nextTaskBtn").style.display = "none";
   $("checkBtn").style.display = "";
   $("solutionBox").style.display = "none";
@@ -212,7 +226,8 @@ function render(){
   }
   $("game").style.display = "";
   const t = current();
-  $("counter").textContent = `Satz ${idx + 1} von ${tasks.length}`;
+  const pct = attempted ? ` · Richtig: ${Math.round(firstCorrect / attempted * 100)} %` : "";
+  $("counter").textContent = `Satz ${idx + 1} von ${tasks.length}${pct}`;
 
   if(MODE === "hoeren"){
     $("promptMini").textContent = "Hör dir den Satz an und baue ihn aus den Hanzi zusammen:";
@@ -303,6 +318,7 @@ function colorAnswerTokens(ok){
 }
 function taskSolved(viaSpeech){
   const t = current();
+  recordAttempt(true);
   cfPlayFeedback(true);
   setFeedback("ok", viaSpeech ? "Richtig gesprochen! 很好！" : "Richtig! Sehr gut gebaut.");
   colorAnswerTokens(true);
@@ -316,13 +332,14 @@ function check(){
   if(attemptString() === solutionString(t)){
     taskSolved(false);
   }else{
+    recordAttempt(false);
     cfPlayFeedback(false);
     colorAnswerTokens(false);
     setFeedback("bad", "Noch nicht richtig. Schau genau auf die Reihenfolge – und ob alle Karten gebraucht werden.");
     $("solutionBox").style.display = "block";
   }
 }
-function restartAll(){ idx = 0; localStorage.removeItem(stateKey()); startTask(); }
+function restartAll(){ idx = 0; attempted = 0; firstCorrect = 0; localStorage.removeItem(stateKey()); startTask(); }
 
 /* Sprechen (nur Deutsch → Chinesisch, nur wenn der Browser es kann) */
 const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;

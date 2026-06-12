@@ -223,6 +223,8 @@ function nextCard(kind){
     again++;
     order.push(order[idx]);
   }
+  const seen = known + again;
+  if(seen) cfSetScore("flash", Math.round(known / seen * 100));
   idx++;
   render();
 }

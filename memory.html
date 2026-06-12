@@ -29,6 +29,7 @@
           <div class="memStat">Paare <strong id="pairCount">0/0</strong></div>
           <div class="memStat">Züge <strong id="moveCount">0</strong></div>
           <button id="soundToggle" type="button">Ton an</button>
+          <button id="nextRoundBtn" type="button" disabled>Weiter →</button>
         </div>
 
         <div class="memoryGrid" id="memoryGrid" aria-label="Memory-Karten"></div>
@@ -66,6 +67,8 @@ let pairsFound = 0;
 let moves = 0;
 let roundNo = 1;
 let soundOn = localStorage.getItem(`cf_memory_sound_${topic.id}`) !== "0";
+let totalPairs = 0;
+let totalMoves = 0;
 let zhVoice = null;
 
 function key(){ return `cf_memory_state_v1_${topic.id}`; }
@@ -98,7 +101,7 @@ function updateSoundButton(){
 
 function save(){
   if(!vocab.length) return;
-  localStorage.setItem(key(), JSON.stringify({allOrder, roundStart, moves, roundNo, savedAt:Date.now()}));
+  localStorage.setItem(key(), JSON.stringify({allOrder, roundStart, moves, roundNo, totalPairs, totalMoves, savedAt:Date.now()}));
 }
 function load(){
   const raw = localStorage.getItem(key());
@@ -109,6 +112,8 @@ function load(){
     allOrder = s.allOrder;
     roundStart = Math.max(0, Math.min(Number(s.roundStart)||0, vocab.length));
     roundNo = Math.max(1, Number(s.roundNo)||1);
+    totalPairs = Math.max(0, Number(s.totalPairs)||0);
+    totalMoves = Math.max(0, Number(s.totalMoves)||0);
     return true;
   }catch(e){ return false; }
 }
@@ -116,6 +121,8 @@ function resetAll(){
   allOrder = shuffle([...Array(vocab.length).keys()]);
   roundStart = 0;
   roundNo = 1;
+  totalPairs = 0;
+  totalMoves = 0;
   localStorage.removeItem(key());
   startRound();
 }
@@ -146,6 +153,7 @@ function startRound(){
   save();
 }
 function nextRound(){
+  $("nextRoundBtn").disabled = true;
   roundStart += PAIRS_PER_ROUND;
   roundNo++;
   startRound();
@@ -181,17 +189,19 @@ function flip(id){
   open.push(card);
   if(open.length === 2){
     moves++;
+    totalMoves++;
     const [a,b] = open;
     if(a.pair === b.pair && a.type !== b.type){
       a.matched = true;
       b.matched = true;
       pairsFound++;
+      totalPairs++;
+      cfSetScore("memory", totalMoves ? Math.round(totalPairs / totalMoves * 100) : 0);
       open = [];
       if(pairsFound >= currentIndices().length){
         save();
         cfPlayFeedback(true);
-        // Nächste Runde startet automatisch, bis alle Vokabeln dran waren
-        setTimeout(nextRound, 1000);
+        $("nextRoundBtn").disabled = false;
       }
     }else{
       locked = true;
@@ -207,6 +217,7 @@ function flip(id){
   render();
 }
 
+$("nextRoundBtn").addEventListener("click", nextRound);
 $("finishRestart").addEventListener("click", resetAll);
 $("soundToggle").addEventListener("click", () => {
   soundOn = !soundOn;

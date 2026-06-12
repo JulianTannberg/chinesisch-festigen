@@ -153,16 +153,18 @@ function personalizeGap(g){
 const gaps = prepareGaps(topic).map(personalizeGap);
 let idx = 0;
 let correct = 0;
+let answeredCount = 0;
 let locked = false;
 
 function stateKey(){ return `cf_gap_state_v1_${topic.id}`; }
-function save(){ localStorage.setItem(stateKey(), JSON.stringify({idx, correct, savedAt:Date.now()})); }
+function save(){ localStorage.setItem(stateKey(), JSON.stringify({idx, correct, answeredCount, savedAt:Date.now()})); }
 function load(){
   try{
     const s = JSON.parse(localStorage.getItem(stateKey()) || "{}");
     idx = Math.max(0, Math.min(Number(s.idx)||0, gaps.length));
     correct = Math.max(0, Number(s.correct)||0);
-  }catch(e){ idx = 0; correct = 0; }
+    answeredCount = Math.max(0, Number(s.answeredCount)||0);
+  }catch(e){ idx = 0; correct = 0; answeredCount = 0; }
 }
 function setFeedback(kind, text){
   const el = $("feedback");
@@ -182,7 +184,8 @@ function render(){
   locked = false;
   const g = gaps[idx];
   $("game").style.display="";
-  $("counter").textContent = `Aufgabe ${idx+1} von ${gaps.length}`;
+  const pct = answeredCount ? ` · Richtig: ${Math.round(correct / answeredCount * 100)} %` : "";
+  $("counter").textContent = `Aufgabe ${idx+1} von ${gaps.length}${pct}`;
   const german = String(g.de || "").trim();
   $("gapGerman").textContent = german;
   $("gapGerman").style.display = german ? "block" : "none";
@@ -211,6 +214,7 @@ function choose(choice, btn){
   locked = true;
   const g = gaps[idx];
   document.querySelectorAll(".choiceBtn").forEach(b => b.disabled = true);
+  answeredCount++;
   if(choice === g.answer) cfPlayFeedback(true); else cfPlayFeedback(false);
   if(cfHasCJK(choice)) cfSpeakZh(choice, {queue:true});
   if(choice === g.answer){
@@ -222,13 +226,16 @@ function choose(choice, btn){
     btn.classList.add("wrongChoice");
     document.querySelectorAll(".choiceBtn").forEach(b => { if(b.textContent === g.answer) b.classList.add("correctChoice"); });
     setFeedback("bad", `Noch nicht. Richtig ist: ${g.answer}`);
+    // Falsch beantwortete Aufgaben kommen hinten noch einmal dran
+    gaps.push(g);
   }
+  cfSetScore("luecken", answeredCount ? Math.round(correct / answeredCount * 100) : 0);
   $("solutionBox").style.display = "block";
   $("nextBtn").disabled = false;
   save();
 }
 function next(){ idx++; render(); }
-function restart(){ idx = 0; correct = 0; localStorage.removeItem(stateKey()); render(); }
+function restart(){ idx = 0; correct = 0; answeredCount = 0; localStorage.removeItem(stateKey()); render(); }
 
 $("nextBtn").addEventListener("click", next);
 $("finishRestart").addEventListener("click", restart);

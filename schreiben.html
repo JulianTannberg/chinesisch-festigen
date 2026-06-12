@@ -207,7 +207,7 @@
         </div>
       </section>
 
-      <section class="card" id="quizCard">
+      <section class="card flexCard" id="quizCard">
         <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Schreibvokabeln eingetragen.</div>
 
         <div id="quiz">
@@ -237,15 +237,15 @@
             <div class="pinyin" id="pinyinText">–</div>
           </div>
 
-          <div class="small">Fortschritt aktuelle Runde: <span id="posCounter">–</span></div>
-          <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
-
-          <div class="stats">
-            <div class="stat"><div class="statK">Runde</div><div class="statV" id="sRound">1</div></div>
-            <div class="stat"><div class="statK">Erstversuche</div><div class="statV" id="sAnswered">0</div></div>
-            <div class="stat"><div class="statK">Direkt richtig</div><div class="statV" id="sCorrect">0</div></div>
-            <div class="stat"><div class="statK">Quote</div><div class="statV" id="sRate">0%</div></div>
-            <div class="stat"><div class="statK">Serie</div><div class="statV" id="sStreak">0</div></div>
+          <div class="cardBottom">
+            <div class="small">Fortschritt aktuelle Runde: <span id="posCounter">–</span></div>
+            <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
+            <div class="stats statsRow">
+              <div class="stat"><div class="statK">Runde</div><div class="statV" id="sRound">1</div></div>
+              <div class="stat"><div class="statK">Direkt richtig</div><div class="statV" id="sCorrect">0</div></div>
+              <div class="stat"><div class="statK">Quote</div><div class="statV" id="sRate">0%</div></div>
+              <div class="stat"><div class="statK">Serie</div><div class="statV" id="sStreak">0</div></div>
+            </div>
           </div>
         </div>
 
@@ -441,7 +441,6 @@ function setModeButtons(){
 }
 function updateStats(){
   $("sRound").textContent = round;
-  $("sAnswered").textContent = answered;
   $("sCorrect").textContent = correct;
   $("sRate").textContent = answered ? Math.round(correct/answered*100) + "%" : "0%";
   $("sStreak").textContent = globalStreak;
@@ -505,6 +504,7 @@ function check(){
     firstCheckDone = true;
     if(ok){ correct++; globalStreak++; } else { globalStreak = 0; }
     saveStreak();
+    cfSetScore("tippen", answered ? Math.round(correct / answered * 100) : 0);
   }
   if(ok){
     setInputState("correct");
@@ -597,12 +597,12 @@ try{
 }catch(e){}
 function saveLearnDone(){ localStorage.setItem(LEARN_DONE_KEY, JSON.stringify(learnDone)); }
 
-const LEARN_STEPS = ["Hören & Pinyin", "Bedeutung", "Mit Vorlage", "Nur Striche", "Aus dem Kopf"];
+const LEARN_STEPS = ["Hören & Pinyin", "Bedeutung", "Striche zeigen", "Mit Vorlage", "Aus dem Kopf"];
 // Konfiguration der drei Zeichen-Stufen (Schritte 3–5)
 const LEARN_TRACE_CFG = {
-  2: { outline: true,  demo: true,  rounds: 2, info: "Mit Vorlage" },
-  3: { outline: false, demo: true,  rounds: 2, info: "Ohne Vorlage, Striche werden gezeigt" },
-  4: { outline: false, demo: false, rounds: 1, info: "Aus dem Kopf – Hilfe erst nach 2 Fehlern" }
+  2: { outline: true,  demo: true,  rounds: 2, info: "Mit Vorlage, Striche werden gezeigt" },
+  3: { outline: true,  demo: false, rounds: 2, info: "Mit Vorlage, ohne vorgezeigte Striche" },
+  4: { outline: false, demo: false, rounds: 1, info: "Aus dem Kopf – Hilfe erst nach 3 Fehlern" }
 };
 
 let lWord = null;
@@ -819,8 +819,8 @@ function loadLearnChar(){
         if(token !== lToken) return;
         lWordMistakes++;
         strokeMisses++;
-        if(strokeMisses % 2 === 0){
-          // Nach jeweils 2 Fehlversuchen den aktuellen Strich vorzeigen –
+        if(strokeMisses % 3 === 0){
+          // Nach jeweils 3 Fehlversuchen den aktuellen Strich vorzeigen –
           // so kann niemand steckenbleiben, das Zeichen bleibt verborgen.
           setLearnStatus("Schau her, so geht dieser Strich:", "bad");
           animateLearnStroke(completed);
@@ -926,9 +926,9 @@ $("learnResetDone").addEventListener("click", () => {
    Profi           = aus dem Kopf; Hilfsstrich nach 2 Fehlern
    ============================================================ */
 const TRAIN_CFG = {
-  beginner:  { outline: true,  demo: true,  info: "Mit Vorlage" },
-  advanced:  { outline: false, demo: true,  info: "Ohne Vorlage, Striche werden gezeigt" },
-  pro:       { outline: false, demo: false, info: "Aus dem Kopf – Hilfe nach 2 Fehlern" }
+  beginner:  { outline: true,  demo: true,  info: "Mit Vorlage, Striche werden gezeigt" },
+  advanced:  { outline: true,  demo: false, info: "Mit Vorlage, ohne vorgezeigte Striche" },
+  pro:       { outline: false, demo: false, info: "Aus dem Kopf – Hilfe nach 3 Fehlern" }
 };
 const trainWords = learnWords; // gleiche Vokabelliste wie „Zeichen lernen“
 let trainLevel = localStorage.getItem(`cf_train_level_${topic.id}`) || "beginner";
@@ -1040,7 +1040,7 @@ function loadTrainChar(){
       onMistake(){
         if(token !== trainToken) return;
         strokeMisses++;
-        if(strokeMisses % 2 === 0){
+        if(strokeMisses % 3 === 0){
           setTrainStatus("Schau her, so geht dieser Strich:", "bad");
           trainAnimateStroke(completed);
         }else{

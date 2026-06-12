@@ -27,7 +27,7 @@
     </div>
 
     <section class="panel active" id="panel-satz">
-      <section class="card speechCheckCard">
+      <section class="card flexCard speechCheckCard">
         <div id="unsupported" class="empty" style="display:none;">
           Auf diesem Gerät (z.&nbsp;B. iPhone/iPad) gibt es keine direkte Spracherkennung im Browser.
           Du kannst trotzdem sprechen: Tippe unten in das Eingabefeld und wähle auf der Tastatur das
@@ -38,20 +38,19 @@
 
         <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Sprechsätze eingetragen.</div>
 
-        <div id="game">
+        <div id="game" class="gameFlex">
           <div class="puzzleTopline">
             <div class="small" id="counter">Satz –</div>
-            <button id="restartBtn" type="button">Von vorne starten</button>
           </div>
 
           <div class="promptMini">Sag auf Chinesisch:</div>
           <div class="speakGerman" id="germanPrompt">–</div>
 
-          <div class="toolbar">
+          <div class="actionBar">
             <button id="recordBtn" class="recordBtn" type="button">Aufnehmen</button>
             <button id="hearBtn" type="button">Lösung anhören</button>
-            <button id="showBtn" type="button">Lösung zeigen</button>
-            <button id="nextBtn" type="button" disabled>Weiter</button>
+            <span class="spacer"></span>
+            <button id="nextBtn" type="button" disabled>Weiter →</button>
           </div>
 
           <div class="inputRow" id="dictateRow" style="display:none;">
@@ -71,7 +70,9 @@
             <div class="de" id="expectedDe">–</div>
           </div>
 
-          <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
+          <div class="cardBottom">
+            <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
+          </div>
         </div>
 
         <div class="finish" id="finish">
@@ -226,6 +227,7 @@ function renderSpeechSentence(){
   $("counter").textContent = `Satz ${idx+1} von ${tasks.length}`;
   $("germanPrompt").textContent = t.displayDe || t.de || "";
   $("transcript").textContent = "Noch nichts aufgenommen.";
+  spTried = false;
   if($("dictateInput")){ $("dictateInput").value = ""; $("dictateCheck").disabled = true; }
   $("expectedZh").textContent = t.zh || "";
   $("expectedPinyin").textContent = t.pinyin || "";
@@ -303,6 +305,9 @@ async function startRecording(){
     setFeedback("bad", "Die Aufnahme konnte nicht gestartet werden. Versuch es noch einmal.");
   }
 }
+let spTried = false;
+let spAttempted = 0;
+let spCorrect = 0;
 function checkTranscript(alternatives, task){
   const heardNorms = alternatives.map(normalizeZh).filter(Boolean);
   let ok = false;
@@ -311,9 +316,16 @@ function checkTranscript(alternatives, task){
     ok = heardNorms.some(h => h.includes("我叫"));
   }else{
     const accepted = [task.zh, ...(task.accept || [])].map(normalizeZh).filter(Boolean);
-    ok = heardNorms.some(h => accepted.some(a => h === a || h.includes(a) || a.includes(h)));
+    // Es zählt nur der komplette Satz, nicht ein Teil davon.
+    ok = heardNorms.some(h => accepted.some(a => h === a));
   }
 
+  if(!spTried){
+    spTried = true;
+    spAttempted++;
+    if(ok) spCorrect++;
+    cfSetScore("sprechen", Math.round(spCorrect / spAttempted * 100));
+  }
   if(ok){
     cfPlayFeedback(true);
     correct++;
@@ -324,7 +336,7 @@ function checkTranscript(alternatives, task){
     cfPlayFeedback(false);
     failedAttempts++;
     $("expectedBox").classList.add("show");
-    $("nextBtn").disabled = false;
+    if(failedAttempts >= 3) $("nextBtn").disabled = false;
 
     if(failedAttempts === 3){
       setFeedback("bad", task.acceptMode === "woJiaoName" ? "Noch nicht erkannt. Ich spreche dir die Struktur einmal langsam vor." : "Noch nicht erkannt. Ich spreche dir den Satz einmal langsam vor; danach versuchst du ihn noch einmal.");
@@ -353,9 +365,7 @@ function restartSpeechSentence(){ idx=0; correct=0; localStorage.removeItem(stat
 
 $("recordBtn").addEventListener("click", startRecording);
 $("hearBtn").addEventListener("click", () => speakZh(current()?.zh || ""));
-$("showBtn").addEventListener("click", () => $("expectedBox").classList.toggle("show"));
 $("nextBtn").addEventListener("click", nextSpeechSentence);
-$("restartBtn").addEventListener("click", restartSpeechSentence);
 $("finishRestart").addEventListener("click", restartSpeechSentence);
 if(window.speechSynthesis) speechSynthesis.onvoiceschanged = () => {};
 

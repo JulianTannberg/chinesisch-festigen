@@ -184,3 +184,15 @@ dynamischer Tracking-Dienst).
   - Tippen: „Hilfe / Lösung“ links, „Prüfen/Weiter“ rechts – beide über dem Eingabefeld. „Von vorne starten“ entfernt (Neustart wie bei Memory über den Abschluss-Bildschirm).
   - Lückenspiel: „Weiter →“ oben rechts neben dem Aufgaben-Zähler. „Von vorne starten“ entfernt.
 - Service-Worker-Version: cf-v8.
+
+## Änderungen Etappe 7
+
+- **Weiter-Knopf einheitlich oben rechts:** Wo es „Prüfen“ gibt (Üben, Tippen), wird es bei richtig zu „Weiter →“. Ohne Prüfen (Memory, Lückenspiel, Sprechen) ist „Weiter →“ vorhanden, aber inaktiv, bis es weitergehen kann. Memory springt nicht mehr automatisch zur nächsten Runde – „Weiter →“ wird nach der Runde aktiv. Sprechen: „Weiter“ erst nach richtigem Satz (oder zur Not nach 3 Fehlversuchen, damit niemand feststeckt).
+- **Lückenspiel:** Falsch beantwortete Aufgaben kommen hinten noch einmal dran.
+- **Hören:** Seite ist fest, Reiter (Vokabeln | Geschichte) und Werkzeuge bleiben stehen, nur die Liste scrollt innen. Hinweis-Text entfernt.
+- **Stufe „Fortgeschritten“/Schritt 4 geändert:** Zeichen grau als Vorlage, aber keine vorgezeigten Striche mehr (Zeichen lernen und Schreibtraining). Hilfsstrich kommt jetzt überall erst nach **3** Fehlversuchen (vorher 2).
+- **Tippen:** „Erstversuche“ entfernt; Runde · Direkt richtig · Quote · Serie nebeneinander unten in der Karte, Fortschrittsbalken direkt darüber.
+- **Sprechen (Sätze):** „Lösung zeigen“ und „Von vorne starten“ entfernt. Leiste: Aufnehmen · Lösung anhören · (rechts) Weiter →. Es zählt nur noch der **komplette** Satz, keine Teil-Treffer. Fortschritt unten.
+- **Üben:** Lösung erscheint kompakt **über** den Karten direkt unter dem Fragesatz (nichts verschiebt sich nach unten weg); Fortschritt unten; Prozent „Richtig“ im Zähler.
+- **Punktestände:** Jede Übung speichert die Richtig-Quote (kann auch wieder sinken). Auf der Kapitelseite füllen sich die Karten anteilig grün und zeigen die Prozentzahl: Tippen, Sprechen, alle 3 Üben-Modi, Flashkarten, Memory, Lückenspiel.
+- Service-Worker-Version: cf-v9.
