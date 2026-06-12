@@ -196,3 +196,14 @@ dynamischer Tracking-Dienst).
 - **Üben:** Lösung erscheint kompakt **über** den Karten direkt unter dem Fragesatz (nichts verschiebt sich nach unten weg); Fortschritt unten; Prozent „Richtig“ im Zähler.
 - **Punktestände:** Jede Übung speichert die Richtig-Quote (kann auch wieder sinken). Auf der Kapitelseite füllen sich die Karten anteilig grün und zeigen die Prozentzahl: Tippen, Sprechen, alle 3 Üben-Modi, Flashkarten, Memory, Lückenspiel.
 - Service-Worker-Version: cf-v9.
+
+## Änderungen Etappe 8
+
+- **Reiter immer nebeneinander:** Eine alte Handy-Regel stapelte alle Reiter untereinander (z. B. Vokabeln/Geschichte beim Hören) – entfernt.
+- **Karten reichen überall bis zum unteren Rand**, auch in Reiter-Seiten (Tippen usw.); Fortschritt im Lückenspiel jetzt ebenfalls unten angepinnt.
+- **Memory-Kopfzeile:** Runde · Paare · Züge links, Ton + Weiter → rechts in einer Zeile; wird es zu eng, rutschen Ton + Weiter gemeinsam um – nie einzeln.
+- **Schreibtraining:** „Wort überspringen“ entfernt. Oben steht jetzt **Deutsch** (plus Pinyin) statt des Hanzi – sonst könnte man abschreiben.
+- **Zeichen lernen:** „Aus dem Kopf“ wird jetzt ebenfalls **zweimal** abgefragt.
+- **Hören:** Pinyin ohne Hinweis-Zusätze (z. B. „x → ch“) auf den Vokabelkarten.
+- **iPad / Diktat-Modus (Sätze sprechen):** Nur noch ein Knopf – „Prüfen“ wird bei richtigem Satz (oder nach 3 Fehlversuchen) zu „Weiter →“.
+- Service-Worker-Version: cf-v11.

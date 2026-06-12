@@ -23,7 +23,7 @@
 
     <section class="card">
       <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Lücken oder Dialogsätze eingetragen.</div>
-      <div id="game">
+      <div id="game" class="gameFlex">
         <div class="actionBar">
           <div class="small" id="counter">Aufgabe –</div>
           <span class="spacer"></span>
@@ -39,7 +39,9 @@
           <div class="pinyin" id="solutionPinyin">–</div>
           <div class="de" id="solutionDe">–</div>
         </div>
-        <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
+        <div class="cardBottom">
+          <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
+        </div>
       </div>
       <div class="finish" id="finish">
         <p class="finishTitle">Lücken geschafft!</p>
@@ -184,7 +186,7 @@ function render(){
   locked = false;
   const g = gaps[idx];
   $("game").style.display="";
-  const pct = answeredCount ? ` · Richtig: ${Math.round(correct / answeredCount * 100)} %` : "";
+  const pct = gaps.length ? ` · Richtig: ${Math.round(correct / gaps.length * 100)} %` : "";
   $("counter").textContent = `Aufgabe ${idx+1} von ${gaps.length}${pct}`;
   const german = String(g.de || "").trim();
   $("gapGerman").textContent = german;
@@ -229,7 +231,7 @@ function choose(choice, btn){
     // Falsch beantwortete Aufgaben kommen hinten noch einmal dran
     gaps.push(g);
   }
-  cfSetScore("luecken", answeredCount ? Math.round(correct / answeredCount * 100) : 0);
+  cfSetScore("luecken", gaps.length ? Math.round(correct / gaps.length * 100) : 0);
   $("solutionBox").style.display = "block";
   $("nextBtn").disabled = false;
   save();

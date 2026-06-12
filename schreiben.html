@@ -184,9 +184,6 @@
 
           <div class="traceStatus" id="trainStatus">&nbsp;</div>
 
-          <div class="toolbar" style="justify-content:center;">
-            <button id="trainSkip" type="button">Wort überspringen ›</button>
-          </div>
         </div>
       </section>
     </section>
@@ -504,7 +501,7 @@ function check(){
     firstCheckDone = true;
     if(ok){ correct++; globalStreak++; } else { globalStreak = 0; }
     saveStreak();
-    cfSetScore("tippen", answered ? Math.round(correct / answered * 100) : 0);
+    cfSetScore("tippen", vocab.length ? Math.round(correct / vocab.length * 100) : 0);
   }
   if(ok){
     setInputState("correct");
@@ -602,7 +599,7 @@ const LEARN_STEPS = ["Hören & Pinyin", "Bedeutung", "Striche zeigen", "Mit Vorl
 const LEARN_TRACE_CFG = {
   2: { outline: true,  demo: true,  rounds: 2, info: "Mit Vorlage, Striche werden gezeigt" },
   3: { outline: true,  demo: false, rounds: 2, info: "Mit Vorlage, ohne vorgezeigte Striche" },
-  4: { outline: false, demo: false, rounds: 1, info: "Aus dem Kopf – Hilfe erst nach 3 Fehlern" }
+  4: { outline: false, demo: false, rounds: 2, info: "Aus dem Kopf – Hilfe erst nach 3 Fehlern" }
 };
 
 let lWord = null;
@@ -1087,9 +1084,10 @@ function loadTrainWord(){
   const w = trainWord();
   if(!w) return;
   $("trainCounter").textContent = `Wort ${trainIdx + 1} von ${trainWords.length}`;
-  $("trainHanzi").textContent = w.zh;
+  // Deutsch als Aufgabe zeigen – das Hanzi würde das Abschreiben erlauben.
+  $("trainHanzi").textContent = w.de;
   $("trainPinyin").textContent = w.pinyin;
-  $("trainDe").textContent = w.de;
+  $("trainDe").textContent = "";
   updateTrainLevelButtons();
   saveTrain();
   loadTrainChar();
@@ -1122,7 +1120,6 @@ document.querySelectorAll("#trainLevels button").forEach(b => {
   });
 });
 $("trainPlay").addEventListener("click", () => cfSpeakZh(trainWord() ? trainWord().zh : "", {rate:0.85}));
-$("trainSkip").addEventListener("click", () => { if(trainStarted) nextTrainWord(); });
 updateTrainLevelButtons();
 
 /* ===== Hinweis: chinesische Tastatur einrichten ===== */

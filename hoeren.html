@@ -170,7 +170,6 @@ function renderVocabSection(title, items){
       <div class="zh">${escapeHtml(v.zh)}</div>
       <div class="pinyin">${escapeHtml(v.pinyin || "")}</div>
       <div class="de">${escapeHtml(v.de || "")}</div>
-      ${v.hint ? `<div class="hintLine">${escapeHtml(v.hint)}</div>` : ""}
     `;
     card.addEventListener("click", () => speak(v.zh));
     grid.appendChild(card);

@@ -224,7 +224,7 @@ function nextCard(kind){
     order.push(order[idx]);
   }
   const seen = known + again;
-  if(seen) cfSetScore("flash", Math.round(known / seen * 100));
+  if(seen) cfSetScore("flash", Math.round(known / Math.max(vocab.length, seen) * 100));
   idx++;
   render();
 }

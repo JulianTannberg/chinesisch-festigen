@@ -25,11 +25,15 @@
       <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Memory-Karten eingetragen.</div>
       <div id="game">
         <div class="memTopRow">
-          <div class="memStat">Runde <strong id="roundNo">1</strong></div>
-          <div class="memStat">Paare <strong id="pairCount">0/0</strong></div>
-          <div class="memStat">Züge <strong id="moveCount">0</strong></div>
-          <button id="soundToggle" type="button">Ton an</button>
-          <button id="nextRoundBtn" type="button" disabled>Weiter →</button>
+          <div class="memStats">
+            <div class="memStat">Runde <strong id="roundNo">1</strong></div>
+            <div class="memStat">Paare <strong id="pairCount">0/0</strong></div>
+            <div class="memStat">Züge <strong id="moveCount">0</strong></div>
+          </div>
+          <div class="memActions">
+            <button id="soundToggle" type="button">Ton an</button>
+            <button id="nextRoundBtn" type="button" disabled>Weiter →</button>
+          </div>
         </div>
 
         <div class="memoryGrid" id="memoryGrid" aria-label="Memory-Karten"></div>
@@ -196,7 +200,7 @@ function flip(id){
       b.matched = true;
       pairsFound++;
       totalPairs++;
-      cfSetScore("memory", totalMoves ? Math.round(totalPairs / totalMoves * 100) : 0);
+      cfSetScore("memory", Math.round(totalPairs / Math.max(totalMoves, vocab.length) * 100));
       open = [];
       if(pairsFound >= currentIndices().length){
         save();

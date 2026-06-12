@@ -305,7 +305,6 @@ input.wrong{border-color:var(--bad);background:rgba(239,68,68,.18)}
   .inputRow{grid-template-columns:1fr}
   .stats{grid-template-columns:repeat(2,1fr)}
   .speechBubble{max-width:92%}
-  .tabbar{grid-template-columns:1fr}
   .app{padding-left:12px;padding-right:12px}
 }
 
@@ -953,3 +952,49 @@ html.noScroll .listenApp .panel.active{
 .solutionBox.compact .zh{ font-size:19px; }
 .solutionBox.compact .pinyin{ font-size:14px; }
 .solutionBox.compact .de{ font-size:13px; }
+
+/* ===== Aktionsleiste bleibt einzeilig ===== */
+.actionBar{ flex-wrap:nowrap; }
+.actionBar button{
+  white-space:nowrap;
+  flex:0 1 auto;
+  min-width:0;
+  padding:10px 14px;
+}
+@media(max-width:520px){
+  .actionBar{ gap:6px; }
+  .actionBar button{
+    padding:9px 10px;
+    font-size:14px;
+    min-height:44px;
+  }
+}
+
+
+/* ===== Karten reichen überall bis zum unteren Rand ===== */
+html.noScroll .app > section.panel.active{
+  display:flex;
+  flex-direction:column;
+}
+html.noScroll .app > section.panel.active > section.card{
+  flex:1 0 auto;
+  display:flex;
+  flex-direction:column;
+}
+html.noScroll .app > section.card{
+  display:flex;
+  flex-direction:column;
+}
+
+/* ===== Memory-Kopfzeile: eine Zeile; falls zu eng, bleiben
+       Ton + Weiter zusammen und rutschen gemeinsam ===== */
+.memTopRow{ justify-content:space-between; }
+.memStats{ display:flex; align-items:center; gap:12px; flex-wrap:nowrap; }
+.memActions{ display:flex; align-items:center; gap:8px; flex-wrap:nowrap; margin-left:auto; }
+.memTopRow #soundToggle{ margin-left:0; }
+.memActions button{ min-height:38px; padding:7px 10px; font-size:13px; white-space:nowrap; }
+@media(max-width:430px){
+  .memTopRow .memStat{ font-size:12px; }
+  .memTopRow .memStat strong{ font-size:14px; }
+  .memStats{ gap:8px; }
+}

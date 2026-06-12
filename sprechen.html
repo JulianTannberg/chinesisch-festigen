@@ -228,7 +228,12 @@ function renderSpeechSentence(){
   $("germanPrompt").textContent = t.displayDe || t.de || "";
   $("transcript").textContent = "Noch nichts aufgenommen.";
   spTried = false;
-  if($("dictateInput")){ $("dictateInput").value = ""; $("dictateCheck").disabled = true; }
+  if($("dictateInput")){
+    $("dictateInput").value = "";
+    $("dictateCheck").dataset.mode = "";
+    $("dictateCheck").textContent = "Prüfen";
+    $("dictateCheck").disabled = true;
+  }
   $("expectedZh").textContent = t.zh || "";
   $("expectedPinyin").textContent = t.pinyin || "";
   $("expectedDe").textContent = t.displayDe || t.de || "";
@@ -324,7 +329,7 @@ function checkTranscript(alternatives, task){
     spTried = true;
     spAttempted++;
     if(ok) spCorrect++;
-    cfSetScore("sprechen", Math.round(spCorrect / spAttempted * 100));
+    cfSetScore("sprechen", tasks.length ? Math.round(spCorrect / tasks.length * 100) : 0);
   }
   if(ok){
     cfPlayFeedback(true);
@@ -374,6 +379,8 @@ if(!Recognition){
   $("unsupported").style.display = "block";
   $("recordBtn").style.display = "none";
   $("dictateRow").style.display = "";
+  // Im Diktat-Modus gibt es nur einen Knopf: Prüfen wird zu Weiter.
+  $("nextBtn").style.display = "none";
 }
 function checkDictation(){
   const val = ($("dictateInput").value || "").trim();
@@ -381,12 +388,33 @@ function checkDictation(){
   $("transcript").textContent = val;
   checkTranscript([val], current());
 }
-$("dictateInput").addEventListener("input", () => {
+function resetDictateButton(){
+  $("dictateCheck").dataset.mode = "";
+  $("dictateCheck").textContent = "Prüfen";
   $("dictateCheck").disabled = !($("dictateInput").value || "").trim();
+}
+function handleDictate(){
+  if($("dictateCheck").dataset.mode === "next"){
+    // Weiter zum nächsten Satz
+    nextSpeechSentence();
+    return;
+  }
+  checkDictation();
+  // Richtig (oder nach 3 Fehlversuchen freigegeben) -> Knopf wird zu Weiter
+  if(!$("nextBtn").disabled){
+    $("dictateCheck").dataset.mode = "next";
+    $("dictateCheck").textContent = "Weiter →";
+    $("dictateCheck").disabled = false;
+  }
+}
+$("dictateInput").addEventListener("input", () => {
+  if($("dictateCheck").dataset.mode !== "next"){
+    $("dictateCheck").disabled = !($("dictateInput").value || "").trim();
+  }
 });
-$("dictateCheck").addEventListener("click", checkDictation);
+$("dictateCheck").addEventListener("click", handleDictate);
 $("dictateInput").addEventListener("keydown", e => {
-  if(e.key === "Enter"){ e.preventDefault(); checkDictation(); }
+  if(e.key === "Enter"){ e.preventDefault(); handleDictate(); }
 });
 
 load();

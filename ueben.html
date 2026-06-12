@@ -59,7 +59,7 @@
         <div class="actionBar">
           <button id="listenBtn" type="button" style="display:none;">▶ Anhören</button>
           <button id="slowBtn" type="button" style="display:none;">Langsam</button>
-          <button id="speakBtn" class="recordBtn" type="button" style="display:none;">🎤 Stattdessen sprechen</button>
+          <button id="speakBtn" class="recordBtn" type="button" style="display:none;">🎤 Sprechen</button>
           <span class="spacer"></span>
           <button id="checkBtn" type="button">Prüfen</button>
           <button id="nextTaskBtn" type="button" style="display:none;">Weiter →</button>
@@ -179,7 +179,7 @@ function recordAttempt(ok){
   taskChecked = true;
   attempted++;
   if(ok) firstCorrect++;
-  cfSetScore(`ueben_${MODE}`, Math.round(firstCorrect / attempted * 100));
+  cfSetScore(`ueben_${MODE}`, Math.round(firstCorrect / tasks.length * 100));
 }
 
 function stateKey(){ return `cf_ueben_${MODE}_v1_${topic.id}`; }
@@ -226,7 +226,7 @@ function render(){
   }
   $("game").style.display = "";
   const t = current();
-  const pct = attempted ? ` · Richtig: ${Math.round(firstCorrect / attempted * 100)} %` : "";
+  const pct = ` · Richtig: ${Math.round(firstCorrect / tasks.length * 100)} %`;
   $("counter").textContent = `Satz ${idx + 1} von ${tasks.length}${pct}`;
 
   if(MODE === "hoeren"){
