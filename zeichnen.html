@@ -535,14 +535,22 @@ function startBeginnerStrokeQuiz(){
   if(tWriter.hideCharacter) tWriter.hideCharacter();
   const beginQuiz = () => {
     if(token !== traceQuizToken || !tWriter) return;
+    let strokeMisses = 0;
     tWriter.quiz({
       onMistake(){
         if(token !== traceQuizToken) return;
         currentMistakes++;
-        setTraceStatus("Nicht ganz – probiere diesen Strich noch einmal.", "bad");
+        strokeMisses++;
+        if(strokeMisses % 2 === 0){
+          setTraceStatus("Schau her, so geht dieser Strich:", "bad");
+          animateOneStroke(beginnerCompletedStrokes);
+        }else{
+          setTraceStatus("Nicht ganz – probiere diesen Strich noch einmal.", "bad");
+        }
       },
       onCorrectStroke(data){
         if(token !== traceQuizToken) return;
+        strokeMisses = 0;
         const doneStroke = strokeNumberFromData(data);
         if(doneStroke !== null) beginnerCompletedStrokes = Math.max(beginnerCompletedStrokes, doneStroke + 1);
         else beginnerCompletedStrokes++;

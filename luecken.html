@@ -212,7 +212,8 @@ function choose(choice, btn){
   locked = true;
   const g = gaps[idx];
   document.querySelectorAll(".choiceBtn").forEach(b => b.disabled = true);
-  if(cfHasCJK(choice)) cfSpeakZh(choice);
+  if(choice === g.answer) cfPlayFeedback(true); else cfPlayFeedback(false);
+  if(cfHasCJK(choice)) cfSpeakZh(choice, {queue:true});
   if(choice === g.answer){
     btn.classList.add("correctChoice");
     correct++;

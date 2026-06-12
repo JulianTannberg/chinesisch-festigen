@@ -37,6 +37,7 @@
 
         <div class="toolbar">
           <button id="checkBtn" type="button">Prüfen</button>
+          <button id="nextBtn" type="button" style="display:none;">Weiter →</button>
           <button id="undoBtn" type="button">Letzte Karte zurück</button>
           <button id="resetBtn" type="button">Satz zurücksetzen</button>
         </div>
@@ -125,6 +126,8 @@ function startSentence(){
   const p = current();
   bank = makeTokens([...(p.tokens || []), ...buildDistractors(p)]);
   answer = [];
+  $("nextBtn").style.display = "none";
+  $("checkBtn").disabled = false;
   $("solutionBox").style.display = "none";
   setFeedback("neutral", "");
   render();
@@ -205,15 +208,25 @@ function handleDrop(target){
     }catch(err){}
   });
 }
+function colorAnswerTokens(ok){
+  document.querySelectorAll("#answerZone .wordToken").forEach(b => {
+    b.classList.add(ok ? "okToken" : "badToken");
+  });
+}
 function check(){
   const p = current();
   const attempt = answer.map(t => t.text).join("");
   const solution = (p.tokens || []).join("");
   if(attempt === solution){
-    setFeedback("ok", "Richtig! Sehr gut gebaut.");
+    cfPlayFeedback(true);
+    setFeedback("ok", "Richtig! Sehr gut gebaut. Hör dir den Satz noch einmal an.");
+    colorAnswerTokens(true);
+    $("checkBtn").disabled = true;
+    $("nextBtn").style.display = "";
     cfSpeakZh(p.zh);
-    setTimeout(() => { idx++; startSentence(); }, 900);
   }else{
+    cfPlayFeedback(false);
+    colorAnswerTokens(false);
     setFeedback("bad", "Noch nicht richtig. Schau genau auf die Reihenfolge.");
     $("solutionBox").style.display = "block";
   }
@@ -225,6 +238,11 @@ function restartAll(){ idx = 0; localStorage.removeItem(stateKey()); startSenten
 handleDrop($("answerZone"));
 handleDrop($("tokenBank"));
 $("checkBtn").addEventListener("click", check);
+$("nextBtn").addEventListener("click", () => {
+  speechSynthesis.cancel();
+  idx++;
+  startSentence();
+});
 $("undoBtn").addEventListener("click", undo);
 $("resetBtn").addEventListener("click", resetSentence);
 $("restartBtn").addEventListener("click", restartAll);

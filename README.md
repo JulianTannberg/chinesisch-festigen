@@ -144,3 +144,13 @@ dynamischer Tracking-Dienst).
   - `dezh`: Deutschen Satz auf Chinesisch bauen, ebenfalls mit Extra-Karten; auf Geräten mit Spracherkennung kann der Satz alternativ gesprochen werden (auf iPhone/iPad ausgeblendet).
   Alle Sätze stammen aus dem Story-Dialog des Kapitels.
 - Service-Worker-Version: cf-v4.
+
+## Änderungen Etappe 3 (Testfeedback)
+
+- **Steckenbleiben behoben:** Beim „Zeichen lernen“ (alle drei Zeichnen-Stufen) und beim Nachzeichnen-Spiel (Anfänger) wird der aktuelle Strich jetzt zuverlässig nach jeweils 2 Fehlversuchen vorgezeigt. In Stufe „Aus dem Kopf“ erscheint nur der Hilfsstrich, nie das ganze Zeichen.
+- **iPhone/iPad:** Die Browser-Spracherkennung wird auf iOS-Geräten gar nicht mehr benutzt (Safari meldet sie als vorhanden, sie hängt aber). Sprechen-Seite zeigt dort immer das Diktat-Eingabefeld; in „Deutsch → Chinesisch“ ist der Sprechen-Knopf auf iOS ausgeblendet.
+- **Feedback-Töne:** Kurzer Bestätigungston bei richtig, tieferer Ton bei falsch (Sprechen, Satz-Puzzle, Lückenspiel, Üben, Zeichen lernen). Ohne Audiodateien, funktioniert offline.
+- **Kärtchen-Färbung:** Beim Prüfen färben sich die gelegten Karten grün (richtig) oder rot (falsch) – Satz-Puzzle und alle drei Üben-Modi.
+- **Weiter-Knopf statt Auto-Sprung:** Nach richtiger Lösung in Satz-Puzzle und Üben bleibt der Satz stehen (und wird vorgelesen); weiter geht es erst mit „Weiter →“.
+- **Zeichen lernen:** Das Wort wird im Pinyin-Schritt nicht mehr automatisch vorgesprochen (▶ bleibt als freiwillige Hilfe). Fehlerfreie Wörter färben die ganze Wortkarte grün („perfekt“), Wörter mit Fehlern bekommen nur die grüne Umrandung. Einmal „perfekt“ bleibt erhalten.
+- Service-Worker-Version: cf-v5.

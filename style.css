@@ -786,3 +786,18 @@ input.wrong{border-color:var(--bad);background:rgba(239,68,68,.18)}
 .imeSwitch button{flex:1 1 auto;min-height:42px;border-radius:12px;font-weight:750;font-size:14px;}
 .imeSwitch button.active{background:var(--card-strong);outline:2px solid rgba(255,255,255,.26);}
 .theme-light .imeSwitch button.active{outline:2px solid rgba(11,27,46,.24);}
+
+
+/* ===== Token-Färbung nach Prüfen (Satz-Puzzle / Üben) ===== */
+.wordToken.okToken{background:rgba(34,197,94,.30);outline:2px solid rgba(34,197,94,.65)}
+.wordToken.badToken{background:rgba(239,68,68,.28);outline:2px solid rgba(239,68,68,.60)}
+
+/* ===== Zeichen lernen: fehlerfrei = ganze Karte grün ===== */
+.learnCard.perfect{
+  background:linear-gradient(135deg, rgba(34,197,94,.55), rgba(34,197,94,.25));
+  outline:2px solid rgba(34,197,94,.8);
+}
+.theme-light .learnCard.perfect{
+  background:linear-gradient(135deg, rgba(21,128,61,.45), rgba(21,128,61,.20));
+  outline:2px solid #15803d;
+}

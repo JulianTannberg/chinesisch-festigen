@@ -70,6 +70,7 @@
 
         <div class="toolbar">
           <button id="checkBtn" type="button">Prüfen</button>
+          <button id="nextTaskBtn" type="button" style="display:none;">Weiter →</button>
           <button id="undoBtn" type="button">Letzte Karte zurück</button>
           <button id="resetBtn" type="button">Satz zurücksetzen</button>
         </div>
@@ -208,6 +209,7 @@ function startTask(){
   bank = makeTokens(buildTokens(t));
   answer = [];
   solvedBySpeech = false;
+  $("nextTaskBtn").style.display = "none";
   $("solutionBox").style.display = "none";
   $("speakHeard").textContent = "";
   setFeedback("neutral", "");
@@ -305,18 +307,28 @@ function handleDrop(target){
     }catch(err){}
   });
 }
+function colorAnswerTokens(ok){
+  document.querySelectorAll("#answerZone .wordToken").forEach(b => {
+    b.classList.add(ok ? "okToken" : "badToken");
+  });
+}
 function taskSolved(viaSpeech){
   const t = current();
+  cfPlayFeedback(true);
   setFeedback("ok", viaSpeech ? "Richtig gesprochen! 很好！" : "Richtig! Sehr gut gebaut.");
+  colorAnswerTokens(true);
   $("solutionBox").style.display = "block";
+  $("checkBtn").disabled = true;
+  $("nextTaskBtn").style.display = "";
   cfSpeakZh(t.zh);
-  setTimeout(() => { idx++; startTask(); }, viaSpeech ? 1400 : 1100);
 }
 function check(){
   const t = current();
   if(attemptString() === solutionString(t)){
     taskSolved(false);
   }else{
+    cfPlayFeedback(false);
+    colorAnswerTokens(false);
     setFeedback("bad", "Noch nicht richtig. Schau genau auf die Reihenfolge – und ob alle Karten gebraucht werden.");
     $("solutionBox").style.display = "block";
   }
@@ -326,7 +338,7 @@ function restartAll(){ idx = 0; localStorage.removeItem(stateKey()); startTask()
 
 /* Sprechen (nur Deutsch → Chinesisch, nur wenn der Browser es kann) */
 const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-if(MODE === "dezh" && Recognition){
+if(MODE === "dezh" && Recognition && !cfIsIOS()){
   $("speakRow").style.display = "";
   let listening = false;
   $("speakBtn").addEventListener("click", () => {
@@ -367,6 +379,11 @@ $("zhPlayBtn").addEventListener("click", () => cfSpeakZh(current()?.zh || "", {r
 handleDrop($("answerZone"));
 handleDrop($("tokenBank"));
 $("checkBtn").addEventListener("click", check);
+$("nextTaskBtn").addEventListener("click", () => {
+  speechSynthesis.cancel();
+  idx++;
+  startTask();
+});
 $("undoBtn").addEventListener("click", undo);
 $("resetBtn").addEventListener("click", startTask);
 $("restartBtn").addEventListener("click", restartAll);

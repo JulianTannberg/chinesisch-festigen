@@ -99,3 +99,41 @@ function cfDetectDevice(){
   if(/Mac/.test(ua)) return "mac";
   return "windows";
 }
+
+// iPhone/iPad? Dort funktioniert die Browser-Spracherkennung nicht
+// zuverlässig, auch wenn die Schnittstelle vorhanden ist.
+function cfIsIOS(){
+  const d = cfDetectDevice();
+  return d === "iphone" || d === "ipad";
+}
+
+// Kurzer Bestätigungs-/Fehlerton (ohne Audiodateien, funktioniert offline)
+let _cfAudioCtx = null;
+function cfPlayFeedback(ok){
+  try{
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return;
+    if(!_cfAudioCtx) _cfAudioCtx = new AC();
+    if(_cfAudioCtx.state === "suspended") _cfAudioCtx.resume();
+    const ctx = _cfAudioCtx;
+    const t = ctx.currentTime;
+    const gain = ctx.createGain();
+    gain.connect(ctx.destination);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(0.18, t + 0.02);
+    const osc = ctx.createOscillator();
+    osc.type = ok ? "sine" : "triangle";
+    if(ok){
+      osc.frequency.setValueAtTime(660, t);
+      osc.frequency.setValueAtTime(880, t + 0.12);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+      osc.start(t); osc.stop(t + 0.36);
+    }else{
+      osc.frequency.setValueAtTime(220, t);
+      osc.frequency.setValueAtTime(170, t + 0.12);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
+      osc.start(t); osc.stop(t + 0.31);
+    }
+    osc.connect(gain);
+  }catch(e){}
+}

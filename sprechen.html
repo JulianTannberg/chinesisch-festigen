@@ -134,7 +134,10 @@ const initialTab = (new URLSearchParams(location.search).get("tab") === "ki") ? 
 activateTab(initialTab);
 
 /* ===== Teil 1: Sätze sprechen ===== */
-const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+// Auf iPhone/iPad meldet Safari die Spracherkennung zwar als vorhanden,
+// sie funktioniert dort aber nicht (Mikrofon bleibt hängen). Deshalb wird
+// sie auf iOS-Geräten gar nicht erst benutzt.
+const Recognition = cfIsIOS() ? null : (window.SpeechRecognition || window.webkitSpeechRecognition);
 let recognition = null;
 let recording = false;
 let idx = 0;
@@ -311,11 +314,13 @@ function checkTranscript(alternatives, task){
   }
 
   if(ok){
+    cfPlayFeedback(true);
     correct++;
     failedAttempts = 0;
     setFeedback("ok", task.acceptMode === "woJiaoName" ? "Richtig erkannt: 我叫… passt. Dein eigener Name ist in Ordnung." : "Richtig erkannt. Gut gesprochen.");
     $("nextBtn").disabled = false;
   }else{
+    cfPlayFeedback(false);
     failedAttempts++;
     $("expectedBox").classList.add("show");
     $("nextBtn").disabled = false;

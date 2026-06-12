@@ -529,16 +529,20 @@ const learnWords = (topic.vocab || [])
   .filter(w => w.chars.length > 0);
 
 const LEARN_DONE_KEY = `cf_learn_done_${topic.id}`;
-let learnDone = new Set();
-try{ learnDone = new Set(JSON.parse(localStorage.getItem(LEARN_DONE_KEY) || "[]")); }catch(e){}
-function saveLearnDone(){ localStorage.setItem(LEARN_DONE_KEY, JSON.stringify([...learnDone])); }
+let learnDone = {};
+try{
+  const raw = JSON.parse(localStorage.getItem(LEARN_DONE_KEY) || "{}");
+  if(Array.isArray(raw)) raw.forEach(zh => learnDone[zh] = "ok");
+  else if(raw && typeof raw === "object") learnDone = raw;
+}catch(e){}
+function saveLearnDone(){ localStorage.setItem(LEARN_DONE_KEY, JSON.stringify(learnDone)); }
 
 const LEARN_STEPS = ["Hören & Pinyin", "Bedeutung", "Mit Vorlage", "Nur Striche", "Aus dem Kopf"];
 // Konfiguration der drei Zeichen-Stufen (Schritte 3–5)
 const LEARN_TRACE_CFG = {
-  2: { outline: true,  demo: true,  hintAfter: 99, rounds: 2, info: "Mit Vorlage" },
-  3: { outline: false, demo: true,  hintAfter: 99, rounds: 2, info: "Ohne Vorlage, Striche werden gezeigt" },
-  4: { outline: false, demo: false, hintAfter: 2,  rounds: 1, info: "Aus dem Kopf – Hilfe erst nach 2 Fehlern" }
+  2: { outline: true,  demo: true,  rounds: 2, info: "Mit Vorlage" },
+  3: { outline: false, demo: true,  rounds: 2, info: "Ohne Vorlage, Striche werden gezeigt" },
+  4: { outline: false, demo: false, rounds: 1, info: "Aus dem Kopf – Hilfe erst nach 2 Fehlern" }
 };
 
 let lWord = null;
@@ -548,6 +552,7 @@ let lChar = 0;
 let lWriter = null;
 let lToken = 0;
 let lLocked = false;
+let lWordMistakes = 0;   // Fehler im ganzen Wort (für „perfekt“)
 
 function setLearnStatus(text, kind){
   const el = $("learnStatus");
@@ -558,10 +563,11 @@ function renderLearnGrid(){
   const grid = $("learnGrid");
   grid.innerHTML = "";
   learnWords.forEach(w => {
+    const status = learnDone[w.zh]; // undefined | "ok" | "perfect"
     const b = document.createElement("button");
     b.type = "button";
-    b.className = "learnCard" + (learnDone.has(w.zh) ? " done" : "");
-    b.innerHTML = (learnDone.has(w.zh) ? '<span class="doneMark">✓</span>' : "") + escapeHtml(w.zh);
+    b.className = "learnCard" + (status === "perfect" ? " perfect" : status ? " done" : "");
+    b.innerHTML = (status ? '<span class="doneMark">✓</span>' : "") + escapeHtml(w.zh);
     b.addEventListener("click", () => startLearnWord(w));
     grid.appendChild(b);
   });
@@ -582,6 +588,7 @@ function cancelLearnWriter(){
 function startLearnWord(w){
   lWord = w;
   lStep = 0;
+  lWordMistakes = 0;
   $("learnGridWrap").style.display = "none";
   $("learnView").style.display = "";
   runLearnStep();
@@ -619,10 +626,13 @@ function buildLearnChoices(kind){
       if(lLocked) return;
       if(opt === correct){
         lLocked = true;
+        cfPlayFeedback(true);
         b.classList.add("correctChoice");
         setLearnStatus("Richtig!", "ok");
         setTimeout(() => { lStep++; runLearnStep(); }, 700);
       }else{
+        lWordMistakes++;
+        cfPlayFeedback(false);
         b.classList.add("wrongChoice");
         b.disabled = true;
         setLearnStatus("Noch nicht – versuch es noch einmal.", "bad");
@@ -644,9 +654,8 @@ function runLearnStep(){
 
   if(lStep === 0){
     $("learnPlay").style.display = "";
-    $("learnQuestion").textContent = "Wie wird das ausgesprochen? Hör es dir an und wähle das passende Pinyin.";
+    $("learnQuestion").textContent = "Wie wird das Wort ausgesprochen? Wähle das passende Pinyin. Mit ▶ kannst du es dir zur Hilfe anhören.";
     buildLearnChoices("pinyin");
-    cfSpeakZh(lWord.zh, {rate:0.85});
   }else if(lStep === 1){
     $("learnPlay").style.display = "none";
     $("learnQuestion").textContent = "Was bedeutet das Wort?";
@@ -737,20 +746,31 @@ function loadLearnChar(){
     drawingColor: "#111111",
     drawingWidth: 26,
     leniency: cfg.outline ? 1.25 : 1.1,
-    showHintAfterMisses: cfg.hintAfter
+    showHintAfterMisses: 9999 // Hilfe zeigen wir selbst, damit sie sicher kommt
   });
 
   let completed = 0;
+  let strokeMisses = 0;
   const beginQuiz = () => {
     if(token !== lToken || !lWriter) return;
     setLearnStatus(cfg.demo ? "Zeichne den Strich nach …" : "Schreib das Zeichen aus dem Kopf …");
     lWriter.quiz({
       onMistake(){
         if(token !== lToken) return;
-        setLearnStatus("Nicht ganz – probiere den Strich noch einmal.", "bad");
+        lWordMistakes++;
+        strokeMisses++;
+        if(strokeMisses % 2 === 0){
+          // Nach jeweils 2 Fehlversuchen den aktuellen Strich vorzeigen –
+          // so kann niemand steckenbleiben, das Zeichen bleibt verborgen.
+          setLearnStatus("Schau her, so geht dieser Strich:", "bad");
+          animateLearnStroke(completed);
+        }else{
+          setLearnStatus("Nicht ganz – probiere den Strich noch einmal.", "bad");
+        }
       },
       onCorrectStroke(data){
         if(token !== lToken) return;
+        strokeMisses = 0;
         const n = (data && Number.isInteger(data.strokeNum)) ? data.strokeNum + 1 : completed + 1;
         completed = Math.max(completed, n);
         const total = lWriter?._character?.strokes?.length || null;
@@ -804,16 +824,20 @@ function finishLearnWord(){
   $("learnDe").textContent = lWord.de;
   $("learnPlay").style.display = "";
   $("learnQuestion").textContent = "";
-  learnDone.add(lWord.zh);
+  const status = lWordMistakes === 0 ? "perfect" : "ok";
+  if(learnDone[lWord.zh] !== "perfect") learnDone[lWord.zh] = status;
   saveLearnDone();
-  setLearnStatus("Wort gelernt! 很好！", "ok");
+  cfPlayFeedback(true);
+  setLearnStatus(lWordMistakes === 0
+    ? "Perfekt – ganz ohne Fehler! 太棒了！"
+    : "Wort gelernt! 很好！", "ok");
   $("learnDoneBar").style.display = "";
   cfSpeakZh(lWord.zh, {rate:0.85});
 }
 function nextLearnWord(){
   const startIdx = learnWords.findIndex(w => w.zh === lWord.zh);
-  const after = learnWords.slice(startIdx + 1).find(w => !learnDone.has(w.zh));
-  const any = after || learnWords.find(w => !learnDone.has(w.zh));
+  const after = learnWords.slice(startIdx + 1).find(w => !learnDone[w.zh]);
+  const any = after || learnWords.find(w => !learnDone[w.zh]);
   if(any) startLearnWord(any);
   else showLearnGrid();
 }
@@ -829,7 +853,7 @@ $("learnExit").addEventListener("click", showLearnGrid);
 $("learnToGrid").addEventListener("click", showLearnGrid);
 $("learnNextWord").addEventListener("click", nextLearnWord);
 $("learnResetDone").addEventListener("click", () => {
-  learnDone = new Set();
+  learnDone = {};
   saveLearnDone();
   renderLearnGrid();
 });
