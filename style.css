@@ -801,3 +801,30 @@ input.wrong{border-color:var(--bad);background:rgba(239,68,68,.18)}
   background:linear-gradient(135deg, rgba(21,128,61,.45), rgba(21,128,61,.20));
   outline:2px solid #15803d;
 }
+
+
+/* ===== Feste Ansicht ohne Seiten-Verschieben =====
+   Die Seite selbst scrollt nicht; nur falls der Inhalt auf sehr
+   kleinen Bildschirmen nicht passt, scrollt die Karte innen. */
+html.noScroll, html.noScroll body{
+  height:100%;
+  overflow:hidden;
+  overscroll-behavior:none;
+}
+html.noScroll .app{
+  height:100dvh;
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  padding-top:10px;
+  padding-bottom:10px;
+}
+html.noScroll .app h1{ font-size:clamp(19px, 4vw, 26px); margin:2px 0 4px; }
+html.noScroll .app .subtitle{ display:none; }
+html.noScroll .app > section.card{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}

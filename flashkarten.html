@@ -80,6 +80,7 @@
 <script>
 const topic = getTopic();
 applyTheme(topic, "Flashkarten");
+document.documentElement.classList.add("noScroll");
 const $ = id => document.getElementById(id);
 $("back").href = `kapitel.html?id=${topic.id}`;
 $("finishBack").href = `kapitel.html?id=${topic.id}`;

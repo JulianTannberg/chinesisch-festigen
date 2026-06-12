@@ -30,7 +30,7 @@
       </a>
       <a class="modeCard" id="writeLink">
         <p class="modeTitle">Schreiben</p>
-        <p class="modeText">Vokabeln aktiv schreiben, Fehler wiederholen und die Lernserie halten.</p>
+        <p class="modeText">Zeichen Schritt für Schritt lernen, mit Stufen wiederholen oder tippen.</p>
       </a>
       <a class="modeCard" id="speakLink">
         <p class="modeTitle">Sprechen</p>
@@ -56,10 +56,6 @@
 
     <h2 class="groupTitle">Spielen</h2>
     <section class="grid">
-      <a class="modeCard" id="traceGameLink">
-        <p class="modeTitle">Nachzeichnen</p>
-        <p class="modeText">Zeichen Strich für Strich nachzeichnen – mit drei Schwierigkeitsstufen.</p>
-      </a>
       <a class="modeCard" id="flashLink">
         <p class="modeTitle">Flashkarten</p>
         <p class="modeText">Vokabeln als Karten üben, aufdecken und schwierige Wörter wiederholen.</p>
@@ -67,10 +63,6 @@
       <a class="modeCard" id="memoryLink">
         <p class="modeTitle">Memory</p>
         <p class="modeText">Hanzi und deutsche Bedeutung als Paare finden.</p>
-      </a>
-      <a class="modeCard" id="puzzleLink">
-        <p class="modeTitle">Satz-Puzzle</p>
-        <p class="modeText">Wortkarten schieben und chinesische Sätze zusammensetzen.</p>
       </a>
       <a class="modeCard" id="gapLink">
         <p class="modeTitle">Lückenspiel</p>
@@ -97,10 +89,8 @@
   document.getElementById("uebenHoerenLink").href = `ueben.html?id=${topic.id}&mode=hoeren`;
   document.getElementById("uebenZhDeLink").href = `ueben.html?id=${topic.id}&mode=zhde`;
   document.getElementById("uebenDeZhLink").href = `ueben.html?id=${topic.id}&mode=dezh`;
-  document.getElementById("traceGameLink").href = `zeichnen.html?id=${topic.id}`;
   document.getElementById("flashLink").href = `flashkarten.html?id=${topic.id}`;
   document.getElementById("memoryLink").href = `memory.html?id=${topic.id}`;
-  document.getElementById("puzzleLink").href = `satzpuzzle.html?id=${topic.id}`;
   document.getElementById("gapLink").href = `luecken.html?id=${topic.id}`;
 </script>
 </body>

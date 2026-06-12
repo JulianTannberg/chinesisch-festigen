@@ -154,3 +154,15 @@ dynamischer Tracking-Dienst).
 - **Weiter-Knopf statt Auto-Sprung:** Nach richtiger Lösung in Satz-Puzzle und Üben bleibt der Satz stehen (und wird vorgelesen); weiter geht es erst mit „Weiter →“.
 - **Zeichen lernen:** Das Wort wird im Pinyin-Schritt nicht mehr automatisch vorgesprochen (▶ bleibt als freiwillige Hilfe). Fehlerfreie Wörter färben die ganze Wortkarte grün („perfekt“), Wörter mit Fehlern bekommen nur die grüne Umrandung. Einmal „perfekt“ bleibt erhalten.
 - Service-Worker-Version: cf-v5.
+
+## Änderungen Etappe 4
+
+- **Struktur jetzt 3×3:** Lernen (Hören, Schreiben, Sprechen) · Üben (Chinesisch hören, Chinesisch→Deutsch, Deutsch→Chinesisch) · Spielen (Flashkarten, Memory, Lückenspiel).
+- **Satz-Puzzle entfernt** (Doppelung mit Üben „Deutsch → Chinesisch“). `satzpuzzle.html` gelöscht.
+- **Nachzeichnen-Spiel in Schreiben integriert** als mittlerer Reiter **„Wiederholen“** (Zeichen lernen · Wiederholen · Tippen). `zeichnen.html` gelöscht.
+- **Hilfsstrich überall:** Auch unter „Wiederholen“ wird in allen drei Stufen (Anfänger, Mit Zeichen, Profi) der aktuelle Strich nach jeweils 2 Fehlversuchen vorgezeigt – wie beim Zeichen lernen.
+- **Hören:** Reiter heißt jetzt „Geschichte“; „Stopp“ und „Geschichte abspielen“ erscheinen nur in diesem Reiter.
+- **Feste Ansicht (noScroll):** Flashkarten, Sprechen und ein geöffnetes Wort im Zeichen lernen halten die Seite fest (kein Mitscrollen/Verschieben); passt der Inhalt auf sehr kleinen Bildschirmen nicht, scrollt nur die Karte innen. Vokabel-Übersicht u. ä. scrollen weiter normal.
+- **Offline-Fix:** Seitenaufrufe mit `?id=…` (z. B. `kapitel.html?id=01`) wurden offline nicht im Cache gefunden – behoben (ignoreSearch). Hinweis: Die Seite muss einmal **online** besucht worden sein, damit der Service Worker alles speichert; danach klappt die Navigation offline.
+- **Zeichen lernen:** ✓-Haken entfernt – nur noch grüne Umrandung (gelernt) bzw. ganz grüne Karte (fehlerfrei).
+- Service-Worker-Version: cf-v6.

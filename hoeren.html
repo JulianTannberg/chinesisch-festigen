@@ -31,12 +31,12 @@
         <button id="togglePinyin" class="toggleBtn" type="button" aria-pressed="false">Pinyin anzeigen</button>
         <button id="toggleDeutsch" class="toggleBtn" type="button" aria-pressed="false">Deutsch anzeigen</button>
         <button id="stopBtn" type="button">Stopp</button>
-        <button id="playAllBtn" type="button">Dialog alles abspielen</button>
+        <button id="playAllBtn" type="button">Geschichte abspielen</button>
       </div>
 
       <div class="tabbar">
         <button class="tab active" data-tab="vocab">Vokabeln</button>
-        <button class="tab" data-tab="dialog">Dialog / Geschichte</button>
+        <button class="tab" data-tab="dialog">Geschichte</button>
       </div>
 
       <div class="panel active" id="panel-vocab">
@@ -113,11 +113,18 @@ function speakAndWait(text, token){
 document.getElementById("stopBtn").onclick = stopAudio;
 
 const tabs = [...document.querySelectorAll(".tab")];
+function updateStoryButtons(activeTab){
+  const show = activeTab === "dialog";
+  document.getElementById("stopBtn").style.display = show ? "" : "none";
+  document.getElementById("playAllBtn").style.display = show ? "" : "none";
+}
 tabs.forEach(tab => tab.addEventListener("click", () => {
   tabs.forEach(t => t.classList.toggle("active", t === tab));
   document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
   document.getElementById(`panel-${tab.dataset.tab}`).classList.add("active");
+  updateStoryButtons(tab.dataset.tab);
 }));
+updateStoryButtons("vocab");
 
 function hexToRgb(hex){
   const h = hex.replace("#","");
@@ -182,7 +189,7 @@ if((!topic.vocab || topic.vocab.length === 0) && (!topic.understandingVocab || t
 const dialogEl = document.getElementById("dialog");
 const dialogData = topic.storyDialog || [];
 if(dialogData.length === 0){
-  dialogEl.innerHTML = `<div class="empty">Für dieses Kapitel ist noch kein Dialog / keine Geschichte eingetragen.</div>`;
+  dialogEl.innerHTML = `<div class="empty">Für dieses Kapitel ist noch keine Geschichte eingetragen.</div>`;
 }else{
   dialogData.forEach(line => {
     const color = bubbleColor(line.speaker);

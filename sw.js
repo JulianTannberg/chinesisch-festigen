@@ -1,7 +1,7 @@
 // Chinesisch festigen – Service Worker
 // Bei jeder Änderung an der Website die Versionsnummer erhöhen,
 // damit alle Geräte die neuen Dateien laden.
-const CACHE = "cf-v5";
+const CACHE = "cf-v6";
 
 const SHELL = [
   "./",
@@ -14,10 +14,8 @@ const SHELL = [
   "./sprechsatz.html",
   "./flashkarten.html",
   "./memory.html",
-  "./satzpuzzle.html",
   "./luecken.html",
   "./ueben.html",
-  "./zeichnen.html",
   "./style.css",
   "./topics.js",
   "./common.js",
@@ -71,7 +69,7 @@ self.addEventListener("fetch", e => {
           caches.open(CACHE).then(c => c.put(e.request, copy));
           return res;
         })
-        .catch(() => caches.match(e.request).then(hit => hit || caches.match("./index.html")))
+        .catch(() => caches.match(e.request, {ignoreSearch:true}).then(hit => hit || caches.match("./index.html")))
     );
     return;
   }
