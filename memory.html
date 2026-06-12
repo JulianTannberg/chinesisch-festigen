@@ -19,29 +19,19 @@
       <a class="back" id="back">← Kapitel</a>
     </div>
     <h1 id="title">Memory</h1>
-    <p class="subtitle">Finde die Paare aus Hanzi und deutscher Bedeutung. Pro Runde werden nur einige Karten genommen, damit es übersichtlich bleibt.</p>
+    <p class="subtitle">Finde die Paare aus Hanzi und deutscher Bedeutung.</p>
 
     <section class="card">
       <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Memory-Karten eingetragen.</div>
       <div id="game">
-        <div class="gameStats">
-          <div class="stat"><div class="statK">Runde</div><div class="statV" id="roundNo">1</div></div>
-          <div class="stat"><div class="statK">Paare</div><div class="statV" id="pairCount">0/0</div></div>
-          <div class="stat"><div class="statK">Züge</div><div class="statV" id="moveCount">0</div></div>
-        </div>
-
-        <div class="toolbar compactToolbar">
+        <div class="memTopRow">
+          <div class="memStat">Runde <strong id="roundNo">1</strong></div>
+          <div class="memStat">Paare <strong id="pairCount">0/0</strong></div>
+          <div class="memStat">Züge <strong id="moveCount">0</strong></div>
           <button id="soundToggle" type="button">Ton an</button>
         </div>
 
         <div class="memoryGrid" id="memoryGrid" aria-label="Memory-Karten"></div>
-
-        <div class="toolbar">
-          <button id="restartBtn" type="button">Runde neu starten</button>
-          <button id="nextRoundBtn" type="button">Nächste Runde</button>
-          <button id="fromStartBtn" type="button">Von vorne starten</button>
-        </div>
-        <p class="small">Tipp: Erst die Hanzi-Karte merken, dann die passende deutsche Karte suchen.</p>
       </div>
       <div class="finish" id="finish">
         <p class="finishTitle">Memory geschafft!</p>
@@ -59,13 +49,14 @@
 <script>
 const topic = getTopic();
 applyTheme(topic, "Memory");
+document.documentElement.classList.add("noScroll");
 const $ = id => document.getElementById(id);
 $("back").href = `kapitel.html?id=${topic.id}`;
 $("finishBack").href = `kapitel.html?id=${topic.id}`;
 $("title").textContent = `${topic.id}. ${topic.title} · Memory`;
 
 const vocab = (topic.vocab || []).filter(v => v.zh && v.de);
-const PAIRS_PER_ROUND = (window.matchMedia && window.matchMedia("(max-width: 480px)").matches) ? 6 : 8;
+const PAIRS_PER_ROUND = 5; // 10 Karten – passt ohne Scrollen
 let allOrder = [];
 let roundStart = 0;
 let cards = [];
@@ -165,7 +156,6 @@ function render(){
   $("roundNo").textContent = String(roundNo);
   $("pairCount").textContent = `${pairsFound}/${currentIndices().length}`;
   $("moveCount").textContent = String(moves);
-  $("nextRoundBtn").disabled = pairsFound < currentIndices().length;
   const grid = $("memoryGrid");
   grid.innerHTML = "";
   cards.forEach(card => {
@@ -197,7 +187,12 @@ function flip(id){
       b.matched = true;
       pairsFound++;
       open = [];
-      if(pairsFound >= currentIndices().length){ save(); }
+      if(pairsFound >= currentIndices().length){
+        save();
+        cfPlayFeedback(true);
+        // Nächste Runde startet automatisch, bis alle Vokabeln dran waren
+        setTimeout(nextRound, 1000);
+      }
     }else{
       locked = true;
       setTimeout(() => {
@@ -212,9 +207,6 @@ function flip(id){
   render();
 }
 
-$("restartBtn").addEventListener("click", restartRound);
-$("nextRoundBtn").addEventListener("click", nextRound);
-$("fromStartBtn").addEventListener("click", resetAll);
 $("finishRestart").addEventListener("click", resetAll);
 $("soundToggle").addEventListener("click", () => {
   soundOn = !soundOn;

@@ -828,3 +828,54 @@ html.noScroll .app > section.card{
   overflow-y:auto;
   -webkit-overflow-scrolling:touch;
 }
+
+
+/* ===== Kapitelseite: untere Reiter ===== */
+.bottomTabs{
+  display:flex;
+  gap:8px;
+  margin-top:18px;
+  padding:4px 0 2px;
+}
+.bottomTabs button{
+  flex:1;
+  min-height:54px;
+  font-size:16px;
+  font-weight:850;
+  border-radius:16px;
+}
+.bottomTabs button.active{
+  background:var(--card-strong);
+  outline:2px solid rgba(255,255,255,.28);
+}
+.theme-light .bottomTabs button.active{ outline:2px solid rgba(11,27,46,.26); }
+html.noScroll .app .kgroup{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+html.noScroll .app .bottomTabs{ margin-top:auto; }
+
+/* ===== Memory: Kopfzeile + kompakte Karten ===== */
+.memTopRow{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-bottom:12px;
+}
+.memTopRow .memStat{
+  font-size:14px;
+  color:var(--muted);
+}
+.memTopRow .memStat strong{ color:var(--chapter-text); font-size:16px; }
+.memTopRow #soundToggle{
+  margin-left:auto;
+  min-height:40px;
+  padding:8px 14px;
+  font-size:14px;
+}
+@media(max-width:440px){
+  .memoryCard{ min-height:74px; font-size:15px; }
+}

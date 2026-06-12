@@ -22,7 +22,7 @@
     <p class="subtitle" id="short"></p>
     <div id="profileSetupMount"></div>
 
-    <h2 class="groupTitle">Lernen</h2>
+    <div class="kgroup" id="group-lernen">
     <section class="grid">
       <a class="modeCard" id="hearLink">
         <p class="modeTitle">Hören</p>
@@ -37,8 +37,9 @@
         <p class="modeText">Sätze auf Chinesisch sprechen oder den Schülerdialog mit KI üben.</p>
       </a>
     </section>
+    </div>
 
-    <h2 class="groupTitle">Üben</h2>
+    <div class="kgroup" id="group-ueben" style="display:none;">
     <section class="grid">
       <a class="modeCard" id="uebenHoerenLink">
         <p class="modeTitle">Chinesisch hören</p>
@@ -53,8 +54,9 @@
         <p class="modeText">Den deutschen Satz auf Chinesisch zusammensetzen – oder gleich sprechen.</p>
       </a>
     </section>
+    </div>
 
-    <h2 class="groupTitle">Spielen</h2>
+    <div class="kgroup" id="group-spielen" style="display:none;">
     <section class="grid">
       <a class="modeCard" id="flashLink">
         <p class="modeTitle">Flashkarten</p>
@@ -69,6 +71,13 @@
         <p class="modeText">Das passende Wort für die Lücke auswählen.</p>
       </a>
     </section>
+    </div>
+
+    <nav class="bottomTabs" id="kapitelTabs" aria-label="Bereich wählen">
+      <button type="button" data-group="lernen" class="active">Lernen</button>
+      <button type="button" data-group="ueben">Üben</button>
+      <button type="button" data-group="spielen">Spielen</button>
+    </nav>
 
     <div id="profileEditMount" class="bottomProfile"></div>
   </main>
@@ -92,6 +101,20 @@
   document.getElementById("flashLink").href = `flashkarten.html?id=${topic.id}`;
   document.getElementById("memoryLink").href = `memory.html?id=${topic.id}`;
   document.getElementById("gapLink").href = `luecken.html?id=${topic.id}`;
+
+  // Untere Reiter: nur einen Bereich zeigen, Seite bleibt fest
+  document.documentElement.classList.add("noScroll");
+  const groupButtons = [...document.querySelectorAll("#kapitelTabs button")];
+  function showGroup(name){
+    groupButtons.forEach(b => b.classList.toggle("active", b.dataset.group === name));
+    ["lernen","ueben","spielen"].forEach(g => {
+      document.getElementById(`group-${g}`).style.display = g === name ? "" : "none";
+    });
+    localStorage.setItem("cf_kapitel_tab", name);
+  }
+  groupButtons.forEach(b => b.addEventListener("click", () => showGroup(b.dataset.group)));
+  const savedGroup = localStorage.getItem("cf_kapitel_tab");
+  showGroup(["lernen","ueben","spielen"].includes(savedGroup) ? savedGroup : "lernen");
 </script>
 </body>
 </html>

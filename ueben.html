@@ -43,7 +43,6 @@
       <div id="game">
         <div class="puzzleTopline">
           <div class="small" id="counter">Satz –</div>
-          <button id="restartBtn" type="button">Von vorne starten</button>
         </div>
 
         <!-- Hören-Modus -->
@@ -65,20 +64,15 @@
           </div>
         </div>
 
-        <div class="dropZone" id="answerZone" aria-label="Antwortbereich"></div>
-        <div class="tokenBank" id="tokenBank" aria-label="Wortkarten"></div>
-
         <div class="toolbar">
           <button id="checkBtn" type="button">Prüfen</button>
+          <button id="speakBtn" class="recordBtn" type="button" style="display:none;">🎤 Stattdessen sprechen</button>
           <button id="nextTaskBtn" type="button" style="display:none;">Weiter →</button>
-          <button id="undoBtn" type="button">Letzte Karte zurück</button>
-          <button id="resetBtn" type="button">Satz zurücksetzen</button>
         </div>
+        <div class="small" id="speakHeard"></div>
 
-        <div class="toolbar speakRow" id="speakRow" style="display:none;">
-          <button id="speakBtn" class="recordBtn" type="button">🎤 Stattdessen sprechen</button>
-          <span class="small" id="speakHeard"></span>
-        </div>
+        <div class="dropZone" id="answerZone" aria-label="Antwortbereich"></div>
+        <div class="tokenBank" id="tokenBank" aria-label="Wortkarten"></div>
 
         <div class="feedback neutral" id="feedback"></div>
         <div class="solutionBox" id="solutionBox">
@@ -126,6 +120,7 @@ let MODE = params.get("mode") || "hoeren";
 if(!MODES[MODE]) MODE = "hoeren";
 
 applyTheme(topic, `Üben: ${MODES[MODE].name}`);
+document.documentElement.classList.add("noScroll");
 $("back").href = `kapitel.html?id=${topic.id}`;
 $("finishBack").href = `kapitel.html?id=${topic.id}`;
 $("title").textContent = `${topic.id}. ${topic.title} · ${MODES[MODE].name}`;
@@ -333,13 +328,12 @@ function check(){
     $("solutionBox").style.display = "block";
   }
 }
-function undo(){ if(answer.length){ bank.push(answer.pop()); renderTokens(); } }
 function restartAll(){ idx = 0; localStorage.removeItem(stateKey()); startTask(); }
 
 /* Sprechen (nur Deutsch → Chinesisch, nur wenn der Browser es kann) */
 const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 if(MODE === "dezh" && Recognition && !cfIsIOS()){
-  $("speakRow").style.display = "";
+  $("speakBtn").style.display = "";
   let listening = false;
   $("speakBtn").addEventListener("click", () => {
     if(listening) return;
@@ -384,9 +378,6 @@ $("nextTaskBtn").addEventListener("click", () => {
   idx++;
   startTask();
 });
-$("undoBtn").addEventListener("click", undo);
-$("resetBtn").addEventListener("click", startTask);
-$("restartBtn").addEventListener("click", restartAll);
 $("finishRestart").addEventListener("click", restartAll);
 
 load();

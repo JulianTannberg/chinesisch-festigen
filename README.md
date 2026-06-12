@@ -166,3 +166,12 @@ dynamischer Tracking-Dienst).
 - **Offline-Fix:** Seitenaufrufe mit `?id=…` (z. B. `kapitel.html?id=01`) wurden offline nicht im Cache gefunden – behoben (ignoreSearch). Hinweis: Die Seite muss einmal **online** besucht worden sein, damit der Service Worker alles speichert; danach klappt die Navigation offline.
 - **Zeichen lernen:** ✓-Haken entfernt – nur noch grüne Umrandung (gelernt) bzw. ganz grüne Karte (fehlerfrei).
 - Service-Worker-Version: cf-v6.
+
+## Änderungen Etappe 5
+
+- **Schreibtraining** (vorher „Wiederholen“): komplett neu, jetzt exakt die drei Zeichnen-Stufen aus „Zeichen lernen“ – als Stufen **Anfänger** (mit Vorlage, Striche vorgezeigt), **Fortgeschritten** (ohne Vorlage, Striche vorgezeigt), **Profi** (aus dem Kopf, Hilfsstrich nach 2 Fehlern). „Zeig mir“ und „Neu üben“ entfernt. Nur noch: Stufenwahl, ▶ Anhören, „Wort überspringen ›“. Wörter laufen automatisch durch und beginnen am Ende wieder von vorn; Stufe und Position werden gemerkt. Reiter ist fest (noScroll).
+- **Sprechen:** „KI sprechen“ scrollt wieder normal; nur „Sätze sprechen“ bleibt fest.
+- **Üben (alle 3 Modi):** „Von vorne starten“, „Letzte Karte zurück“ und „Satz zurücksetzen“ entfernt (Karten wandern per Antippen zurück in die Reihe). „Prüfen“, „🎤 Stattdessen sprechen“ und „Weiter →“ stehen jetzt **über** den Karten. Seiten sind fest.
+- **Memory:** Runde · Paare · Züge · Ton in einer Kopfzeile. Alles unter den Karten entfernt. 5 Paare (10 Karten) pro Runde; die nächste Runde startet automatisch, bis alle Vokabeln dran waren. Seite ist fest.
+- **Kapitelseite:** Untere Reiter **Lernen / Üben / Spielen** zeigen jeweils nur die drei zugehörigen Karten; Seite ist fest. Der zuletzt gewählte Reiter wird gemerkt.
+- Service-Worker-Version: cf-v7.
