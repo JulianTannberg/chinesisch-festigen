@@ -716,6 +716,7 @@ input.wrong{border-color:var(--bad);background:rgba(239,68,68,.18)}
   opacity:.92;
 }
 .profileMini strong{color:var(--chapter-text);}
+.profileMiniBtns{ display:inline-flex; gap:8px; flex-wrap:wrap; justify-content:center; }
 .profileMini [data-profile-reset]{
   border-color:rgba(239,68,68,.5);
   color:#fca5a5;

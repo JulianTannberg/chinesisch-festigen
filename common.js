@@ -165,17 +165,22 @@ function cfPaintTabScores(pairs, chapterId){
   });
 }
 
-// Setzt den gesamten Lernfortschritt zurück (alle Kapitel). Name und
-// Einstellungen (Ton, Richtung, Hinweise, zuletzt gewählter Reiter) bleiben.
-function cfResetProgress(){
+// Setzt den Lernfortschritt zurück. Mit chapterId nur dieses Kapitel,
+// ohne chapterId alle Kapitel. Name und Einstellungen (Ton, Richtung,
+// Hinweise, zuletzt gewählter Reiter) bleiben immer erhalten.
+function cfResetProgress(chapterId){
   const keep = new Set(["cf_user_name", "cf_kapitel_tab", "cf_ueben_sound", "cf_ime_hint_hidden"]);
   const keepPrefix = ["cf_memory_sound_", "cf_flash_direction_", "cf_write_direction_"];
+  const id = chapterId ? String(chapterId) : null;
   const remove = [];
   for(let i = 0; i < localStorage.length; i++){
     const k = localStorage.key(i);
     if(!k || k.indexOf("cf_") !== 0) continue;
     if(keep.has(k)) continue;
     if(keepPrefix.some(p => k.indexOf(p) === 0)) continue;
+    // Nur Schlüssel dieses Kapitels: die Kapitel-ID steht als eigenes
+    // Segment im Schlüssel (z. B. cf_score_v1_01_tippen).
+    if(id && !k.split("_").includes(id)) continue;
     remove.push(k);
   }
   remove.forEach(k => localStorage.removeItem(k));

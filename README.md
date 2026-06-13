@@ -252,3 +252,8 @@ dynamischer Tracking-Dienst).
 
 - **„Fortschritt zurücksetzen"** neben „Name ändern" (unten auf der Kapitelseite). Mit Sicherheitsabfrage (Ja/Nein). Setzt alle Prozente und Statistiken aller Kapitel zurück; der gespeicherte Name und Einstellungen (Ton, Richtung, Hinweise) bleiben erhalten. Danach lädt die Seite neu.
 - Service-Worker-Version: cf-v17.
+
+## Änderungen Etappe 15
+
+- **„Fortschritt zurücksetzen"** sitzt jetzt rechts neben „Name ändern" (zusammen als Knopf-Gruppe) und setzt nur das **aktuelle Kapitel** zurück (per ?id aus der Adresse). Sicherheitsabfrage angepasst auf „dieses Kapitel". Name, Einstellungen und andere Kapitel bleiben unberührt.
+- Service-Worker-Version: cf-v18.
