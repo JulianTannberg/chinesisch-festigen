@@ -505,6 +505,14 @@ input.wrong{border-color:var(--bad);background:rgba(239,68,68,.18)}
   border-bottom:4px solid currentColor;
   margin:0 4px;
 }
+.gapBlank.filledOk{
+  color:#22c55e;
+  border-bottom-color:transparent;
+}
+.gapBlank.filledSolution{
+  color:#fca5a5;
+  border-bottom-color:transparent;
+}
 .choiceGrid{
   display:grid;
   grid-template-columns:repeat(auto-fit, minmax(120px,1fr));

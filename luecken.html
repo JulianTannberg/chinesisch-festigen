@@ -33,12 +33,6 @@
         <div class="gapSentence" id="sentence">–</div>
         <div class="choiceGrid" id="choices"></div>
         <div class="feedback neutral" id="feedback"></div>
-        <div class="solutionBox" id="solutionBox">
-          <div class="small">Richtiger Satz:</div>
-          <div class="zh" id="solutionZh">–</div>
-          <div class="pinyin" id="solutionPinyin">–</div>
-          <div class="de" id="solutionDe">–</div>
-        </div>
         <div class="cardBottom">
           <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
         </div>
@@ -157,6 +151,7 @@ let idx = 0;
 let correct = 0;
 let answeredCount = 0;
 let locked = false;
+let hadWrong = false; // hatte die AKTUELLE Aufgabe schon einen Fehlversuch?
 
 function stateKey(){ return `cf_gap_state_v1_${topic.id}`; }
 function save(){ localStorage.setItem(stateKey(), JSON.stringify({idx, correct, answeredCount, savedAt:Date.now()})); }
@@ -184,6 +179,7 @@ function render(){
     return;
   }
   locked = false;
+  hadWrong = false;
   const g = gaps[idx];
   $("game").style.display="";
   const pct = gaps.length ? ` · Richtig: ${Math.round(correct / gaps.length * 100)} %` : "";
@@ -191,11 +187,7 @@ function render(){
   const german = String(g.de || "").trim();
   $("gapGerman").textContent = german;
   $("gapGerman").style.display = german ? "block" : "none";
-  $("sentence").innerHTML = escapeHtml(g.prompt || "").replace("___", '<span class="gapBlank">___</span>');
-  $("solutionZh").textContent = g.solution || "";
-  $("solutionPinyin").textContent = g.pinyin || "";
-  $("solutionDe").textContent = g.de || "";
-  $("solutionBox").style.display = "none";
+  $("sentence").innerHTML = escapeHtml(g.prompt || "").replace("___", '<span class="gapBlank" id="gapBlank">___</span>');
   $("nextBtn").disabled = true;
   setFeedback("neutral", "");
   $("progressFill").style.width = `${Math.round(idx / gaps.length * 100)}%`;
@@ -212,28 +204,35 @@ function render(){
   save();
 }
 function choose(choice, btn){
-  if(locked) return;
-  locked = true;
+  if(locked) return; // nach der richtigen Lösung gesperrt
   const g = gaps[idx];
-  document.querySelectorAll(".choiceBtn").forEach(b => b.disabled = true);
-  answeredCount++;
-  if(choice === g.answer) cfPlayFeedback(true); else cfPlayFeedback(false);
-  if(cfHasCJK(choice)) cfSpeakZh(choice, {queue:true});
+  const blank = $("gapBlank");
   if(choice === g.answer){
+    // Richtig: Wort in die Lücke, alles sperren, weiter freigeben
+    locked = true;
+    document.querySelectorAll(".choiceBtn").forEach(b => b.disabled = true);
     btn.classList.add("correctChoice");
-    correct++;
-    setFeedback("ok", "Richtig!");
-    if(g.solution) cfSpeakZh(g.solution, {queue:true});
+    if(blank){ blank.textContent = choice; blank.classList.add("filledOk"); }
+    cfPlayFeedback(true);
+    if(cfHasCJK(choice)) cfSpeakZh(choice, {queue:true});
+    answeredCount++;
+    if(!hadWrong) correct++; // „Direkt richtig" nur ohne vorherigen Fehler
+    setFeedback("ok", hadWrong ? "Jetzt richtig!" : "Richtig!");
+    cfSetScore("luecken", gaps.length ? Math.round(correct / gaps.length * 100) : 0);
+    $("nextBtn").disabled = false;
   }else{
+    // Falsch: nur dieses Wort wird rot, die Lücke bleibt leer.
+    // Das richtige Wort muss noch gefunden werden.
     btn.classList.add("wrongChoice");
-    document.querySelectorAll(".choiceBtn").forEach(b => { if(b.textContent === g.answer) b.classList.add("correctChoice"); });
-    setFeedback("bad", `Noch nicht. Richtig ist: ${g.answer}`);
-    // Falsch beantwortete Aufgaben kommen hinten noch einmal dran
-    gaps.push(g);
+    cfPlayFeedback(false);
+    setFeedback("bad", "Noch nicht – versuch ein anderes Wort.");
+    if(!hadWrong){
+      hadWrong = true;
+      answeredCount++;
+      gaps.push(g); // diese Aufgabe kommt später noch einmal
+      cfSetScore("luecken", gaps.length ? Math.round(correct / gaps.length * 100) : 0);
+    }
   }
-  cfSetScore("luecken", gaps.length ? Math.round(correct / gaps.length * 100) : 0);
-  $("solutionBox").style.display = "block";
-  $("nextBtn").disabled = false;
   save();
 }
 function next(){ idx++; render(); }

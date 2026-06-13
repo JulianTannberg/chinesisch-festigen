@@ -237,3 +237,13 @@ dynamischer Tracking-Dienst).
 - Hören fließt in die **Lernen-Gruppe** (untere Reiter) und ins **Gesamt-Prozent** der Kapitelübersicht ein.
 - Schreibtraining bleibt Teil der Rechnung und grün gefärbt.
 - Service-Worker-Version: cf-v14.
+
+## Änderungen Etappe 12
+
+- **Lückenspiel:** Das angetippte Wort erscheint direkt in der Lücke im Satz. Bei richtiger Wahl grün; bei falscher Wahl wird das korrekte Wort in die Lücke gesetzt (rötlich), damit der ganze Satz stimmt. Die separate „Richtiger Satz"-Box darunter ist entfernt.
+- Service-Worker-Version: cf-v15.
+
+## Änderungen Etappe 13
+
+- **Lückenspiel, falsche Wahl:** Nur das angetippte Wort wird rot; die Lücke bleibt leer und das richtige Wort muss noch gefunden werden. Erst die richtige Wahl füllt die Lücke (grün) und gibt „Weiter" frei. „Direkt richtig" zählt nur, wenn ohne Fehlversuch gelöst; die Aufgabe kommt nach einem Fehler später noch einmal dran.
+- Service-Worker-Version: cf-v16.
