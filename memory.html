@@ -235,7 +235,9 @@ function flip(id){
       b.matched = true;
       pairsFound++;
       totalPairs++;
-      cfSetScore("memory", Math.round(totalPairs / Math.max(totalMoves, vocab.length) * 100));
+      // 100 % = alle Vokabel-Paare dreimal gefunden
+      const memoryGoal = Math.max(1, vocab.length * 3);
+      cfSetScore("memory", Math.min(100, Math.round(totalPairs / memoryGoal * 100)));
       open = [];
       if(pairsFound >= currentIndices().length){
         save();

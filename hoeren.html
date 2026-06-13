@@ -58,6 +58,24 @@ document.getElementById("back").href = `kapitel.html?id=${topic.id}`;
 document.getElementById("title").textContent = `${topic.id}. ${topic.title} · Hören`;
 
 const listenApp = document.getElementById("listenApp");
+
+// ===== Hören-Fortschritt: jedes gehörte Wort / jeder gehörte Satz zählt =====
+const heardKey = `cf_heard_v1_${topic.id}`;
+let heard = new Set();
+try{ heard = new Set(JSON.parse(localStorage.getItem(heardKey) || "[]")); }catch(e){ heard = new Set(); }
+const totalHearables = (topic.vocab||[]).length + (topic.understandingVocab||[]).length + (topic.storyDialog||[]).length;
+function updateHoerenScore(){
+  cfSetScore("hoeren", totalHearables ? Math.round(heard.size / totalHearables * 100) : 0, topic.id);
+}
+function markHeard(key){
+  if(!key || heard.has(key)) return;
+  heard.add(key);
+  try{ localStorage.setItem(heardKey, JSON.stringify([...heard])); }catch(e){}
+  updateHoerenScore();
+}
+// Schon vorhandenen Fortschritt beim Öffnen übernehmen (aber nicht bei 0 anlegen)
+if(heard.size > 0) updateHoerenScore();
+
 function toggleMeta(kind){
   const cls = kind === "pinyin" ? "show-pinyin" : "show-deutsch";
   listenApp.classList.toggle(cls);
@@ -171,7 +189,7 @@ function renderVocabSection(title, items){
       <div class="pinyin">${escapeHtml(v.pinyin || "")}</div>
       <div class="de">${escapeHtml(v.de || "")}</div>
     `;
-    card.addEventListener("click", () => speak(v.zh));
+    card.addEventListener("click", () => { speak(v.zh); markHeard(`v:${v.zh}|${v.pinyin || ""}`); });
     grid.appendChild(card);
   });
   section.appendChild(h);
@@ -190,7 +208,7 @@ const dialogData = topic.storyDialog || [];
 if(dialogData.length === 0){
   dialogEl.innerHTML = `<div class="empty">Für dieses Kapitel ist noch keine Geschichte eingetragen.</div>`;
 }else{
-  dialogData.forEach(line => {
+  dialogData.forEach((line, idx) => {
     const color = bubbleColor(line.speaker);
     const row = document.createElement("div");
     row.className = `bubbleRow ${bubbleSide(line.speaker)}`;
@@ -202,7 +220,7 @@ if(dialogData.length === 0){
         ${line.de ? `<div class="speechDe">${escapeHtml(line.de)}</div>` : ""}
       </div>
     `;
-    row.querySelector(".speechBubble").addEventListener("click", () => speak(line.zh));
+    row.querySelector(".speechBubble").addEventListener("click", () => { speak(line.zh); markHeard(`d:${idx}`); });
     dialogEl.appendChild(row);
   });
 }
@@ -211,9 +229,10 @@ async function playAll(){
   document.querySelector('[data-tab="dialog"]').click();
   stopAudio();
   const token = playToken;
-  for(const line of dialogData){
+  for(const [i, line] of dialogData.entries()){
     if(token !== playToken) return;
     await speakAndWait(line.zh, token);
+    if(token === playToken) markHeard(`d:${i}`);
   }
 }
 document.getElementById("playAllBtn").onclick = playAll;

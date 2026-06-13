@@ -133,6 +133,18 @@ h1{
   cursor:pointer;
 }
 .tab.active{background:var(--card-strong);outline:2px solid rgba(255,255,255,.28)}
+.tabBadge{
+  position:absolute;
+  top:4px;
+  right:6px;
+  font-size:10px;
+  font-weight:850;
+  line-height:1;
+  padding:2px 5px;
+  border-radius:999px;
+  background:rgba(34,197,94,.32);
+  border:1px solid rgba(34,197,94,.55);
+}
 .panel{display:none}
 .panel.active{display:block}
 button{
@@ -505,6 +517,10 @@ input.wrong{border-color:var(--bad);background:rgba(239,68,68,.18)}
   border-bottom:4px solid currentColor;
   margin:0 4px;
 }
+.gapBlank.gapFilledOk{ color:#86efac; border-bottom-color:#4ade80; }
+.gapBlank.gapFilledBad{ color:#fca5a5; border-bottom-color:#f87171; }
+.theme-light .gapBlank.gapFilledOk{ color:#15803d; border-bottom-color:#15803d; }
+.theme-light .gapBlank.gapFilledBad{ color:#b91c1c; border-bottom-color:#b91c1c; }
 .choiceGrid{
   display:grid;
   grid-template-columns:repeat(auto-fit, minmax(120px,1fr));

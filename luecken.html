@@ -33,12 +33,6 @@
         <div class="gapSentence" id="sentence">–</div>
         <div class="choiceGrid" id="choices"></div>
         <div class="feedback neutral" id="feedback"></div>
-        <div class="solutionBox" id="solutionBox">
-          <div class="small">Richtiger Satz:</div>
-          <div class="zh" id="solutionZh">–</div>
-          <div class="pinyin" id="solutionPinyin">–</div>
-          <div class="de" id="solutionDe">–</div>
-        </div>
         <div class="cardBottom">
           <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
         </div>
@@ -192,10 +186,6 @@ function render(){
   $("gapGerman").textContent = german;
   $("gapGerman").style.display = german ? "block" : "none";
   $("sentence").innerHTML = escapeHtml(g.prompt || "").replace("___", '<span class="gapBlank">___</span>');
-  $("solutionZh").textContent = g.solution || "";
-  $("solutionPinyin").textContent = g.pinyin || "";
-  $("solutionDe").textContent = g.de || "";
-  $("solutionBox").style.display = "none";
   $("nextBtn").disabled = true;
   setFeedback("neutral", "");
   $("progressFill").style.width = `${Math.round(idx / gaps.length * 100)}%`;
@@ -217,6 +207,12 @@ function choose(choice, btn){
   const g = gaps[idx];
   document.querySelectorAll(".choiceBtn").forEach(b => b.disabled = true);
   answeredCount++;
+  // Angetipptes Zeichen direkt in die Lücke schreiben
+  const blank = document.querySelector("#sentence .gapBlank");
+  if(blank){
+    blank.textContent = choice;
+    blank.classList.add(choice === g.answer ? "gapFilledOk" : "gapFilledBad");
+  }
   if(choice === g.answer) cfPlayFeedback(true); else cfPlayFeedback(false);
   if(cfHasCJK(choice)) cfSpeakZh(choice, {queue:true});
   if(choice === g.answer){
@@ -232,7 +228,6 @@ function choose(choice, btn){
     gaps.push(g);
   }
   cfSetScore("luecken", gaps.length ? Math.round(correct / gaps.length * 100) : 0);
-  $("solutionBox").style.display = "block";
   $("nextBtn").disabled = false;
   save();
 }

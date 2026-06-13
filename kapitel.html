@@ -116,32 +116,46 @@
   const savedGroup = localStorage.getItem("cf_kapitel_tab");
   showGroup(["lernen","ueben","spielen"].includes(savedGroup) ? savedGroup : "lernen");
 
-  // Punktestände: Karten anteilig grün füllen + Prozent anzeigen
-  const SCORES = [
-    ["speakLink", "sprechen"],
-    ["uebenHoerenLink", "ueben_hoeren"],
-    ["uebenZhDeLink", "ueben_zhde"],
-    ["uebenDeZhLink", "ueben_dezh"],
-    ["flashLink", "flash"],
-    ["memoryLink", "memory"],
-    ["gapLink", "luecken"]
-  ];
+  // Punktestände: Karten + untere Reiter anteilig grün füllen
+  function greenFill(el, p){
+    if(!el || p === null) return;
+    el.style.backgroundImage = `linear-gradient(90deg, rgba(34,197,94,.32) ${p}%, rgba(34,197,94,0) ${p}%)`;
+  }
   function paintScore(elId, p){
     if(p === null) return;
     const el = document.getElementById(elId);
     if(!el) return;
-    el.style.backgroundImage = `linear-gradient(90deg, rgba(34,197,94,.32) ${p}%, rgba(34,197,94,0) ${p}%)`;
+    greenFill(el, p);
     const badge = document.createElement("span");
     badge.className = "scoreBadge";
     badge.textContent = `${p} %`;
     el.appendChild(badge);
   }
-  SCORES.forEach(([elId, name]) => paintScore(elId, cfGetScore(name, topic.id)));
-  // Schreiben = Mittel aus „Zeichen lernen“ und „Tippen“ (ohne Schreibtraining)
-  const writeParts = [cfGetScore("lernen", topic.id), cfGetScore("tippen", topic.id)].filter(p => p !== null);
-  if(writeParts.length){
-    paintScore("writeLink", Math.round(writeParts.reduce((a,b) => a+b, 0) / writeParts.length));
+  const g = name => cfGetScore(name, topic.id);
+  function avg(list){
+    const v = list.filter(x => x !== null && x !== undefined);
+    return v.length ? Math.round(v.reduce((a,b) => a + b, 0) / v.length) : null;
   }
+  // Schreiben = Mittel aus „Zeichen lernen“, „Tippen“ und „Schreibtraining“
+  const writeScore = avg([g("lernen"), g("tippen"), g("schreibtraining")]);
+
+  paintScore("hearLink", g("hoeren"));
+  paintScore("writeLink", writeScore);
+  paintScore("speakLink", g("sprechen"));
+  paintScore("uebenHoerenLink", g("ueben_hoeren"));
+  paintScore("uebenZhDeLink", g("ueben_zhde"));
+  paintScore("uebenDeZhLink", g("ueben_dezh"));
+  paintScore("flashLink", g("flash"));
+  paintScore("memoryLink", g("memory"));
+  paintScore("gapLink", g("luecken"));
+
+  // Untere Reiter nach Gruppen-Mittel einfärben
+  const groupScore = {
+    lernen: avg([g("hoeren"), writeScore, g("sprechen")]),
+    ueben: avg([g("ueben_hoeren"), g("ueben_zhde"), g("ueben_dezh")]),
+    spielen: avg([g("flash"), g("memory"), g("luecken")])
+  };
+  groupButtons.forEach(b => greenFill(b, groupScore[b.dataset.group]));
 </script>
 </body>
 </html>

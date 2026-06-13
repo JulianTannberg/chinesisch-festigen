@@ -152,3 +152,24 @@ function cfGetScore(name, chapterId){
   const p = Number(raw);
   return Number.isFinite(p) ? Math.max(0, Math.min(100, p)) : null;
 }
+
+// Reiter/Buttons anteilig grün einfärben (gleiche Optik wie die Karten)
+// plus ein kleines Prozent-Badge, damit der Fortschritt klar sichtbar ist.
+// pairs: Array aus [Selektor oder Element, ScoreName].
+function cfPaintTabScores(pairs, chapterId){
+  (pairs || []).forEach(([sel, name]) => {
+    const el = typeof sel === "string" ? document.querySelector(sel) : sel;
+    if(!el) return;
+    const p = cfGetScore(name, chapterId);
+    if(p === null) return;
+    el.style.backgroundImage = `linear-gradient(90deg, rgba(34,197,94,.32) ${p}%, rgba(34,197,94,0) ${p}%)`;
+    el.style.position = "relative";
+    let badge = el.querySelector(".tabBadge");
+    if(!badge){
+      badge = document.createElement("span");
+      badge.className = "tabBadge";
+      el.appendChild(badge);
+    }
+    badge.textContent = `${p}%`;
+  });
+}
