@@ -899,7 +899,8 @@ function finishLearnWord(){
   if(learnDone[lWord.zh] !== "perfect") learnDone[lWord.zh] = status;
   saveLearnDone();
   // Nur komplett durchgearbeitete Wörter zählen (Status gesetzt = alle Schritte fertig).
-  const _doneCount = learnWords.filter(w => learnDone[w.zh]).length;
+  // Nur fehlerfrei gemeisterte Wörter zählen (Karte ganz grün = "perfect").
+  const _doneCount = learnWords.filter(w => learnDone[w.zh] === "perfect").length;
   cfSetScore("lernen", learnWords.length ? Math.round(_doneCount / learnWords.length * 100) : 0, topic.id);
   cfPlayFeedback(true);
   setLearnStatus(lWordMistakes === 0

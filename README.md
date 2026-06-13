@@ -262,3 +262,8 @@ dynamischer Tracking-Dienst).
 
 - **Fix: unterer Rand abgeschnitten.** viewport-fit=cover auf allen Seiten + Sicherheitsabstand (env safe-area-inset) oben und unten in der festen App. Dadurch sitzt die Profilzeile (Name ändern / Fortschritt zurücksetzen) nicht mehr hinter der iPhone-Home-Leiste. Profilabstand leicht verkleinert.
 - Service-Worker-Version: cf-v19.
+
+## Änderungen Etappe 17
+
+- **Zeichen lernen – Prozent:** Ein Wort zählt erst, wenn es komplett fehlerfrei gemeistert wurde (Karte ganz grün = „perfect"). Mit Fehlern abgeschlossene Wörter („done") zählen nicht mehr mit.
+- Service-Worker-Version: cf-v20.
