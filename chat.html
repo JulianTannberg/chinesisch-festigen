@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Nachrichten · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.webmanifest" />
+</head>
+<body>
+  <main class="app">
+    <div class="topbar">
+      <a class="back" id="backLink" href="index.html">← Zurück</a>
+    </div>
+    <h1 id="title">Nachrichten</h1>
+
+    <!-- Kontaktliste -->
+    <section class="card" id="contactsView">
+      <p class="subtitle" id="contactsHint">Mit wem möchtest du schreiben?</p>
+      <div id="contactsList"></div>
+    </section>
+
+    <!-- Chat -->
+    <section class="card chatCard" id="convoView" style="display:none;">
+      <div class="chatHead">
+        <button class="miniBtn" id="toContacts" type="button">←</button>
+        <div class="chatWho"><strong id="chatName">–</strong><span class="small" id="chatTag"></span></div>
+      </div>
+      <div class="chatMsgs" id="chatMsgs"></div>
+      <div class="chatInputWrap">
+        <div class="chatChips" id="chatChips"></div>
+        <div class="chatInput">
+          <input id="chatText" type="text" lang="zh" inputmode="text" autocomplete="off" placeholder="Antwort schreiben …" />
+          <button class="iconBtn" id="sendBtn" type="button" aria-label="Senden">➤</button>
+          <button class="iconBtn micBtn" id="micBtn" type="button" aria-label="Sprachnachricht" style="display:none;">🎤</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="common.js"></script>
+  <script src="topics.js"></script>
+  <script src="chatdata.js"></script>
+  <script>
+  const qs = new URLSearchParams(location.search);
+  const id = qs.get("id") || "01";
+  const topic = (window.CF_TOPICS || []).find(t => t.id === id) || {accent:"#03172B", textColor:"#FFFFFF", title:"", id:id};
+  applyTheme(topic, "Nachrichten");
+  document.documentElement.classList.add("noScroll");
+  document.getElementById("backLink").href = `kapitel.html?id=${id}`;
+  document.getElementById("title").textContent = `${topic.title ? (id + ". " + topic.title + " · ") : ""}Nachrichten`;
+
+  // Akzentfarbe des Kapitels für die eigenen Blasen
+  document.getElementById("convoView").style.setProperty("--me-bubble", topic.accent || "#2f6f4f");
+  document.getElementById("convoView").style.setProperty("--me-text", topic.textColor || "#fff");
+
+  const NAME = (localStorage.getItem("cf_user_name") || "Vanessa").trim() || "Vanessa";
+  const DATA = (window.CF_CHAT || {})[id] || null;
+
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const micOK = !!SR && !cfIsIOS();
+
+  function fill(t){ return String(t).replace(/\{name\}/g, NAME); }
+  function norm(s){
+    return String(s || "").toLowerCase()
+      .replace(/[\s，。！？、,.!?；;：:（）()「」『』"'~·…—\-]/g, "");
+  }
+
+  // ---------- Kontaktliste ----------
+  function renderContacts(){
+    const list = document.getElementById("contactsList");
+    list.innerHTML = "";
+    if(!DATA || !DATA.partners || !DATA.partners.length){
+      document.getElementById("contactsHint").textContent =
+        "Für dieses Kapitel gibt es noch keine Kontakte.";
+      return;
+    }
+    DATA.partners.forEach(p => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "contactRow";
+      b.innerHTML = `<span class="contactAvatar">${escapeHtml(p.name.slice(0,1))}</span>
+        <span class="contactInfo"><strong>${escapeHtml(p.name)}</strong>
+        <span class="small">${escapeHtml(p.pinyin)} · ${escapeHtml(p.tag || "")}</span></span>`;
+      b.addEventListener("click", () => openConvo(p));
+      list.appendChild(b);
+    });
+  }
+
+  // ---------- Chat-Ablauf ----------
+  let convo = [], rIdx = 0, partner = null, lastMode = "text", busy = false;
+
+  function openConvo(p){
+    partner = p;
+    convo = (DATA.convo && DATA.convo[p.key]) || [];
+    rIdx = 0; lastMode = "text";
+    document.getElementById("contactsView").style.display = "none";
+    document.getElementById("convoView").style.display = "";
+    document.getElementById("chatName").textContent = `${p.name} (${p.pinyin})`;
+    document.getElementById("chatTag").textContent = p.tag || "";
+    document.getElementById("micBtn").style.display = micOK ? "" : "none";
+    document.getElementById("chatMsgs").innerHTML = "";
+    runRound();
+  }
+  function backToContacts(){
+    document.getElementById("convoView").style.display = "none";
+    document.getElementById("contactsView").style.display = "";
+  }
+
+  function scrollDown(){
+    const m = document.getElementById("chatMsgs");
+    m.scrollTop = m.scrollHeight;
+  }
+  function fakeDuration(text){
+    const n = (String(text).match(/[\u4e00-\u9fff]/g) || []).length;
+    return `0:0${Math.max(1, Math.min(9, Math.ceil(n / 2)))}`;
+  }
+  function speak(text){ cfSpeakZh(text, {rate: 0.92}); }
+
+  function addTextBubble(side, line){
+    const wrap = document.createElement("div");
+    wrap.className = `msg ${side}`;
+    const b = document.createElement("div");
+    b.className = "bubble text";
+    if(side === "partner"){
+      b.innerHTML = `<span class="bzh">${escapeHtml(line.zh)}</span>
+        <span class="bpy">${escapeHtml(line.pinyin || "")}</span>
+        <span class="bde">${escapeHtml(line.de || "")}</span>
+        <button class="bPlay" type="button" aria-label="Anhören">▶</button>`;
+      b.querySelector(".bPlay").addEventListener("click", () => speak(line.zh));
+    }else{
+      b.innerHTML = `<span class="bzh">${escapeHtml(line.zh)}</span>`;
+    }
+    wrap.appendChild(b);
+    document.getElementById("chatMsgs").appendChild(wrap);
+    scrollDown();
+  }
+  function addVoiceBubble(side, text){
+    const wrap = document.createElement("div");
+    wrap.className = `msg ${side}`;
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "bubble voice";
+    b.innerHTML = `<span class="vIcon">▶</span>
+      <span class="vBars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+      <span class="vDur">${fakeDuration(text)}</span>`;
+    b.addEventListener("click", () => speak(text));
+    wrap.appendChild(b);
+    document.getElementById("chatMsgs").appendChild(wrap);
+    scrollDown();
+  }
+  function addTyping(){
+    const wrap = document.createElement("div");
+    wrap.className = "msg partner";
+    wrap.id = "typingRow";
+    wrap.innerHTML = `<div class="bubble typing"><i></i><i></i><i></i></div>`;
+    document.getElementById("chatMsgs").appendChild(wrap);
+    scrollDown();
+  }
+  function removeTyping(){
+    const t = document.getElementById("typingRow");
+    if(t) t.remove();
+  }
+
+  // Partnerzeilen nacheinander zeigen (mit kurzer „tippt …"-Pause)
+  function showPartnerLines(lines, asVoice, done){
+    let i = 0;
+    function next(){
+      if(i >= lines.length){ done && done(); return; }
+      addTyping();
+      setTimeout(() => {
+        removeTyping();
+        if(asVoice){
+          addVoiceBubble("partner", lines[i].zh);
+          speak(lines[i].zh);
+        }else{
+          addTextBubble("partner", lines[i]);
+        }
+        i++;
+        setTimeout(next, asVoice ? 500 : 350);
+      }, 600);
+    }
+    next();
+  }
+
+  function runRound(){
+    busy = true;
+    setChips([]);
+    setInputEnabled(false);
+    if(rIdx >= convo.length){ showEnd(); return; }
+    const r = convo[rIdx];
+    showPartnerLines(r.ask, false, () => {
+      busy = false;
+      setChips(r.options.map(o => fill(o.chip)));
+      setInputEnabled(true);
+    });
+  }
+
+  function matchOption(text){
+    const r = convo[rIdx];
+    const u = norm(fill(text));
+    for(let i = 0; i < r.options.length; i++){
+      const accepts = r.options[i].accept.map(a => norm(fill(a)));
+      if(accepts.includes(u)) return i;
+    }
+    return -1;
+  }
+
+  function handleAnswer(optIdx, mode, shownText){
+    if(optIdx < 0) return;
+    const r = convo[rIdx];
+    const opt = r.options[optIdx];
+    lastMode = mode;
+    setChips([]);
+    setInputEnabled(false);
+    document.getElementById("chatText").value = "";
+
+    if(mode === "voice"){
+      addVoiceBubble("me", shownText || fill(opt.chip));
+    }else{
+      addTextBubble("me", { zh: shownText || fill(opt.chip) });
+    }
+
+    const reply = (opt.reply || r.reply || []);
+    setTimeout(() => {
+      if(reply.length){
+        showPartnerLines(reply, mode === "voice", () => { rIdx++; runRound(); });
+      }else{
+        rIdx++; runRound();
+      }
+    }, 450);
+  }
+
+  function trySend(text, mode){
+    if(busy) return;
+    const idx = matchOption(text);
+    if(idx < 0){
+      flashHint();
+      return;
+    }
+    handleAnswer(idx, mode, mode === "voice" ? fill(convo[rIdx].options[idx].chip) : text);
+  }
+
+  function flashHint(){
+    const chips = document.getElementById("chatChips");
+    chips.classList.remove("nudge"); void chips.offsetWidth; chips.classList.add("nudge");
+  }
+
+  function setChips(arr){
+    const box = document.getElementById("chatChips");
+    box.innerHTML = "";
+    arr.forEach((label, i) => {
+      const c = document.createElement("button");
+      c.type = "button";
+      c.className = "chip";
+      c.textContent = label;
+      c.addEventListener("click", () => trySend(label, "text"));
+      box.appendChild(c);
+    });
+  }
+  function setInputEnabled(on){
+    document.getElementById("chatText").disabled = !on;
+    document.getElementById("sendBtn").disabled = !on;
+    document.getElementById("micBtn").disabled = !on;
+  }
+
+  function showEnd(){
+    const wrap = document.createElement("div");
+    wrap.className = "chatEnd";
+    wrap.innerHTML = `<span>— Gespräch beendet —</span>
+      <button class="miniBtn" id="restartChat" type="button">Noch einmal</button>`;
+    document.getElementById("chatMsgs").appendChild(wrap);
+    scrollDown();
+    document.getElementById("restartChat").addEventListener("click", () => openConvo(partner));
+    setChips([]); setInputEnabled(false);
+  }
+
+  // ---------- Eingabe ----------
+  document.getElementById("sendBtn").addEventListener("click", () => {
+    const v = document.getElementById("chatText").value.trim();
+    if(v) trySend(v, "text");
+  });
+  document.getElementById("chatText").addEventListener("keydown", e => {
+    if(e.key === "Enter"){ e.preventDefault();
+      const v = document.getElementById("chatText").value.trim();
+      if(v) trySend(v, "text");
+    }
+  });
+  document.getElementById("toContacts").addEventListener("click", backToContacts);
+
+  // Sprachnachricht (nur wo Spracherkennung läuft – nicht iOS/Firefox)
+  let rec = null, recording = false;
+  document.getElementById("micBtn").addEventListener("click", () => {
+    if(!micOK || busy) return;
+    if(recording){ try{ rec && rec.stop(); }catch(e){} return; }
+    try{
+      rec = new SR();
+      rec.lang = "zh-CN";
+      rec.interimResults = false;
+      rec.maxAlternatives = 3;
+      recording = true;
+      document.getElementById("micBtn").classList.add("rec");
+      rec.onresult = ev => {
+        let best = -1, bestText = "";
+        for(let i = 0; i < ev.results.length; i++){
+          for(let j = 0; j < ev.results[i].length; j++){
+            const t = ev.results[i][j].transcript;
+            const idx = matchOption(t);
+            if(idx >= 0){ best = idx; bestText = t; break; }
+            if(!bestText) bestText = t;
+          }
+          if(best >= 0) break;
+        }
+        if(best >= 0){
+          handleAnswer(best, "voice", fill(convo[rIdx].options[best].chip));
+        }else{
+          flashHint();
+        }
+      };
+      rec.onerror = () => {};
+      rec.onend = () => { recording = false; document.getElementById("micBtn").classList.remove("rec"); };
+      rec.start();
+    }catch(e){ recording = false; }
+  });
+
+  // Start
+  renderContacts();
+  const who = qs.get("who");
+  if(who && DATA){
+    const p = DATA.partners.find(x => x.key === who);
+    if(p) openConvo(p);
+  }
+  </script>
+</body>
+</html>

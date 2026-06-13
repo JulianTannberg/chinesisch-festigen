@@ -17,6 +17,9 @@
   <main class="app">
     <div class="topbar">
       <a class="back" href="index.html">← Kapitelübersicht</a>
+      <a class="miniBtn chatIcon" id="chatLink" aria-label="Nachrichten" title="Nachrichten">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.9-5.4A8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"/></svg>
+      </a>
     </div>
     <h1 id="title">Kapitel</h1>
     <p class="subtitle" id="short"></p>
@@ -101,6 +104,8 @@
   document.getElementById("flashLink").href = `flashkarten.html?id=${topic.id}`;
   document.getElementById("memoryLink").href = `memory.html?id=${topic.id}`;
   document.getElementById("gapLink").href = `luecken.html?id=${topic.id}`;
+  const chatLink = document.getElementById("chatLink");
+  if(chatLink) chatLink.href = `chat.html?id=${topic.id}`;
 
   // Untere Reiter: nur einen Bereich zeigen, Seite bleibt fest
   document.documentElement.classList.add("noScroll");
