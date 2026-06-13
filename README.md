@@ -247,3 +247,8 @@ dynamischer Tracking-Dienst).
 
 - **Lückenspiel, falsche Wahl:** Nur das angetippte Wort wird rot; die Lücke bleibt leer und das richtige Wort muss noch gefunden werden. Erst die richtige Wahl füllt die Lücke (grün) und gibt „Weiter" frei. „Direkt richtig" zählt nur, wenn ohne Fehlversuch gelöst; die Aufgabe kommt nach einem Fehler später noch einmal dran.
 - Service-Worker-Version: cf-v16.
+
+## Änderungen Etappe 14
+
+- **„Fortschritt zurücksetzen"** neben „Name ändern" (unten auf der Kapitelseite). Mit Sicherheitsabfrage (Ja/Nein). Setzt alle Prozente und Statistiken aller Kapitel zurück; der gespeicherte Name und Einstellungen (Ton, Richtung, Hinweise) bleiben erhalten. Danach lädt die Seite neu.
+- Service-Worker-Version: cf-v17.

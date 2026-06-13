@@ -716,6 +716,10 @@ input.wrong{border-color:var(--bad);background:rgba(239,68,68,.18)}
   opacity:.92;
 }
 .profileMini strong{color:var(--chapter-text);}
+.profileMini [data-profile-reset]{
+  border-color:rgba(239,68,68,.5);
+  color:#fca5a5;
+}
 
 
 /* Sprechen: zwei Reiter bleiben nebeneinander */

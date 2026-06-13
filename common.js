@@ -164,3 +164,20 @@ function cfPaintTabScores(pairs, chapterId){
     el.style.backgroundImage = `linear-gradient(90deg, rgba(34,197,94,.32) ${p}%, rgba(34,197,94,0) ${p}%)`;
   });
 }
+
+// Setzt den gesamten Lernfortschritt zurück (alle Kapitel). Name und
+// Einstellungen (Ton, Richtung, Hinweise, zuletzt gewählter Reiter) bleiben.
+function cfResetProgress(){
+  const keep = new Set(["cf_user_name", "cf_kapitel_tab", "cf_ueben_sound", "cf_ime_hint_hidden"]);
+  const keepPrefix = ["cf_memory_sound_", "cf_flash_direction_", "cf_write_direction_"];
+  const remove = [];
+  for(let i = 0; i < localStorage.length; i++){
+    const k = localStorage.key(i);
+    if(!k || k.indexOf("cf_") !== 0) continue;
+    if(keep.has(k)) continue;
+    if(keepPrefix.some(p => k.indexOf(p) === 0)) continue;
+    remove.push(k);
+  }
+  remove.forEach(k => localStorage.removeItem(k));
+  return remove.length;
+}

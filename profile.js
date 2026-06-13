@@ -71,10 +71,17 @@
       <div class="profileMini">
         <span>Name für Übungen: <strong>${escapeHtml(current)}</strong></span>
         <button type="button" data-profile-edit>Name ändern</button>
+        <button type="button" data-profile-reset>Fortschritt zurücksetzen</button>
       </div>
     `;
     host.querySelector("[data-profile-edit]").addEventListener("click", () => {
       renderFull(host, {collapseAfterSave:true});
+    });
+    host.querySelector("[data-profile-reset]").addEventListener("click", () => {
+      const ok = window.confirm("Möchtest du wirklich deinen gesamten Fortschritt zurücksetzen?\n\nAlle Prozente und Statistiken (alle Kapitel) werden gelöscht. Dein Name bleibt erhalten.");
+      if(!ok) return;
+      if(typeof cfResetProgress === "function") cfResetProgress();
+      location.reload();
     });
   }
 
