@@ -287,3 +287,13 @@ dynamischer Tracking-Dienst).
 
 - **Chat-Seite war leer & „Zurück" ging zur Übersicht:** Ursache war eine Namenskollision – `chat.html` deklarierte `qs`, das es in `common.js` schon global gibt. Dadurch stürzte das ganze Chat-Skript ab (keine Kontakte, „Zurück"-Adresse nicht gesetzt). Lokale Variable in `params` umbenannt. Jetzt erscheinen die Kontakte und „Zurück" führt zum Kapitel.
 - Service-Worker-Version: cf-v23.
+
+## Änderungen Etappe 21 (Chat-Feinschliff)
+
+- **Unten nicht mehr abgeschnitten:** Die Chat-Karte füllt jetzt die Höhe, die Nachrichten scrollen innen, Eingabe + Mikrofon bleiben sichtbar (über der Home-Leiste).
+- **Text-Modus wie echter Chat:** Partner-Nachrichten zeigen nur Hanzi, kein Ton, kein Pinyin/Deutsch. Tippt man eine Partner-Blase an, werden Pinyin + Deutsch lautlos als Hilfe eingeblendet.
+- **Vorschläge nur auf Wunsch:** Die Beispiel-Antworten sind standardmäßig versteckt; Knopf „💡 Vorschläge anzeigen" blendet sie ein (bei jeder neuen Runde wieder versteckt).
+- **Modus folgt der Eingabe:** Schreibst du, kommen Hanzi-Textnachrichten; sprichst du, kommen ab da Sprachnachrichten – wechselt jederzeit mit, je nachdem wie du zuletzt geantwortet hast.
+- **Name per Sprache:** „我叫…" genügt zum Fortfahren (der Name selbst muss nicht erkannt werden), analog zu den Sprechübungen.
+- **Echte Aufnahme:** Sprachnachrichten nehmen jetzt dein Mikrofon auf (MediaRecorder) – Antippen der eigenen Blase spielt deine echte Aufnahme ab. Klappt die Aufnahme nicht, wird ersatzweise der hinterlegte Satz vorgelesen.
+- Service-Worker-Version: cf-v24.

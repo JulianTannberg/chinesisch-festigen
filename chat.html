@@ -28,7 +28,10 @@
       </div>
       <div class="chatMsgs" id="chatMsgs"></div>
       <div class="chatInputWrap">
-        <div class="chatChips" id="chatChips"></div>
+        <div class="chatSuggestRow">
+          <button class="suggestToggle" id="suggestToggle" type="button">💡 Vorschläge anzeigen</button>
+        </div>
+        <div class="chatChips" id="chatChips" style="display:none;"></div>
         <div class="chatInput">
           <input id="chatText" type="text" lang="zh" inputmode="text" autocomplete="off" placeholder="Antwort schreiben …" />
           <button class="iconBtn" id="sendBtn" type="button" aria-label="Senden">➤</button>
@@ -50,9 +53,9 @@
   document.getElementById("backLink").href = `kapitel.html?id=${id}`;
   document.getElementById("title").textContent = `${topic.title ? (id + ". " + topic.title + " · ") : ""}Nachrichten`;
 
-  // Akzentfarbe des Kapitels für die eigenen Blasen
-  document.getElementById("convoView").style.setProperty("--me-bubble", topic.accent || "#2f6f4f");
-  document.getElementById("convoView").style.setProperty("--me-text", topic.textColor || "#fff");
+  const convoEl = document.getElementById("convoView");
+  convoEl.style.setProperty("--me-bubble", topic.accent || "#2f6f4f");
+  convoEl.style.setProperty("--me-text", topic.textColor || "#fff");
 
   const NAME = (localStorage.getItem("cf_user_name") || "Vanessa").trim() || "Vanessa";
   const DATA = (window.CF_CHAT || {})[id] || null;
@@ -63,7 +66,7 @@
   function fill(t){ return String(t).replace(/\{name\}/g, NAME); }
   function norm(s){
     return String(s || "").toLowerCase()
-      .replace(/[\s，。！？、,.!?；;：:（）()「」『』"'~·…—\-]/g, "");
+      .replace(/[\s，。！？、,.!?；;：:（）()「」『』~·…—\-"']/g, "");
   }
 
   // ---------- Kontaktliste ----------
@@ -71,8 +74,7 @@
     const list = document.getElementById("contactsList");
     list.innerHTML = "";
     if(!DATA || !DATA.partners || !DATA.partners.length){
-      document.getElementById("contactsHint").textContent =
-        "Für dieses Kapitel gibt es noch keine Kontakte.";
+      document.getElementById("contactsHint").textContent = "Für dieses Kapitel gibt es noch keine Kontakte.";
       return;
     }
     DATA.partners.forEach(p => {
@@ -95,7 +97,7 @@
     convo = (DATA.convo && DATA.convo[p.key]) || [];
     rIdx = 0; lastMode = "text";
     document.getElementById("contactsView").style.display = "none";
-    document.getElementById("convoView").style.display = "";
+    convoEl.style.display = "";
     document.getElementById("chatName").textContent = `${p.name} (${p.pinyin})`;
     document.getElementById("chatTag").textContent = p.tag || "";
     document.getElementById("micBtn").style.display = micOK ? "" : "none";
@@ -103,20 +105,19 @@
     runRound();
   }
   function backToContacts(){
-    document.getElementById("convoView").style.display = "none";
+    convoEl.style.display = "none";
     document.getElementById("contactsView").style.display = "";
   }
 
-  function scrollDown(){
-    const m = document.getElementById("chatMsgs");
-    m.scrollTop = m.scrollHeight;
-  }
+  function scrollDown(){ const m = document.getElementById("chatMsgs"); m.scrollTop = m.scrollHeight; }
   function fakeDuration(text){
     const n = (String(text).match(/[\u4e00-\u9fff]/g) || []).length;
     return `0:0${Math.max(1, Math.min(9, Math.ceil(n / 2)))}`;
   }
   function speak(text){ cfSpeakZh(text, {rate: 0.92}); }
 
+  // Text-Blase: nur Hanzi. Partner-Blase lässt sich antippen, um (lautlos)
+  // Pinyin + Deutsch als Hilfe einzublenden. Kein Ton im Text-Modus.
   function addTextBubble(side, line){
     const wrap = document.createElement("div");
     wrap.className = `msg ${side}`;
@@ -124,10 +125,15 @@
     b.className = "bubble text";
     if(side === "partner"){
       b.innerHTML = `<span class="bzh">${escapeHtml(line.zh)}</span>
-        <span class="bpy">${escapeHtml(line.pinyin || "")}</span>
-        <span class="bde">${escapeHtml(line.de || "")}</span>
-        <button class="bPlay" type="button" aria-label="Anhören">▶</button>`;
-      b.querySelector(".bPlay").addEventListener("click", () => speak(line.zh));
+        <span class="bhelp" style="display:none;">
+          <span class="bpy">${escapeHtml(line.pinyin || "")}</span>
+          <span class="bde">${escapeHtml(line.de || "")}</span>
+        </span>`;
+      b.classList.add("tappable");
+      b.addEventListener("click", () => {
+        const h = b.querySelector(".bhelp");
+        h.style.display = h.style.display === "none" ? "block" : "none";
+      });
     }else{
       b.innerHTML = `<span class="bzh">${escapeHtml(line.zh)}</span>`;
     }
@@ -135,7 +141,9 @@
     document.getElementById("chatMsgs").appendChild(wrap);
     scrollDown();
   }
-  function addVoiceBubble(side, text){
+  // Sprachblase: nur die Blase sichtbar. Tippen spielt ab – eigene Aufnahme,
+  // falls vorhanden, sonst Sprachausgabe des hinterlegten Textes.
+  function addVoiceBubble(side, text, audioURL){
     const wrap = document.createElement("div");
     wrap.className = `msg ${side}`;
     const b = document.createElement("button");
@@ -144,25 +152,22 @@
     b.innerHTML = `<span class="vIcon">▶</span>
       <span class="vBars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
       <span class="vDur">${fakeDuration(text)}</span>`;
-    b.addEventListener("click", () => speak(text));
+    b.addEventListener("click", () => {
+      if(audioURL){ try{ new Audio(audioURL).play(); return; }catch(e){} }
+      speak(text);
+    });
     wrap.appendChild(b);
     document.getElementById("chatMsgs").appendChild(wrap);
     scrollDown();
   }
   function addTyping(){
     const wrap = document.createElement("div");
-    wrap.className = "msg partner";
-    wrap.id = "typingRow";
+    wrap.className = "msg partner"; wrap.id = "typingRow";
     wrap.innerHTML = `<div class="bubble typing"><i></i><i></i><i></i></div>`;
-    document.getElementById("chatMsgs").appendChild(wrap);
-    scrollDown();
+    document.getElementById("chatMsgs").appendChild(wrap); scrollDown();
   }
-  function removeTyping(){
-    const t = document.getElementById("typingRow");
-    if(t) t.remove();
-  }
+  function removeTyping(){ const t = document.getElementById("typingRow"); if(t) t.remove(); }
 
-  // Partnerzeilen nacheinander zeigen (mit kurzer „tippt …"-Pause)
   function showPartnerLines(lines, asVoice, done){
     let i = 0;
     function next(){
@@ -170,12 +175,8 @@
       addTyping();
       setTimeout(() => {
         removeTyping();
-        if(asVoice){
-          addVoiceBubble("partner", lines[i].zh);
-          speak(lines[i].zh);
-        }else{
-          addTextBubble("partner", lines[i]);
-        }
+        if(asVoice){ addVoiceBubble("partner", lines[i].zh); speak(lines[i].zh); }
+        else{ addTextBubble("partner", lines[i]); }
         i++;
         setTimeout(next, asVoice ? 500 : 350);
       }, 600);
@@ -189,7 +190,7 @@
     setInputEnabled(false);
     if(rIdx >= convo.length){ showEnd(); return; }
     const r = convo[rIdx];
-    showPartnerLines(r.ask, false, () => {
+    showPartnerLines(r.ask, lastMode === "voice", () => {
       busy = false;
       setChips(r.options.map(o => fill(o.chip)));
       setInputEnabled(true);
@@ -197,71 +198,72 @@
   }
 
   function matchOption(text){
-    const r = convo[rIdx];
-    const u = norm(fill(text));
+    const r = convo[rIdx]; const u = norm(fill(text));
     for(let i = 0; i < r.options.length; i++){
-      const accepts = r.options[i].accept.map(a => norm(fill(a)));
-      if(accepts.includes(u)) return i;
+      if(r.options[i].accept.map(a => norm(fill(a))).includes(u)) return i;
+    }
+    return -1;
+  }
+  // Bei Sprache zusätzlich: Optionen mit voicePrefix akzeptieren, wenn der
+  // erkannte Text damit beginnt (z. B. „我叫…" reicht für die Namensrunde).
+  function matchVoice(text){
+    const exact = matchOption(text); if(exact >= 0) return exact;
+    const u = norm(fill(text)); const r = convo[rIdx];
+    for(let i = 0; i < r.options.length; i++){
+      const pres = (r.options[i].voicePrefix || []).map(p => norm(fill(p)));
+      if(pres.some(p => p && u.indexOf(p) === 0)) return i;
     }
     return -1;
   }
 
-  function handleAnswer(optIdx, mode, shownText){
+  function handleAnswer(optIdx, mode, shownText, audioURL){
     if(optIdx < 0) return;
-    const r = convo[rIdx];
-    const opt = r.options[optIdx];
+    const r = convo[rIdx]; const opt = r.options[optIdx];
     lastMode = mode;
-    setChips([]);
-    setInputEnabled(false);
+    setChips([]); setInputEnabled(false);
     document.getElementById("chatText").value = "";
 
-    if(mode === "voice"){
-      addVoiceBubble("me", shownText || fill(opt.chip));
-    }else{
-      addTextBubble("me", { zh: shownText || fill(opt.chip) });
-    }
+    if(mode === "voice"){ addVoiceBubble("me", shownText || fill(opt.chip), audioURL); }
+    else{ addTextBubble("me", { zh: shownText || fill(opt.chip) }); }
 
     const reply = (opt.reply || r.reply || []);
     setTimeout(() => {
-      if(reply.length){
-        showPartnerLines(reply, mode === "voice", () => { rIdx++; runRound(); });
-      }else{
-        rIdx++; runRound();
-      }
+      if(reply.length){ showPartnerLines(reply, mode === "voice", () => { rIdx++; runRound(); }); }
+      else{ rIdx++; runRound(); }
     }, 450);
   }
 
   function trySend(text, mode){
     if(busy) return;
     const idx = matchOption(text);
-    if(idx < 0){
-      flashHint();
-      return;
-    }
-    handleAnswer(idx, mode, mode === "voice" ? fill(convo[rIdx].options[idx].chip) : text);
+    if(idx < 0){ flashHint(); return; }
+    handleAnswer(idx, mode, text);
   }
-
   function flashHint(){
     const chips = document.getElementById("chatChips");
+    chips.style.display = "flex";
+    document.getElementById("suggestToggle").textContent = "💡 Vorschläge ausblenden";
     chips.classList.remove("nudge"); void chips.offsetWidth; chips.classList.add("nudge");
   }
 
   function setChips(arr){
     const box = document.getElementById("chatChips");
     box.innerHTML = "";
-    arr.forEach((label, i) => {
+    arr.forEach(label => {
       const c = document.createElement("button");
-      c.type = "button";
-      c.className = "chip";
-      c.textContent = label;
+      c.type = "button"; c.className = "chip"; c.textContent = label;
       c.addEventListener("click", () => trySend(label, "text"));
       box.appendChild(c);
     });
+    // Bei jeder neuen Runde Vorschläge wieder ausblenden (erst selbst versuchen)
+    box.style.display = "none";
+    document.getElementById("suggestToggle").textContent = "💡 Vorschläge anzeigen";
   }
   function setInputEnabled(on){
     document.getElementById("chatText").disabled = !on;
     document.getElementById("sendBtn").disabled = !on;
     document.getElementById("micBtn").disabled = !on;
+    document.getElementById("suggestToggle").disabled = !on;
   }
 
   function showEnd(){
@@ -269,8 +271,7 @@
     wrap.className = "chatEnd";
     wrap.innerHTML = `<span>— Gespräch beendet —</span>
       <button class="miniBtn" id="restartChat" type="button">Noch einmal</button>`;
-    document.getElementById("chatMsgs").appendChild(wrap);
-    scrollDown();
+    document.getElementById("chatMsgs").appendChild(wrap); scrollDown();
     document.getElementById("restartChat").addEventListener("click", () => openConvo(partner));
     setChips([]); setInputEnabled(false);
   }
@@ -287,49 +288,80 @@
     }
   });
   document.getElementById("toContacts").addEventListener("click", backToContacts);
+  document.getElementById("suggestToggle").addEventListener("click", () => {
+    const box = document.getElementById("chatChips");
+    const show = box.style.display === "none";
+    box.style.display = show ? "flex" : "none";
+    document.getElementById("suggestToggle").textContent = show ? "💡 Vorschläge ausblenden" : "💡 Vorschläge anzeigen";
+  });
 
-  // Sprachnachricht (nur wo Spracherkennung läuft – nicht iOS/Firefox)
-  let rec = null, recording = false;
-  document.getElementById("micBtn").addEventListener("click", () => {
-    if(!micOK || busy) return;
-    if(recording){ try{ rec && rec.stop(); }catch(e){} return; }
+  // ---------- Sprachnachricht: aufnehmen (Audio) + erkennen (Text) ----------
+  let mediaStream = null, mediaRec = null, chunks = [], srObj = null;
+  let recognizedText = "", recAudioURL = null, recActive = false, finalized = false;
+
+  function stopTracks(){ if(mediaStream){ mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; } }
+
+  async function startVoice(){
+    recognizedText = ""; recAudioURL = null; chunks = []; finalized = false;
+    try{ mediaStream = await navigator.mediaDevices.getUserMedia({audio:true}); }catch(e){ mediaStream = null; }
+    if(mediaStream && window.MediaRecorder){
+      try{
+        mediaRec = new MediaRecorder(mediaStream);
+        mediaRec.ondataavailable = e => { if(e.data && e.data.size) chunks.push(e.data); };
+        mediaRec.onstop = () => {
+          try{ if(chunks.length) recAudioURL = URL.createObjectURL(new Blob(chunks, {type: chunks[0].type || "audio/webm"})); }catch(e){}
+          finalizeVoice();
+        };
+        mediaRec.start();
+      }catch(e){ mediaRec = null; }
+    }
     try{
-      rec = new SR();
-      rec.lang = "zh-CN";
-      rec.interimResults = false;
-      rec.maxAlternatives = 3;
-      recording = true;
-      document.getElementById("micBtn").classList.add("rec");
-      rec.onresult = ev => {
-        let best = -1, bestText = "";
+      srObj = new SR(); srObj.lang = "zh-CN"; srObj.interimResults = false; srObj.maxAlternatives = 3;
+      srObj.onresult = ev => {
         for(let i = 0; i < ev.results.length; i++){
           for(let j = 0; j < ev.results[i].length; j++){
             const t = ev.results[i][j].transcript;
-            const idx = matchOption(t);
-            if(idx >= 0){ best = idx; bestText = t; break; }
-            if(!bestText) bestText = t;
+            if(!recognizedText) recognizedText = t;
+            if(matchVoice(t) >= 0){ recognizedText = t; return; }
           }
-          if(best >= 0) break;
-        }
-        if(best >= 0){
-          handleAnswer(best, "voice", fill(convo[rIdx].options[best].chip));
-        }else{
-          flashHint();
         }
       };
-      rec.onerror = () => {};
-      rec.onend = () => { recording = false; document.getElementById("micBtn").classList.remove("rec"); };
-      rec.start();
-    }catch(e){ recording = false; }
+      srObj.onerror = () => {};
+      srObj.onend = () => {
+        if(mediaRec && mediaRec.state !== "inactive"){ try{ mediaRec.stop(); }catch(e){ finalizeVoice(); } }
+        else finalizeVoice();
+      };
+      srObj.start();
+      recActive = true;
+      document.getElementById("micBtn").classList.add("rec");
+    }catch(e){ recActive = false; stopTracks(); }
+  }
+  function stopVoice(){
+    if(srObj){ try{ srObj.stop(); }catch(e){} }
+    else if(mediaRec && mediaRec.state !== "inactive"){ try{ mediaRec.stop(); }catch(e){} }
+  }
+  function finalizeVoice(){
+    if(finalized) return; finalized = true;
+    recActive = false;
+    document.getElementById("micBtn").classList.remove("rec");
+    stopTracks();
+    const idx = matchVoice(recognizedText);
+    if(idx >= 0){
+      handleAnswer(idx, "voice", fill(convo[rIdx].options[idx].chip), recAudioURL);
+    }else{
+      flashHint();
+    }
+  }
+  document.getElementById("micBtn").addEventListener("click", () => {
+    if(!micOK || busy) return;
+    if(recActive){ stopVoice(); return; }
+    startVoice();
   });
 
   // Start
   renderContacts();
   const who = params.get("who");
-  if(who && DATA){
-    const p = DATA.partners.find(x => x.key === who);
-    if(p) openConvo(p);
-  }
+  if(who && DATA){ const p = DATA.partners.find(x => x.key === who); if(p) openConvo(p); }
   </script>
 </body>
 </html>

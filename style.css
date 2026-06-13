@@ -1055,7 +1055,7 @@ html.noScroll section.card > .cardBottom{ margin-top:auto; padding-top:8px; }
 .contactInfo{ display:flex; flex-direction:column; gap:2px; }
 
 .chatCard{ overflow:hidden; }
-html.noScroll .app > section.chatCard{ display:flex; flex-direction:column; }
+html.noScroll .app > section.chatCard{ display:flex; flex-direction:column; flex:1 1 auto; min-height:0; }
 .chatHead{ display:flex; align-items:center; gap:10px; padding-bottom:10px; border-bottom:1px solid var(--stroke); }
 .chatWho{ display:flex; flex-direction:column; line-height:1.2; }
 .chatMsgs{ flex:1 1 auto; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:12px 2px; display:flex; flex-direction:column; gap:10px; }
@@ -1115,3 +1115,16 @@ html.noScroll .app > section.chatCard{ display:flex; flex-direction:column; }
 .micBtn.rec{ background:#ef4444; color:#fff; border-color:#ef4444; animation:cfPulse 1s infinite; }
 @keyframes cfPulse{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
 .chatEnd{ text-align:center; color:var(--muted); margin:14px 0; display:flex; flex-direction:column; gap:10px; align-items:center; }
+
+
+/* Chat-Feinschliff (Etappe 21) */
+.bubble.text.tappable{ cursor:pointer; }
+.bubble.text .bhelp{ margin-top:6px; padding-top:6px; border-top:1px dashed var(--stroke); }
+.chatSuggestRow{ display:flex; justify-content:flex-end; margin-bottom:8px; }
+.suggestToggle{
+  min-height:34px; padding:6px 12px; border-radius:999px;
+  border:1px solid var(--stroke); background:var(--button-bg); color:var(--chapter-text);
+  font-size:13px; cursor:pointer;
+}
+.suggestToggle:hover{ background:var(--button-bg-hover); }
+.suggestToggle:disabled{ opacity:.4; }

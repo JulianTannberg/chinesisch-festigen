@@ -21,7 +21,7 @@ window.CF_CHAT = {
         {
           ask: [{ zh: "你叫什么名字？", pinyin: "Nǐ jiào shénme míngzi?", de: "Wie heißt du?" }],
           options: [
-            { chip: "我叫{name}。", accept: ["我叫{name}", "我是{name}", "{name}"] },
+            { chip: "我叫{name}。", accept: ["我叫{name}", "我是{name}", "{name}"], voicePrefix: ["我叫", "我是"] },
             { chip: "我叫{name}，你呢？", accept: ["我叫{name}你呢"] }
           ]
         },
@@ -64,7 +64,7 @@ window.CF_CHAT = {
         {
           ask: [{ zh: "你叫什么名字？", pinyin: "Nǐ jiào shénme míngzi?", de: "Wie heißt du?" }],
           options: [
-            { chip: "我叫{name}。", accept: ["我叫{name}", "我是{name}", "{name}"] },
+            { chip: "我叫{name}。", accept: ["我叫{name}", "我是{name}", "{name}"], voicePrefix: ["我叫", "我是"] },
             { chip: "我叫{name}，你呢？", accept: ["我叫{name}你呢"] }
           ]
         },
