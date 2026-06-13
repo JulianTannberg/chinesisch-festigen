@@ -273,3 +273,17 @@ dynamischer Tracking-Dienst).
 - **Updates greifen jetzt sofort:** Sobald eine neue Version aktiv wird, lädt die Seite automatisch einmal neu (controllerchange) und sucht beim Öffnen aktiv nach Updates (reg.update()). Damit ist das frühere „zweimal von Hand laden" nicht mehr nötig.
 - Hinweis: Der Zeichen-lernen-Score zählt seit v20 nur „perfect" (komplett grün); der zuvor gesehene 4-%-Effekt bei „done" (nur Umriss) war eine noch nicht aktive alte Version.
 - Service-Worker-Version: cf-v21.
+
+## Änderungen Etappe 19 – Messenger/Chat (Prototyp)
+
+- **Messenger-Symbol** oben rechts auf der Kapitelseite → Kontaktliste (Lín Yuè, Sū Rán) → Chat mit der gewählten Person.
+- **Geführter Chat** mit vielen Antwortvarianten pro Schritt (Reihenfolge/Satzzeichen egal, eigener Name aus dem Profil). Nur Kapitel-1-Wortschatz. Partner reagiert passend; bei Nicht-Treffer wird kurz „gewackelt" und Vorschläge bleiben sichtbar.
+- **Eingabe:** antippbare Vorschläge, Tippen, und Mikrofon (Sprachnachricht). Mikrofon nur, wo die Spracherkennung läuft (Chrome/Edge unter Windows/macOS/Linux/ChromeOS, Chrome Android); auf iOS und Firefox ausgeblendet.
+- **Sprachnachrichten:** Sendet man per Mikrofon, erscheint nur die Sprachblase (Text liegt unsichtbar dahinter, für den Abgleich/das Vorlesen). Der Partner antwortet dann ebenfalls als Sprachnachricht (wird vorgelesen). Bei Tippen/Antippen antwortet der Partner als Textblase (mit Pinyin/Deutsch und Abspielknopf).
+- **Farben pro Kapitel:** eigene Blasen in der Kapitel-Akzentfarbe. Neutraler Messenger-Look (kein WeChat).
+- Dateien: chat.html, chatdata.js. Service-Worker-Version: cf-v22.
+
+## Änderungen Etappe 20 (Fix)
+
+- **Chat-Seite war leer & „Zurück" ging zur Übersicht:** Ursache war eine Namenskollision – `chat.html` deklarierte `qs`, das es in `common.js` schon global gibt. Dadurch stürzte das ganze Chat-Skript ab (keine Kontakte, „Zurück"-Adresse nicht gesetzt). Lokale Variable in `params` umbenannt. Jetzt erscheinen die Kontakte und „Zurück" führt zum Kapitel.
+- Service-Worker-Version: cf-v23.

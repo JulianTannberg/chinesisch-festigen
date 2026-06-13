@@ -42,8 +42,8 @@
   <script src="topics.js"></script>
   <script src="chatdata.js"></script>
   <script>
-  const qs = new URLSearchParams(location.search);
-  const id = qs.get("id") || "01";
+  const params = new URLSearchParams(location.search);
+  const id = params.get("id") || "01";
   const topic = (window.CF_TOPICS || []).find(t => t.id === id) || {accent:"#03172B", textColor:"#FFFFFF", title:"", id:id};
   applyTheme(topic, "Nachrichten");
   document.documentElement.classList.add("noScroll");
@@ -325,7 +325,7 @@
 
   // Start
   renderContacts();
-  const who = qs.get("who");
+  const who = params.get("who");
   if(who && DATA){
     const p = DATA.partners.find(x => x.key === who);
     if(p) openConvo(p);
