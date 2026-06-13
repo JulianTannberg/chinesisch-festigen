@@ -329,6 +329,11 @@ document.getElementById("title").textContent = `${topic.id}. ${topic.title} · S
 
 /* ===== Reiter-Umschaltung ===== */
 const tabs = [...document.querySelectorAll(".tab")];
+cfPaintTabScores([
+  ['.tab[data-tab="learn"]', "lernen"],
+  ['.tab[data-tab="trace"]', "schreibtraining"],
+  ['.tab[data-tab="type"]', "tippen"]
+], topic.id);
 tabs.forEach(tab => tab.addEventListener("click", () => {
   tabs.forEach(t => t.classList.toggle("active", t === tab));
   document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
@@ -893,7 +898,9 @@ function finishLearnWord(){
   const status = lWordMistakes === 0 ? "perfect" : "ok";
   if(learnDone[lWord.zh] !== "perfect") learnDone[lWord.zh] = status;
   saveLearnDone();
-  cfSetScore("lernen", learnWords.length ? Math.round(Object.keys(learnDone).length / learnWords.length * 100) : 0);
+  // Nur komplett durchgearbeitete Wörter zählen (Status gesetzt = alle Schritte fertig).
+  const _doneCount = learnWords.filter(w => learnDone[w.zh]).length;
+  cfSetScore("lernen", learnWords.length ? Math.round(_doneCount / learnWords.length * 100) : 0, topic.id);
   cfPlayFeedback(true);
   setLearnStatus(lWordMistakes === 0
     ? "Perfekt – ganz ohne Fehler! 太棒了！"
@@ -961,8 +968,10 @@ function saveTrainStats(){
 function updateTrainStats(){
   $("trainRound").textContent = String(trainStats.round);
   $("trainDirect").textContent = String(trainStats.direct);
-  $("trainRate").textContent = (trainStats.attempted ? Math.round(trainStats.direct / trainStats.attempted * 100) : 0) + "%";
+  const rate = trainStats.attempted ? Math.round(trainStats.direct / trainStats.attempted * 100) : 0;
+  $("trainRate").textContent = rate + "%";
   $("trainStreak").textContent = String(trainStats.streak);
+  cfSetScore("schreibtraining", rate, topic.id);
 }
 
 function saveTrain(){

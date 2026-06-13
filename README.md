@@ -219,3 +219,21 @@ dynamischer Tracking-Dienst).
 - **Flashkarten:** „Aufdecken/Verbergen“-Knopf entfernt (Karte antippen genügt).
 - **Kapitelübersicht:** Gesamt-Prozent in Grün (Mittel aller gezählten Übungs-Quoten) plus Fortschrittsleiste; bei 100 % grüner Rahmen um die Kapitelkarte.
 - Service-Worker-Version: cf-v12.
+
+## Änderungen Etappe 10
+
+- **Untere Reiter (Lernen / Üben / Spielen)** werden anteilig grün gefüllt – nach dem Mittel der jeweiligen Gruppe.
+- **In-Page-Reiter** ebenfalls grün nach ihrem eigenen Prozentwert: Schreiben (Zeichen lernen / Schreibtraining / Tippen) und Sprechen (Sätze sprechen). „KI sprechen", „Hören", „Vokabeln/Geschichte" bleiben ungefärbt (kein richtig/falsch).
+- **Zeichen-lernen-Prozent** zählt jetzt fertige Wörter (alle Schritte durchlaufen) ÷ alle Wörter; veraltete Einträge werden ignoriert.
+- **Schreibtraining** speichert einen eigenen Prozentwert (Quote Direkt richtig) und ist – vorläufig – Teil der Schreiben-Rechnung und grün gefärbt.
+- **Schreiben-Kachel** = Mittel aus Zeichen lernen + Tippen + Schreibtraining (Fix für den fehlenden Fortschritt).
+- **Gesamt-Prozent** auf der Übersicht bezieht Schreibtraining mit ein.
+- Service-Worker-Version: cf-v13.
+
+## Änderungen Etappe 11
+
+- **Hören zählt jetzt mit:** Ein Wort (Vokabel) oder Satz (Geschichte) gilt als „gehört", sobald es angetippt oder im Geschichte-Durchlauf abgespielt wurde. Prozent = gehörte (Wörter + Sätze) ÷ alle. Wird pro Kapitel gespeichert.
+- Die Hören-Karte und die Reiter Vokabeln/Geschichte färben sich entsprechend grün (Vokabeln nach Wörtern, Geschichte nach Sätzen).
+- Hören fließt in die **Lernen-Gruppe** (untere Reiter) und ins **Gesamt-Prozent** der Kapitelübersicht ein.
+- Schreibtraining bleibt Teil der Rechnung und grün gefärbt.
+- Service-Worker-Version: cf-v14.

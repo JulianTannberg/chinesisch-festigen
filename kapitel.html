@@ -139,7 +139,6 @@
   // Schreiben = Mittel aus „Zeichen lernen“, „Tippen“ und „Schreibtraining“
   const writeScore = avg([g("lernen"), g("tippen"), g("schreibtraining")]);
 
-  paintScore("hearLink", g("hoeren"));
   paintScore("writeLink", writeScore);
   paintScore("speakLink", g("sprechen"));
   paintScore("uebenHoerenLink", g("ueben_hoeren"));
@@ -148,10 +147,11 @@
   paintScore("flashLink", g("flash"));
   paintScore("memoryLink", g("memory"));
   paintScore("gapLink", g("luecken"));
+  paintScore("hearLink", g("hoeren"));
 
   // Untere Reiter nach Gruppen-Mittel einfärben
   const groupScore = {
-    lernen: avg([g("hoeren"), writeScore, g("sprechen")]),
+    lernen: avg([writeScore, g("sprechen"), g("hoeren")]),
     ueben: avg([g("ueben_hoeren"), g("ueben_zhde"), g("ueben_dezh")]),
     spielen: avg([g("flash"), g("memory"), g("luecken")])
   };

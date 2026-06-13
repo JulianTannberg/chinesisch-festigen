@@ -140,6 +140,7 @@ function activateTab(name){
 tabButtons.forEach(btn => btn.addEventListener("click", () => activateTab(btn.dataset.tab)));
 const initialTab = (new URLSearchParams(location.search).get("tab") === "ki") ? "ki" : "satz";
 activateTab(initialTab);
+cfPaintTabScores([['.tab[data-tab="satz"]', "sprechen"]], topic.id);
 
 /* ===== Teil 1: Sätze sprechen ===== */
 // Auf iPhone/iPad meldet Safari die Spracherkennung zwar als vorhanden,

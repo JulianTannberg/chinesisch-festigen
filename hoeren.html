@@ -58,24 +58,6 @@ document.getElementById("back").href = `kapitel.html?id=${topic.id}`;
 document.getElementById("title").textContent = `${topic.id}. ${topic.title} · Hören`;
 
 const listenApp = document.getElementById("listenApp");
-
-// ===== Hören-Fortschritt: jedes gehörte Wort / jeder gehörte Satz zählt =====
-const heardKey = `cf_heard_v1_${topic.id}`;
-let heard = new Set();
-try{ heard = new Set(JSON.parse(localStorage.getItem(heardKey) || "[]")); }catch(e){ heard = new Set(); }
-const totalHearables = (topic.vocab||[]).length + (topic.understandingVocab||[]).length + (topic.storyDialog||[]).length;
-function updateHoerenScore(){
-  cfSetScore("hoeren", totalHearables ? Math.round(heard.size / totalHearables * 100) : 0, topic.id);
-}
-function markHeard(key){
-  if(!key || heard.has(key)) return;
-  heard.add(key);
-  try{ localStorage.setItem(heardKey, JSON.stringify([...heard])); }catch(e){}
-  updateHoerenScore();
-}
-// Schon vorhandenen Fortschritt beim Öffnen übernehmen (aber nicht bei 0 anlegen)
-if(heard.size > 0) updateHoerenScore();
-
 function toggleMeta(kind){
   const cls = kind === "pinyin" ? "show-pinyin" : "show-deutsch";
   listenApp.classList.toggle(cls);
@@ -170,6 +152,36 @@ function bubbleColor(speaker){
 }
 function bubbleSide(speaker){ return isLinYue(speaker) ? "right" : "left"; }
 
+// Hören zählt als „gehört": ein Wort (Vokabel) oder Satz (Geschichte) gilt
+// als gehört, sobald er angetippt oder im Durchlauf abgespielt wurde.
+const hoerenKey = `cf_hoeren_heard_${topic.id}`;
+let hoerenHeard = { w:{}, s:{} };
+try{
+  const st = JSON.parse(localStorage.getItem(hoerenKey) || "{}");
+  if(st && typeof st === "object"){ hoerenHeard.w = st.w || {}; hoerenHeard.s = st.s || {}; }
+}catch(e){}
+function hoerenGrad(p){ return `linear-gradient(90deg, rgba(34,197,94,.32) ${p}%, rgba(34,197,94,0) ${p}%)`; }
+function recomputeHoeren(){
+  const totalW = (topic.vocab ? topic.vocab.length : 0) + (topic.understandingVocab ? topic.understandingVocab.length : 0);
+  const totalS = (topic.storyDialog ? topic.storyDialog.length : 0);
+  const heardW = Math.min(Object.keys(hoerenHeard.w).length, totalW);
+  const heardS = Math.min(Object.keys(hoerenHeard.s).length, totalS);
+  const total = totalW + totalS;
+  cfSetScore("hoeren", total ? Math.round((heardW + heardS) / total * 100) : 0, topic.id);
+  const vt = document.querySelector('.tab[data-tab="vocab"]');
+  const dt = document.querySelector('.tab[data-tab="dialog"]');
+  if(vt && totalW) vt.style.backgroundImage = hoerenGrad(Math.round(heardW / totalW * 100));
+  if(dt && totalS) dt.style.backgroundImage = hoerenGrad(Math.round(heardS / totalS * 100));
+}
+function markHeard(kind, keyText){
+  if(!keyText) return;
+  const bucket = kind === "s" ? hoerenHeard.s : hoerenHeard.w;
+  if(bucket[keyText]) return;
+  bucket[keyText] = 1;
+  try{ localStorage.setItem(hoerenKey, JSON.stringify(hoerenHeard)); }catch(e){}
+  recomputeHoeren();
+}
+
 const vocabGrid = document.getElementById("vocabGrid");
 function renderVocabSection(title, items){
   if(!items || items.length === 0) return;
@@ -189,7 +201,7 @@ function renderVocabSection(title, items){
       <div class="pinyin">${escapeHtml(v.pinyin || "")}</div>
       <div class="de">${escapeHtml(v.de || "")}</div>
     `;
-    card.addEventListener("click", () => { speak(v.zh); markHeard(`v:${v.zh}|${v.pinyin || ""}`); });
+    card.addEventListener("click", () => { speak(v.zh); markHeard("w", v.zh); });
     grid.appendChild(card);
   });
   section.appendChild(h);
@@ -208,7 +220,7 @@ const dialogData = topic.storyDialog || [];
 if(dialogData.length === 0){
   dialogEl.innerHTML = `<div class="empty">Für dieses Kapitel ist noch keine Geschichte eingetragen.</div>`;
 }else{
-  dialogData.forEach((line, idx) => {
+  dialogData.forEach(line => {
     const color = bubbleColor(line.speaker);
     const row = document.createElement("div");
     row.className = `bubbleRow ${bubbleSide(line.speaker)}`;
@@ -220,7 +232,7 @@ if(dialogData.length === 0){
         ${line.de ? `<div class="speechDe">${escapeHtml(line.de)}</div>` : ""}
       </div>
     `;
-    row.querySelector(".speechBubble").addEventListener("click", () => { speak(line.zh); markHeard(`d:${idx}`); });
+    row.querySelector(".speechBubble").addEventListener("click", () => { speak(line.zh); markHeard("s", line.zh); });
     dialogEl.appendChild(row);
   });
 }
@@ -229,13 +241,14 @@ async function playAll(){
   document.querySelector('[data-tab="dialog"]').click();
   stopAudio();
   const token = playToken;
-  for(const [i, line] of dialogData.entries()){
+  for(const line of dialogData){
     if(token !== playToken) return;
     await speakAndWait(line.zh, token);
-    if(token === playToken) markHeard(`d:${i}`);
+    markHeard("s", line.zh);
   }
 }
 document.getElementById("playAllBtn").onclick = playAll;
+recomputeHoeren();
 </script>
 </body>
 </html>
