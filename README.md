@@ -257,3 +257,8 @@ dynamischer Tracking-Dienst).
 
 - **„Fortschritt zurücksetzen"** sitzt jetzt rechts neben „Name ändern" (zusammen als Knopf-Gruppe) und setzt nur das **aktuelle Kapitel** zurück (per ?id aus der Adresse). Sicherheitsabfrage angepasst auf „dieses Kapitel". Name, Einstellungen und andere Kapitel bleiben unberührt.
 - Service-Worker-Version: cf-v18.
+
+## Änderungen Etappe 16
+
+- **Fix: unterer Rand abgeschnitten.** viewport-fit=cover auf allen Seiten + Sicherheitsabstand (env safe-area-inset) oben und unten in der festen App. Dadurch sitzt die Profilzeile (Name ändern / Fortschritt zurücksetzen) nicht mehr hinter der iPhone-Home-Leiste. Profilabstand leicht verkleinert.
+- Service-Worker-Version: cf-v19.
