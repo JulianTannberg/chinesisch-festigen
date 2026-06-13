@@ -267,3 +267,9 @@ dynamischer Tracking-Dienst).
 
 - **Zeichen lernen – Prozent:** Ein Wort zählt erst, wenn es komplett fehlerfrei gemeistert wurde (Karte ganz grün = „perfect"). Mit Fehlern abgeschlossene Wörter („done") zählen nicht mehr mit.
 - Service-Worker-Version: cf-v20.
+
+## Änderungen Etappe 18
+
+- **Updates greifen jetzt sofort:** Sobald eine neue Version aktiv wird, lädt die Seite automatisch einmal neu (controllerchange) und sucht beim Öffnen aktiv nach Updates (reg.update()). Damit ist das frühere „zweimal von Hand laden" nicht mehr nötig.
+- Hinweis: Der Zeichen-lernen-Score zählt seit v20 nur „perfect" (komplett grün); der zuvor gesehene 4-%-Effekt bei „done" (nur Umriss) war eine noch nicht aktive alte Version.
+- Service-Worker-Version: cf-v21.

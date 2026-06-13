@@ -64,8 +64,19 @@ function topicHasContent(t){
   if(!("serviceWorker" in navigator)) return;
   const ok = location.protocol === "https:" || ["localhost","127.0.0.1"].includes(location.hostname);
   if(!ok) return;
+  // Sobald eine NEUE Version aktiv wird, lädt die Seite genau einmal neu,
+  // damit alle Dateien frisch sind (kein doppeltes Laden von Hand nötig).
+  let cfReloaded = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if(cfReloaded) return;
+    cfReloaded = true;
+    location.reload();
+  });
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("sw.js").catch(() => {});
+    navigator.serviceWorker.register("sw.js").then(reg => {
+      // Beim Öffnen aktiv nach einer neuen Version suchen
+      try{ reg.update(); }catch(e){}
+    }).catch(() => {});
   });
 })();
 
