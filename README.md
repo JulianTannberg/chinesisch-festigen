@@ -207,3 +207,15 @@ dynamischer Tracking-Dienst).
 - **Hören:** Pinyin ohne Hinweis-Zusätze (z. B. „x → ch“) auf den Vokabelkarten.
 - **iPad / Diktat-Modus (Sätze sprechen):** Nur noch ein Knopf – „Prüfen“ wird bei richtigem Satz (oder nach 3 Fehlversuchen) zu „Weiter →“.
 - Service-Worker-Version: cf-v11.
+
+## Änderungen Etappe 9
+
+- **Tippen:** Bei richtiger Antwort wird das chinesische Wort vorgelesen.
+- **Schreiben-Prozent** auf der Kapitelseite = Mittel aus „Zeichen lernen“ und „Tippen“; Schreibtraining zählt nicht mit.
+- **Schreibtraining:** Statistikzeile unten wie beim Tippen (Runde · Direkt richtig · Quote · Serie). „Direkt richtig“ = Wort ohne Fehler geschafft.
+- **Sätze sprechen:** gleiche Statistikzeile (Runde · Direkt richtig · Quote · Serie), Werte bleiben gespeichert.
+- **Memory:** unter den Karten „Züge dieses Spiel“ samt Niedrigste/Höchste (Rekorde pro Kapitel gespeichert); der Abschluss-Text nennt die Zügezahl.
+- **Hören & alle Puzzle-Übungen (Üben):** Angetippte Karten werden **nicht** automatisch vorgelesen. Stattdessen Ton-Schalter, standardmäßig **aus**, anschaltbar – so verrät der Ton nicht die Lösung.
+- **Flashkarten:** „Aufdecken/Verbergen“-Knopf entfernt (Karte antippen genügt).
+- **Kapitelübersicht:** Gesamt-Prozent in Grün (Mittel aller gezählten Übungs-Quoten) plus Fortschrittsleiste; bei 100 % grüner Rahmen um die Kapitelkarte.
+- Service-Worker-Version: cf-v12.

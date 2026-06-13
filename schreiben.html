@@ -184,6 +184,14 @@
 
           <div class="traceStatus" id="trainStatus">&nbsp;</div>
 
+          <div class="cardBottom">
+            <div class="stats statsRow">
+              <div class="stat"><div class="statK">Runde</div><div class="statV" id="trainRound">1</div></div>
+              <div class="stat"><div class="statK">Direkt richtig</div><div class="statV" id="trainDirect">0</div></div>
+              <div class="stat"><div class="statK">Quote</div><div class="statV" id="trainRate">0%</div></div>
+              <div class="stat"><div class="statK">Serie</div><div class="statV" id="trainStreak">0</div></div>
+            </div>
+          </div>
         </div>
       </section>
     </section>
@@ -508,6 +516,7 @@ function check(){
     actionMode = "next";
     $("actionBtn").textContent = "Weiter";
     $("actionBtn").disabled = false;
+    cfSpeakZh(card.writeZh || card.zh);
     if(!hasWrongAttempt && !usedHelp){
       wrongSet.delete(card.vocabIndex);
       setFeedback("ok", "Richtig. Weiter geht es.");
@@ -884,6 +893,7 @@ function finishLearnWord(){
   const status = lWordMistakes === 0 ? "perfect" : "ok";
   if(learnDone[lWord.zh] !== "perfect") learnDone[lWord.zh] = status;
   saveLearnDone();
+  cfSetScore("lernen", learnWords.length ? Math.round(Object.keys(learnDone).length / learnWords.length * 100) : 0);
   cfPlayFeedback(true);
   setLearnStatus(lWordMistakes === 0
     ? "Perfekt – ganz ohne Fehler! 太棒了！"
@@ -912,6 +922,7 @@ $("learnNextWord").addEventListener("click", nextLearnWord);
 $("learnResetDone").addEventListener("click", () => {
   learnDone = {};
   saveLearnDone();
+  cfSetScore("lernen", 0);
   renderLearnGrid();
 });
 
@@ -935,6 +946,24 @@ let trainChar = 0;
 let trainWriter = null;
 let trainToken = 0;
 let trainStarted = false;
+let trainHadMistake = false;
+let trainStats = { round: 1, attempted: 0, direct: 0, streak: 0 };
+try{
+  const s = JSON.parse(localStorage.getItem(`cf_train_stats_${topic.id}`) || "{}");
+  trainStats.round = Math.max(1, Number(s.round) || 1);
+  trainStats.attempted = Math.max(0, Number(s.attempted) || 0);
+  trainStats.direct = Math.max(0, Number(s.direct) || 0);
+  trainStats.streak = Math.max(0, Number(s.streak) || 0);
+}catch(e){}
+function saveTrainStats(){
+  localStorage.setItem(`cf_train_stats_${topic.id}`, JSON.stringify(trainStats));
+}
+function updateTrainStats(){
+  $("trainRound").textContent = String(trainStats.round);
+  $("trainDirect").textContent = String(trainStats.direct);
+  $("trainRate").textContent = (trainStats.attempted ? Math.round(trainStats.direct / trainStats.attempted * 100) : 0) + "%";
+  $("trainStreak").textContent = String(trainStats.streak);
+}
 
 function saveTrain(){
   localStorage.setItem(`cf_train_level_${topic.id}`, trainLevel);
@@ -1036,6 +1065,7 @@ function loadTrainChar(){
     trainWriter.quiz({
       onMistake(){
         if(token !== trainToken) return;
+        trainHadMistake = true;
         strokeMisses++;
         if(strokeMisses % 3 === 0){
           setTrainStatus("Schau her, so geht dieser Strich:", "bad");
@@ -1073,6 +1103,15 @@ function advanceTrain(){
     setTimeout(loadTrainChar, 450);
     return;
   }
+  trainStats.attempted++;
+  if(trainHadMistake){
+    trainStats.streak = 0;
+  }else{
+    trainStats.direct++;
+    trainStats.streak++;
+  }
+  saveTrainStats();
+  updateTrainStats();
   cfPlayFeedback(true);
   setTrainStatus("Wort geschafft! 很好！", "ok");
   setTimeout(() => nextTrainWord(), 800);
@@ -1081,6 +1120,8 @@ function loadTrainWord(){
   cancelTrainWriter();
   trainToken++;
   trainChar = 0;
+  trainHadMistake = false;
+  updateTrainStats();
   const w = trainWord();
   if(!w) return;
   $("trainCounter").textContent = `Wort ${trainIdx + 1} von ${trainWords.length}`;
@@ -1095,6 +1136,8 @@ function loadTrainWord(){
 function nextTrainWord(){
   if(trainIdx >= trainWords.length - 1){
     trainIdx = 0;
+    trainStats.round++;
+    saveTrainStats();
     setTrainStatus("Alle Wörter durch – es geht wieder von vorne los.", "ok");
   }else{
     trainIdx++;

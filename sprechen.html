@@ -71,6 +71,12 @@
           </div>
 
           <div class="cardBottom">
+            <div class="stats statsRow">
+              <div class="stat"><div class="statK">Runde</div><div class="statV" id="sprRound">1</div></div>
+              <div class="stat"><div class="statK">Direkt richtig</div><div class="statV" id="sprDirect">0</div></div>
+              <div class="stat"><div class="statK">Quote</div><div class="statV" id="sprRate">0%</div></div>
+              <div class="stat"><div class="statK">Serie</div><div class="statV" id="sprStreak">0</div></div>
+            </div>
             <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
           </div>
         </div>
@@ -311,8 +317,23 @@ async function startRecording(){
   }
 }
 let spTried = false;
-let spAttempted = 0;
-let spCorrect = 0;
+let spStats = { round: 1, attempted: 0, direct: 0, streak: 0 };
+try{
+  const s = JSON.parse(localStorage.getItem(`cf_speak_stats_${topic.id}`) || "{}");
+  spStats.round = Math.max(1, Number(s.round) || 1);
+  spStats.attempted = Math.max(0, Number(s.attempted) || 0);
+  spStats.direct = Math.max(0, Number(s.direct) || 0);
+  spStats.streak = Math.max(0, Number(s.streak) || 0);
+}catch(e){}
+function saveSpStats(){
+  localStorage.setItem(`cf_speak_stats_${topic.id}`, JSON.stringify(spStats));
+}
+function updateSpStats(){
+  $("sprRound").textContent = String(spStats.round);
+  $("sprDirect").textContent = String(spStats.direct);
+  $("sprRate").textContent = (spStats.attempted ? Math.round(spStats.direct / spStats.attempted * 100) : 0) + "%";
+  $("sprStreak").textContent = String(spStats.streak);
+}
 function checkTranscript(alternatives, task){
   const heardNorms = alternatives.map(normalizeZh).filter(Boolean);
   let ok = false;
@@ -327,9 +348,11 @@ function checkTranscript(alternatives, task){
 
   if(!spTried){
     spTried = true;
-    spAttempted++;
-    if(ok) spCorrect++;
-    cfSetScore("sprechen", tasks.length ? Math.round(spCorrect / tasks.length * 100) : 0);
+    spStats.attempted++;
+    if(ok){ spStats.direct++; spStats.streak++; } else { spStats.streak = 0; }
+    saveSpStats();
+    updateSpStats();
+    cfSetScore("sprechen", tasks.length ? Math.round(spStats.direct / tasks.length * 100) : 0);
   }
   if(ok){
     cfPlayFeedback(true);
@@ -366,7 +389,15 @@ function speakZh(text, rate = 0.9){
   speechSynthesis.speak(u);
 }
 function nextSpeechSentence(){ idx++; renderSpeechSentence(); }
-function restartSpeechSentence(){ idx=0; correct=0; localStorage.removeItem(stateKey()); renderSpeechSentence(); }
+function restartSpeechSentence(){
+  idx = 0;
+  correct = 0;
+  spStats.round++;
+  saveSpStats();
+  updateSpStats();
+  localStorage.removeItem(stateKey());
+  renderSpeechSentence();
+}
 
 $("recordBtn").addEventListener("click", startRecording);
 $("hearBtn").addEventListener("click", () => speakZh(current()?.zh || ""));
@@ -418,6 +449,7 @@ $("dictateInput").addEventListener("keydown", e => {
 });
 
 load();
+updateSpStats();
 renderSpeechSentence();
 
 /* ===== Teil 2: KI sprechen ===== */

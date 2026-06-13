@@ -118,7 +118,6 @@
 
   // Punktestände: Karten anteilig grün füllen + Prozent anzeigen
   const SCORES = [
-    ["writeLink", "tippen"],
     ["speakLink", "sprechen"],
     ["uebenHoerenLink", "ueben_hoeren"],
     ["uebenZhDeLink", "ueben_zhde"],
@@ -127,8 +126,7 @@
     ["memoryLink", "memory"],
     ["gapLink", "luecken"]
   ];
-  SCORES.forEach(([elId, name]) => {
-    const p = cfGetScore(name, topic.id);
+  function paintScore(elId, p){
     if(p === null) return;
     const el = document.getElementById(elId);
     if(!el) return;
@@ -137,7 +135,13 @@
     badge.className = "scoreBadge";
     badge.textContent = `${p} %`;
     el.appendChild(badge);
-  });
+  }
+  SCORES.forEach(([elId, name]) => paintScore(elId, cfGetScore(name, topic.id)));
+  // Schreiben = Mittel aus „Zeichen lernen“ und „Tippen“ (ohne Schreibtraining)
+  const writeParts = [cfGetScore("lernen", topic.id), cfGetScore("tippen", topic.id)].filter(p => p !== null);
+  if(writeParts.length){
+    paintScore("writeLink", Math.round(writeParts.reduce((a,b) => a+b, 0) / writeParts.length));
+  }
 </script>
 </body>
 </html>

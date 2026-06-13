@@ -37,10 +37,14 @@
         </div>
 
         <div class="memoryGrid" id="memoryGrid" aria-label="Memory-Karten"></div>
+
+        <div class="cardBottom">
+          <div class="small" id="gameMovesLine">Züge dieses Spiel: 0 · Niedrigste: – · Höchste: –</div>
+        </div>
       </div>
       <div class="finish" id="finish">
         <p class="finishTitle">Memory geschafft!</p>
-        <p class="finishText">Du hast alle Vokabel-Paare dieses Kapitels gefunden.</p>
+        <p class="finishText" id="finishText">Du hast alle Vokabel-Paare dieses Kapitels gefunden.</p>
         <div class="toolbar" style="justify-content:center;margin-top:18px;">
           <button id="finishRestart" type="button">Noch einmal spielen</button>
           <a class="miniBtn" id="finishBack">Zurück zum Kapitel</a>
@@ -73,6 +77,28 @@ let roundNo = 1;
 let soundOn = localStorage.getItem(`cf_memory_sound_${topic.id}`) !== "0";
 let totalPairs = 0;
 let totalMoves = 0;
+let gameMoves = 0;
+let gameDone = false;
+function gameRecordKey(){ return `cf_memory_games_${topic.id}`; }
+function loadGameRecords(){
+  try{ return JSON.parse(localStorage.getItem(gameRecordKey()) || "{}"); }catch(e){ return {}; }
+}
+function updateGameMovesLine(){
+  const r = loadGameRecords();
+  const best = Number.isFinite(r.best) ? r.best : "–";
+  const worst = Number.isFinite(r.worst) ? r.worst : "–";
+  const line = $("gameMovesLine");
+  if(line) line.textContent = `Züge dieses Spiel: ${gameMoves} · Niedrigste: ${best} · Höchste: ${worst}`;
+}
+function recordFinishedGame(){
+  if(gameDone || gameMoves <= 0) return;
+  gameDone = true;
+  const r = loadGameRecords();
+  r.best = Number.isFinite(r.best) ? Math.min(r.best, gameMoves) : gameMoves;
+  r.worst = Number.isFinite(r.worst) ? Math.max(r.worst, gameMoves) : gameMoves;
+  r.last = gameMoves;
+  localStorage.setItem(gameRecordKey(), JSON.stringify(r));
+}
 let zhVoice = null;
 
 function key(){ return `cf_memory_state_v1_${topic.id}`; }
@@ -105,7 +131,7 @@ function updateSoundButton(){
 
 function save(){
   if(!vocab.length) return;
-  localStorage.setItem(key(), JSON.stringify({allOrder, roundStart, moves, roundNo, totalPairs, totalMoves, savedAt:Date.now()}));
+  localStorage.setItem(key(), JSON.stringify({allOrder, roundStart, moves, roundNo, totalPairs, totalMoves, gameMoves, gameDone, savedAt:Date.now()}));
 }
 function load(){
   const raw = localStorage.getItem(key());
@@ -118,6 +144,8 @@ function load(){
     roundNo = Math.max(1, Number(s.roundNo)||1);
     totalPairs = Math.max(0, Number(s.totalPairs)||0);
     totalMoves = Math.max(0, Number(s.totalMoves)||0);
+    gameMoves = Math.max(0, Number(s.gameMoves)||0);
+    gameDone = Boolean(s.gameDone);
     return true;
   }catch(e){ return false; }
 }
@@ -127,6 +155,8 @@ function resetAll(){
   roundNo = 1;
   totalPairs = 0;
   totalMoves = 0;
+  gameMoves = 0;
+  gameDone = false;
   localStorage.removeItem(key());
   startRound();
 }
@@ -141,8 +171,11 @@ function startRound(){
   if(!vocab.length){ $("game").style.display="none"; $("empty").style.display="block"; return; }
   if(!allOrder.length) allOrder = shuffle([...Array(vocab.length).keys()]);
   if(roundStart >= allOrder.length){
+    recordFinishedGame();
     $("game").style.display = "none";
     $("finish").classList.add("show");
+    const r = loadGameRecords();
+    $("finishText").textContent = `Du hast alle Vokabel-Paare gefunden – mit ${gameMoves} Zügen (Niedrigste: ${r.best ?? gameMoves}, Höchste: ${r.worst ?? gameMoves}).`;
     save();
     return;
   }
@@ -168,6 +201,7 @@ function render(){
   $("roundNo").textContent = String(roundNo);
   $("pairCount").textContent = `${pairsFound}/${currentIndices().length}`;
   $("moveCount").textContent = String(moves);
+  updateGameMovesLine();
   const grid = $("memoryGrid");
   grid.innerHTML = "";
   cards.forEach(card => {
@@ -194,6 +228,7 @@ function flip(id){
   if(open.length === 2){
     moves++;
     totalMoves++;
+    gameMoves++;
     const [a,b] = open;
     if(a.pair === b.pair && a.type !== b.type){
       a.matched = true;

@@ -49,7 +49,6 @@
         </button>
 
         <div class="flashActions">
-          <button id="flipBtn" type="button">Aufdecken</button>
           <button id="againBtn" type="button" disabled>Noch üben</button>
           <button id="knownBtn" type="button" disabled>Gewusst</button>
         </div>
@@ -171,7 +170,6 @@ function setRevealed(value){
   revealed = value;
   $("flashCard").classList.toggle("revealed", revealed);
   $("flashBack").setAttribute("aria-hidden", revealed ? "false" : "true");
-  $("flipBtn").textContent = revealed ? "Verbergen" : "Aufdecken";
   $("knownBtn").disabled = !revealed;
   $("againBtn").disabled = !revealed;
   if(revealed && !wasRevealed && idx < order.length){
@@ -246,7 +244,6 @@ function switchDirection(nextDirection){
 }
 
 $("flashCard").addEventListener("click", () => setRevealed(!revealed));
-$("flipBtn").addEventListener("click", () => setRevealed(!revealed));
 $("knownBtn").addEventListener("click", () => nextCard("known"));
 $("againBtn").addEventListener("click", () => nextCard("again"));
 $("restartBtn").addEventListener("click", () => restart(false));

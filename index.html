@@ -35,11 +35,28 @@
       if(ready) el.href = `kapitel.html?id=${t.id}`;
       el.style.background = `linear-gradient(135deg, ${t.accent}, rgba(255,255,255,.14))`;
       el.style.color = t.textColor;
+
+      // Gesamt-Prozent: Mittel aller bereits gezählten Übungs-Quoten
+      let scoreHtml = "";
+      if(ready){
+        const names = ["lernen","tippen","sprechen","ueben_hoeren","ueben_zhde","ueben_dezh","flash","memory","luecken"];
+        const values = names.map(n => cfGetScore(n, t.id)).filter(p => p !== null);
+        if(values.length){
+          const total = Math.round(values.reduce((a,b) => a+b, 0) / values.length);
+          if(total >= 100) el.classList.add("complete");
+          scoreHtml = `
+            <div class="chapterScore">${total} %</div>
+            <div class="chapterBar"><div style="width:${total}%"></div></div>
+          `;
+        }
+      }
+
       el.innerHTML = `
         <div class="chapterNo">Kapitel ${t.id}</div>
         <div class="chapterTitle">${escapeHtml(t.title)}</div>
         <p class="chapterShort">${escapeHtml(t.short)}</p>
         ${ready ? "" : `<span class="soonBadge">Bald verfügbar</span>`}
+        ${scoreHtml}
       `;
       grid.appendChild(el);
     });
