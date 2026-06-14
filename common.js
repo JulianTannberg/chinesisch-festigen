@@ -197,3 +197,18 @@ function cfResetProgress(chapterId){
   remove.forEach(k => localStorage.removeItem(k));
   return remove.length;
 }
+
+
+// Audio-Blob an den Cloudflare Worker schicken und erkannten Text zurückgeben.
+// Wirft einen Fehler, wenn keine Worker-URL konfiguriert ist oder die Anfrage scheitert.
+async function cfTranscribe(blob){
+  var url = (window.CF_CONFIG && window.CF_CONFIG.workerUrl) || "";
+  if(!url) throw new Error("no-worker");
+  var form = new FormData();
+  form.append("file", blob, "audio.webm");
+  var r = await fetch(url, { method: "POST", body: form });
+  if(!r.ok) throw new Error("worker-" + r.status);
+  var data = await r.json();
+  return (data && data.text) ? String(data.text) : "";
+}
+function cfWorkerReady(){ return !!((window.CF_CONFIG && window.CF_CONFIG.workerUrl)); }

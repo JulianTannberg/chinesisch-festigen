@@ -297,3 +297,18 @@ dynamischer Tracking-Dienst).
 - **Name per Sprache:** „我叫…" genügt zum Fortfahren (der Name selbst muss nicht erkannt werden), analog zu den Sprechübungen.
 - **Echte Aufnahme:** Sprachnachrichten nehmen jetzt dein Mikrofon auf (MediaRecorder) – Antippen der eigenen Blase spielt deine echte Aufnahme ab. Klappt die Aufnahme nicht, wird ersatzweise der hinterlegte Satz vorgelesen.
 - Service-Worker-Version: cf-v24.
+
+## Änderungen Etappe 22 (Fix Mikrofon + Rand)
+
+- **Mikrofon hängt nicht mehr:** Aufnahme und Spracherkennung gleichzeitig blockierten sich auf dem Gerät. Jetzt nur noch Spracherkennung (wie bei „Sätze sprechen"); das Mikrofon schaltet bei Ergebnis, Fehler oder Ende sicher ab. Die eigene Sprachblase wird per Sprachausgabe abgespielt (kein echtes Aufnehmen mehr – das ließ sich auf dem Gerät nicht zuverlässig mit der Erkennung kombinieren).
+- **Unterer Rand:** Sicherheitsabstand unten erhöht (mindestens ~26px bzw. Safe-Area, falls größer), zusätzlich Luft unter der Eingabeleiste – Eingabe/Mikrofon sollten nun frei stehen.
+- Service-Worker-Version: cf-v25.
+
+## Änderungen Etappe 23 (Chat: echte Aufnahme + Groq-Transkription)
+
+- **Chat, alle Geräte:** Mikrofon nimmt frei gesprochen auf (max. 10 s) → die eigene Aufnahme erscheint sofort als abspielbare Voice-Bubble → die Aufnahme geht an den Cloudflare Worker → Groq transkribiert → der erkannte Text wird wie bisher gegen die erlaubten Antworten geprüft. Nie gleichzeitig Aufnahme + Erkennung; erst aufnehmen, dann transkribieren.
+- **Fallback ohne Worker:** Ist in `config.js` keine Worker-URL eingetragen, nutzt der Chat weiter die kostenlose Browser-Erkennung (nicht iOS); die eigene Blase wird dann vorgelesen.
+- **Neu:** `config.js` (öffentliche Worker-URL, KEIN Key), Helfer `cfTranscribe`/`cfWorkerReady` in `common.js`.
+- **Worker separat:** Ordner `cf-worker/` (transcribe-worker.js, wrangler.toml, ANLEITUNG.md). API-Key nur als Cloudflare-Secret. Worker speichert nichts.
+- Service-Worker-Version: cf-v27.
+- OFFEN (Etappe 24): Sprechübungen – nur iPhone/iPad über Worker→Groq, Android/PC weiter Browser-Erkennung.

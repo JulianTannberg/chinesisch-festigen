@@ -9,18 +9,14 @@
 </head>
 <body>
   <main class="app">
-    <div class="topbar">
-      <a class="back" id="backLink" href="index.html">← Zurück</a>
-    </div>
+    <div class="topbar"><a class="back" id="backLink" href="index.html">← Zurück</a></div>
     <h1 id="title">Nachrichten</h1>
 
-    <!-- Kontaktliste -->
     <section class="card" id="contactsView">
       <p class="subtitle" id="contactsHint">Mit wem möchtest du schreiben?</p>
       <div id="contactsList"></div>
     </section>
 
-    <!-- Chat -->
     <section class="card chatCard" id="convoView" style="display:none;">
       <div class="chatHead">
         <button class="miniBtn" id="toContacts" type="button">←</button>
@@ -28,8 +24,19 @@
       </div>
       <div class="chatMsgs" id="chatMsgs"></div>
       <div class="chatInputWrap">
-        <div class="chatChips" id="chatChips"></div>
-        <div class="chatInput">
+        <div class="chatSuggestRow">
+          <button class="suggestToggle" id="suggestToggle" type="button">💡 Vorschläge anzeigen</button>
+        </div>
+        <div class="chatChips" id="chatChips" style="display:none;"></div>
+
+        <div class="recordBar" id="recordBar" style="display:none;">
+          <span class="recDot"></span>
+          <span class="recLabel" id="recLabel">Sprich jetzt … (max. 10 s)</span>
+          <button class="iconBtn recStop" id="recStop" type="button" aria-label="Stopp">■</button>
+          <button class="linkBtn" id="recCancel" type="button">Abbrechen</button>
+        </div>
+
+        <div class="chatInput" id="chatInput">
           <input id="chatText" type="text" lang="zh" inputmode="text" autocomplete="off" placeholder="Antwort schreiben …" />
           <button class="iconBtn" id="sendBtn" type="button" aria-label="Senden">➤</button>
           <button class="iconBtn micBtn" id="micBtn" type="button" aria-label="Sprachnachricht" style="display:none;">🎤</button>
@@ -38,6 +45,7 @@
     </section>
   </main>
 
+  <script src="config.js"></script>
   <script src="common.js"></script>
   <script src="topics.js"></script>
   <script src="chatdata.js"></script>
@@ -50,36 +58,32 @@
   document.getElementById("backLink").href = `kapitel.html?id=${id}`;
   document.getElementById("title").textContent = `${topic.title ? (id + ". " + topic.title + " · ") : ""}Nachrichten`;
 
-  // Akzentfarbe des Kapitels für die eigenen Blasen
-  document.getElementById("convoView").style.setProperty("--me-bubble", topic.accent || "#2f6f4f");
-  document.getElementById("convoView").style.setProperty("--me-text", topic.textColor || "#fff");
+  const convoEl = document.getElementById("convoView");
+  convoEl.style.setProperty("--me-bubble", topic.accent || "#2f6f4f");
+  convoEl.style.setProperty("--me-text", topic.textColor || "#fff");
 
   const NAME = (localStorage.getItem("cf_user_name") || "Vanessa").trim() || "Vanessa";
   const DATA = (window.CF_CHAT || {})[id] || null;
 
+  const canRecord = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const canRecordAudio = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
-  const micOK = !!SR && !cfIsIOS() && canRecordAudio;
+  // Voice-Strategie: 1) Worker (aufnehmen+transkribieren, alle Geräte) wenn konfiguriert,
+  // sonst 2) kostenlose Browser-Erkennung (nicht iOS). Sonst kein Mikrofon.
+  const useWorker = canRecord && cfWorkerReady();
+  const useBrowserSR = !useWorker && !!SR && !cfIsIOS();
+  const micOK = useWorker || useBrowserSR;
 
   function fill(t){ return String(t).replace(/\{name\}/g, NAME); }
-  function norm(s){
-    return String(s || "").toLowerCase()
-      .replace(/[\s，。！？、,.!?；;：:（）()「」『』"'~·…—\-]/g, "");
-  }
+  function norm(s){ return String(s || "").toLowerCase().replace(/[\s，。！？、,.!?；;：:（）()「」『』~·…—\-"']/g, ""); }
 
   // ---------- Kontaktliste ----------
   function renderContacts(){
-    const list = document.getElementById("contactsList");
-    list.innerHTML = "";
+    const list = document.getElementById("contactsList"); list.innerHTML = "";
     if(!DATA || !DATA.partners || !DATA.partners.length){
-      document.getElementById("contactsHint").textContent =
-        "Für dieses Kapitel gibt es noch keine Kontakte.";
-      return;
+      document.getElementById("contactsHint").textContent = "Für dieses Kapitel gibt es noch keine Kontakte."; return;
     }
     DATA.partners.forEach(p => {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.className = "contactRow";
+      const b = document.createElement("button"); b.type = "button"; b.className = "contactRow";
       b.innerHTML = `<span class="contactAvatar">${escapeHtml(p.name.slice(0,1))}</span>
         <span class="contactInfo"><strong>${escapeHtml(p.name)}</strong>
         <span class="small">${escapeHtml(p.pinyin)} · ${escapeHtml(p.tag || "")}</span></span>`;
@@ -88,358 +92,235 @@
     });
   }
 
-  // ---------- Chat-Ablauf ----------
+  // ---------- Chat ----------
   let convo = [], rIdx = 0, partner = null, lastMode = "text", busy = false;
 
   function openConvo(p){
-    partner = p;
-    convo = (DATA.convo && DATA.convo[p.key]) || [];
+    partner = p; convo = (DATA.convo && DATA.convo[p.key]) || [];
     rIdx = 0; lastMode = "text";
-    document.getElementById("contactsView").style.display = "none";
-    document.getElementById("convoView").style.display = "";
+    document.getElementById("contactsView").style.display = "none"; convoEl.style.display = "";
     document.getElementById("chatName").textContent = `${p.name} (${p.pinyin})`;
     document.getElementById("chatTag").textContent = p.tag || "";
     document.getElementById("micBtn").style.display = micOK ? "" : "none";
     document.getElementById("chatMsgs").innerHTML = "";
     runRound();
   }
-  function backToContacts(){
-    document.getElementById("convoView").style.display = "none";
-    document.getElementById("contactsView").style.display = "";
-  }
+  function backToContacts(){ cancelRecording(); convoEl.style.display = "none"; document.getElementById("contactsView").style.display = ""; }
 
-  function scrollDown(){
-    const m = document.getElementById("chatMsgs");
-    m.scrollTop = m.scrollHeight;
-  }
-  function fakeDuration(text){
-    const n = (String(text).match(/[\u4e00-\u9fff]/g) || []).length;
-    return `0:0${Math.max(1, Math.min(9, Math.ceil(n / 2)))}`;
-  }
+  function scrollDown(){ const m = document.getElementById("chatMsgs"); m.scrollTop = m.scrollHeight; }
+  function durLabel(secs){ const s = Math.max(1, Math.min(99, Math.round(secs || 1))); return "0:" + (s < 10 ? "0" + s : s); }
   function speak(text){ cfSpeakZh(text, {rate: 0.92}); }
 
   function addTextBubble(side, line){
-    const wrap = document.createElement("div");
-    wrap.className = `msg ${side}`;
-    const b = document.createElement("div");
-    b.className = "bubble text";
+    const wrap = document.createElement("div"); wrap.className = `msg ${side}`;
+    const b = document.createElement("div"); b.className = "bubble text";
     if(side === "partner"){
       b.innerHTML = `<span class="bzh">${escapeHtml(line.zh)}</span>
-        <span class="bpy">${escapeHtml(line.pinyin || "")}</span>
-        <span class="bde">${escapeHtml(line.de || "")}</span>
-        <button class="bPlay" type="button" aria-label="Anhören">▶</button>`;
-      b.querySelector(".bPlay").addEventListener("click", () => speak(line.zh));
-    }else{
-      b.innerHTML = `<span class="bzh">${escapeHtml(line.zh)}</span>`;
-    }
-    wrap.appendChild(b);
-    document.getElementById("chatMsgs").appendChild(wrap);
-    scrollDown();
+        <span class="bhelp" style="display:none;"><span class="bpy">${escapeHtml(line.pinyin || "")}</span>
+        <span class="bde">${escapeHtml(line.de || "")}</span></span>`;
+      b.classList.add("tappable");
+      b.addEventListener("click", () => { const h = b.querySelector(".bhelp"); h.style.display = h.style.display === "none" ? "block" : "none"; });
+    }else{ b.innerHTML = `<span class="bzh">${escapeHtml(line.zh)}</span>`; }
+    wrap.appendChild(b); document.getElementById("chatMsgs").appendChild(wrap); scrollDown();
   }
-  function addVoiceBubble(side, text, audioUrl, durationLabel){
-    const wrap = document.createElement("div");
-    wrap.className = `msg ${side}`;
-    const b = document.createElement("button");
-    b.type = "button";
-    b.className = "bubble voice";
+  function addVoiceBubble(side, text, audioURL, secs){
+    const wrap = document.createElement("div"); wrap.className = `msg ${side}`;
+    const b = document.createElement("button"); b.type = "button"; b.className = "bubble voice";
     b.innerHTML = `<span class="vIcon">▶</span>
       <span class="vBars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
-      <span class="vDur">${escapeHtml(durationLabel || fakeDuration(text))}</span>`;
+      <span class="vDur">${durLabel(secs || ((String(text).match(/[\u4e00-\u9fff]/g)||[]).length/2))}</span>`;
     b.addEventListener("click", () => {
-      if(audioUrl){
-        try{
-          speechSynthesis.cancel();
-          const a = new Audio(audioUrl);
-          a.play().catch(() => {});
-        }catch(e){}
-      }else{
-        speak(text);
-      }
+      if(audioURL){ try{ new Audio(audioURL).play(); return; }catch(e){} }
+      if(text) speak(text);
     });
-    wrap.appendChild(b);
-    document.getElementById("chatMsgs").appendChild(wrap);
-    scrollDown();
+    wrap.appendChild(b); document.getElementById("chatMsgs").appendChild(wrap); scrollDown();
+  }
+  function addNote(text){
+    const wrap = document.createElement("div"); wrap.className = "chatNote"; wrap.textContent = text;
+    document.getElementById("chatMsgs").appendChild(wrap); scrollDown();
   }
   function addTyping(){
-    const wrap = document.createElement("div");
-    wrap.className = "msg partner";
-    wrap.id = "typingRow";
+    const wrap = document.createElement("div"); wrap.className = "msg partner"; wrap.id = "typingRow";
     wrap.innerHTML = `<div class="bubble typing"><i></i><i></i><i></i></div>`;
-    document.getElementById("chatMsgs").appendChild(wrap);
-    scrollDown();
+    document.getElementById("chatMsgs").appendChild(wrap); scrollDown();
   }
-  function removeTyping(){
-    const t = document.getElementById("typingRow");
-    if(t) t.remove();
-  }
+  function removeTyping(){ const t = document.getElementById("typingRow"); if(t) t.remove(); }
 
-  // Partnerzeilen nacheinander zeigen (mit kurzer „tippt …"-Pause)
   function showPartnerLines(lines, asVoice, done){
     let i = 0;
-    function next(){
+    (function next(){
       if(i >= lines.length){ done && done(); return; }
       addTyping();
       setTimeout(() => {
         removeTyping();
-        if(asVoice){
-          addVoiceBubble("partner", lines[i].zh);
-          speak(lines[i].zh);
-        }else{
-          addTextBubble("partner", lines[i]);
-        }
-        i++;
-        setTimeout(next, asVoice ? 500 : 350);
+        if(asVoice){ addVoiceBubble("partner", lines[i].zh); speak(lines[i].zh); }
+        else{ addTextBubble("partner", lines[i]); }
+        i++; setTimeout(next, asVoice ? 500 : 350);
       }, 600);
-    }
-    next();
+    })();
   }
 
   function runRound(){
-    busy = true;
-    setChips([]);
-    setInputEnabled(false);
+    busy = true; setChips([]); setInputEnabled(false);
     if(rIdx >= convo.length){ showEnd(); return; }
     const r = convo[rIdx];
-    showPartnerLines(r.ask, false, () => {
-      busy = false;
-      setChips(r.options.map(o => fill(o.chip)));
-      setInputEnabled(true);
+    showPartnerLines(r.ask, lastMode === "voice", () => {
+      busy = false; setChips(r.options.map(o => fill(o.chip))); setInputEnabled(true);
     });
   }
 
   function matchOption(text){
-    const r = convo[rIdx];
-    const u = norm(fill(text));
+    const r = convo[rIdx]; const u = norm(fill(text));
+    for(let i = 0; i < r.options.length; i++){ if(r.options[i].accept.map(a => norm(fill(a))).includes(u)) return i; }
+    return -1;
+  }
+  function matchVoice(text){
+    const exact = matchOption(text); if(exact >= 0) return exact;
+    const u = norm(fill(text)); const r = convo[rIdx];
     for(let i = 0; i < r.options.length; i++){
-      const accepts = r.options[i].accept.map(a => norm(fill(a)));
-      if(accepts.includes(u)) return i;
+      const pres = (r.options[i].voicePrefix || []).map(p => norm(fill(p)));
+      if(pres.some(p => p && u.indexOf(p) === 0)) return i;
     }
     return -1;
   }
 
-  function handleAnswer(optIdx, mode, shownText, audioUrl, durationLabel){
-    if(optIdx < 0) return;
-    const r = convo[rIdx];
-    const opt = r.options[optIdx];
-    lastMode = mode;
-    setChips([]);
-    setInputEnabled(false);
-    document.getElementById("chatText").value = "";
-
-    if(mode === "voice"){
-      addVoiceBubble("me", shownText || fill(opt.chip), audioUrl, durationLabel);
-    }else{
-      addTextBubble("me", { zh: shownText || fill(opt.chip) });
-    }
-
+  // Partner-Antwort + nächste Runde (Nutzerblase wurde schon hinzugefügt)
+  function proceedAfter(optIdx, mode){
+    const r = convo[rIdx]; const opt = r.options[optIdx];
+    lastMode = mode; setChips([]); setInputEnabled(false);
     const reply = (opt.reply || r.reply || []);
     setTimeout(() => {
-      if(reply.length){
-        showPartnerLines(reply, mode === "voice", () => { rIdx++; runRound(); });
-      }else{
-        rIdx++; runRound();
-      }
+      if(reply.length){ showPartnerLines(reply, mode === "voice", () => { rIdx++; runRound(); }); }
+      else{ rIdx++; runRound(); }
     }, 450);
   }
 
-  function trySend(text, mode){
+  function answerText(text){
     if(busy) return;
     const idx = matchOption(text);
-    if(idx < 0){
-      flashHint();
-      return;
-    }
-    handleAnswer(idx, mode, mode === "voice" ? fill(convo[rIdx].options[idx].chip) : text);
+    if(idx < 0){ revealChips(); flashHint(); return; }
+    addTextBubble("me", { zh: text }); document.getElementById("chatText").value = "";
+    proceedAfter(idx, "text");
   }
-
-  function flashHint(){
-    const chips = document.getElementById("chatChips");
-    chips.classList.remove("nudge"); void chips.offsetWidth; chips.classList.add("nudge");
-  }
+  function flashHint(){ const chips = document.getElementById("chatChips"); chips.classList.remove("nudge"); void chips.offsetWidth; chips.classList.add("nudge"); }
+  function revealChips(){ document.getElementById("chatChips").style.display = "flex"; document.getElementById("suggestToggle").textContent = "💡 Vorschläge ausblenden"; }
 
   function setChips(arr){
-    const box = document.getElementById("chatChips");
-    box.innerHTML = "";
-    arr.forEach((label, i) => {
-      const c = document.createElement("button");
-      c.type = "button";
-      c.className = "chip";
-      c.textContent = label;
-      c.addEventListener("click", () => trySend(label, "text"));
+    const box = document.getElementById("chatChips"); box.innerHTML = "";
+    arr.forEach(label => {
+      const c = document.createElement("button"); c.type = "button"; c.className = "chip"; c.textContent = label;
+      c.addEventListener("click", () => answerText(label));
       box.appendChild(c);
     });
+    box.style.display = "none"; document.getElementById("suggestToggle").textContent = "💡 Vorschläge anzeigen";
   }
   function setInputEnabled(on){
     document.getElementById("chatText").disabled = !on;
     document.getElementById("sendBtn").disabled = !on;
     document.getElementById("micBtn").disabled = !on;
+    document.getElementById("suggestToggle").disabled = !on;
   }
-
   function showEnd(){
-    const wrap = document.createElement("div");
-    wrap.className = "chatEnd";
-    wrap.innerHTML = `<span>— Gespräch beendet —</span>
-      <button class="miniBtn" id="restartChat" type="button">Noch einmal</button>`;
-    document.getElementById("chatMsgs").appendChild(wrap);
-    scrollDown();
+    const wrap = document.createElement("div"); wrap.className = "chatEnd";
+    wrap.innerHTML = `<span>— Gespräch beendet —</span><button class="miniBtn" id="restartChat" type="button">Noch einmal</button>`;
+    document.getElementById("chatMsgs").appendChild(wrap); scrollDown();
     document.getElementById("restartChat").addEventListener("click", () => openConvo(partner));
     setChips([]); setInputEnabled(false);
   }
 
-  // ---------- Eingabe ----------
-  document.getElementById("sendBtn").addEventListener("click", () => {
-    const v = document.getElementById("chatText").value.trim();
-    if(v) trySend(v, "text");
-  });
-  document.getElementById("chatText").addEventListener("keydown", e => {
-    if(e.key === "Enter"){ e.preventDefault();
-      const v = document.getElementById("chatText").value.trim();
-      if(v) trySend(v, "text");
-    }
-  });
+  // ---------- Eingabe (Text) ----------
+  document.getElementById("sendBtn").addEventListener("click", () => { const v = document.getElementById("chatText").value.trim(); if(v) answerText(v); });
+  document.getElementById("chatText").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); const v = document.getElementById("chatText").value.trim(); if(v) answerText(v); } });
   document.getElementById("toContacts").addEventListener("click", backToContacts);
-
-  // Sprachnachricht:
-  // 1. SpeechRecognition prüft den gesprochenen Satz.
-  // 2. MediaRecorder nimmt gleichzeitig die echte Stimme auf.
-  // 3. Erst wenn beides fertig ist, wird die eigene Voice-Bubble eingefügt.
-  let rec = null, mediaRec = null, micStream = null;
-  let recording = false, voiceChunks = [], voiceStartedAt = 0;
-  let voiceResult = null, voiceFinalized = false;
-
-  function pickVoiceMimeType(){
-    if(!window.MediaRecorder || !MediaRecorder.isTypeSupported) return "";
-    const types = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"];
-    return types.find(t => MediaRecorder.isTypeSupported(t)) || "";
-  }
-  function formatVoiceDuration(ms){
-    const sec = Math.max(1, Math.round((Number(ms) || 0) / 1000));
-    return `0:${String(Math.min(sec, 59)).padStart(2, "0")}`;
-  }
-  function stopMicStream(){
-    try{ if(micStream) micStream.getTracks().forEach(t => t.stop()); }catch(e){}
-    micStream = null;
-  }
-  function resetMicUi(){
-    recording = false;
-    document.getElementById("micBtn").classList.remove("rec");
-  }
-  function stopMediaRecorder(){
-    try{
-      if(mediaRec && mediaRec.state !== "inactive"){
-        mediaRec.stop();
-        return;
-      }
-    }catch(e){}
-    finishVoiceAttempt();
-  }
-  function finishVoiceAttempt(){
-    if(voiceFinalized) return;
-    voiceFinalized = true;
-    resetMicUi();
-
-    const result = voiceResult;
-    const durationLabel = formatVoiceDuration(Date.now() - voiceStartedAt);
-    let audioUrl = "";
-
-    try{
-      if(voiceChunks.length){
-        const type = (mediaRec && mediaRec.mimeType) || "audio/webm";
-        const blob = new Blob(voiceChunks, {type});
-        if(blob.size) audioUrl = URL.createObjectURL(blob);
-      }
-    }catch(e){}
-
-    stopMicStream();
-
-    if(result && result.best >= 0){
-      const chip = fill(convo[rIdx].options[result.best].chip);
-      handleAnswer(result.best, "voice", chip, audioUrl, durationLabel);
-    }else{
-      flashHint();
-    }
-
-    rec = null;
-    mediaRec = null;
-    voiceChunks = [];
-    voiceResult = null;
-  }
-
-  document.getElementById("micBtn").addEventListener("click", async () => {
-    if(!micOK || busy) return;
-
-    if(recording){
-      // Beim manuellen Stoppen zuerst die Spracherkennung beenden.
-      // Das Ergebnis kommt normalerweise kurz danach über onresult/onend.
-      try{
-        if(rec) rec.stop();
-        return;
-      }catch(e){
-        stopMediaRecorder();
-        return;
-      }
-    }
-
-    try{
-      micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-      const mimeType = pickVoiceMimeType();
-      mediaRec = mimeType ? new MediaRecorder(micStream, { mimeType }) : new MediaRecorder(micStream);
-      voiceChunks = [];
-      voiceResult = null;
-      voiceFinalized = false;
-      voiceStartedAt = Date.now();
-
-      mediaRec.ondataavailable = e => {
-        if(e.data && e.data.size) voiceChunks.push(e.data);
-      };
-      mediaRec.onstop = finishVoiceAttempt;
-      mediaRec.start();
-
-      rec = new SR();
-      rec.lang = "zh-CN";
-      rec.interimResults = false;
-      rec.maxAlternatives = 3;
-
-      recording = true;
-      document.getElementById("micBtn").classList.add("rec");
-
-      rec.onresult = ev => {
-        let best = -1, bestText = "";
-        for(let i = 0; i < ev.results.length; i++){
-          for(let j = 0; j < ev.results[i].length; j++){
-            const t = ev.results[i][j].transcript;
-            const idx = matchOption(t);
-            if(idx >= 0){ best = idx; bestText = t; break; }
-            if(!bestText) bestText = t;
-          }
-          if(best >= 0) break;
-        }
-        voiceResult = { best, text: bestText };
-        stopMediaRecorder();
-      };
-      rec.onerror = () => {
-        voiceResult = null;
-        stopMediaRecorder();
-      };
-      rec.onend = () => {
-        stopMediaRecorder();
-      };
-      rec.start();
-    }catch(e){
-      resetMicUi();
-      stopMicStream();
-      flashHint();
-    }
+  document.getElementById("suggestToggle").addEventListener("click", () => {
+    const box = document.getElementById("chatChips"); const show = box.style.display === "none";
+    box.style.display = show ? "flex" : "none";
+    document.getElementById("suggestToggle").textContent = show ? "💡 Vorschläge ausblenden" : "💡 Vorschläge anzeigen";
   });
+
+  // ---------- Mikrofon ----------
+  document.getElementById("micBtn").addEventListener("click", () => {
+    if(!micOK || busy) return;
+    if(useWorker){ if(recording){ stopRecording(); } else { startRecording(); } }
+    else { startBrowserSR(); }
+  });
+
+  // A) Worker-Weg: aufnehmen -> abspielbar -> transkribieren -> abgleichen
+  let mediaStream = null, mediaRec = null, chunks = [], recording = false, recStart = 0, autoStop = null;
+  function showRecordBar(on){
+    document.getElementById("recordBar").style.display = on ? "flex" : "none";
+    document.getElementById("chatInput").style.display = on ? "none" : "flex";
+  }
+  async function startRecording(){
+    try{ mediaStream = await navigator.mediaDevices.getUserMedia({audio:true}); }
+    catch(e){ addNote("Kein Mikrofon-Zugriff. Du kannst auch tippen."); return; }
+    chunks = [];
+    try{
+      mediaRec = new MediaRecorder(mediaStream);
+      mediaRec.ondataavailable = e => { if(e.data && e.data.size) chunks.push(e.data); };
+      mediaRec.onstop = onRecStop;
+      mediaRec.start(); recording = true; recStart = Date.now();
+    }catch(e){ cleanupStream(); addNote("Aufnahme auf diesem Gerät nicht möglich."); return; }
+    showRecordBar(true);
+    autoStop = setTimeout(() => stopRecording(), 10000); // max 10s
+  }
+  function stopRecording(){ if(autoStop){ clearTimeout(autoStop); autoStop = null; } if(mediaRec && mediaRec.state !== "inactive"){ try{ mediaRec.stop(); }catch(e){} } }
+  function cancelRecording(){ if(autoStop){ clearTimeout(autoStop); autoStop = null; } if(mediaRec){ mediaRec.onstop = null; try{ mediaRec.stop(); }catch(e){} } cleanupStream(); recording = false; showRecordBar(false); }
+  function cleanupStream(){ if(mediaStream){ mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; } mediaRec = null; }
+
+  async function onRecStop(){
+    const secs = (Date.now() - recStart) / 1000;
+    let url = null, type = (chunks[0] && chunks[0].type) || "audio/webm";
+    let blob = null;
+    try{ if(chunks.length){ blob = new Blob(chunks, {type}); url = URL.createObjectURL(blob); } }catch(e){}
+    cleanupStream(); recording = false; showRecordBar(false);
+    if(!blob){ return; }
+    // Eigene Sprachblase sofort (abspielbar)
+    addVoiceBubble("me", "", url, secs);
+    setInputEnabled(false);
+    addNote("Wird erkannt …");
+    let text = "";
+    try{ text = await cfTranscribe(blob); }catch(e){ text = ""; }
+    // „Wird erkannt …" entfernen
+    const notes = document.querySelectorAll(".chatNote"); if(notes.length) notes[notes.length-1].remove();
+    const idx = matchVoice(text);
+    if(idx >= 0){ proceedAfter(idx, "voice"); }
+    else{
+      addNote(text ? ('Verstanden: ' + text + ' – das passt hier nicht. Versuch es nochmal oder tippe.') : 'Nicht erkannt. Versuch es nochmal oder tippe.');
+      setInputEnabled(true);
+    }
+  }
+  document.getElementById("recStop").addEventListener("click", stopRecording);
+  document.getElementById("recCancel").addEventListener("click", () => cancelRecording());
+
+  // B) Kostenloser Browser-Weg (nicht iOS): nur Erkennung, eigene Blase per Sprachausgabe
+  let srObj = null, srActive = false;
+  function endSR(){ srActive = false; srObj = null; document.getElementById("micBtn").classList.remove("rec"); }
+  function startBrowserSR(){
+    if(srActive){ if(srObj){ try{ srObj.stop(); }catch(e){} } return; }
+    let handled = false;
+    try{
+      srObj = new SR(); srObj.lang = "zh-CN"; srObj.interimResults = false; srObj.maxAlternatives = 5; srObj.continuous = false;
+      srObj.onresult = ev => {
+        if(handled) return; handled = true;
+        let chosen = -1;
+        for(let i = 0; i < ev.results.length && chosen < 0; i++){
+          for(let j = 0; j < ev.results[i].length; j++){ const t = ev.results[i][j].transcript; const m = matchVoice(t); if(m >= 0){ chosen = m; break; } }
+        }
+        endSR();
+        if(chosen >= 0){ addVoiceBubble("me", fill(convo[rIdx].options[chosen].chip)); proceedAfter(chosen, "voice"); }
+        else{ revealChips(); flashHint(); }
+      };
+      srObj.onerror = () => { handled = true; endSR(); };
+      srObj.onend = () => { if(!handled){ handled = true; endSR(); } };
+      srObj.start(); srActive = true; document.getElementById("micBtn").classList.add("rec");
+    }catch(e){ endSR(); }
+  }
 
   // Start
   renderContacts();
   const who = params.get("who");
-  if(who && DATA){
-    const p = DATA.partners.find(x => x.key === who);
-    if(p) openConvo(p);
-  }
+  if(who && DATA){ const p = DATA.partners.find(x => x.key === who); if(p) openConvo(p); }
   </script>
 </body>
 </html>
