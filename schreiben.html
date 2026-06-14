@@ -166,7 +166,7 @@
             <button type="button" data-level="pro">Profi</button>
           </div>
 
-          <div class="small" id="trainCounter" style="text-align:center;">Wort –</div>
+          <div class="small" id="trainCounter" style="text-align:center;">Zeichen –</div>
 
           <div class="learnHead">
             <div class="learnHanzi" id="trainHanzi">–</div>
@@ -274,7 +274,7 @@
         <div id="learnEmpty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Vokabeln eingetragen.</div>
 
         <div id="learnGridWrap">
-          <p class="small" style="margin-top:0;">Tippe ein Wort an und lerne es Schritt für Schritt: anhören, Pinyin erkennen, Bedeutung wählen und in drei Stufen zeichnen.</p>
+          <p class="small" style="margin-top:0;">Tippe ein Zeichen an und lerne es Schritt für Schritt: anhören, Pinyin erkennen, Bedeutung wählen und in drei Stufen zeichnen. Das ganze Wort steht dabei darüber, das aktuelle Zeichen ist farbig.</p>
           <div class="learnGrid" id="learnGrid"></div>
           <div class="toolbar">
             <button id="learnResetDone" type="button">Gelernt-Markierungen zurücksetzen</button>
@@ -319,6 +319,7 @@
 
 <script src="topics.js"></script>
 <script src="common.js"></script>
+<script src="bausteine.js"></script>
 <script>
 const topic = getTopic();
 applyTheme(topic, "Chinesisch festigen");
@@ -588,16 +589,36 @@ render();
    5) Aus dem Kopf: keine Vorlage, keine Striche;
       Hilfe-Strich erst nach 2 Fehlversuchen (1×)
    ============================================================ */
-const learnWords = (topic.vocab || [])
-  .filter(v => /[\u4e00-\u9fff]/.test(v.zh || ""))
-  .map((v, index) => ({
-    index,
-    zh: v.writeZh || v.zh || "",
-    pinyin: v.writePinyin || v.pinyin || "",
-    de: v.writeDe || v.de || "",
-    chars: [...String(v.writeZh || v.zh || "")].filter(c => /[\u4e00-\u9fff]/.test(c))
-  }))
-  .filter(w => w.chars.length > 0);
+const _bau = (window.CF_BAUSTEINE && window.CF_BAUSTEINE[topic.id]) ? window.CF_BAUSTEINE[topic.id] : null;
+const learnWords = _bau
+  ? _bau.order
+      .filter(c => /[\u4e00-\u9fff]/.test(c) && _bau.chars[c])
+      .map((c, index) => {
+        const d = _bau.chars[c];
+        return {
+          index, zh: c,
+          pinyin: d.py || "",
+          de: d.de || "",
+          chars: [c],
+          word: d.word || c,
+          wordPy: d.wordPy || d.py || "",
+          wordDe: d.wordDe || d.de || "",
+          review: !!d.review
+        };
+      })
+  : (topic.vocab || [])
+      .filter(v => /[\u4e00-\u9fff]/.test(v.zh || ""))
+      .map((v, index) => ({
+        index,
+        zh: v.writeZh || v.zh || "",
+        pinyin: v.writePinyin || v.pinyin || "",
+        de: v.writeDe || v.de || "",
+        chars: [...String(v.writeZh || v.zh || "")].filter(c => /[\u4e00-\u9fff]/.test(c)),
+        word: v.writeZh || v.zh || "",
+        wordPy: v.writePinyin || v.pinyin || "",
+        wordDe: v.writeDe || v.de || ""
+      }))
+      .filter(w => w.chars.length > 0);
 
 const LEARN_DONE_KEY = `cf_learn_done_${topic.id}`;
 let learnDone = {};
@@ -712,6 +733,19 @@ function buildLearnChoices(kind){
     grid.appendChild(b);
   });
 }
+// Wort mit aktuell zu lernendem Zeichen farbig hervorgehoben
+function wordContextHTML(item){
+  const word = item.word || item.zh, ch = item.zh; let html = "";
+  for(const c of word){ html += (c === ch) ? `<span style="color:#ffce3a">${escapeHtml(c)}</span>` : escapeHtml(c); }
+  return html;
+}
+// Bedeutung + Hinweis, in welchem Wort das Zeichen vorkommt
+function learnDeText(item){
+  let t = item.de || "";
+  if(item.word && item.word !== item.zh) t += ` · in ${item.word} (${item.wordDe})`;
+  if(item.review) t += "  ⚑";
+  return t;
+}
 function runLearnStep(){
   lToken++;
   cancelLearnWriter();
@@ -721,7 +755,7 @@ function runLearnStep(){
   $("learnChoices").innerHTML = "";
   $("learnTraceArea").style.display = "none";
   $("learnMeta").style.display = "none";
-  $("learnHanzi").textContent = lWord.zh;
+  $("learnHanzi").innerHTML = wordContextHTML(lWord);
 
   if(lStep === 0){
     $("learnPlay").style.display = "";
@@ -736,7 +770,7 @@ function runLearnStep(){
     $("learnQuestion").textContent = "";
     $("learnMeta").style.display = "";
     $("learnPinyin").textContent = lWord.pinyin;
-    $("learnDe").textContent = lWord.de;
+    $("learnDe").textContent = learnDeText(lWord);
     $("learnTraceArea").style.display = "";
     lRound = 1;
     lChar = 0;
@@ -892,7 +926,7 @@ function finishLearnWord(){
   $("learnTraceArea").style.display = "none";
   $("learnMeta").style.display = "";
   $("learnPinyin").textContent = lWord.pinyin;
-  $("learnDe").textContent = lWord.de;
+  $("learnDe").textContent = learnDeText(lWord);
   $("learnPlay").style.display = "";
   $("learnQuestion").textContent = "";
   const status = lWordMistakes === 0 ? "perfect" : "ok";
@@ -1134,11 +1168,11 @@ function loadTrainWord(){
   updateTrainStats();
   const w = trainWord();
   if(!w) return;
-  $("trainCounter").textContent = `Wort ${trainIdx + 1} von ${trainWords.length}`;
+  $("trainCounter").textContent = `Zeichen ${trainIdx + 1} von ${trainWords.length}`;
   // Deutsch als Aufgabe zeigen – das Hanzi würde das Abschreiben erlauben.
-  $("trainHanzi").textContent = w.de;
-  $("trainPinyin").textContent = w.pinyin;
-  $("trainDe").textContent = "";
+  $("trainHanzi").textContent = w.pinyin;
+  $("trainPinyin").textContent = w.de + (w.review ? "  ⚑" : "");
+  $("trainDe").textContent = (w.word && w.word !== w.zh) ? `in „${w.wordPy}“ (${w.wordDe})` : "";
   updateTrainLevelButtons();
   saveTrain();
   loadTrainChar();

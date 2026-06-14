@@ -26,7 +26,6 @@ window.CF_CHAT = {
           },
           origin: {
             ask: [
-              { zh: "我叫林月。", pinyin: "Wǒ jiào Lín Yuè.", de: "Ich heiße Lín Yuè." },
               { zh: "你是北京人吗？", pinyin: "Nǐ shì Běijīng rén ma?", de: "Bist du aus Beijing?" }
             ],
             options: [
@@ -101,7 +100,6 @@ window.CF_CHAT = {
           },
           origin: {
             ask: [
-              { zh: "我叫苏然。", pinyin: "Wǒ jiào Sū Rán.", de: "Ich heiße Sū Rán." },
               { zh: "你是德国人吗？", pinyin: "Nǐ shì Déguó rén ma?", de: "Bist du Deutsche?" }
             ],
             reply: [{ zh: "啊，德国人！", pinyin: "Ā, Déguó rén!", de: "Ah, Deutsche!" }],

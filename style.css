@@ -1160,3 +1160,27 @@ img.contactAvatar{ object-fit:cover; padding:0; }
 .ownProfile{ display:flex; align-items:center; gap:10px; margin-top:14px; padding-top:12px; border-top:1px solid var(--stroke); }
 .ownProfile .ownProfileText{ flex:1 1 auto; color:var(--muted); font-size:14px; }
 .ownProfile .contactAvatar{ width:40px; height:40px; }
+
+
+/* Hören: Handy-Breite – eine Spalte, Texte umbrechen, kein Überlaufen */
+.vocabCard{ min-width:0; }
+.vocabCard .zh, .vocabCard .pinyin, .vocabCard .de{ overflow-wrap:anywhere; min-width:0; }
+.speechText, .speechPinyin, .speechDe{ overflow-wrap:anywhere; }
+@media (max-width:560px){
+  .vocabGrid{ grid-template-columns:1fr; }
+}
+
+
+/* Einstellungen + Menü-Icons */
+.topbarEnd{ justify-content:flex-end; }
+.topbarIcons{ display:flex; gap:8px; align-items:center; }
+.settingsIcon svg{ width:22px; height:22px; display:block; }
+.setTitle{ font-size:18px; font-weight:800; margin-bottom:4px; }
+.setRow{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:10px; }
+.setRow .profileInput{ flex:1 1 180px; min-width:0; }
+.setAvatarRow{ align-items:center; }
+.setLinks{ display:flex; flex-direction:column; gap:10px; margin-top:6px; }
+.setLinks a{ color:var(--accent, #6cb6ff); text-decoration:none; font-weight:650; }
+.setLinks a:hover{ text-decoration:underline; }
+.dangerBtn{ background:rgba(220,70,70,.18); border-color:rgba(220,70,70,.5); }
+.dangerBtn:hover{ background:rgba(220,70,70,.30); }

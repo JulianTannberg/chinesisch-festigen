@@ -38,6 +38,7 @@ function cfLuminance(hex){
 // Setzt die Kapitelfarbe und schaltet bei hellen Farben auf dunkle
 // Texte/Rahmen um (Klasse "theme-light" auf <html>).
 function applyTheme(topic, pageSuffix){
+  try{ window.CF_CHAPTER = topic && topic.id; }catch(e){}
   const accent = topic.accent || "#03172B";
   // Helles Kapitel = in topics.js ist eine dunkle Textfarbe definiert.
   // Fallback: Helligkeit der Akzentfarbe.
@@ -81,20 +82,115 @@ function topicHasContent(t){
 })();
 
 // Chinesische Sprachausgabe (gemeinsam für Spiele/Übungen).
-// opts: { rate: 0.4–1.0, queue: true = an laufende Ausgabe anhängen }
+// ===== ElevenLabs-Audios mit Browserstimme als Fallback =====
+// Schema: audio/audio_<kapitel>_<typ>_<hanzi>.<ext>  (typ: "vocable" | "story")
+// Beispiel: audio/audio_01_vocable_人.mp3
+window.CF_AUDIO = window.CF_AUDIO || {
+  enabled: true,        // false = immer Browserstimme (z. B. zum Testen)
+  base: "audio/",       // Ordner mit den Audiodateien
+  ext: ".mp3",          // Dateiendung
+  name: function(text){ return String(text == null ? "" : text).trim(); }, // Hanzi-Teil = exakt der Text
+  // Sprecher-Kürzel für Story-Dateien (Hanzi-Name -> lateinisch). Erweiterbar.
+  speakerId: function(name){
+    var m = {"苏然":"suran","林月":"linyue","suran":"suran","linyue":"linyue"};
+    return m[name] || String(name == null ? "" : name).trim();
+  }
+};
+function cfAudioUrl(text, chapter, type, speaker){
+  if(!text || !chapter || !type) return "";
+  var stem;
+  if(type === "story" && speaker){
+    stem = "audio_" + chapter + "_story_" + window.CF_AUDIO.speakerId(speaker) + "_" + window.CF_AUDIO.name(text);
+  }else{
+    stem = "audio_" + chapter + "_" + type + "_" + window.CF_AUDIO.name(text);
+  }
+  return window.CF_AUDIO.base + encodeURIComponent(stem) + window.CF_AUDIO.ext;
+}
+var _cfAudioIndex = null;
+function _cfBuildAudioIndex(){
+  var m = {};
+  (window.CF_TOPICS || []).forEach(function(t){
+    (t.vocab || []).forEach(function(v){ if(v && v.zh){ (m[v.zh] = m[v.zh] || []).push({chapter:t.id, type:"vocable"}); } });
+    (t.understandingVocab || []).forEach(function(v){ if(v && v.zh){ (m[v.zh] = m[v.zh] || []).push({chapter:t.id, type:"vocable"}); } });
+    (t.storyDialog || []).forEach(function(l){ if(l && l.zh){ (m[l.zh] = m[l.zh] || []).push({chapter:t.id, type:"story", speaker: window.CF_AUDIO.speakerId(l.speaker)}); } });
+  });
+  // Einzelzeichen aus dem Schreibtraining (Bausteine) – als vocable
+  var bau = window.CF_BAUSTEINE || {};
+  Object.keys(bau).forEach(function(cid){
+    var d = bau[cid]; if(!d || !d.chars) return;
+    Object.keys(d.chars).forEach(function(ch){ (m[ch] = m[ch] || []).push({chapter:cid, type:"vocable"}); });
+  });
+  return m;
+}
+function cfAudioUrlFor(text, speaker){
+  if(!window.CF_AUDIO || window.CF_AUDIO.enabled === false || !text) return "";
+  if(!_cfAudioIndex) _cfAudioIndex = _cfBuildAudioIndex();
+  var cands = _cfAudioIndex[String(text)];
+  if(!cands || !cands.length) return "";
+  var sp = speaker ? window.CF_AUDIO.speakerId(speaker) : null;
+  // bevorzugt: passender Sprecher; dann aktuelles Kapitel; sonst erstes
+  var pick = null;
+  if(sp) pick = cands.find(function(x){ return x.speaker === sp && (!window.CF_CHAPTER || x.chapter === window.CF_CHAPTER); })
+              || cands.find(function(x){ return x.speaker === sp; });
+  if(!pick && window.CF_CHAPTER) pick = cands.find(function(x){ return x.chapter === window.CF_CHAPTER; });
+  if(!pick) pick = cands[0];
+  return cfAudioUrl(text, pick.chapter, pick.type, pick.speaker);
+}
+var _cfQueue = [], _cfPlaying = false, _cfCurAudio = null, _cfCurOnend = null;
+function _cfStopAll(){
+  var cb = _cfCurOnend; _cfCurOnend = null;
+  var q = _cfQueue; _cfQueue = [];
+  if(_cfCurAudio){ try{ _cfCurAudio.pause(); }catch(e){} _cfCurAudio = null; }
+  _cfPlaying = false;
+  if("speechSynthesis" in window){ try{ speechSynthesis.cancel(); }catch(e){} }
+  if(cb) cb();
+  q.forEach(function(it){ if(it.onend) it.onend(); });
+}
+function _cfTts(text, rate, cb){
+  if(!("speechSynthesis" in window) || !text){ if(cb) cb(); return; }
+  try{
+    var u = new SpeechSynthesisUtterance(String(text));
+    u.lang = "zh-CN";
+    u.rate = rate || 0.9;
+    var voices = speechSynthesis.getVoices ? speechSynthesis.getVoices() : [];
+    var v = voices.find(function(x){ return (x.lang || "").toLowerCase().startsWith("zh"); });
+    if(v) u.voice = v;
+    u.onend = function(){ if(cb) cb(); };
+    u.onerror = function(){ if(cb) cb(); };
+    speechSynthesis.speak(u);
+  }catch(e){ if(cb) cb(); }
+}
+function _cfNext(){
+  if(_cfPlaying) return;
+  var it = _cfQueue.shift();
+  if(!it) return;
+  _cfPlaying = true;
+  _cfCurOnend = it.onend || null;
+  var afterEnd = function(){ _cfPlaying = false; _cfCurAudio = null; var cb = _cfCurOnend; _cfCurOnend = null; if(cb) cb(); _cfNext(); };
+  if(!it.url){ _cfTts(it.text, it.rate, afterEnd); return; }
+  var a = null; try{ a = new Audio(it.url); }catch(e){ a = null; }
+  if(!a){ _cfTts(it.text, it.rate, afterEnd); return; }
+  _cfCurAudio = a;
+  try{ a.preservesPitch = true; a.mozPreservesPitch = true; a.webkitPreservesPitch = true; }catch(e){}
+  if(it.rate){ a.playbackRate = Math.max(0.5, Math.min(1.5, it.rate)); }
+  var done = false;
+  var finish = function(useTts){
+    if(done) return; done = true; _cfCurAudio = null;
+    if(useTts){ _cfTts(it.text, it.rate, afterEnd); }
+    else { afterEnd(); }
+  };
+  a.addEventListener("ended", function(){ finish(false); });
+  a.addEventListener("error", function(){ finish(true); }); // Datei fehlt -> Browserstimme
+  var pr = null; try{ pr = a.play(); }catch(e){ finish(true); }
+  if(pr && typeof pr.catch === "function") pr.catch(function(){ finish(true); });
+}
+// opts: { rate: 0.5–1.5, queue: true = anhängen, onend: Callback nach Ende }
 function cfSpeakZh(text, opts){
   opts = opts || {};
-  if(!("speechSynthesis" in window) || !text) return;
-  try{
-    if(!opts.queue) speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(String(text));
-    u.lang = "zh-CN";
-    u.rate = opts.rate || 0.9;
-    const voices = speechSynthesis.getVoices ? speechSynthesis.getVoices() : [];
-    const v = voices.find(v => (v.lang || "").toLowerCase().startsWith("zh"));
-    if(v) u.voice = v;
-    speechSynthesis.speak(u);
-  }catch(e){}
+  if(!text){ if(opts.onend) opts.onend(); return; }
+  if(!opts.queue) _cfStopAll();
+  _cfQueue.push({ url: cfAudioUrlFor(text, opts.speaker), text: String(text), rate: opts.rate, onend: opts.onend });
+  _cfNext();
 }
 
 // Enthält der Text chinesische Zeichen? (Satzzeichen-Karten nicht vorlesen)

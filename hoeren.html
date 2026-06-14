@@ -87,27 +87,17 @@ speechSynthesis.onvoiceschanged = pickVoice;
 let playToken = 0;
 function stopAudio(){
   playToken++;
-  speechSynthesis.cancel();
+  if(typeof _cfStopAll === "function") _cfStopAll(); else speechSynthesis.cancel();
 }
-function speak(text, reset=true){
+function speak(text, reset=true, speaker){
   if(!text) return;
-  if(reset) stopAudio();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = "zh-CN";
-  u.rate = parseFloat(tempoEl.value);
-  if(zhVoice) u.voice = zhVoice;
-  speechSynthesis.speak(u);
+  if(reset) playToken++;
+  cfSpeakZh(text, { rate: parseFloat(tempoEl.value), queue: !reset, speaker: speaker });
 }
-function speakAndWait(text, token){
+function speakAndWait(text, token, speaker){
   return new Promise(resolve => {
     if(token !== playToken || !text) return resolve();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = "zh-CN";
-    u.rate = parseFloat(tempoEl.value);
-    if(zhVoice) u.voice = zhVoice;
-    u.onend = resolve;
-    u.onerror = resolve;
-    speechSynthesis.speak(u);
+    cfSpeakZh(text, { rate: parseFloat(tempoEl.value), queue: true, onend: resolve, speaker: speaker });
   });
 }
 document.getElementById("stopBtn").onclick = stopAudio;
@@ -232,7 +222,7 @@ if(dialogData.length === 0){
         ${line.de ? `<div class="speechDe">${escapeHtml(line.de)}</div>` : ""}
       </div>
     `;
-    row.querySelector(".speechBubble").addEventListener("click", () => { speak(line.zh); markHeard("s", line.zh); });
+    row.querySelector(".speechBubble").addEventListener("click", () => { speak(line.zh, true, line.speaker); markHeard("s", line.zh); });
     dialogEl.appendChild(row);
   });
 }
@@ -243,7 +233,7 @@ async function playAll(){
   const token = playToken;
   for(const line of dialogData){
     if(token !== playToken) return;
-    await speakAndWait(line.zh, token);
+    await speakAndWait(line.zh, token, line.speaker);
     markHeard("s", line.zh);
   }
 }

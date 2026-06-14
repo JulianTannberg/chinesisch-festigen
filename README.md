@@ -354,3 +354,53 @@ dynamischer Tracking-Dienst).
 - Avatare: avatars/suran.jpg, avatars/linyue.jpg (klein gerechnet), im Service-Worker-Cache.
 - Service-Worker-Version erhöht.
 - OFFEN (nächster Schritt): Schreibtraining zeichenbasiert (jedes Zeichen einmal, Wort darüber, aktuelles Zeichen farbig, Pinyin im Training) + dortige Ansicht.
+
+## Änderungen Etappe 29 (Funktionsfixes)
+
+- **Chat:** Zwei Partnersätze hintereinander werden jetzt in Reihe gesprochen (erster wird nicht mehr abgebrochen). Lín Yuè/Sū Rán stellen sich nicht mehr mit „我叫…" vor; nach der Begrüßung kommt direkt „你是北京人吗？" bzw. „你是德国人吗？".
+- **Memory:** Ton läuft über die gemeinsame Sprachausgabe (cfSpeakZh) – auch auf dem iPad.
+- **Hören am Handy:** Vokabeln einspaltig, lange Texte brechen um – Reiter nicht mehr zu breit, wenn Pinyin + Deutsch an sind.
+- **Sprechen überall per Gedrückthalten:** „Sätze sprechen", Üben (Deutsch→Chinesisch) und Aussprache – Knopf halten zum Sprechen, loslassen beendet.
+- Üben-Antippton bleibt wie gewünscht am Schalter (unverändert).
+- Service-Worker-Version erhöht.
+- OFFEN: Menü/Einstellungen + Fehlermeldung (Vorlage, mailto an info@memyo.de), Icons heller/abgerundet, großer Schreibtraining-Umbau, ElevenLabs-Dateinamen, rechtlicher Block (Cookie/Datenschutz/AGB/Altersbestätigung).
+
+## Änderungen Etappe 30 (Menü/Einstellungen)
+
+- Neue Seite **einstellungen.html**: Name ändern, Profilbild (Chat) wählen/entfernen, Fortschritt zurücksetzen (Kapitel auswählen oder „Alle Kapitel"), Rechtliches (Datenschutz/AGB/Impressum).
+- Einstieg über **Zahnrad-Icon**: oben rechts auf der Übersicht (index) und auf jeder Kapitelseite (neben dem Chat-Icon).
+- Verstreute Knöpfe entfernt: Name/Fortschritt-Zeile auf der Kapitelseite ist weg (jetzt im Menü). Der Profilbild-Upload im Chat ist weg (jetzt im Menü); die Avatare an den Nachrichten bleiben.
+- Onboarding-Namensfeld (nur wenn noch kein Name) bleibt auf Übersicht und Kapitelseite.
+- Rechtliche Seiten als ehrliche Platzhalter („wird noch ergänzt").
+- Service-Worker-Version auf cf-v34 erhöht, neue Seiten in den Offline-Cache aufgenommen.
+- OFFEN: Fehlermeldung (Vorlage, mailto an info@memyo.de), Icons heller/abgerundet, Schreibtraining-Umbau, ElevenLabs-Dateinamen, rechtlicher Block (Cookie/Datenschutz/AGB/Altersbestätigung mit echten Texten).
+
+## Änderungen Etappe 31 (Schreibtraining: Zeichen-Bausteine)
+
+- Neue Datendatei **bausteine.js** (App-Ebene, Buch unangetastet): Kapitel-1-Vokabeln in 34 eindeutige Zeichen zerlegt, jedes mit eigener Übersetzung, eigenem Pinyin (silbenweise) und dem Wort, in dem es vorkommt.
+- „Zeichen lernen" und „Schreibtraining" laufen jetzt **zeichenbasiert mit Dedup** (jedes Zeichen nur einmal über alle Wörter) statt wortbasiert.
+- „Zeichen lernen": das ganze Wort steht oben, das aktuelle Zeichen ist farbig (gold); Bedeutung zeigt zusätzlich „in <Wort> (<Bedeutung>)".
+- „Schreibtraining": oben steht jetzt das **Pinyin** als Aufgabe (kein Hanzi-Abschreiben), darunter Bedeutung + Pinyin-Wortkontext.
+- ⚑ markiert Zeichen, deren Einzelbedeutung der/die Beijing-Kontakt noch prüfen soll (德, 什, 么, 起, 关, 系).
+- Andere Kapitel ohne bausteine.js fallen automatisch auf das alte wortbasierte Verhalten zurück.
+- Service-Worker auf cf-v35; bausteine.js im Offline-Cache.
+- OFFEN: Fehlermeldung (mailto-Vorlage), Icons heller/abgerundet, ElevenLabs-Dateinamen, rechtlicher Block.
+
+## Änderungen Etappe 32 (ElevenLabs-Audios)
+
+- Zentrale Sprachausgabe cfSpeakZh spielt jetzt zuerst eine echte Audiodatei und nutzt die Browserstimme nur als Fallback, wenn die Datei fehlt → reines „Datei-Drop".
+- Dateischema: `audio/audio_<kapitel>_<typ>_<hanzi>.<ext>`, typ = `vocable` oder `story`, z. B. `audio/audio_01_vocable_人.mp3`. Konfigurierbar oben in common.js (CF_AUDIO: enabled, base-Ordner, ext, name-Funktion).
+- Zuordnung automatisch aus topics.js (vocab/understandingVocab → vocable, storyDialog → story); aktuelles Kapitel wird in applyTheme als window.CF_CHAPTER gemerkt und bevorzugt.
+- Seiten mit eigener Sprachausgabe (hoeren inkl. „Geschichte abspielen", flashkarten, sprechen) laufen jetzt über cfSpeakZh, damit die echten Dateien überall greifen. „Slow"-Tempo wirkt auch auf Dateien (playbackRate, Tonhöhe bleibt).
+- Datei `audio/DATEINAMEN_Kapitel01.txt`: exakte Soll-Dateinamen zum Abgleich.
+- Service-Worker erhöht. Audiodateien werden NICHT in die Shell gecacht (kommen erst nach und nach dazu).
+- OFFEN/zu bestätigen: Dateiendung (.mp3?), Ordner (audio/?), Satzzeichen in Namen (你呢？, 啊！…). Außerdem: Einzelzeichen im Schreibtraining haben kein vocable-File → dort Browserstimme.
+
+## Änderungen Etappe 33 (Story-Sprecher + Einzelzeichen-Audio)
+
+- Story-Dateien enthalten jetzt den Sprecher: `audio_<kap>_story_<sprecher>_<hanzi>.mp3` (苏然→suran, 林月→linyue; Mapping in common.js CF_AUDIO.speakerId, erweiterbar). Verhindert Verwechslungen und passt zu den zwei Stimmen.
+- „Hören" reicht den Sprecher je Story-Zeile an die Audioauswahl weiter (Einzelantippen und „Geschichte abspielen").
+- Einzelzeichen aus dem Schreibtraining sind als vocable im Such-Index: `audio_01_vocable_海.mp3` usw.
+- Satzzeichen sind Teil des Dateinamens (wie vom Nutzer bestätigt).
+- DATEINAMEN_Kapitel01.txt neu: Vokabeln, Einzelzeichen, Geschichte (mit Sprecher).
+- Service-Worker erhöht.

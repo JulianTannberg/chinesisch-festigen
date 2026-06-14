@@ -115,14 +115,7 @@ if("speechSynthesis" in window){
 }
 function speakChinese(text){
   if(!soundOn || !text) return;
-  try{
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = "zh-CN";
-    u.rate = 0.85;
-    if(zhVoice) u.voice = zhVoice;
-    speechSynthesis.speak(u);
-  }catch(e){}
+  cfSpeakZh(text, {rate:0.85});
 }
 function updateSoundButton(){
   $("soundToggle").textContent = soundOn ? "Ton an" : "Ton aus";

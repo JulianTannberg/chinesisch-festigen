@@ -48,7 +48,7 @@
           <div class="speakGerman" id="germanPrompt">–</div>
 
           <div class="actionBar">
-            <button id="recordBtn" class="recordBtn" type="button">Aufnehmen</button>
+            <button id="recordBtn" class="recordBtn" type="button">Halten &amp; sprechen</button>
             <button id="hearBtn" type="button">Lösung anhören</button>
             <span class="spacer"></span>
             <button id="nextBtn" type="button" disabled>Weiter →</button>
@@ -309,7 +309,7 @@ function createRecognition(task){
   r.onend = () => {
     recording = false;
     $("recordBtn").classList.remove("recording");
-    $("recordBtn").textContent = "Aufnehmen";
+    $("recordBtn").textContent = "Halten & sprechen";
   };
   return r;
 }
@@ -331,8 +331,11 @@ async function prepareMicrophoneOnce(){
     return false;
   }
 }
+let pttReleased = false;
+function stopRecording(){ pttReleased = true; if(recognition && recording){ try{ recognition.stop(); }catch(e){} } }
 async function startRecording(){
   if(!Recognition || recording) return;
+  pttReleased = false;
   const okMic = await prepareMicrophoneOnce();
   if(!okMic) return;
 
@@ -340,14 +343,14 @@ async function startRecording(){
   recognition = createRecognition(t);
   recording = true;
   $("recordBtn").classList.add("recording");
-  $("recordBtn").textContent = "Höre zu …";
+  $("recordBtn").textContent = "Sprich … (loslassen)";
   $("transcript").textContent = "Jetzt sprechen.";
-  setFeedback("neutral", "Jetzt langsam und deutlich sprechen.");
-  try{ recognition.start(); }
+  setFeedback("neutral", "Halten und langsam, deutlich sprechen.");
+  try{ recognition.start(); if(pttReleased){ try{ recognition.stop(); }catch(e){} } }
   catch(e){
     recording = false;
     $("recordBtn").classList.remove("recording");
-    $("recordBtn").textContent = "Aufnehmen";
+    $("recordBtn").textContent = "Halten & sprechen";
     setFeedback("bad", "Die Aufnahme konnte nicht gestartet werden. Versuch es noch einmal.");
   }
 }
@@ -414,14 +417,7 @@ function checkTranscript(alternatives, task){
   save();
 }
 function speakZh(text, rate = 0.9){
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = "zh-CN";
-  u.rate = rate;
-  const voices = speechSynthesis.getVoices();
-  const zhVoice = voices.find(v => (v.lang || "").toLowerCase().startsWith("zh"));
-  if(zhVoice) u.voice = zhVoice;
-  speechSynthesis.speak(u);
+  cfSpeakZh(text, { rate: rate });
 }
 function nextSpeechSentence(){ idx++; renderSpeechSentence(); }
 function restartSpeechSentence(){
@@ -434,7 +430,14 @@ function restartSpeechSentence(){
   renderSpeechSentence();
 }
 
-$("recordBtn").addEventListener("click", startRecording);
+(function(){
+  const _rb = $("recordBtn"); _rb.style.touchAction = "none";
+  _rb.addEventListener("pointerdown", e => { e.preventDefault(); startRecording(); });
+  _rb.addEventListener("pointerup", stopRecording);
+  _rb.addEventListener("pointerleave", stopRecording);
+  _rb.addEventListener("pointercancel", stopRecording);
+  _rb.addEventListener("contextmenu", e => e.preventDefault());
+})();
 $("hearBtn").addEventListener("click", () => speakZh(current()?.zh || ""));
 $("nextBtn").addEventListener("click", nextSpeechSentence);
 $("finishRestart").addEventListener("click", restartSpeechSentence);

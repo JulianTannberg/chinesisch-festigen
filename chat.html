@@ -15,11 +15,6 @@
     <section class="card" id="contactsView">
       <p class="subtitle" id="contactsHint">Mit wem möchtest du schreiben?</p>
       <div id="contactsList"></div>
-      <div class="ownProfile">
-        <span id="ownAvatarWrap"></span>
-        <span class="ownProfileText">Dein Profilbild</span>
-        <label class="miniBtn">Bild wählen<input type="file" accept="image/*" id="ownAvatarInput" hidden></label>
-      </div>
     </section>
 
     <section class="card chatCard" id="convoView" style="display:none;">
@@ -168,7 +163,7 @@
       addTyping();
       setTimeout(() => {
         removeTyping();
-        if(asVoice){ addVoiceBubble("partner", lines[i].zh); speak(lines[i].zh); }
+        if(asVoice){ addVoiceBubble("partner", lines[i].zh); cfSpeakZh(lines[i].zh, {rate:0.92, queue: i > 0}); }
         else{ addTextBubble("partner", lines[i]); }
         i++; setTimeout(next, asVoice ? 500 : 350);
       }, 600);
@@ -336,35 +331,8 @@
     }catch(e){ endSR(); }
   }
 
-  // Eigenes Profilbild (lokal in localStorage)
-  function renderOwnAvatar(){
-    const wrap = document.getElementById("ownAvatarWrap"); if(!wrap) return;
-    const ua = userAvatar();
-    wrap.innerHTML = ua ? `<img class="contactAvatar" src="${ua}" alt="">` : `<span class="contactAvatar">${escapeHtml((NAME || "?").slice(0,1))}</span>`;
-  }
-  function downscaleAvatar(file, cb){
-    const fr = new FileReader();
-    fr.onload = () => { const img = new Image(); img.onload = () => {
-      const s = 128, c = document.createElement("canvas"); c.width = s; c.height = s;
-      const ctx = c.getContext("2d"); const m = Math.min(img.width, img.height);
-      ctx.drawImage(img, (img.width-m)/2, (img.height-m)/2, m, m, 0, 0, s, s);
-      try{ cb(c.toDataURL("image/jpeg", 0.85)); }catch(e){ cb(null); }
-    }; img.onerror = () => cb(null); img.src = fr.result; };
-    fr.onerror = () => cb(null); fr.readAsDataURL(file);
-  }
-  const ownInput = document.getElementById("ownAvatarInput");
-  if(ownInput){ ownInput.addEventListener("change", () => {
-    const f = ownInput.files && ownInput.files[0]; if(!f) return;
-    downscaleAvatar(f, (data) => {
-      if(!data){ alert("Bild konnte nicht geladen werden."); return; }
-      try{ localStorage.setItem("cf_user_avatar", data); }catch(e){ alert("Bild zu groß zum Speichern."); return; }
-      renderOwnAvatar();
-    });
-  }); }
-
   // Start
   renderContacts();
-  renderOwnAvatar();
   const who = params.get("who");
   if(who && DATA){ const p = DATA.partners.find(x => x.key === who); if(p) openConvo(p); }
   </script>

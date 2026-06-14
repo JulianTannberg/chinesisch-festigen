@@ -353,16 +353,20 @@ function restartAll(){ idx = 0; attempted = 0; firstCorrect = 0; localStorage.re
 const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 if(MODE === "dezh" && Recognition && !cfIsIOS()){
   $("speakBtn").style.display = "";
-  let listening = false;
-  $("speakBtn").addEventListener("click", () => {
+  $("speakBtn").textContent = "🎤 Halten & sprechen";
+  $("speakBtn").style.touchAction = "none";
+  let listening = false, r = null, released = false;
+  function startSpeak(e){
+    if(e) e.preventDefault();
     if(listening) return;
+    released = false;
     const t = current();
-    const r = new Recognition();
+    r = new Recognition();
     r.lang = "zh-CN";
     r.interimResults = false;
     r.maxAlternatives = 3;
     listening = true;
-    $("speakBtn").textContent = "Höre zu …";
+    $("speakBtn").textContent = "Sprich … (loslassen)";
     $("speakBtn").classList.add("recording");
     r.onresult = event => {
       const alts = Array.from(event.results[0] || []).map(a => a.transcript || "").filter(Boolean);
@@ -370,8 +374,8 @@ if(MODE === "dezh" && Recognition && !cfIsIOS()){
       $("speakHeard").textContent = heard ? `Erkannt: ${heard}` : "Nichts erkannt.";
       const target = stripZh(t.zh);
       const ok = alts.some(a => {
-        const h = stripZh(a);
-        return h === target || h.includes(target) || target.includes(h) && h.length >= Math.max(2, target.length - 1);
+        const hh = stripZh(a);
+        return hh === target || hh.includes(target) || target.includes(hh) && hh.length >= Math.max(2, target.length - 1);
       });
       if(ok) taskSolved(true);
       else setFeedback("bad", "Noch nicht erkannt. Sprich langsam und deutlich oder baue den Satz mit den Karten.");
@@ -379,11 +383,17 @@ if(MODE === "dezh" && Recognition && !cfIsIOS()){
     r.onerror = () => { $("speakHeard").textContent = "Nicht erkannt."; };
     r.onend = () => {
       listening = false;
-      $("speakBtn").textContent = "🎤 Stattdessen sprechen";
+      $("speakBtn").textContent = "🎤 Halten & sprechen";
       $("speakBtn").classList.remove("recording");
     };
-    try{ r.start(); }catch(e){ listening = false; }
-  });
+    try{ r.start(); if(released){ try{ r.stop(); }catch(e){} } }catch(e){ listening = false; }
+  }
+  function stopSpeak(){ released = true; if(r && listening){ try{ r.stop(); }catch(e){} } }
+  $("speakBtn").addEventListener("pointerdown", startSpeak);
+  $("speakBtn").addEventListener("pointerup", stopSpeak);
+  $("speakBtn").addEventListener("pointerleave", stopSpeak);
+  $("speakBtn").addEventListener("pointercancel", stopSpeak);
+  $("speakBtn").addEventListener("contextmenu", e => e.preventDefault());
 }
 
 $("soundToggle").addEventListener("click", () => {
