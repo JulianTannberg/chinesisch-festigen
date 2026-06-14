@@ -67,8 +67,6 @@
 
   const canRecord = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  // Voice-Strategie: 1) Worker (aufnehmen+transkribieren, alle Geräte) wenn konfiguriert,
-  // sonst 2) kostenlose Browser-Erkennung (nicht iOS). Sonst kein Mikrofon.
   const useWorker = canRecord && cfWorkerReady();
   const useBrowserSR = !useWorker && !!SR && !cfIsIOS();
   const micOK = useWorker || useBrowserSR;
@@ -92,18 +90,17 @@
     });
   }
 
-  // ---------- Chat ----------
-  let convo = [], rIdx = 0, partner = null, lastMode = "text", busy = false;
+  // ---------- Chat (Knoten-Graph) ----------
+  let convo = null, node = null, nodeId = null, partner = null, lastMode = "text", busy = false;
 
   function openConvo(p){
-    partner = p; convo = (DATA.convo && DATA.convo[p.key]) || [];
-    rIdx = 0; lastMode = "text";
+    partner = p; convo = (DATA.convo && DATA.convo[p.key]) || null; lastMode = "text";
     document.getElementById("contactsView").style.display = "none"; convoEl.style.display = "";
     document.getElementById("chatName").textContent = `${p.name} (${p.pinyin})`;
     document.getElementById("chatTag").textContent = p.tag || "";
     document.getElementById("micBtn").style.display = micOK ? "" : "none";
     document.getElementById("chatMsgs").innerHTML = "";
-    runRound();
+    runNode(convo ? convo.start : null);
   }
   function backToContacts(){ cancelRecording(); convoEl.style.display = "none"; document.getElementById("contactsView").style.display = ""; }
 
@@ -135,15 +132,8 @@
     });
     wrap.appendChild(b); document.getElementById("chatMsgs").appendChild(wrap); scrollDown();
   }
-  function addNote(text){
-    const wrap = document.createElement("div"); wrap.className = "chatNote"; wrap.textContent = text;
-    document.getElementById("chatMsgs").appendChild(wrap); scrollDown();
-  }
-  function addTyping(){
-    const wrap = document.createElement("div"); wrap.className = "msg partner"; wrap.id = "typingRow";
-    wrap.innerHTML = `<div class="bubble typing"><i></i><i></i><i></i></div>`;
-    document.getElementById("chatMsgs").appendChild(wrap); scrollDown();
-  }
+  function addNote(text){ const w = document.createElement("div"); w.className = "chatNote"; w.textContent = text; document.getElementById("chatMsgs").appendChild(w); scrollDown(); }
+  function addTyping(){ const w = document.createElement("div"); w.className = "msg partner"; w.id = "typingRow"; w.innerHTML = `<div class="bubble typing"><i></i><i></i><i></i></div>`; document.getElementById("chatMsgs").appendChild(w); scrollDown(); }
   function removeTyping(){ const t = document.getElementById("typingRow"); if(t) t.remove(); }
 
   function showPartnerLines(lines, asVoice, done){
@@ -160,38 +150,41 @@
     })();
   }
 
-  function runRound(){
+  function runNode(targetId){
+    nodeId = targetId;
+    if(!nodeId || !convo || !convo.nodes[nodeId]){ showEnd(); return; }
+    node = convo.nodes[nodeId];
     busy = true; setChips([]); setInputEnabled(false);
-    if(rIdx >= convo.length){ showEnd(); return; }
-    const r = convo[rIdx];
-    showPartnerLines(r.ask, lastMode === "voice", () => {
-      busy = false; setChips(r.options.map(o => fill(o.chip))); setInputEnabled(true);
+    showPartnerLines(node.ask, lastMode === "voice", () => {
+      busy = false; setChips(node.options.map(o => fill(o.chip))); setInputEnabled(true);
     });
   }
 
   function matchOption(text){
-    const r = convo[rIdx]; const u = norm(fill(text));
-    for(let i = 0; i < r.options.length; i++){ if(r.options[i].accept.map(a => norm(fill(a))).includes(u)) return i; }
+    if(!node) return -1;
+    const u = norm(fill(text));
+    for(let i = 0; i < node.options.length; i++){ if(node.options[i].accept.map(a => norm(fill(a))).includes(u)) return i; }
     return -1;
   }
   function matchVoice(text){
     const exact = matchOption(text); if(exact >= 0) return exact;
-    const u = norm(fill(text)); const r = convo[rIdx];
-    for(let i = 0; i < r.options.length; i++){
-      const pres = (r.options[i].voicePrefix || []).map(p => norm(fill(p)));
+    if(!node) return -1;
+    const u = norm(fill(text));
+    for(let i = 0; i < node.options.length; i++){
+      const pres = (node.options[i].voicePrefix || []).map(p => norm(fill(p)));
       if(pres.some(p => p && u.indexOf(p) === 0)) return i;
     }
     return -1;
   }
 
-  // Partner-Antwort + nächste Runde (Nutzerblase wurde schon hinzugefügt)
+  // Partner-Antwort + nächster Knoten (Nutzerblase ist schon gesetzt)
   function proceedAfter(optIdx, mode){
-    const r = convo[rIdx]; const opt = r.options[optIdx];
+    const opt = node.options[optIdx];
     lastMode = mode; setChips([]); setInputEnabled(false);
-    const reply = (opt.reply || r.reply || []);
+    const reply = (opt.reply || node.reply || []); const nxt = opt.next;
     setTimeout(() => {
-      if(reply.length){ showPartnerLines(reply, mode === "voice", () => { rIdx++; runRound(); }); }
-      else{ rIdx++; runRound(); }
+      if(reply.length){ showPartnerLines(reply, mode === "voice", () => runNode(nxt)); }
+      else{ runNode(nxt); }
     }, 450);
   }
 
@@ -202,7 +195,7 @@
     addTextBubble("me", { zh: text }); document.getElementById("chatText").value = "";
     proceedAfter(idx, "text");
   }
-  function flashHint(){ const chips = document.getElementById("chatChips"); chips.classList.remove("nudge"); void chips.offsetWidth; chips.classList.add("nudge"); }
+  function flashHint(){ const c = document.getElementById("chatChips"); c.classList.remove("nudge"); void c.offsetWidth; c.classList.add("nudge"); }
   function revealChips(){ document.getElementById("chatChips").style.display = "flex"; document.getElementById("suggestToggle").textContent = "💡 Vorschläge ausblenden"; }
 
   function setChips(arr){
@@ -232,6 +225,17 @@
   document.getElementById("sendBtn").addEventListener("click", () => { const v = document.getElementById("chatText").value.trim(); if(v) answerText(v); });
   document.getElementById("chatText").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); const v = document.getElementById("chatText").value.trim(); if(v) answerText(v); } });
   document.getElementById("toContacts").addEventListener("click", backToContacts);
+
+  // iPad/iOS: nach dem Schließen der Tastatur die Ansicht wieder oben fixieren,
+  // damit der Kopf (Name/Zurück) nicht halb verdeckt bleibt.
+  function cfPinTop(){ try{ window.scrollTo(0,0); }catch(e){} document.body.scrollTop = 0; document.documentElement.scrollTop = 0; }
+  document.getElementById("chatText").addEventListener("blur", () => setTimeout(cfPinTop, 60));
+  window.addEventListener("orientationchange", () => setTimeout(cfPinTop, 120));
+  if(window.visualViewport){
+    window.visualViewport.addEventListener("resize", () => {
+      if(document.activeElement !== document.getElementById("chatText")) setTimeout(cfPinTop, 60);
+    });
+  }
   document.getElementById("suggestToggle").addEventListener("click", () => {
     const box = document.getElementById("chatChips"); const show = box.style.display === "none";
     box.style.display = show ? "flex" : "none";
@@ -245,12 +249,9 @@
     else { startBrowserSR(); }
   });
 
-  // A) Worker-Weg: aufnehmen -> abspielbar -> transkribieren -> abgleichen
+  // A) Worker: aufnehmen -> abspielbar -> transkribieren -> abgleichen
   let mediaStream = null, mediaRec = null, chunks = [], recording = false, recStart = 0, autoStop = null;
-  function showRecordBar(on){
-    document.getElementById("recordBar").style.display = on ? "flex" : "none";
-    document.getElementById("chatInput").style.display = on ? "none" : "flex";
-  }
+  function showRecordBar(on){ document.getElementById("recordBar").style.display = on ? "flex" : "none"; document.getElementById("chatInput").style.display = on ? "none" : "flex"; }
   async function startRecording(){
     try{ mediaStream = await navigator.mediaDevices.getUserMedia({audio:true}); }
     catch(e){ addNote("Kein Mikrofon-Zugriff. Du kannst auch tippen."); return; }
@@ -262,7 +263,7 @@
       mediaRec.start(); recording = true; recStart = Date.now();
     }catch(e){ cleanupStream(); addNote("Aufnahme auf diesem Gerät nicht möglich."); return; }
     showRecordBar(true);
-    autoStop = setTimeout(() => stopRecording(), 10000); // max 10s
+    autoStop = setTimeout(() => stopRecording(), 10000);
   }
   function stopRecording(){ if(autoStop){ clearTimeout(autoStop); autoStop = null; } if(mediaRec && mediaRec.state !== "inactive"){ try{ mediaRec.stop(); }catch(e){} } }
   function cancelRecording(){ if(autoStop){ clearTimeout(autoStop); autoStop = null; } if(mediaRec){ mediaRec.onstop = null; try{ mediaRec.stop(); }catch(e){} } cleanupStream(); recording = false; showRecordBar(false); }
@@ -270,25 +271,18 @@
 
   async function onRecStop(){
     const secs = (Date.now() - recStart) / 1000;
-    let url = null, type = (chunks[0] && chunks[0].type) || "audio/webm";
-    let blob = null;
+    let url = null, blob = null, type = (chunks[0] && chunks[0].type) || "audio/webm";
     try{ if(chunks.length){ blob = new Blob(chunks, {type}); url = URL.createObjectURL(blob); } }catch(e){}
     cleanupStream(); recording = false; showRecordBar(false);
-    if(!blob){ return; }
-    // Eigene Sprachblase sofort (abspielbar)
+    if(!blob) return;
     addVoiceBubble("me", "", url, secs);
-    setInputEnabled(false);
-    addNote("Wird erkannt …");
+    setInputEnabled(false); addNote("Wird erkannt …");
     let text = "";
     try{ text = await cfTranscribe(blob); }catch(e){ text = ""; }
-    // „Wird erkannt …" entfernen
     const notes = document.querySelectorAll(".chatNote"); if(notes.length) notes[notes.length-1].remove();
     const idx = matchVoice(text);
     if(idx >= 0){ proceedAfter(idx, "voice"); }
-    else{
-      addNote(text ? ('Verstanden: ' + text + ' – das passt hier nicht. Versuch es nochmal oder tippe.') : 'Nicht erkannt. Versuch es nochmal oder tippe.');
-      setInputEnabled(true);
-    }
+    else{ addNote(text ? ('Verstanden: ' + text + ' – das passt hier nicht. Versuch es nochmal oder tippe.') : 'Nicht erkannt. Versuch es nochmal oder tippe.'); setInputEnabled(true); }
   }
   document.getElementById("recStop").addEventListener("click", stopRecording);
   document.getElementById("recCancel").addEventListener("click", () => cancelRecording());
@@ -305,10 +299,10 @@
         if(handled) return; handled = true;
         let chosen = -1;
         for(let i = 0; i < ev.results.length && chosen < 0; i++){
-          for(let j = 0; j < ev.results[i].length; j++){ const t = ev.results[i][j].transcript; const m = matchVoice(t); if(m >= 0){ chosen = m; break; } }
+          for(let j = 0; j < ev.results[i].length; j++){ const m = matchVoice(ev.results[i][j].transcript); if(m >= 0){ chosen = m; break; } }
         }
         endSR();
-        if(chosen >= 0){ addVoiceBubble("me", fill(convo[rIdx].options[chosen].chip)); proceedAfter(chosen, "voice"); }
+        if(chosen >= 0){ addVoiceBubble("me", fill(node.options[chosen].chip)); proceedAfter(chosen, "voice"); }
         else{ revealChips(); flashHint(); }
       };
       srObj.onerror = () => { handled = true; endSR(); };

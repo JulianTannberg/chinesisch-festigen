@@ -214,7 +214,8 @@ function choose(choice, btn){
     btn.classList.add("correctChoice");
     if(blank){ blank.textContent = choice; blank.classList.add("filledOk"); }
     cfPlayFeedback(true);
-    if(cfHasCJK(choice)) cfSpeakZh(choice, {queue:true});
+    const fullSentence = String(g.prompt || "").replace("___", choice);
+    if(cfHasCJK(fullSentence)) cfSpeakZh(fullSentence, {queue:true});
     answeredCount++;
     if(!hadWrong) correct++; // „Direkt richtig" nur ohne vorherigen Fehler
     setFeedback("ok", hadWrong ? "Jetzt richtig!" : "Richtig!");

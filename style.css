@@ -724,9 +724,9 @@ input.wrong{border-color:var(--bad);background:rgba(239,68,68,.18)}
 
 
 /* Sprechen: zwei Reiter bleiben nebeneinander */
-.speakTabbar{grid-template-columns:1fr 1fr;}
+.speakTabbar{grid-template-columns:1fr 1fr 1fr;}
 @media(max-width:640px){
-  .speakTabbar{grid-template-columns:1fr 1fr; gap:8px;}
+  .speakTabbar{grid-template-columns:1fr 1fr 1fr; gap:6px;}
   .speakTabbar .tab{font-size:14px; min-height:44px; padding:8px 6px;}
 }
 
@@ -1141,3 +1141,12 @@ html.noScroll .app > section.chatCard{ display:flex; flex-direction:column; flex
 
 /* Hinweiszeile im Chat (z. B. „Wird erkannt …") */
 .chatNote{ align-self:center; max-width:85%; text-align:center; color:var(--muted); font-size:13px; margin:4px 0; }
+
+
+/* Aussprache üben */
+.aussGrid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:12px 0; }
+@media (max-width:640px){ .aussGrid{ grid-template-columns:1fr; } }
+.aussGrid .card2{ background:var(--card-strong); border:1px solid var(--stroke); border-radius:16px; padding:14px; display:flex; flex-direction:column; gap:8px; }
+.aussGrid .card2 .zh{ font-size:26px; line-height:1.2; }
+.aussGrid .card2 .pinyin{ opacity:.85; }
+.aussGrid .card2 .de{ opacity:.8; }

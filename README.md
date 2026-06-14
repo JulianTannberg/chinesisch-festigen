@@ -312,3 +312,30 @@ dynamischer Tracking-Dienst).
 - **Worker separat:** Ordner `cf-worker/` (transcribe-worker.js, wrangler.toml, ANLEITUNG.md). API-Key nur als Cloudflare-Secret. Worker speichert nichts.
 - Service-Worker-Version: cf-v27.
 - OFFEN (Etappe 24): Sprechübungen – nur iPhone/iPad über Worker→Groq, Android/PC weiter Browser-Erkennung.
+
+## Änderungen Etappe 24 (Chat: Verzweigungen + Antwort-Abgleich)
+
+- Gespräche jetzt als **verzweigter Knoten-Graph** (statt starrer Reihenfolge) – Grundlage für mehr Wege.
+- **Satzzeichen** werden im Abgleich ignoriert (Punkt setzen, anderes Zeichen oder weglassen – alles gilt). Reihenfolge/Varianten wie gehabt.
+- **Neue Abzweigungen Lín Yuè:**
+  - „你是北京人吗？" → wer nur „我不是北京人" sagt, wird gefragt „那你是哪国人？" (statt sofort „啊，德国人！"). „我是德国人/我从德国来" führt direkt zur Willkommens-Antwort.
+  - „你在北京吗？" → jetzt auch „我不在北京。" möglich (Antwort „啊，好。").
+- Sū Rán parallel mit „我不在北京"-Zweig.
+- Service-Worker-Version erhöht.
+- ZUR PRÜFUNG (Beijing): „那你是哪国人？" (那 als „dann"), „啊，好。" als Reaktion auf „我不在北京".
+
+## Änderungen Etappe 25 (Chat-Zweige + iOS-Sprechübung)
+
+- **Chat, reichere Wege:** „我不在北京" führt jetzt zu „那你在哪里？" (wo bist du?) → „我在德国"/„我在上海" → „你来北京吗？" (kommst du nach Beijing?) → „我来北京"/„我不来北京". Damit sind „wo bist du", „in Deutschland" und ein A1-nahes „kommst du nach Beijing" abgedeckt. („möchten/wollen" = 想/要 ist erst in späteren Kapiteln möglich.)
+- **iOS-Sprechübung:** Im Diktat-Modus wird der „Erkannt:"-Block ausgeblendet (er zeigte nur dieselbe Eingabe); die redundante Transcript-Zuweisung entfernt.
+- ZUR PRÜFUNG (Beijing): 那你在哪里？ · 你来北京吗？ · 我来北京/我不来北京 · 啊，好！欢迎！ · 啊，上海！ · 啊，上海！我也是！
+- Service-Worker-Version erhöht.
+
+## Änderungen Etappe 26
+
+- **Lückenspiel:** Bei richtiger Antwort wird jetzt der GANZE Satz vorgelesen (vorher nur das eingesetzte Wort).
+- **Memory:** 6 Paare / 12 Karten pro Runde (4×3) – ausgewogener, besonders auf dem iPad.
+- **Chat/iPad:** Nach dem Schließen der Tastatur wird die Ansicht wieder nach oben fixiert (Kopf/Zurück nicht mehr halb verdeckt).
+- **Sprechen – neuer Reiter „Aussprache":** Vorbild links anhören (Hanzi/Pinyin/Deutsch), rechts selbst aufnehmen und zum Vergleich anhören. Funktioniert auf allen Geräten (auch iOS). Bewertung folgt später (wenn Worker + ergänzte Inhalte stehen).
+- Service-Worker-Version erhöht.
+- OFFEN (nächster Schritt): Schreibtraining – zeichenbasiert (jedes Zeichen nur einmal), ganzes Wort darüber, aktuelles Zeichen farbig; im Schreibtraining Pinyin darüber (kein Abschreiben); Wertung pro Zeichen, Fortschritt wird dabei einmalig zurückgesetzt.

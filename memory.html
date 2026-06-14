@@ -65,7 +65,7 @@ $("finishBack").href = `kapitel.html?id=${topic.id}`;
 $("title").textContent = `${topic.id}. ${topic.title} · Memory`;
 
 const vocab = (topic.vocab || []).filter(v => v.zh && v.de);
-const PAIRS_PER_ROUND = 5; // 10 Karten – passt ohne Scrollen
+const PAIRS_PER_ROUND = 6; // 12 Karten (4×3) – ausgewogener, passt ohne Scrollen
 let allOrder = [];
 let roundStart = 0;
 let cards = [];

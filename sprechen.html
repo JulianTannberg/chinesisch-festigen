@@ -23,6 +23,7 @@
 
     <div class="tabbar speakTabbar">
       <button class="tab active" data-tab="satz" type="button">Sätze sprechen</button>
+      <button class="tab" data-tab="aussprache" type="button">Aussprache</button>
       <button class="tab" data-tab="ki" type="button">KI sprechen</button>
     </div>
 
@@ -58,8 +59,10 @@
             <button id="dictateCheck" type="button" disabled>Prüfen</button>
           </div>
 
-          <div class="small">Erkannt:</div>
-          <div class="speakTranscript" id="transcript">Noch nichts aufgenommen.</div>
+          <div id="transcriptBox">
+            <div class="small">Erkannt:</div>
+            <div class="speakTranscript" id="transcript">Noch nichts aufgenommen.</div>
+          </div>
           <div class="feedback neutral" id="feedback"></div>
           <div class="small" id="micHint"></div>
 
@@ -87,6 +90,36 @@
           <div class="toolbar" style="justify-content:center;margin-top:18px;">
             <button id="finishRestart" type="button">Noch einmal üben</button>
             <a class="miniBtn" id="finishBack">Zurück zum Kapitel</a>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section class="panel" id="panel-aussprache">
+      <section class="card">
+        <p class="small" style="margin-top:0;">Höre das Vorbild an, nimm dich selbst auf und vergleiche. Hier wird (noch) nicht bewertet – es geht ums Zuhören und Nachsprechen.</p>
+        <div id="aussEmpty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Sätze eingetragen.</div>
+        <div id="aussGame">
+          <div class="puzzleTopline"><div class="small" id="aussCounter">Satz –</div></div>
+          <div class="aussGrid">
+            <div class="card2">
+              <div class="small">Vorbild – anhören</div>
+              <div class="zh" id="aussZh">–</div>
+              <div class="pinyin" id="aussPinyin">–</div>
+              <div class="de" id="aussDe">–</div>
+              <button id="aussPlayModel" type="button">▶ Anhören</button>
+            </div>
+            <div class="card2">
+              <div class="small">Du – aufnehmen &amp; vergleichen</div>
+              <button id="aussRecord" class="recordBtn" type="button">● Aufnehmen</button>
+              <button id="aussPlayMine" type="button" disabled>▶ Meine Aufnahme</button>
+              <div class="small" id="aussMicNote"></div>
+            </div>
+          </div>
+          <div class="actionBar">
+            <button id="aussPrev" type="button">← Zurück</button>
+            <span class="spacer"></span>
+            <button id="aussNext" type="button">Weiter →</button>
           </div>
         </div>
       </section>
@@ -133,12 +166,13 @@ function activateTab(name){
   if(panel) panel.classList.add("active");
   const params = new URLSearchParams(location.search);
   params.set("id", topic.id);
-  if(name === "ki") params.set("tab", "ki");
-  else params.delete("tab");
+  if(name === "satz") params.delete("tab");
+  else params.set("tab", name);
   history.replaceState(null, "", `${location.pathname}?${params.toString()}`);
 }
 tabButtons.forEach(btn => btn.addEventListener("click", () => activateTab(btn.dataset.tab)));
-const initialTab = (new URLSearchParams(location.search).get("tab") === "ki") ? "ki" : "satz";
+const _tp = new URLSearchParams(location.search).get("tab");
+const initialTab = (_tp === "ki" || _tp === "aussprache") ? _tp : "satz";
 activateTab(initialTab);
 cfPaintTabScores([['.tab[data-tab="satz"]', "sprechen"]], topic.id);
 
@@ -413,11 +447,12 @@ if(!Recognition){
   $("dictateRow").style.display = "";
   // Im Diktat-Modus gibt es nur einen Knopf: Prüfen wird zu Weiter.
   $("nextBtn").style.display = "none";
+  // „Erkannt:" auf iOS ausblenden – dort steht nur dasselbe wie die Eingabe.
+  if($("transcriptBox")) $("transcriptBox").style.display = "none";
 }
 function checkDictation(){
   const val = ($("dictateInput").value || "").trim();
   if(!val) return;
-  $("transcript").textContent = val;
   checkTranscript([val], current());
 }
 function resetDictateButton(){
@@ -452,6 +487,58 @@ $("dictateInput").addEventListener("keydown", e => {
 load();
 updateSpStats();
 renderSpeechSentence();
+
+/* ===== Teil: Aussprache üben (anhören + selbst aufnehmen + vergleichen) ===== */
+(function(){
+  const aCanRecord = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+  let aIdx = 0, aStream = null, aRec = null, aChunks = [], aURL = null, aRecording = false, aAutoStop = null;
+
+  function aReset(){
+    if(aURL){ try{ URL.revokeObjectURL(aURL); }catch(e){} aURL = null; }
+    $("aussPlayMine").disabled = true;
+    $("aussRecord").textContent = "● Aufnehmen";
+    aRecording = false;
+  }
+  function aRender(){
+    if(!tasks.length){ $("aussEmpty").style.display = "block"; $("aussGame").style.display = "none"; return; }
+    const t = tasks[aIdx];
+    $("aussZh").textContent = t.zh;
+    $("aussPinyin").textContent = t.pinyin || "";
+    $("aussDe").textContent = t.displayDe || t.de || "";
+    $("aussCounter").textContent = `Satz ${aIdx+1} von ${tasks.length}`;
+    aReset();
+    $("aussRecord").style.display = aCanRecord ? "" : "none";
+    $("aussMicNote").textContent = aCanRecord ? "" : "Aufnahme auf diesem Gerät nicht möglich.";
+  }
+  function aStop(){ if(aAutoStop){ clearTimeout(aAutoStop); aAutoStop = null; } if(aRec && aRec.state !== "inactive"){ try{ aRec.stop(); }catch(e){} } }
+  async function aToggle(){
+    if(!aCanRecord) return;
+    if(aRecording){ aStop(); return; }
+    try{ aStream = await navigator.mediaDevices.getUserMedia({audio:true}); }
+    catch(e){ $("aussMicNote").textContent = "Kein Mikrofon-Zugriff."; return; }
+    aChunks = [];
+    try{
+      aRec = new MediaRecorder(aStream);
+      aRec.ondataavailable = e => { if(e.data && e.data.size) aChunks.push(e.data); };
+      aRec.onstop = () => {
+        try{ if(aChunks.length) aURL = URL.createObjectURL(new Blob(aChunks, {type: aChunks[0].type || "audio/webm"})); }catch(e){}
+        if(aStream){ aStream.getTracks().forEach(x => x.stop()); aStream = null; }
+        aRec = null; aRecording = false;
+        $("aussRecord").textContent = "● Aufnehmen";
+        $("aussPlayMine").disabled = !aURL;
+        if(aURL){ try{ new Audio(aURL).play(); }catch(e){} }
+      };
+      aRec.start(); aRecording = true; $("aussRecord").textContent = "■ Stopp";
+      aAutoStop = setTimeout(aStop, 10000);
+    }catch(e){ $("aussMicNote").textContent = "Aufnahme nicht möglich."; if(aStream){ aStream.getTracks().forEach(x => x.stop()); aStream = null; } }
+  }
+  $("aussPlayModel").addEventListener("click", () => { if(tasks[aIdx]) cfSpeakZh(tasks[aIdx].zh, {rate:0.9}); });
+  $("aussRecord").addEventListener("click", aToggle);
+  $("aussPlayMine").addEventListener("click", () => { if(aURL){ try{ new Audio(aURL).play(); }catch(e){} } });
+  $("aussPrev").addEventListener("click", () => { if(!tasks.length) return; aStop(); aIdx = (aIdx - 1 + tasks.length) % tasks.length; aRender(); });
+  $("aussNext").addEventListener("click", () => { if(!tasks.length) return; aStop(); aIdx = (aIdx + 1) % tasks.length; aRender(); });
+  aRender();
+})();
 
 /* ===== Teil 2: KI sprechen ===== */
 function buildPrompt(){
