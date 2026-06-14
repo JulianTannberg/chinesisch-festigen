@@ -496,7 +496,7 @@ renderSpeechSentence();
   function aReset(){
     if(aURL){ try{ URL.revokeObjectURL(aURL); }catch(e){} aURL = null; }
     $("aussPlayMine").disabled = true;
-    $("aussRecord").textContent = "● Aufnehmen";
+    $("aussRecord").textContent = "🎤 Halten & sprechen";
     aRecording = false;
   }
   function aRender(){
@@ -508,32 +508,44 @@ renderSpeechSentence();
     $("aussCounter").textContent = `Satz ${aIdx+1} von ${tasks.length}`;
     aReset();
     $("aussRecord").style.display = aCanRecord ? "" : "none";
-    $("aussMicNote").textContent = aCanRecord ? "" : "Aufnahme auf diesem Gerät nicht möglich.";
+    $("aussMicNote").textContent = aCanRecord ? "Zum Sprechen gedrückt halten, zum Beenden loslassen." : "Aufnahme auf diesem Gerät nicht möglich.";
   }
   function aStop(){ if(aAutoStop){ clearTimeout(aAutoStop); aAutoStop = null; } if(aRec && aRec.state !== "inactive"){ try{ aRec.stop(); }catch(e){} } }
-  async function aToggle(){
-    if(!aCanRecord) return;
-    if(aRecording){ aStop(); return; }
+  // Push-to-Talk: gedrückt halten zum Sprechen, loslassen zum Beenden.
+  let aHoldWanted = false, aStartPending = false;
+  async function aHoldStart(e){
+    if(e){ e.preventDefault(); }
+    if(!aCanRecord || aRecording || aStartPending) return;
+    aHoldWanted = true; aStartPending = true;
     try{ aStream = await navigator.mediaDevices.getUserMedia({audio:true}); }
-    catch(e){ $("aussMicNote").textContent = "Kein Mikrofon-Zugriff."; return; }
+    catch(err){ $("aussMicNote").textContent = "Kein Mikrofon-Zugriff."; aStartPending = false; aHoldWanted = false; return; }
+    if(!aHoldWanted){ aStream.getTracks().forEach(x => x.stop()); aStream = null; aStartPending = false; return; }
     aChunks = [];
     try{
       aRec = new MediaRecorder(aStream);
-      aRec.ondataavailable = e => { if(e.data && e.data.size) aChunks.push(e.data); };
+      aRec.ondataavailable = ev => { if(ev.data && ev.data.size) aChunks.push(ev.data); };
       aRec.onstop = () => {
         try{ if(aChunks.length) aURL = URL.createObjectURL(new Blob(aChunks, {type: aChunks[0].type || "audio/webm"})); }catch(e){}
         if(aStream){ aStream.getTracks().forEach(x => x.stop()); aStream = null; }
         aRec = null; aRecording = false;
-        $("aussRecord").textContent = "● Aufnehmen";
+        $("aussRecord").textContent = "🎤 Halten & sprechen";
         $("aussPlayMine").disabled = !aURL;
         if(aURL){ try{ new Audio(aURL).play(); }catch(e){} }
       };
-      aRec.start(); aRecording = true; $("aussRecord").textContent = "■ Stopp";
-      aAutoStop = setTimeout(aStop, 10000);
+      aRec.start(); aRecording = true; $("aussRecord").textContent = "● Aufnahme … loslassen";
+      aAutoStop = setTimeout(aStop, 10000); // Sicherheitslimit 10 s
     }catch(e){ $("aussMicNote").textContent = "Aufnahme nicht möglich."; if(aStream){ aStream.getTracks().forEach(x => x.stop()); aStream = null; } }
+    aStartPending = false;
   }
+  function aHoldEnd(){ aHoldWanted = false; aStop(); }
   $("aussPlayModel").addEventListener("click", () => { if(tasks[aIdx]) cfSpeakZh(tasks[aIdx].zh, {rate:0.9}); });
-  $("aussRecord").addEventListener("click", aToggle);
+  const _arb = $("aussRecord");
+  _arb.style.touchAction = "none";
+  _arb.addEventListener("pointerdown", aHoldStart);
+  _arb.addEventListener("pointerup", aHoldEnd);
+  _arb.addEventListener("pointerleave", aHoldEnd);
+  _arb.addEventListener("pointercancel", aHoldEnd);
+  _arb.addEventListener("contextmenu", e => e.preventDefault());
   $("aussPlayMine").addEventListener("click", () => { if(aURL){ try{ new Audio(aURL).play(); }catch(e){} } });
   $("aussPrev").addEventListener("click", () => { if(!tasks.length) return; aStop(); aIdx = (aIdx - 1 + tasks.length) % tasks.length; aRender(); });
   $("aussNext").addEventListener("click", () => { if(!tasks.length) return; aStop(); aIdx = (aIdx + 1) % tasks.length; aRender(); });

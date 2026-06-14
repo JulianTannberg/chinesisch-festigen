@@ -3,8 +3,8 @@
 window.CF_CHAT = {
   "01": {
     partners: [
-      { key: "linyue", name: "林月", pinyin: "Lín Yuè", tag: "aus Beijing" },
-      { key: "suran",  name: "苏然", pinyin: "Sū Rán", tag: "aus Shanghai" }
+      { key: "linyue", name: "林月", pinyin: "Lín Yuè", avatar: "avatars/linyue.jpg" },
+      { key: "suran",  name: "苏然", pinyin: "Sū Rán", avatar: "avatars/suran.jpg" }
     ],
     convo: {
       linyue: {

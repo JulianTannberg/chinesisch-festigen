@@ -212,3 +212,24 @@ async function cfTranscribe(blob){
   return (data && data.text) ? String(data.text) : "";
 }
 function cfWorkerReady(){ return !!((window.CF_CONFIG && window.CF_CONFIG.workerUrl)); }
+
+
+// Globaler iPad/iOS-Fix: Auf festen Seiten (html.noScroll) darf das Fenster nicht
+// verrutschen. Nach dem Schließen der Tastatur / bei Viewport-Änderung wieder oben fixieren.
+(function cfPinTopGlobal(){
+  function pin(){
+    if(!document.documentElement.classList.contains("noScroll")) return;
+    try{ window.scrollTo(0, 0); }catch(e){}
+    if(document.body) document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  }
+  document.addEventListener("focusout", function(){ setTimeout(pin, 60); }, true);
+  window.addEventListener("orientationchange", function(){ setTimeout(pin, 120); });
+  if(window.visualViewport){
+    window.visualViewport.addEventListener("resize", function(){
+      var ae = document.activeElement;
+      var typing = ae && (ae.tagName === "INPUT" || ae.tagName === "TEXTAREA");
+      if(!typing) setTimeout(pin, 60);
+    });
+  }
+})();

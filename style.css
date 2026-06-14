@@ -1060,10 +1060,10 @@ html.noScroll .app > section.chatCard{ display:flex; flex-direction:column; flex
 .chatWho{ display:flex; flex-direction:column; line-height:1.2; }
 .chatMsgs{ flex:1 1 auto; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:12px 2px; display:flex; flex-direction:column; gap:10px; }
 
-.msg{ display:flex; }
+.msg{ display:flex; align-items:flex-end; gap:8px; }
 .msg.partner{ justify-content:flex-start; }
 .msg.me{ justify-content:flex-end; }
-.bubble{ max-width:80%; padding:10px 13px; border-radius:18px; font-size:16px; }
+.bubble{ max-width:72%; padding:10px 13px; border-radius:18px; font-size:16px; }
 .msg.partner .bubble{ background:var(--card-strong); border-bottom-left-radius:6px; }
 .msg.me .bubble{ background:var(--me-bubble); color:var(--me-text); border-bottom-right-radius:6px; }
 .bubble.text .bzh{ display:block; font-size:21px; }
@@ -1150,3 +1150,13 @@ html.noScroll .app > section.chatCard{ display:flex; flex-direction:column; flex
 .aussGrid .card2 .zh{ font-size:26px; line-height:1.2; }
 .aussGrid .card2 .pinyin{ opacity:.85; }
 .aussGrid .card2 .de{ opacity:.8; }
+
+
+/* Chat-Avatare */
+.msgAvatar{ width:30px; height:30px; border-radius:50%; flex:0 0 auto; object-fit:cover; }
+.msgAvatar.letter{ display:flex; align-items:center; justify-content:center; background:var(--card-strong); font-weight:800; font-size:14px; color:var(--chapter-text); }
+img.contactAvatar{ object-fit:cover; padding:0; }
+.chatHeadAvatar{ width:38px; height:38px; border-radius:50%; object-fit:cover; flex:0 0 auto; }
+.ownProfile{ display:flex; align-items:center; gap:10px; margin-top:14px; padding-top:12px; border-top:1px solid var(--stroke); }
+.ownProfile .ownProfileText{ flex:1 1 auto; color:var(--muted); font-size:14px; }
+.ownProfile .contactAvatar{ width:40px; height:40px; }

@@ -339,3 +339,18 @@ dynamischer Tracking-Dienst).
 - **Sprechen – neuer Reiter „Aussprache":** Vorbild links anhören (Hanzi/Pinyin/Deutsch), rechts selbst aufnehmen und zum Vergleich anhören. Funktioniert auf allen Geräten (auch iOS). Bewertung folgt später (wenn Worker + ergänzte Inhalte stehen).
 - Service-Worker-Version erhöht.
 - OFFEN (nächster Schritt): Schreibtraining – zeichenbasiert (jedes Zeichen nur einmal), ganzes Wort darüber, aktuelles Zeichen farbig; im Schreibtraining Pinyin darüber (kein Abschreiben); Wertung pro Zeichen, Fortschritt wird dabei einmalig zurückgesetzt.
+
+## Änderungen Etappe 27
+
+- **Aussprache:** Aufnehmen jetzt per Gedrückthalten (Push-to-Talk) – Knopf halten zum Sprechen, loslassen beendet und spielt direkt ab. Sicherheitslimit 10 s.
+- Vermerk: „Aussprache" ist die kostenlose Version. Sobald Aufnahme + Prüfung über den Worker läuft, kann „Sätze sprechen" beides (aufnehmen/zurückhören UND prüfen) – dann kann der Reiter „Aussprache" wieder entfernt werden.
+- Service-Worker-Version erhöht.
+
+## Änderungen Etappe 28
+
+- **Ansichts-Fix global:** Der iPad/iOS-Tastatur-Fix liegt jetzt in common.js und greift auf allen festen Seiten (auch Sprechen) – nach dem Tippen rutscht die Ansicht nicht mehr.
+- **Chat-Profilbilder:** Sū Rán und Lín Yuè haben Bilder (in Kontaktliste, Kopf und an jeder Nachricht). Herkunft („aus Beijing/Shanghai") entfernt – nur Bild, Name (Hanzi) und Pinyin.
+- **Eigenes Profilbild:** In der Kontaktliste „Bild wählen" → wird lokal (verkleinert, im Browser) gespeichert und erscheint an den eigenen Nachrichten. Bleibt nur auf dem Gerät.
+- Avatare: avatars/suran.jpg, avatars/linyue.jpg (klein gerechnet), im Service-Worker-Cache.
+- Service-Worker-Version erhöht.
+- OFFEN (nächster Schritt): Schreibtraining zeichenbasiert (jedes Zeichen einmal, Wort darüber, aktuelles Zeichen farbig, Pinyin im Training) + dortige Ansicht.

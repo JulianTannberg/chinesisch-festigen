@@ -15,11 +15,17 @@
     <section class="card" id="contactsView">
       <p class="subtitle" id="contactsHint">Mit wem möchtest du schreiben?</p>
       <div id="contactsList"></div>
+      <div class="ownProfile">
+        <span id="ownAvatarWrap"></span>
+        <span class="ownProfileText">Dein Profilbild</span>
+        <label class="miniBtn">Bild wählen<input type="file" accept="image/*" id="ownAvatarInput" hidden></label>
+      </div>
     </section>
 
     <section class="card chatCard" id="convoView" style="display:none;">
       <div class="chatHead">
         <button class="miniBtn" id="toContacts" type="button">←</button>
+        <img id="chatHeadAvatar" class="chatHeadAvatar" alt="" style="display:none;">
         <div class="chatWho"><strong id="chatName">–</strong><span class="small" id="chatTag"></span></div>
       </div>
       <div class="chatMsgs" id="chatMsgs"></div>
@@ -82,9 +88,8 @@
     }
     DATA.partners.forEach(p => {
       const b = document.createElement("button"); b.type = "button"; b.className = "contactRow";
-      b.innerHTML = `<span class="contactAvatar">${escapeHtml(p.name.slice(0,1))}</span>
-        <span class="contactInfo"><strong>${escapeHtml(p.name)}</strong>
-        <span class="small">${escapeHtml(p.pinyin)} · ${escapeHtml(p.tag || "")}</span></span>`;
+      const av = p.avatar ? `<img class="contactAvatar" src="${p.avatar}" alt="">` : `<span class="contactAvatar">${escapeHtml(p.name.slice(0,1))}</span>`;
+      b.innerHTML = `${av}<span class="contactInfo"><strong>${escapeHtml(p.name)}</strong><span class="small">${escapeHtml(p.pinyin)}</span></span>`;
       b.addEventListener("click", () => openConvo(p));
       list.appendChild(b);
     });
@@ -96,8 +101,10 @@
   function openConvo(p){
     partner = p; convo = (DATA.convo && DATA.convo[p.key]) || null; lastMode = "text";
     document.getElementById("contactsView").style.display = "none"; convoEl.style.display = "";
-    document.getElementById("chatName").textContent = `${p.name} (${p.pinyin})`;
-    document.getElementById("chatTag").textContent = p.tag || "";
+    document.getElementById("chatName").textContent = p.name;
+    document.getElementById("chatTag").textContent = p.pinyin || "";
+    const _cha = document.getElementById("chatHeadAvatar");
+    if(p.avatar){ _cha.src = p.avatar; _cha.style.display = ""; } else { _cha.style.display = "none"; }
     document.getElementById("micBtn").style.display = micOK ? "" : "none";
     document.getElementById("chatMsgs").innerHTML = "";
     runNode(convo ? convo.start : null);
@@ -108,6 +115,21 @@
   function durLabel(secs){ const s = Math.max(1, Math.min(99, Math.round(secs || 1))); return "0:" + (s < 10 ? "0" + s : s); }
   function speak(text){ cfSpeakZh(text, {rate: 0.92}); }
 
+  function userAvatar(){ try{ return localStorage.getItem("cf_user_avatar") || ""; }catch(e){ return ""; } }
+  function avatarEl(side){
+    const src = side === "me" ? userAvatar() : (partner && partner.avatar);
+    let el;
+    if(src){ el = document.createElement("img"); el.src = src; el.alt = ""; }
+    else { el = document.createElement("span"); el.classList.add("letter");
+      el.textContent = side === "me" ? (NAME || "?").slice(0,1) : (partner ? partner.name.slice(0,1) : "?"); }
+    el.classList.add("msgAvatar"); return el;
+  }
+  function mountMsg(wrap, side, bubbleEl){
+    const av = avatarEl(side);
+    if(side === "partner"){ wrap.appendChild(av); wrap.appendChild(bubbleEl); }
+    else { wrap.appendChild(bubbleEl); wrap.appendChild(av); }
+    document.getElementById("chatMsgs").appendChild(wrap); scrollDown();
+  }
   function addTextBubble(side, line){
     const wrap = document.createElement("div"); wrap.className = `msg ${side}`;
     const b = document.createElement("div"); b.className = "bubble text";
@@ -118,7 +140,7 @@
       b.classList.add("tappable");
       b.addEventListener("click", () => { const h = b.querySelector(".bhelp"); h.style.display = h.style.display === "none" ? "block" : "none"; });
     }else{ b.innerHTML = `<span class="bzh">${escapeHtml(line.zh)}</span>`; }
-    wrap.appendChild(b); document.getElementById("chatMsgs").appendChild(wrap); scrollDown();
+    mountMsg(wrap, side, b);
   }
   function addVoiceBubble(side, text, audioURL, secs){
     const wrap = document.createElement("div"); wrap.className = `msg ${side}`;
@@ -130,10 +152,13 @@
       if(audioURL){ try{ new Audio(audioURL).play(); return; }catch(e){} }
       if(text) speak(text);
     });
-    wrap.appendChild(b); document.getElementById("chatMsgs").appendChild(wrap); scrollDown();
+    mountMsg(wrap, side, b);
   }
   function addNote(text){ const w = document.createElement("div"); w.className = "chatNote"; w.textContent = text; document.getElementById("chatMsgs").appendChild(w); scrollDown(); }
-  function addTyping(){ const w = document.createElement("div"); w.className = "msg partner"; w.id = "typingRow"; w.innerHTML = `<div class="bubble typing"><i></i><i></i><i></i></div>`; document.getElementById("chatMsgs").appendChild(w); scrollDown(); }
+  function addTyping(){ const w = document.createElement("div"); w.className = "msg partner"; w.id = "typingRow";
+    const b = document.createElement("div"); b.className = "bubble typing"; b.innerHTML = "<i></i><i></i><i></i>";
+    w.appendChild(avatarEl("partner")); w.appendChild(b);
+    document.getElementById("chatMsgs").appendChild(w); scrollDown(); }
   function removeTyping(){ const t = document.getElementById("typingRow"); if(t) t.remove(); }
 
   function showPartnerLines(lines, asVoice, done){
@@ -311,8 +336,35 @@
     }catch(e){ endSR(); }
   }
 
+  // Eigenes Profilbild (lokal in localStorage)
+  function renderOwnAvatar(){
+    const wrap = document.getElementById("ownAvatarWrap"); if(!wrap) return;
+    const ua = userAvatar();
+    wrap.innerHTML = ua ? `<img class="contactAvatar" src="${ua}" alt="">` : `<span class="contactAvatar">${escapeHtml((NAME || "?").slice(0,1))}</span>`;
+  }
+  function downscaleAvatar(file, cb){
+    const fr = new FileReader();
+    fr.onload = () => { const img = new Image(); img.onload = () => {
+      const s = 128, c = document.createElement("canvas"); c.width = s; c.height = s;
+      const ctx = c.getContext("2d"); const m = Math.min(img.width, img.height);
+      ctx.drawImage(img, (img.width-m)/2, (img.height-m)/2, m, m, 0, 0, s, s);
+      try{ cb(c.toDataURL("image/jpeg", 0.85)); }catch(e){ cb(null); }
+    }; img.onerror = () => cb(null); img.src = fr.result; };
+    fr.onerror = () => cb(null); fr.readAsDataURL(file);
+  }
+  const ownInput = document.getElementById("ownAvatarInput");
+  if(ownInput){ ownInput.addEventListener("change", () => {
+    const f = ownInput.files && ownInput.files[0]; if(!f) return;
+    downscaleAvatar(f, (data) => {
+      if(!data){ alert("Bild konnte nicht geladen werden."); return; }
+      try{ localStorage.setItem("cf_user_avatar", data); }catch(e){ alert("Bild zu groß zum Speichern."); return; }
+      renderOwnAvatar();
+    });
+  }); }
+
   // Start
   renderContacts();
+  renderOwnAvatar();
   const who = params.get("who");
   if(who && DATA){ const p = DATA.partners.find(x => x.key === who); if(p) openConvo(p); }
   </script>
