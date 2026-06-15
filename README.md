@@ -404,3 +404,41 @@ dynamischer Tracking-Dienst).
 - Satzzeichen sind Teil des Dateinamens (wie vom Nutzer bestätigt).
 - DATEINAMEN_Kapitel01.txt neu: Vokabeln, Einzelzeichen, Geschichte (mit Sprecher).
 - Service-Worker erhöht.
+
+## Änderungen Etappe 34 (Geschichte in Einzelsätzen + untere Leiste)
+
+- Geschichte Kapitel 1: fünf mehrsatzige Zeilen in einzelne Sätze geteilt (16 → 21 Einträge). „啊！对不起！" bewusst als eine Einheit gelassen. Wirkt auf Hören (kürzere Häppchen + je eine Audiodatei), Üben (je ein Satz) und Audio-Dateinamen.
+- DATEINAMEN_Kapitel01.txt neu: Geschichte jetzt als Einzelsätze (21 Dateien).
+- Untere Reiter (Lernen/Üben/Spielen) wurden auf manchen Android-PWAs abgeschnitten: noScroll-Höhe von 100dvh auf 100svh umgestellt, bottomTabs flex-shrink:0 – untere Leiste bleibt sichtbar.
+- Hinweis: Für künftige Kapitel Dialogzeilen gleich als Einzelsätze anlegen (keine mehreren Sätze in einer Zeile).
+
+## Änderungen Etappe 35 (maximale Wiederverwendung der Audios)
+
+- Ergebnis: Vokabeln + Story decken Hören, Üben, Spielen (inkl. Lückenspiel) UND „Sätze sprechen" ab – alles greift per exakter Text-Übereinstimmung auf dieselben Dateien zu. Keine zusätzlichen Dateien dafür nötig.
+- Chat gibt jetzt den Sprecher mit (partner.key). Verhindert falsche Stimmen.
+- cfAudioUrlFor: bei angegebenem Sprecher wird NUR eine gleiche Stimme (Story) oder eine sprecherneutrale Vokabel verwendet – sonst Browserstimme (kein Rückgriff auf fremde Stimme).
+- Browserstimme bleibt nur bei: Chat-eigenen Sätzen ohne passende Datei und beim KI-Schülerdialog (Platzhalter „……", Rollen A/B – für feste Dateien ungeeignet).
+- Service-Worker erhöht.
+
+## Änderungen Etappe 36 (Chat raus, Menü ohne Profilbild)
+
+- Chat-Einstieg (Icon auf der Kapitelseite) entfernt – Chat ist vorerst raus. Die Dateien (chat.html, chatdata.js) bleiben im Projekt, falls er später zurückkommt.
+- „Profilbild (Chat)" aus dem Einstellungen-Menü entfernt (wurde nur im Chat gebraucht). Reset-Hinweis angepasst.
+- Übungen: jeder Story-Satz behält die Stimme seiner Sprecherin/seines Sprechers (Lín Yuè bleibt Lín Yuè).
+- Service-Worker erhöht.
+- OFFEN/zu klären: Behandlung des Selbstvorstellungs-Satzes „我叫 [Name des Nutzers]" (kein festes Audio möglich).
+
+## Änderungen Etappe 37 (Selbstvorstellung mit eigenem Namen, Variante A)
+
+- Sprechübung: Der Satz „你好，我叫苏然。" wird zur Selbstvorstellung „你好，我叫 [dein Name]。" personalisiert (Anzeige + deutscher Hinweis mit deinem Namen, bei fehlendem Namen „… deinen Namen einsetzen").
+- Vorbild-Audio bleibt Sū Ráns Originalaufnahme „你好，我叫苏然。" (audioZh) – kein neues Audio nötig, kein deutscher Name in chinesischer TTS.
+- Erkennung akzeptiert weiterhin alles mit „我叫" (dein Name zählt).
+- Hören/Üben/Lückenspiel zeigen denselben Satz weiter als Story (Sū Rán) mit seiner Aufnahme – die Sätze bleiben über die Modi identisch, Audios werden wiederverwendet.
+- Service-Worker erhöht.
+
+## Änderungen Etappe 38 (Fehler melden)
+
+- Neue Seite fehler.html: geführte Vorlage Kapitel → Bereich (Lernen/Üben/Spielen/Allgemein) → Unterpunkt → Freitext. „Senden“ öffnet die E-Mail-App via mailto an info@memyo.de mit vorbereitetem Betreff „Chinesisch festigen – Fehler: Kapitel X · Bereich · Unterpunkt“ und strukturiertem Text; danach Dankesseite.
+- Stufe 1 (ohne Server). Später leicht auf echten Versand (Worker) umstellbar – nur der „Senden“-Teil ändert sich.
+- Verlinkt im Einstellungen-Menü („Fehler melden“).
+- Service-Worker erhöht, fehler.html im Offline-Cache.

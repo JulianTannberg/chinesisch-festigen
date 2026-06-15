@@ -127,13 +127,19 @@ function cfAudioUrlFor(text, speaker){
   if(!_cfAudioIndex) _cfAudioIndex = _cfBuildAudioIndex();
   var cands = _cfAudioIndex[String(text)];
   if(!cands || !cands.length) return "";
+  var cur = window.CF_CHAPTER;
   var sp = speaker ? window.CF_AUDIO.speakerId(speaker) : null;
-  // bevorzugt: passender Sprecher; dann aktuelles Kapitel; sonst erstes
   var pick = null;
-  if(sp) pick = cands.find(function(x){ return x.speaker === sp && (!window.CF_CHAPTER || x.chapter === window.CF_CHAPTER); })
-              || cands.find(function(x){ return x.speaker === sp; });
-  if(!pick && window.CF_CHAPTER) pick = cands.find(function(x){ return x.chapter === window.CF_CHAPTER; });
-  if(!pick) pick = cands[0];
+  if(sp){
+    // Bei angegebenem Sprecher NUR gleiche Stimme (Story) ODER sprecherneutrale Vokabel.
+    // KEIN Rückgriff auf eine fremde Stimme – sonst lieber Browserstimme.
+    pick = cands.find(function(x){ return x.speaker === sp && (!cur || x.chapter === cur); })
+        || cands.find(function(x){ return x.speaker === sp; })
+        || cands.find(function(x){ return !x.speaker && (!cur || x.chapter === cur); })
+        || cands.find(function(x){ return !x.speaker; });
+    return pick ? cfAudioUrl(text, pick.chapter, pick.type, pick.speaker) : "";
+  }
+  pick = (cur && cands.find(function(x){ return x.chapter === cur; })) || cands[0];
   return cfAudioUrl(text, pick.chapter, pick.type, pick.speaker);
 }
 var _cfQueue = [], _cfPlaying = false, _cfCurAudio = null, _cfCurOnend = null;

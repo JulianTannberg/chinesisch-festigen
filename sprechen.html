@@ -197,17 +197,22 @@ function normalizeZh(s){
 }
 function exerciseName(){ return window.CF_PROFILE?.getName?.() || ""; }
 function makeNameFlexible(task){
-  const zhNorm = normalizeZh(task.zh);
-  if(zhNorm === "我叫苏然"){
+  // Selbstvorstellung: 苏然 wird durch den eigenen Namen ersetzt.
+  // Vorbild-Audio bleibt aber Sū Ráns Originalaufnahme (audioZh) – Variante A.
+  if(task.zh && task.zh.indexOf("我叫苏然") !== -1){
     const name = exerciseName();
     const deName = name || "…";
     const zhName = name || "……";
+    const baseDe = task.de || "Hallo, ich heiße Sū Rán.";
     return {
       ...task,
-      de: `Ich heiße ${deName}.`,
-      displayDe: name ? `Ich heiße ${name}.` : "Ich heiße … (deinen Namen einsetzen).",
-      zh: `我叫 ${zhName}。`,
-      pinyin: `Wǒ jiào ${deName}.`,
+      audioZh: task.zh,                                   // Vorbild bleibt "你好，我叫苏然。"
+      zh: task.zh.replace("苏然", zhName),
+      de: baseDe.replace(/Sū Rán|Su Ran|苏然/g, deName),
+      displayDe: name
+        ? baseDe.replace(/Sū Rán|Su Ran|苏然/g, name)
+        : "Hallo, ich heiße … (deinen Namen einsetzen).",
+      pinyin: (task.pinyin || "").replace(/Sū Rán|Su Ran/g, deName),
       acceptMode: "woJiaoName"
     };
   }
@@ -406,10 +411,10 @@ function checkTranscript(alternatives, task){
 
     if(failedAttempts === 3){
       setFeedback("bad", task.acceptMode === "woJiaoName" ? "Noch nicht erkannt. Ich spreche dir die Struktur einmal langsam vor." : "Noch nicht erkannt. Ich spreche dir den Satz einmal langsam vor; danach versuchst du ihn noch einmal.");
-      setTimeout(() => speakZh(task.zh || "", 0.65), 350);
+      setTimeout(() => speakZh(task.audioZh || task.zh || "", 0.65), 350);
     }else if(failedAttempts >= 5){
       setFeedback("bad", "Das ist ein schwieriger Satz. Hör ihn dir langsam an, lies die Lösung und versuch ihn danach noch einmal. Du darfst auch weitergehen.");
-      setTimeout(() => speakZh(task.zh || "", 0.6), 350);
+      setTimeout(() => speakZh(task.audioZh || task.zh || "", 0.6), 350);
     }else{
       setFeedback("bad", task.acceptMode === "woJiaoName" ? "Noch nicht erkannt. Wichtig ist: 我叫 + dein Name." : "Noch nicht erkannt. Sprich langsam und deutlich oder zeig dir die Lösung an.");
     }
@@ -438,7 +443,7 @@ function restartSpeechSentence(){
   _rb.addEventListener("pointercancel", stopRecording);
   _rb.addEventListener("contextmenu", e => e.preventDefault());
 })();
-$("hearBtn").addEventListener("click", () => speakZh(current()?.zh || ""));
+$("hearBtn").addEventListener("click", () => speakZh(current()?.audioZh || current()?.zh || ""));
 $("nextBtn").addEventListener("click", nextSpeechSentence);
 $("finishRestart").addEventListener("click", restartSpeechSentence);
 if(window.speechSynthesis) speechSynthesis.onvoiceschanged = () => {};

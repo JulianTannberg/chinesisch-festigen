@@ -108,7 +108,7 @@
 
   function scrollDown(){ const m = document.getElementById("chatMsgs"); m.scrollTop = m.scrollHeight; }
   function durLabel(secs){ const s = Math.max(1, Math.min(99, Math.round(secs || 1))); return "0:" + (s < 10 ? "0" + s : s); }
-  function speak(text){ cfSpeakZh(text, {rate: 0.92}); }
+  function speak(text, speaker){ cfSpeakZh(text, {rate: 0.92, speaker: speaker}); }
 
   function userAvatar(){ try{ return localStorage.getItem("cf_user_avatar") || ""; }catch(e){ return ""; } }
   function avatarEl(side){
@@ -145,7 +145,7 @@
       <span class="vDur">${durLabel(secs || ((String(text).match(/[\u4e00-\u9fff]/g)||[]).length/2))}</span>`;
     b.addEventListener("click", () => {
       if(audioURL){ try{ new Audio(audioURL).play(); return; }catch(e){} }
-      if(text) speak(text);
+      if(text) speak(text, side === "partner" ? (partner && partner.key) : null);
     });
     mountMsg(wrap, side, b);
   }
@@ -163,7 +163,7 @@
       addTyping();
       setTimeout(() => {
         removeTyping();
-        if(asVoice){ addVoiceBubble("partner", lines[i].zh); cfSpeakZh(lines[i].zh, {rate:0.92, queue: i > 0}); }
+        if(asVoice){ addVoiceBubble("partner", lines[i].zh); cfSpeakZh(lines[i].zh, {rate:0.92, queue: i > 0, speaker: partner && partner.key}); }
         else{ addTextBubble("partner", lines[i]); }
         i++; setTimeout(next, asVoice ? 500 : 350);
       }, 600);

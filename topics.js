@@ -284,15 +284,27 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "林月",
-        "zh": "没关系。你没事吧？",
-        "pinyin": "Méi guānxi. Nǐ méi shì ba?",
-        "de": "Macht nichts. Alles in Ordnung mit dir?"
+        "zh": "没关系。",
+        "pinyin": "Méi guānxi.",
+        "de": "Macht nichts."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你没事吧？",
+        "pinyin": "Nǐ méi shì ba?",
+        "de": "Alles in Ordnung mit dir?"
       },
       {
         "speaker": "苏然",
-        "zh": "没事，谢谢。我看手机了。",
-        "pinyin": "Méi shì, xièxie. Wǒ kàn shǒujī le.",
-        "de": "Alles gut, danke. Ich habe auf mein Handy geschaut."
+        "zh": "没事，谢谢。",
+        "pinyin": "Méi shì, xièxie.",
+        "de": "Alles gut, danke."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我看手机了。",
+        "pinyin": "Wǒ kàn shǒujī le.",
+        "de": "Ich habe auf mein Handy geschaut."
       },
       {
         "speaker": "林月",
@@ -302,9 +314,15 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "苏然",
-        "zh": "你好，我叫苏然。你叫什么名字？",
-        "pinyin": "Nǐ hǎo, wǒ jiào Sū Rán. Nǐ jiào shénme míngzi?",
-        "de": "Hallo, ich heiße Sū Rán. Wie heißt du?"
+        "zh": "你好，我叫苏然。",
+        "pinyin": "Nǐ hǎo, wǒ jiào Sū Rán.",
+        "de": "Hallo, ich heiße Sū Rán."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你叫什么名字？",
+        "pinyin": "Nǐ jiào shénme míngzi?",
+        "de": "Wie heißt du?"
       },
       {
         "speaker": "林月",
@@ -320,15 +338,27 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "林月",
-        "zh": "是的，我是北京人。你呢？",
-        "pinyin": "Shì de, wǒ shì Běijīng rén. Nǐ ne?",
-        "de": "Ja, ich bin aus Beijing. Und du?"
+        "zh": "是的，我是北京人。",
+        "pinyin": "Shì de, wǒ shì Běijīng rén.",
+        "de": "Ja, ich bin aus Beijing."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你呢？",
+        "pinyin": "Nǐ ne?",
+        "de": "Und du?"
       },
       {
         "speaker": "苏然",
-        "zh": "我不是北京人。我从上海来。",
-        "pinyin": "Wǒ bú shì Běijīng rén. Wǒ cóng Shànghǎi lái.",
-        "de": "Ich bin nicht aus Beijing. Ich komme aus Shanghai."
+        "zh": "我不是北京人。",
+        "pinyin": "Wǒ bú shì Běijīng rén.",
+        "de": "Ich bin nicht aus Beijing."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我从上海来。",
+        "pinyin": "Wǒ cóng Shànghǎi lái.",
+        "de": "Ich komme aus Shanghai."
       },
       {
         "speaker": "林月",

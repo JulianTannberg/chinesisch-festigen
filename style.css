@@ -824,7 +824,7 @@ html.noScroll, html.noScroll body{
   overscroll-behavior:none;
 }
 html.noScroll .app{
-  height:100dvh;
+  height:100svh;
   box-sizing:border-box;
   display:flex;
   flex-direction:column;
@@ -848,6 +848,7 @@ html.noScroll .app > section.card{
   gap:8px;
   margin-top:18px;
   padding:4px 0 2px;
+  flex-shrink:0;
 }
 .bottomTabs button{
   flex:1;

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Fehler melden · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#03172B" />
+  <link rel="manifest" href="manifest.webmanifest" />
+</head>
+<body>
+  <main class="app">
+    <div class="topbar"><a class="back" href="einstellungen.html">← Einstellungen</a></div>
+    <h1>Fehler melden</h1>
+
+    <section class="card" id="formCard">
+      <p class="small">Danke, dass du hilfst, die App besser zu machen. Wähle aus, wo der Fehler ist, und beschreibe ihn kurz. Mit „Senden“ öffnet sich deine E-Mail-App mit einer vorbereiteten Nachricht.</p>
+
+      <div class="setTitle" style="margin-top:14px;">Wo ist der Fehler?</div>
+      <div class="setRow">
+        <select id="kapitel" class="profileInput"></select>
+      </div>
+      <div class="setRow">
+        <select id="bereich" class="profileInput">
+          <option value="">Bereich wählen …</option>
+          <option value="lernen">Lernen</option>
+          <option value="ueben">Üben</option>
+          <option value="spielen">Spielen</option>
+          <option value="allgemein">Allgemein / weiß nicht</option>
+        </select>
+      </div>
+      <div class="setRow">
+        <select id="unter" class="profileInput"><option value="">Zuerst Bereich wählen …</option></select>
+      </div>
+
+      <div class="setTitle" style="margin-top:14px;">Was ist falsch?</div>
+      <textarea id="text" class="profileInput" rows="5" placeholder="Beschreibe den Fehler so genau wie möglich – z. B. „Bei Vokabel 人 wird das falsche Pinyin angezeigt.“" style="width:100%; resize:vertical; min-height:120px;"></textarea>
+      <div class="small" id="hint" style="margin-top:6px;"></div>
+
+      <div class="setRow" style="margin-top:14px;">
+        <button id="send" type="button">E-Mail vorbereiten &amp; senden</button>
+      </div>
+    </section>
+
+    <section class="card" id="thanksCard" style="display:none;">
+      <div class="setTitle">Vielen Dank! 🙏</div>
+      <p class="small">Deine E-Mail-App sollte sich mit der vorbereiteten Nachricht geöffnet haben. Bitte noch auf „Senden“ tippen, damit die Meldung ankommt.</p>
+      <p class="small">Falls sich nichts geöffnet hat, kannst du die Meldung auch direkt an <b>info@memyo.de</b> schreiben.</p>
+      <div class="setRow"><a class="miniBtn" href="einstellungen.html">Zurück zu den Einstellungen</a></div>
+    </section>
+  </main>
+
+  <script src="common.js"></script>
+  <script src="topics.js"></script>
+  <script>
+  const $ = id => document.getElementById(id);
+  const MAIL = "info@memyo.de";
+
+  // Kapitel-Auswahl
+  const kapSel = $("kapitel");
+  const topics = (window.CF_TOPICS || []).filter(t => (typeof topicHasContent === "function") ? topicHasContent(t) : true);
+  kapSel.innerHTML = `<option value="__all">Allgemein (kein bestimmtes Kapitel)</option>` +
+    topics.map(t => `<option value="${t.id}">${escapeHtml(t.id + ". " + (t.title || ""))}</option>`).join("");
+
+  // Unterpunkte je Bereich (passend zu dem, was man in der App sieht)
+  const SUB = {
+    lernen:   ["Hören", "Schreiben (Zeichen lernen / Schreibtraining / Tippen)", "Sprechen"],
+    ueben:    ["Hören-Übung", "Chinesisch → Deutsch", "Deutsch → Chinesisch / Sprechen"],
+    spielen:  ["Flashkarten", "Memory", "Lückenspiel"],
+    allgemein:["Allgemein", "Vokabeln/Übersetzung", "Audio/Aussprache", "Anzeige/Layout", "Sonstiges"]
+  };
+  function fillUnter(){
+    const b = $("bereich").value;
+    const list = SUB[b] || [];
+    $("unter").innerHTML = list.length
+      ? `<option value="">Unterpunkt wählen …</option>` + list.map(x => `<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join("")
+      : `<option value="">Zuerst Bereich wählen …</option>`;
+  }
+  $("bereich").addEventListener("change", fillUnter);
+
+  const BEREICH_LABEL = { lernen:"Lernen", ueben:"Üben", spielen:"Spielen", allgemein:"Allgemein" };
+
+  $("send").addEventListener("click", () => {
+    const txt = $("text").value.trim();
+    if(!txt){ $("hint").textContent = "Bitte beschreibe den Fehler kurz."; $("text").focus(); return; }
+    const kap = kapSel.value;
+    const ber = $("bereich").value;
+    const unt = $("unter").value;
+
+    const loc = [];
+    if(kap && kap !== "__all") loc.push("Kapitel " + kap);
+    if(ber) loc.push(BEREICH_LABEL[ber] || ber);
+    if(unt) loc.push(unt);
+    const subject = "Chinesisch festigen – Fehler: " + (loc.join(" · ") || "Allgemein");
+
+    const bodyLines = [
+      txt,
+      "",
+      "—",
+      "Kapitel: " + (kap === "__all" ? "Allgemein" : kap),
+      "Bereich: " + (ber ? (BEREICH_LABEL[ber] || ber) : "—"),
+      "Unterpunkt: " + (unt || "—"),
+      "(gemeldet über Chinesisch festigen)"
+    ];
+    const href = "mailto:" + MAIL +
+      "?subject=" + encodeURIComponent(subject) +
+      "&body=" + encodeURIComponent(bodyLines.join("\n"));
+
+    // E-Mail-App öffnen
+    window.location.href = href;
+    // Dankesseite zeigen
+    $("formCard").style.display = "none";
+    $("thanksCard").style.display = "";
+    window.scrollTo(0, 0);
+  });
+  </script>
+</body>
+</html>
