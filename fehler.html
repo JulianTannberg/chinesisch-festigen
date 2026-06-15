@@ -17,21 +17,16 @@
       <p class="small">Danke, dass du hilfst, die App besser zu machen. Wähle aus, wo der Fehler ist, und beschreibe ihn kurz. Mit „Senden“ öffnet sich deine E-Mail-App mit einer vorbereiteten Nachricht.</p>
 
       <div class="setTitle" style="margin-top:14px;">Wo ist der Fehler?</div>
-      <div class="setRow">
-        <select id="kapitel" class="profileInput"></select>
-      </div>
-      <div class="setRow">
-        <select id="bereich" class="profileInput">
-          <option value="">Bereich wählen …</option>
-          <option value="lernen">Lernen</option>
-          <option value="ueben">Üben</option>
-          <option value="spielen">Spielen</option>
-          <option value="allgemein">Allgemein / weiß nicht</option>
-        </select>
-      </div>
-      <div class="setRow">
-        <select id="unter" class="profileInput"><option value="">Zuerst Bereich wählen …</option></select>
-      </div>
+      <div class="setRow"><select id="kapitel" class="profileInput"></select></div>
+      <div class="setRow"><select id="bereich" class="profileInput">
+        <option value="">Bereich wählen …</option>
+        <option value="lernen">Lernen</option>
+        <option value="ueben">Üben</option>
+        <option value="spielen">Spielen</option>
+        <option value="allgemein">Allgemein / weiß nicht</option>
+      </select></div>
+      <div class="setRow"><select id="unter" class="profileInput"><option value="">Zuerst Bereich wählen …</option></select></div>
+      <div class="setRow"><select id="unter2" class="profileInput"><option value="">—</option></select></div>
 
       <div class="setTitle" style="margin-top:14px;">Was ist falsch?</div>
       <textarea id="text" class="profileInput" rows="5" placeholder="Beschreibe den Fehler so genau wie möglich – z. B. „Bei Vokabel 人 wird das falsche Pinyin angezeigt.“" style="width:100%; resize:vertical; min-height:120px;"></textarea>
@@ -56,59 +51,79 @@
   const $ = id => document.getElementById(id);
   const MAIL = "info@memyo.de";
 
-  // Kapitel-Auswahl
+  // Kapitel
   const kapSel = $("kapitel");
   const topics = (window.CF_TOPICS || []).filter(t => (typeof topicHasContent === "function") ? topicHasContent(t) : true);
   kapSel.innerHTML = `<option value="__all">Allgemein (kein bestimmtes Kapitel)</option>` +
     topics.map(t => `<option value="${t.id}">${escapeHtml(t.id + ". " + (t.title || ""))}</option>`).join("");
 
-  // Unterpunkte je Bereich (passend zu dem, was man in der App sieht)
-  const SUB = {
-    lernen:   ["Hören", "Schreiben (Zeichen lernen / Schreibtraining / Tippen)", "Sprechen"],
-    ueben:    ["Hören-Übung", "Chinesisch → Deutsch", "Deutsch → Chinesisch / Sprechen"],
-    spielen:  ["Flashkarten", "Memory", "Lückenspiel"],
-    allgemein:["Allgemein", "Vokabeln/Übersetzung", "Audio/Aussprache", "Anzeige/Layout", "Sonstiges"]
+  // Baum: Bereich -> Unterpunkt -> (Unterreiter | null = kein weiterer Reiter)
+  const TREE = {
+    lernen: {
+      "Hören": ["Vokabeln", "Geschichte"],
+      "Schreiben": ["Zeichen lernen", "Schreibtraining", "Tippen"],
+      "Sprechen": ["Sätze sprechen", "Aussprache", "KI sprechen"]
+    },
+    ueben: {
+      "Chinesisch hören": null,
+      "Chinesisch → Deutsch": null,
+      "Deutsch → Chinesisch": null
+    },
+    spielen: {
+      "Flashkarten": ["Chinesisch → Deutsch", "Deutsch → Chinesisch"],
+      "Memory": null,
+      "Lückenspiel": null
+    },
+    allgemein: {
+      "Allgemein": null, "Vokabeln/Übersetzung": null, "Audio/Aussprache": null, "Anzeige/Layout": null, "Sonstiges": null
+    }
   };
+  const BEREICH_LABEL = { lernen:"Lernen", ueben:"Üben", spielen:"Spielen", allgemein:"Allgemein" };
+
   function fillUnter(){
     const b = $("bereich").value;
-    const list = SUB[b] || [];
-    $("unter").innerHTML = list.length
-      ? `<option value="">Unterpunkt wählen …</option>` + list.map(x => `<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join("")
+    const keys = b && TREE[b] ? Object.keys(TREE[b]) : [];
+    $("unter").innerHTML = keys.length
+      ? `<option value="">Unterpunkt wählen …</option>` + keys.map(k => `<option value="${escapeHtml(k)}">${escapeHtml(k)}</option>`).join("")
       : `<option value="">Zuerst Bereich wählen …</option>`;
+    fillUnter2();
+  }
+  function fillUnter2(){
+    const b = $("bereich").value, u = $("unter").value;
+    const subs = (b && u && TREE[b]) ? TREE[b][u] : undefined;
+    if(Array.isArray(subs) && subs.length){
+      $("unter2").innerHTML = `<option value="">Reiter wählen …</option>` + subs.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join("");
+      $("unter2").disabled = false;
+    }else{
+      $("unter2").innerHTML = `<option value="">—</option>`; // kein weiterer Reiter
+      $("unter2").disabled = true;
+    }
   }
   $("bereich").addEventListener("change", fillUnter);
-
-  const BEREICH_LABEL = { lernen:"Lernen", ueben:"Üben", spielen:"Spielen", allgemein:"Allgemein" };
+  $("unter").addEventListener("change", fillUnter2);
 
   $("send").addEventListener("click", () => {
     const txt = $("text").value.trim();
     if(!txt){ $("hint").textContent = "Bitte beschreibe den Fehler kurz."; $("text").focus(); return; }
-    const kap = kapSel.value;
-    const ber = $("bereich").value;
-    const unt = $("unter").value;
+    const kap = kapSel.value, ber = $("bereich").value, unt = $("unter").value, unt2 = $("unter2").value;
 
     const loc = [];
     if(kap && kap !== "__all") loc.push("Kapitel " + kap);
     if(ber) loc.push(BEREICH_LABEL[ber] || ber);
     if(unt) loc.push(unt);
+    if(unt2) loc.push(unt2);
     const subject = "Chinesisch festigen – Fehler: " + (loc.join(" · ") || "Allgemein");
 
-    const bodyLines = [
-      txt,
-      "",
-      "—",
+    const body = [
+      txt, "", "—",
       "Kapitel: " + (kap === "__all" ? "Allgemein" : kap),
       "Bereich: " + (ber ? (BEREICH_LABEL[ber] || ber) : "—"),
       "Unterpunkt: " + (unt || "—"),
+      "Reiter: " + (unt2 || "—"),
       "(gemeldet über Chinesisch festigen)"
-    ];
-    const href = "mailto:" + MAIL +
-      "?subject=" + encodeURIComponent(subject) +
-      "&body=" + encodeURIComponent(bodyLines.join("\n"));
+    ].join("\n");
 
-    // E-Mail-App öffnen
-    window.location.href = href;
-    // Dankesseite zeigen
+    window.location.href = "mailto:" + MAIL + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
     $("formCard").style.display = "none";
     $("thanksCard").style.display = "";
     window.scrollTo(0, 0);

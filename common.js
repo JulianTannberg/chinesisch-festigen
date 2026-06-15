@@ -335,3 +335,7 @@ function cfWorkerReady(){ return !!((window.CF_CONFIG && window.CF_CONFIG.worker
     });
   }
 })();
+
+
+// Textauswahl kurzzeitig sperren (z. B. während einer gedrückt gehaltenen Aufnahme)
+function cfNoSelect(on){ try{ document.body.classList.toggle("cf-noselect", !!on); }catch(e){} }

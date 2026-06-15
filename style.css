@@ -1185,3 +1185,24 @@ img.contactAvatar{ object-fit:cover; padding:0; }
 .setLinks a:hover{ text-decoration:underline; }
 .dangerBtn{ background:rgba(220,70,70,.18); border-color:rgba(220,70,70,.5); }
 .dangerBtn:hover{ background:rgba(220,70,70,.30); }
+
+
+/* Aufnahme: keine Textauswahl beim Gedrückthalten */
+.recordBtn, #recordBtn, #aussRecord, #speakBtn{
+  -webkit-user-select:none; -moz-user-select:none; user-select:none;
+  -webkit-touch-callout:none;
+}
+.cf-noselect, .cf-noselect *{
+  -webkit-user-select:none !important; -moz-user-select:none !important; user-select:none !important;
+  -webkit-touch-callout:none !important;
+}
+
+
+/* Keine Textauswahl in der ganzen App (Eingabefelder ausgenommen) */
+html, body{
+  -webkit-user-select:none; -moz-user-select:none; -ms-user-select:none; user-select:none;
+  -webkit-touch-callout:none;
+}
+input, textarea, select, [contenteditable="true"]{
+  -webkit-user-select:text; -moz-user-select:text; -ms-user-select:text; user-select:text;
+}

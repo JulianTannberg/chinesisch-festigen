@@ -207,6 +207,7 @@ function makeNameFlexible(task){
     return {
       ...task,
       audioZh: task.zh,                                   // Vorbild bleibt "你好，我叫苏然。"
+      model: { zh: task.zh, pinyin: task.pinyin || "", de: task.de || "" }, // Original (Sū Rán) für die Aussprache
       zh: task.zh.replace("苏然", zhName),
       de: baseDe.replace(/Sū Rán|Su Ran|苏然/g, deName),
       displayDe: name
@@ -337,10 +338,11 @@ async function prepareMicrophoneOnce(){
   }
 }
 let pttReleased = false;
-function stopRecording(){ pttReleased = true; if(recognition && recording){ try{ recognition.stop(); }catch(e){} } }
+function stopRecording(){ pttReleased = true; cfNoSelect(false); if(recognition && recording){ try{ recognition.stop(); }catch(e){} } }
 async function startRecording(){
   if(!Recognition || recording) return;
   pttReleased = false;
+  cfNoSelect(true);
   const okMic = await prepareMicrophoneOnce();
   if(!okMic) return;
 
@@ -510,9 +512,10 @@ renderSpeechSentence();
   function aRender(){
     if(!tasks.length){ $("aussEmpty").style.display = "block"; $("aussGame").style.display = "none"; return; }
     const t = tasks[aIdx];
-    $("aussZh").textContent = t.zh;
-    $("aussPinyin").textContent = t.pinyin || "";
-    $("aussDe").textContent = t.displayDe || t.de || "";
+    const m = t.model || null;
+    $("aussZh").textContent = m ? m.zh : t.zh;
+    $("aussPinyin").textContent = m ? m.pinyin : (t.pinyin || "");
+    $("aussDe").textContent = m ? m.de : (t.displayDe || t.de || "");
     $("aussCounter").textContent = `Satz ${aIdx+1} von ${tasks.length}`;
     aReset();
     $("aussRecord").style.display = aCanRecord ? "" : "none";
@@ -524,7 +527,7 @@ renderSpeechSentence();
   async function aHoldStart(e){
     if(e){ e.preventDefault(); }
     if(!aCanRecord || aRecording || aStartPending) return;
-    aHoldWanted = true; aStartPending = true;
+    aHoldWanted = true; aStartPending = true; cfNoSelect(true);
     try{ aStream = await navigator.mediaDevices.getUserMedia({audio:true}); }
     catch(err){ $("aussMicNote").textContent = "Kein Mikrofon-Zugriff."; aStartPending = false; aHoldWanted = false; return; }
     if(!aHoldWanted){ aStream.getTracks().forEach(x => x.stop()); aStream = null; aStartPending = false; return; }
@@ -545,8 +548,8 @@ renderSpeechSentence();
     }catch(e){ $("aussMicNote").textContent = "Aufnahme nicht möglich."; if(aStream){ aStream.getTracks().forEach(x => x.stop()); aStream = null; } }
     aStartPending = false;
   }
-  function aHoldEnd(){ aHoldWanted = false; aStop(); }
-  $("aussPlayModel").addEventListener("click", () => { if(tasks[aIdx]) cfSpeakZh(tasks[aIdx].zh, {rate:0.9}); });
+  function aHoldEnd(){ aHoldWanted = false; cfNoSelect(false); aStop(); }
+  $("aussPlayModel").addEventListener("click", () => { const t = tasks[aIdx]; if(t) cfSpeakZh(t.audioZh || t.zh, {rate:0.9}); });
   const _arb = $("aussRecord");
   _arb.style.touchAction = "none";
   _arb.addEventListener("pointerdown", aHoldStart);

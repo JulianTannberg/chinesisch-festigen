@@ -360,6 +360,7 @@ if(MODE === "dezh" && Recognition && !cfIsIOS()){
     if(e) e.preventDefault();
     if(listening) return;
     released = false;
+    cfNoSelect(true);
     const t = current();
     r = new Recognition();
     r.lang = "zh-CN";
@@ -388,7 +389,7 @@ if(MODE === "dezh" && Recognition && !cfIsIOS()){
     };
     try{ r.start(); if(released){ try{ r.stop(); }catch(e){} } }catch(e){ listening = false; }
   }
-  function stopSpeak(){ released = true; if(r && listening){ try{ r.stop(); }catch(e){} } }
+  function stopSpeak(){ released = true; cfNoSelect(false); if(r && listening){ try{ r.stop(); }catch(e){} } }
   $("speakBtn").addEventListener("pointerdown", startSpeak);
   $("speakBtn").addEventListener("pointerup", stopSpeak);
   $("speakBtn").addEventListener("pointerleave", stopSpeak);

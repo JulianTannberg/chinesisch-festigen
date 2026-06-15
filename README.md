@@ -442,3 +442,16 @@ dynamischer Tracking-Dienst).
 - Stufe 1 (ohne Server). Später leicht auf echten Versand (Worker) umstellbar – nur der „Senden“-Teil ändert sich.
 - Verlinkt im Einstellungen-Menü („Fehler melden“).
 - Service-Worker erhöht, fehler.html im Offline-Cache.
+
+## Änderungen Etappe 39 (Aussprache-Vorbild + Fehler-Vorlage mit Reiter)
+
+- Sprechen → Aussprache: bei der Selbstvorstellung wird jetzt das Vorbild „你好，我叫苏然。" angezeigt UND abgespielt (Sū Ráns Aufnahme), nicht mehr „我叫 [Name]". Personalisierung bleibt nur in „Sätze sprechen".
+- Fehler melden: dritte Ebene ergänzt. Lernen → Hören/Schreiben/Sprechen haben Unterreiter (z. B. Hören: Vokabeln/Geschichte). Üben (Chinesisch hören / Chinesisch→Deutsch / Deutsch→Chinesisch) und Spielen-Memory/Lückenspiel haben keinen → dort steht „—". Flashkarten hat Chinesisch→Deutsch / Deutsch→Chinesisch.
+- Betreff/Text der Mail enthält jetzt zusätzlich den Reiter.
+- Service-Worker erhöht.
+
+## Änderungen Etappe 40 (keine Textauswahl in der ganzen App)
+
+- Globale Sperre: in der gesamten Web-App ist kein Text mehr markierbar (verhindert versehentliches Markieren beim Gedrückthalten der Aufnahme-Buttons und das Long-Press-Menü).
+- Ausgenommen sind Eingabefelder (Name, Fehlertext, Tippen, Lückenspiel) – dort kann weiter getippt und markiert werden.
+- Service-Worker erhöht.
