@@ -114,11 +114,18 @@ function _cfBuildAudioIndex(){
     (t.understandingVocab || []).forEach(function(v){ if(v && v.zh){ (m[v.zh] = m[v.zh] || []).push({chapter:t.id, type:"vocable"}); } });
     (t.storyDialog || []).forEach(function(l){ if(l && l.zh){ (m[l.zh] = m[l.zh] || []).push({chapter:t.id, type:"story", speaker: window.CF_AUDIO.speakerId(l.speaker)}); } });
   });
-  // Einzelzeichen aus dem Schreibtraining (Bausteine) – als vocable
-  var bau = window.CF_BAUSTEINE || {};
-  Object.keys(bau).forEach(function(cid){
-    var d = bau[cid]; if(!d || !d.chars) return;
-    Object.keys(d.chars).forEach(function(ch){ (m[ch] = m[ch] || []).push({chapter:cid, type:"vocable"}); });
+  // Einzelzeichen: ALLE Hanzi des Kapitels (Vokabeln + Zusatz + Geschichte) als vocable,
+  // damit beim Antippen der Kärtchen (Üben) und im Schreibtraining jede Datei greift.
+  (window.CF_TOPICS || []).forEach(function(t){
+    var seen = {};
+    function addChars(s){
+      String(s || "").split("").forEach(function(ch){
+        if(/[\u4e00-\u9fff]/.test(ch) && !seen[ch]){ seen[ch] = 1; (m[ch] = m[ch] || []).push({chapter:t.id, type:"vocable"}); }
+      });
+    }
+    (t.vocab || []).forEach(function(v){ if(v) addChars(v.zh); });
+    (t.understandingVocab || []).forEach(function(v){ if(v) addChars(v.zh); });
+    (t.storyDialog || []).forEach(function(l){ if(l) addChars(l.zh); });
   });
   return m;
 }
@@ -282,7 +289,7 @@ function cfPaintTabScores(pairs, chapterId){
 // ohne chapterId alle Kapitel. Name und Einstellungen (Ton, Richtung,
 // Hinweise, zuletzt gewählter Reiter) bleiben immer erhalten.
 function cfResetProgress(chapterId){
-  const keep = new Set(["cf_user_name", "cf_kapitel_tab", "cf_ueben_sound", "cf_ime_hint_hidden"]);
+  const keep = new Set(["cf_user_name", "cf_kapitel_tab", "cf_ueben_sound", "cf_ime_hint_hidden", "cf_age_ok"]);
   const keepPrefix = ["cf_memory_sound_", "cf_flash_direction_", "cf_write_direction_"];
   const id = chapterId ? String(chapterId) : null;
   const remove = [];
@@ -339,3 +346,41 @@ function cfWorkerReady(){ return !!((window.CF_CONFIG && window.CF_CONFIG.worker
 
 // Textauswahl kurzzeitig sperren (z. B. während einer gedrückt gehaltenen Aufnahme)
 function cfNoSelect(on){ try{ document.body.classList.toggle("cf-noselect", !!on); }catch(e){} }
+
+
+// Altersbestätigung (mind. 16). Blockiert die App bis bestätigt; auf Rechtsseiten nicht.
+function cfAgeGate(){
+  try{
+    if(localStorage.getItem("cf_age_ok") === "1") return;
+  }catch(e){ return; }
+  var path = (location.pathname || "").toLowerCase();
+  if(path.indexOf("datenschutz") !== -1 || path.indexOf("agb") !== -1 || path.indexOf("impressum") !== -1) return;
+  function build(){
+    if(!document.body || document.getElementById("cfAgeGate")) return;
+    var ov = document.createElement("div");
+    ov.id = "cfAgeGate";
+    ov.setAttribute("style", "position:fixed;inset:0;z-index:99999;background:#03172B;color:#fff;display:flex;align-items:center;justify-content:center;padding:24px;overflow:auto;-webkit-user-select:none;user-select:none;");
+    ov.innerHTML =
+      '<div style="max-width:440px;width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:22px;">' +
+        '<div style="font-size:22px;font-weight:850;margin-bottom:10px;">Kurz bestätigen</div>' +
+        '<p style="font-size:15px;line-height:1.5;opacity:.92;margin:0 0 14px;">Bitte bestätige dein Alter, bevor du startest. Für die Sprechübungen kann die App auf dein Mikrofon zugreifen.</p>' +
+        ((typeof cfIsIOS === "function" && cfIsIOS()) ? '<p style="font-size:13px;line-height:1.5;opacity:.85;margin:0 0 14px;background:rgba(255,255,255,.06);border-radius:12px;padding:10px 12px;">Hinweis für iPhone/iPad: Die automatische Spracherkennung in den Sprechübungen ist hier derzeit nicht möglich. Hören, das Bauen mit Kärtchen und das Selbst-Aufnehmen in „Aussprache" funktionieren normal.</p>' : '') +
+        '<button id="cfAgeYes" type="button" style="width:100%;min-height:52px;font-size:16px;font-weight:800;border-radius:14px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.16);color:#fff;margin-bottom:10px;">Ich bin mindestens 16 Jahre alt</button>' +
+        '<button id="cfAgeNo" type="button" style="width:100%;min-height:44px;font-size:14px;border-radius:14px;border:1px solid rgba(255,255,255,.18);background:transparent;color:#fff;opacity:.85;">Ich bin jünger als 16</button>' +
+        '<p style="font-size:12px;line-height:1.5;opacity:.7;margin:14px 0 0;">Mehr dazu in der <a href="datenschutz.html" style="color:#8fc7ff;">Datenschutzerklärung</a>.</p>' +
+      '</div>';
+    document.body.appendChild(ov);
+    document.getElementById("cfAgeYes").addEventListener("click", function(){
+      try{ localStorage.setItem("cf_age_ok", "1"); }catch(e){}
+      ov.parentNode && ov.parentNode.removeChild(ov);
+    });
+    document.getElementById("cfAgeNo").addEventListener("click", function(){
+      ov.querySelector("div").innerHTML =
+        '<div style="font-size:22px;font-weight:850;margin-bottom:10px;">Schade!</div>' +
+        '<p style="font-size:15px;line-height:1.5;opacity:.92;margin:0;">Diese App kannst du leider erst ab 16 Jahren nutzen. Schau gern wieder vorbei, wenn du so weit bist.</p>';
+    });
+  }
+  if(document.body) build();
+  else document.addEventListener("DOMContentLoaded", build);
+}
+// cfAgeGate(); // vorerst deaktiviert – keine Altersbestätigung beim Öffnen (Funktion bleibt erhalten)

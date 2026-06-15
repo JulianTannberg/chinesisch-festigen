@@ -1206,3 +1206,9 @@ html, body{
 input, textarea, select, [contenteditable="true"]{
   -webkit-user-select:text; -moz-user-select:text; -ms-user-select:text; user-select:text;
 }
+
+
+/* Rechtsseiten h2 */
+.card h2{ font-size:17px; font-weight:800; margin:16px 0 6px; }
+.card h2:first-child{ margin-top:0; }
+.card p{ line-height:1.55; }

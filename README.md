@@ -455,3 +455,31 @@ dynamischer Tracking-Dienst).
 - Globale Sperre: in der gesamten Web-App ist kein Text mehr markierbar (verhindert versehentliches Markieren beim Gedrückthalten der Aufnahme-Buttons und das Long-Press-Menü).
 - Ausgenommen sind Eingabefelder (Name, Fehlertext, Tippen, Lückenspiel) – dort kann weiter getippt und markiert werden.
 - Service-Worker erhöht.
+
+## Änderungen Etappe 41 (Einzelzeichen-Audio für Übungs-Kärtchen)
+
+- Audio-Index deckt jetzt ALLE Hanzi des Kapitels als Einzelzeichen (vocable) ab, nicht nur die 34 Bausteine. Damit greift beim Antippen der Kärtchen in „Üben" (und im Schreibtraining) jede aufgenommene Einzelzeichen-Datei.
+- DATEINAMEN_Kapitel01.txt erweitert: Block 3 listet jetzt alle Einzelzeichen (ohne Dubletten zu Block 1/2). Hinweis ergänzt, dass Block 3 optional ist (isolierte Partikel/Namen klingen teils unnatürlich; sonst Browserstimme).
+- Service-Worker erhöht.
+
+## Änderungen Etappe 42 (Altersbestätigung 16+)
+
+- Beim ersten Öffnen erscheint eine Bestätigung „Ich bin mindestens 16 Jahre alt“. Ohne Bestätigung ist die App gesperrt. Wird in localStorage (cf_age_ok) gemerkt und bleibt beim Fortschritt-Zurücksetzen erhalten.
+- Auf den Rechtsseiten (Datenschutz/AGB/Impressum) erscheint die Sperre nicht, damit man die Texte lesen kann.
+- „Jünger als 16“ → freundlicher Hinweis, App bleibt gesperrt.
+- Hinweis: Schwelle (16) und Wortlaut sollten rechtlich geprüft werden.
+- Service-Worker erhöht.
+
+## Änderungen Etappe 43 (iOS-Hinweis + Rechtstexte als Entwurf)
+
+- Altersbestätigung zeigt auf iPhone/iPad zusätzlich einen Hinweis, dass die automatische Spracherkennung in den Sprechübungen dort derzeit nicht möglich ist (Hören/Kärtchen/Aussprache funktionieren).
+- AGB enthält denselben iOS-Hinweis als eigenen Abschnitt (auch übers Menü erreichbar).
+- datenschutz.html, agb.html, impressum.html mit echten ENTWURFS-Texten gefüllt (deutlich als Entwurf markiert, Platzhalter in [Klammern]). Impressum weist auf Pflicht zu echtem Namen/Anschrift hin und nennt HanziWriter / Make Me a Hanzi (Arphic Public License).
+- Hinweis: alle Rechtstexte sind ungeprüfte Entwürfe – bitte rechtlich prüfen lassen.
+- Service-Worker erhöht.
+
+## Änderungen Etappe 44 (Altersbestätigung deaktiviert)
+
+- cfAgeGate() wird nicht mehr aufgerufen – beim Öffnen erscheint keine Altersbestätigung mehr. Die Funktion bleibt im Code erhalten (auskommentierter Aufruf), falls sie später wieder gebraucht wird (z. B. gekoppelt an den Transkriptions-Worker).
+- Rechtsseiten angepasst: kein Verweis mehr auf eine aktive Altersbestätigung. Datenschutz und AGB erwähnen den Mikrofonzugriff (freiwillig, nur nach Freigabe, lokale Verarbeitung) und markieren die Altersfrage als offen für die rechtliche Prüfung.
+- Service-Worker erhöht.
