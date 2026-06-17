@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Memory · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#03172B" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Chinesisch" />
+
+</head>
+<body>
+  <main class="app memoryApp">
+    <div class="topbar">
+      <a class="back" id="back">← Kapitel</a>
+    </div>
+    <h1 id="title">Memory</h1>
+    <p class="subtitle">Finde die Paare aus Hanzi und deutscher Bedeutung.</p>
+
+    <section class="card">
+      <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Memory-Karten eingetragen.</div>
+      <div id="game">
+        <div class="memTopRow">
+          <div class="memStats">
+            <div class="memStat">Runde <strong id="roundNo">1</strong></div>
+            <div class="memStat">Paare <strong id="pairCount">0/0</strong></div>
+            <div class="memStat">Züge <strong id="moveCount">0</strong></div>
+          </div>
+          <div class="memActions">
+            <button id="soundToggle" type="button">Ton an</button>
+            <button id="nextRoundBtn" type="button" disabled>Weiter →</button>
+          </div>
+        </div>
+
+        <div class="memoryGrid" id="memoryGrid" aria-label="Memory-Karten"></div>
+
+        <div class="cardBottom">
+          <div class="small" id="gameMovesLine">Züge dieses Spiel: 0 · Niedrigste: – · Höchste: –</div>
+        </div>
+      </div>
+      <div class="finish" id="finish">
+        <p class="finishTitle">Memory geschafft!</p>
+        <p class="finishText" id="finishText">Du hast alle Vokabel-Paare dieses Kapitels gefunden.</p>
+        <div class="toolbar" style="justify-content:center;margin-top:18px;">
+          <button id="finishRestart" type="button">Noch einmal spielen</button>
+          <a class="miniBtn" id="finishBack">Zurück zum Kapitel</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script src="topics.js"></script>
+<script src="common.js"></script>
+<script>
+const topic = getTopic();
+applyTheme(topic, "Memory");
+document.documentElement.classList.add("noScroll");
+const $ = id => document.getElementById(id);
+$("back").href = `kapitel.html?id=${topic.id}`;
+$("finishBack").href = `kapitel.html?id=${topic.id}`;
+$("title").textContent = `${topic.id}. ${topic.title} · Memory`;
+
+const vocab = (topic.vocab || []).filter(v => v.zh && v.de);
+const PAIRS_PER_ROUND = 6; // 12 Karten (4×3) – ausgewogener, passt ohne Scrollen
+let allOrder = [];
+let roundStart = 0;
+let cards = [];
+let open = [];
+let locked = false;
+let pairsFound = 0;
+let moves = 0;
+let roundNo = 1;
+let soundOn = localStorage.getItem(`cf_memory_sound_${topic.id}`) !== "0";
+let totalPairs = 0;
+let totalMoves = 0;
+let gameMoves = 0;
+let gameDone = false;
+function gameRecordKey(){ return `cf_memory_games_${topic.id}`; }
+function loadGameRecords(){
+  try{ return JSON.parse(localStorage.getItem(gameRecordKey()) || "{}"); }catch(e){ return {}; }
+}
+function updateGameMovesLine(){
+  const r = loadGameRecords();
+  const best = Number.isFinite(r.best) ? r.best : "–";
+  const worst = Number.isFinite(r.worst) ? r.worst : "–";
+  const line = $("gameMovesLine");
+  if(line) line.textContent = `Züge dieses Spiel: ${gameMoves} · Niedrigste: ${best} · Höchste: ${worst}`;
+}
+function recordFinishedGame(){
+  if(gameDone || gameMoves <= 0) return;
+  gameDone = true;
+  const r = loadGameRecords();
+  r.best = Number.isFinite(r.best) ? Math.min(r.best, gameMoves) : gameMoves;
+  r.worst = Number.isFinite(r.worst) ? Math.max(r.worst, gameMoves) : gameMoves;
+  r.last = gameMoves;
+  localStorage.setItem(gameRecordKey(), JSON.stringify(r));
+}
+let zhVoice = null;
+
+function key(){ return `cf_memory_state_v1_${topic.id}`; }
+function writeZh(card){ return card.writeZh || card.zh || ""; }
+function writePinyin(card){ return card.writePinyin || card.pinyin || ""; }
+function writeDe(card){ return card.writeDe || card.de || ""; }
+function pickZhVoice(){
+  const voices = speechSynthesis.getVoices ? speechSynthesis.getVoices() : [];
+  zhVoice = voices.find(v => (v.lang || "").toLowerCase().startsWith("zh")) || null;
+}
+if("speechSynthesis" in window){
+  pickZhVoice();
+  speechSynthesis.onvoiceschanged = pickZhVoice;
+}
+function speakChinese(text){
+  if(!soundOn || !text) return;
+  cfSpeakZh(text, {rate:0.85});
+}
+function updateSoundButton(){
+  $("soundToggle").textContent = soundOn ? "Ton an" : "Ton aus";
+  $("soundToggle").classList.toggle("active", soundOn);
+}
+
+function save(){
+  if(!vocab.length) return;
+  localStorage.setItem(key(), JSON.stringify({allOrder, roundStart, moves, roundNo, totalPairs, totalMoves, gameMoves, gameDone, savedAt:Date.now()}));
+}
+function load(){
+  const raw = localStorage.getItem(key());
+  if(!raw) return false;
+  try{
+    const s = JSON.parse(raw);
+    if(!Array.isArray(s.allOrder) || !s.allOrder.every(i => Number.isInteger(i) && i >= 0 && i < vocab.length)) return false;
+    allOrder = s.allOrder;
+    roundStart = Math.max(0, Math.min(Number(s.roundStart)||0, vocab.length));
+    roundNo = Math.max(1, Number(s.roundNo)||1);
+    totalPairs = Math.max(0, Number(s.totalPairs)||0);
+    totalMoves = Math.max(0, Number(s.totalMoves)||0);
+    gameMoves = Math.max(0, Number(s.gameMoves)||0);
+    gameDone = Boolean(s.gameDone);
+    return true;
+  }catch(e){ return false; }
+}
+function resetAll(){
+  allOrder = shuffle([...Array(vocab.length).keys()]);
+  roundStart = 0;
+  roundNo = 1;
+  totalPairs = 0;
+  totalMoves = 0;
+  gameMoves = 0;
+  gameDone = false;
+  localStorage.removeItem(key());
+  startRound();
+}
+function currentIndices(){ return allOrder.slice(roundStart, roundStart + PAIRS_PER_ROUND); }
+function makeCards(indices){
+  return shuffle(indices.flatMap(i => [
+    {pair:i, type:"zh", text:writeZh(vocab[i]), sub:""},
+    {pair:i, type:"de", text:writeDe(vocab[i]), sub:""}
+  ])).map((c, i) => ({...c, id:`c${Date.now()}_${i}`, open:false, matched:false}));
+}
+function startRound(){
+  if(!vocab.length){ $("game").style.display="none"; $("empty").style.display="block"; return; }
+  if(!allOrder.length) allOrder = shuffle([...Array(vocab.length).keys()]);
+  if(roundStart >= allOrder.length){
+    recordFinishedGame();
+    $("game").style.display = "none";
+    $("finish").classList.add("show");
+    const r = loadGameRecords();
+    $("finishText").textContent = `Du hast alle Vokabel-Paare gefunden – mit ${gameMoves} Zügen (Niedrigste: ${r.best ?? gameMoves}, Höchste: ${r.worst ?? gameMoves}).`;
+    save();
+    return;
+  }
+  $("finish").classList.remove("show");
+  $("game").style.display = "";
+  cards = makeCards(currentIndices());
+  open = [];
+  locked = false;
+  pairsFound = 0;
+  moves = 0;
+  render();
+  save();
+}
+function nextRound(){
+  $("nextRoundBtn").disabled = true;
+  roundStart += PAIRS_PER_ROUND;
+  roundNo++;
+  startRound();
+}
+function restartRound(){ startRound(); }
+function render(){
+  updateSoundButton();
+  $("roundNo").textContent = String(roundNo);
+  $("pairCount").textContent = `${pairsFound}/${currentIndices().length}`;
+  $("moveCount").textContent = String(moves);
+  updateGameMovesLine();
+  const grid = $("memoryGrid");
+  grid.innerHTML = "";
+  cards.forEach(card => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "memoryCard" + ((card.open || card.matched) ? " open" : "") + (card.matched ? " matched" : "");
+    b.dataset.id = card.id;
+    const visible = card.open || card.matched;
+    b.classList.toggle("zhCard", card.type === "zh");
+    b.innerHTML = visible
+      ? `<span class="memoryText">${escapeHtml(card.text)}</span>`
+      : `<span class="memoryText memoryHidden">?</span>`;
+    b.addEventListener("click", () => flip(card.id));
+    grid.appendChild(b);
+  });
+}
+function flip(id){
+  if(locked) return;
+  const card = cards.find(c => c.id === id);
+  if(!card || card.open || card.matched) return;
+  card.open = true;
+  if(card.type === "zh") speakChinese(card.text);
+  open.push(card);
+  if(open.length === 2){
+    moves++;
+    totalMoves++;
+    gameMoves++;
+    const [a,b] = open;
+    if(a.pair === b.pair && a.type !== b.type){
+      a.matched = true;
+      b.matched = true;
+      pairsFound++;
+      totalPairs++;
+      cfSetScore("memory", Math.round(totalPairs / Math.max(totalMoves, vocab.length) * 100));
+      open = [];
+      if(pairsFound >= currentIndices().length){
+        save();
+        cfPlayFeedback(true);
+        $("nextRoundBtn").disabled = false;
+      }
+    }else{
+      locked = true;
+      setTimeout(() => {
+        a.open = false;
+        b.open = false;
+        open = [];
+        locked = false;
+        render();
+      }, 850);
+    }
+  }
+  render();
+}
+
+$("nextRoundBtn").addEventListener("click", nextRound);
+$("finishRestart").addEventListener("click", resetAll);
+$("soundToggle").addEventListener("click", () => {
+  soundOn = !soundOn;
+  localStorage.setItem(`cf_memory_sound_${topic.id}`, soundOn ? "1" : "0");
+  updateSoundButton();
+});
+
+if(!load()) resetAll(); else startRound();
+</script>
+</body>
+</html>

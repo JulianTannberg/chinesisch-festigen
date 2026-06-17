@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Nachrichten · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.webmanifest" />
+</head>
+<body>
+  <main class="app">
+    <div class="topbar"><a class="back" id="backLink" href="index.html">← Zurück</a></div>
+    <h1 id="title">Nachrichten</h1>
+
+    <section class="card" id="contactsView">
+      <p class="subtitle" id="contactsHint">Mit wem möchtest du schreiben?</p>
+      <div id="contactsList"></div>
+    </section>
+
+    <section class="card chatCard" id="convoView" style="display:none;">
+      <div class="chatHead">
+        <button class="miniBtn" id="toContacts" type="button">←</button>
+        <img id="chatHeadAvatar" class="chatHeadAvatar" alt="" style="display:none;">
+        <div class="chatWho"><strong id="chatName">–</strong><span class="small" id="chatTag"></span></div>
+      </div>
+      <div class="chatMsgs" id="chatMsgs"></div>
+      <div class="chatInputWrap">
+        <div class="chatSuggestRow">
+          <button class="suggestToggle" id="suggestToggle" type="button">💡 Vorschläge anzeigen</button>
+        </div>
+        <div class="chatChips" id="chatChips" style="display:none;"></div>
+
+        <div class="recordBar" id="recordBar" style="display:none;">
+          <span class="recDot"></span>
+          <span class="recLabel" id="recLabel">Sprich jetzt … (max. 10 s)</span>
+          <button class="iconBtn recStop" id="recStop" type="button" aria-label="Stopp">■</button>
+          <button class="linkBtn" id="recCancel" type="button">Abbrechen</button>
+        </div>
+
+        <div class="chatInput" id="chatInput">
+          <input id="chatText" type="text" lang="zh" inputmode="text" autocomplete="off" placeholder="Antwort schreiben …" />
+          <button class="iconBtn" id="sendBtn" type="button" aria-label="Senden">➤</button>
+          <button class="iconBtn micBtn" id="micBtn" type="button" aria-label="Sprachnachricht" style="display:none;">🎤</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="common.js"></script>
+  <script src="topics.js"></script>
+  <script src="chatdata.js"></script>
+  <script>
+  const params = new URLSearchParams(location.search);
+  const id = params.get("id") || "01";
+  const topic = (window.CF_TOPICS || []).find(t => t.id === id) || {accent:"#03172B", textColor:"#FFFFFF", title:"", id:id};
+  applyTheme(topic, "Nachrichten");
+  document.documentElement.classList.add("noScroll");
+  document.getElementById("backLink").href = `kapitel.html?id=${id}`;
+  document.getElementById("title").textContent = `${topic.title ? (id + ". " + topic.title + " · ") : ""}Nachrichten`;
+
+  const convoEl = document.getElementById("convoView");
+  convoEl.style.setProperty("--me-bubble", topic.accent || "#2f6f4f");
+  convoEl.style.setProperty("--me-text", topic.textColor || "#fff");
+
+  const NAME = (localStorage.getItem("cf_user_name") || "Vanessa").trim() || "Vanessa";
+  const DATA = (window.CF_CHAT || {})[id] || null;
+
+  const canRecord = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const useWorker = canRecord && cfWorkerReady();
+  const useBrowserSR = !useWorker && !!SR && !cfIsIOS();
+  const micOK = useWorker || useBrowserSR;
+
+  function fill(t){ return String(t).replace(/\{name\}/g, NAME); }
+  function norm(s){ return String(s || "").toLowerCase().replace(/[\s，。！？、,.!?；;：:（）()「」『』~·…—\-"']/g, ""); }
+
+  // ---------- Kontaktliste ----------
+  function renderContacts(){
+    const list = document.getElementById("contactsList"); list.innerHTML = "";
+    if(!DATA || !DATA.partners || !DATA.partners.length){
+      document.getElementById("contactsHint").textContent = "Für dieses Kapitel gibt es noch keine Kontakte."; return;
+    }
+    DATA.partners.forEach(p => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "contactRow";
+      const av = p.avatar ? `<img class="contactAvatar" src="${p.avatar}" alt="">` : `<span class="contactAvatar">${escapeHtml(p.name.slice(0,1))}</span>`;
+      b.innerHTML = `${av}<span class="contactInfo"><strong>${escapeHtml(p.name)}</strong><span class="small">${escapeHtml(p.pinyin)}</span></span>`;
+      b.addEventListener("click", () => openConvo(p));
+      list.appendChild(b);
+    });
+  }
+
+  // ---------- Chat (Knoten-Graph) ----------
+  let convo = null, node = null, nodeId = null, partner = null, lastMode = "text", busy = false;
+
+  function openConvo(p){
+    partner = p; convo = (DATA.convo && DATA.convo[p.key]) || null; lastMode = "text";
+    document.getElementById("contactsView").style.display = "none"; convoEl.style.display = "";
+    document.getElementById("chatName").textContent = p.name;
+    document.getElementById("chatTag").textContent = p.pinyin || "";
+    const _cha = document.getElementById("chatHeadAvatar");
+    if(p.avatar){ _cha.src = p.avatar; _cha.style.display = ""; } else { _cha.style.display = "none"; }
+    document.getElementById("micBtn").style.display = micOK ? "" : "none";
+    document.getElementById("chatMsgs").innerHTML = "";
+    runNode(convo ? convo.start : null);
+  }
+  function backToContacts(){ cancelRecording(); convoEl.style.display = "none"; document.getElementById("contactsView").style.display = ""; }
+
+  function scrollDown(){ const m = document.getElementById("chatMsgs"); m.scrollTop = m.scrollHeight; }
+  function durLabel(secs){ const s = Math.max(1, Math.min(99, Math.round(secs || 1))); return "0:" + (s < 10 ? "0" + s : s); }
+  function speak(text, speaker){ cfSpeakZh(text, {rate: 0.92, speaker: speaker}); }
+
+  function userAvatar(){ try{ return localStorage.getItem("cf_user_avatar") || ""; }catch(e){ return ""; } }
+  function avatarEl(side){
+    const src = side === "me" ? userAvatar() : (partner && partner.avatar);
+    let el;
+    if(src){ el = document.createElement("img"); el.src = src; el.alt = ""; }
+    else { el = document.createElement("span"); el.classList.add("letter");
+      el.textContent = side === "me" ? (NAME || "?").slice(0,1) : (partner ? partner.name.slice(0,1) : "?"); }
+    el.classList.add("msgAvatar"); return el;
+  }
+  function mountMsg(wrap, side, bubbleEl){
+    const av = avatarEl(side);
+    if(side === "partner"){ wrap.appendChild(av); wrap.appendChild(bubbleEl); }
+    else { wrap.appendChild(bubbleEl); wrap.appendChild(av); }
+    document.getElementById("chatMsgs").appendChild(wrap); scrollDown();
+  }
+  function addTextBubble(side, line){
+    const wrap = document.createElement("div"); wrap.className = `msg ${side}`;
+    const b = document.createElement("div"); b.className = "bubble text";
+    if(side === "partner"){
+      b.innerHTML = `<span class="bzh">${escapeHtml(line.zh)}</span>
+        <span class="bhelp" style="display:none;"><span class="bpy">${escapeHtml(line.pinyin || "")}</span>
+        <span class="bde">${escapeHtml(line.de || "")}</span></span>`;
+      b.classList.add("tappable");
+      b.addEventListener("click", () => { const h = b.querySelector(".bhelp"); h.style.display = h.style.display === "none" ? "block" : "none"; });
+    }else{ b.innerHTML = `<span class="bzh">${escapeHtml(line.zh)}</span>`; }
+    mountMsg(wrap, side, b);
+  }
+  function addVoiceBubble(side, text, audioURL, secs){
+    const wrap = document.createElement("div"); wrap.className = `msg ${side}`;
+    const b = document.createElement("button"); b.type = "button"; b.className = "bubble voice";
+    b.innerHTML = `<span class="vIcon">▶</span>
+      <span class="vBars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+      <span class="vDur">${durLabel(secs || ((String(text).match(/[\u4e00-\u9fff]/g)||[]).length/2))}</span>`;
+    b.addEventListener("click", () => {
+      if(audioURL){ try{ new Audio(audioURL).play(); return; }catch(e){} }
+      if(text) speak(text, side === "partner" ? (partner && partner.key) : null);
+    });
+    mountMsg(wrap, side, b);
+  }
+  function addNote(text){ const w = document.createElement("div"); w.className = "chatNote"; w.textContent = text; document.getElementById("chatMsgs").appendChild(w); scrollDown(); }
+  function addTyping(){ const w = document.createElement("div"); w.className = "msg partner"; w.id = "typingRow";
+    const b = document.createElement("div"); b.className = "bubble typing"; b.innerHTML = "<i></i><i></i><i></i>";
+    w.appendChild(avatarEl("partner")); w.appendChild(b);
+    document.getElementById("chatMsgs").appendChild(w); scrollDown(); }
+  function removeTyping(){ const t = document.getElementById("typingRow"); if(t) t.remove(); }
+
+  function showPartnerLines(lines, asVoice, done){
+    let i = 0;
+    (function next(){
+      if(i >= lines.length){ done && done(); return; }
+      addTyping();
+      setTimeout(() => {
+        removeTyping();
+        if(asVoice){ addVoiceBubble("partner", lines[i].zh); cfSpeakZh(lines[i].zh, {rate:0.92, queue: i > 0, speaker: partner && partner.key}); }
+        else{ addTextBubble("partner", lines[i]); }
+        i++; setTimeout(next, asVoice ? 500 : 350);
+      }, 600);
+    })();
+  }
+
+  function runNode(targetId){
+    nodeId = targetId;
+    if(!nodeId || !convo || !convo.nodes[nodeId]){ showEnd(); return; }
+    node = convo.nodes[nodeId];
+    busy = true; setChips([]); setInputEnabled(false);
+    showPartnerLines(node.ask, lastMode === "voice", () => {
+      busy = false; setChips(node.options.map(o => fill(o.chip))); setInputEnabled(true);
+    });
+  }
+
+  function matchOption(text){
+    if(!node) return -1;
+    const u = norm(fill(text));
+    for(let i = 0; i < node.options.length; i++){ if(node.options[i].accept.map(a => norm(fill(a))).includes(u)) return i; }
+    return -1;
+  }
+  function matchVoice(text){
+    const exact = matchOption(text); if(exact >= 0) return exact;
+    if(!node) return -1;
+    const u = norm(fill(text));
+    for(let i = 0; i < node.options.length; i++){
+      const pres = (node.options[i].voicePrefix || []).map(p => norm(fill(p)));
+      if(pres.some(p => p && u.indexOf(p) === 0)) return i;
+    }
+    return -1;
+  }
+
+  // Partner-Antwort + nächster Knoten (Nutzerblase ist schon gesetzt)
+  function proceedAfter(optIdx, mode){
+    const opt = node.options[optIdx];
+    lastMode = mode; setChips([]); setInputEnabled(false);
+    const reply = (opt.reply || node.reply || []); const nxt = opt.next;
+    setTimeout(() => {
+      if(reply.length){ showPartnerLines(reply, mode === "voice", () => runNode(nxt)); }
+      else{ runNode(nxt); }
+    }, 450);
+  }
+
+  function answerText(text){
+    if(busy) return;
+    const idx = matchOption(text);
+    if(idx < 0){ revealChips(); flashHint(); return; }
+    addTextBubble("me", { zh: text }); document.getElementById("chatText").value = "";
+    proceedAfter(idx, "text");
+  }
+  function flashHint(){ const c = document.getElementById("chatChips"); c.classList.remove("nudge"); void c.offsetWidth; c.classList.add("nudge"); }
+  function revealChips(){ document.getElementById("chatChips").style.display = "flex"; document.getElementById("suggestToggle").textContent = "💡 Vorschläge ausblenden"; }
+
+  function setChips(arr){
+    const box = document.getElementById("chatChips"); box.innerHTML = "";
+    arr.forEach(label => {
+      const c = document.createElement("button"); c.type = "button"; c.className = "chip"; c.textContent = label;
+      c.addEventListener("click", () => answerText(label));
+      box.appendChild(c);
+    });
+    box.style.display = "none"; document.getElementById("suggestToggle").textContent = "💡 Vorschläge anzeigen";
+  }
+  function setInputEnabled(on){
+    document.getElementById("chatText").disabled = !on;
+    document.getElementById("sendBtn").disabled = !on;
+    document.getElementById("micBtn").disabled = !on;
+    document.getElementById("suggestToggle").disabled = !on;
+  }
+  function showEnd(){
+    const wrap = document.createElement("div"); wrap.className = "chatEnd";
+    wrap.innerHTML = `<span>— Gespräch beendet —</span><button class="miniBtn" id="restartChat" type="button">Noch einmal</button>`;
+    document.getElementById("chatMsgs").appendChild(wrap); scrollDown();
+    document.getElementById("restartChat").addEventListener("click", () => openConvo(partner));
+    setChips([]); setInputEnabled(false);
+  }
+
+  // ---------- Eingabe (Text) ----------
+  document.getElementById("sendBtn").addEventListener("click", () => { const v = document.getElementById("chatText").value.trim(); if(v) answerText(v); });
+  document.getElementById("chatText").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); const v = document.getElementById("chatText").value.trim(); if(v) answerText(v); } });
+  document.getElementById("toContacts").addEventListener("click", backToContacts);
+
+  // iPad/iOS: nach dem Schließen der Tastatur die Ansicht wieder oben fixieren,
+  // damit der Kopf (Name/Zurück) nicht halb verdeckt bleibt.
+  function cfPinTop(){ try{ window.scrollTo(0,0); }catch(e){} document.body.scrollTop = 0; document.documentElement.scrollTop = 0; }
+  document.getElementById("chatText").addEventListener("blur", () => setTimeout(cfPinTop, 60));
+  window.addEventListener("orientationchange", () => setTimeout(cfPinTop, 120));
+  if(window.visualViewport){
+    window.visualViewport.addEventListener("resize", () => {
+      if(document.activeElement !== document.getElementById("chatText")) setTimeout(cfPinTop, 60);
+    });
+  }
+  document.getElementById("suggestToggle").addEventListener("click", () => {
+    const box = document.getElementById("chatChips"); const show = box.style.display === "none";
+    box.style.display = show ? "flex" : "none";
+    document.getElementById("suggestToggle").textContent = show ? "💡 Vorschläge ausblenden" : "💡 Vorschläge anzeigen";
+  });
+
+  // ---------- Mikrofon ----------
+  document.getElementById("micBtn").addEventListener("click", () => {
+    if(!micOK || busy) return;
+    if(useWorker){ if(recording){ stopRecording(); } else { startRecording(); } }
+    else { startBrowserSR(); }
+  });
+
+  // A) Worker: aufnehmen -> abspielbar -> transkribieren -> abgleichen
+  let mediaStream = null, mediaRec = null, chunks = [], recording = false, recStart = 0, autoStop = null;
+  function showRecordBar(on){ document.getElementById("recordBar").style.display = on ? "flex" : "none"; document.getElementById("chatInput").style.display = on ? "none" : "flex"; }
+  async function startRecording(){
+    try{ mediaStream = await navigator.mediaDevices.getUserMedia({audio:true}); }
+    catch(e){ addNote("Kein Mikrofon-Zugriff. Du kannst auch tippen."); return; }
+    chunks = [];
+    try{
+      mediaRec = new MediaRecorder(mediaStream);
+      mediaRec.ondataavailable = e => { if(e.data && e.data.size) chunks.push(e.data); };
+      mediaRec.onstop = onRecStop;
+      mediaRec.start(); recording = true; recStart = Date.now();
+    }catch(e){ cleanupStream(); addNote("Aufnahme auf diesem Gerät nicht möglich."); return; }
+    showRecordBar(true);
+    autoStop = setTimeout(() => stopRecording(), 10000);
+  }
+  function stopRecording(){ if(autoStop){ clearTimeout(autoStop); autoStop = null; } if(mediaRec && mediaRec.state !== "inactive"){ try{ mediaRec.stop(); }catch(e){} } }
+  function cancelRecording(){ if(autoStop){ clearTimeout(autoStop); autoStop = null; } if(mediaRec){ mediaRec.onstop = null; try{ mediaRec.stop(); }catch(e){} } cleanupStream(); recording = false; showRecordBar(false); }
+  function cleanupStream(){ if(mediaStream){ mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; } mediaRec = null; }
+
+  async function onRecStop(){
+    const secs = (Date.now() - recStart) / 1000;
+    let url = null, blob = null, type = (chunks[0] && chunks[0].type) || "audio/webm";
+    try{ if(chunks.length){ blob = new Blob(chunks, {type}); url = URL.createObjectURL(blob); } }catch(e){}
+    cleanupStream(); recording = false; showRecordBar(false);
+    if(!blob) return;
+    addVoiceBubble("me", "", url, secs);
+    setInputEnabled(false); addNote("Wird erkannt …");
+    let text = "";
+    try{ text = await cfTranscribe(blob); }catch(e){ text = ""; }
+    const notes = document.querySelectorAll(".chatNote"); if(notes.length) notes[notes.length-1].remove();
+    const idx = matchVoice(text);
+    if(idx >= 0){ proceedAfter(idx, "voice"); }
+    else{ addNote(text ? ('Verstanden: ' + text + ' – das passt hier nicht. Versuch es nochmal oder tippe.') : 'Nicht erkannt. Versuch es nochmal oder tippe.'); setInputEnabled(true); }
+  }
+  document.getElementById("recStop").addEventListener("click", stopRecording);
+  document.getElementById("recCancel").addEventListener("click", () => cancelRecording());
+
+  // B) Kostenloser Browser-Weg (nicht iOS): nur Erkennung, eigene Blase per Sprachausgabe
+  let srObj = null, srActive = false;
+  function endSR(){ srActive = false; srObj = null; document.getElementById("micBtn").classList.remove("rec"); }
+  function startBrowserSR(){
+    if(srActive){ if(srObj){ try{ srObj.stop(); }catch(e){} } return; }
+    let handled = false;
+    try{
+      srObj = new SR(); srObj.lang = "zh-CN"; srObj.interimResults = false; srObj.maxAlternatives = 5; srObj.continuous = false;
+      srObj.onresult = ev => {
+        if(handled) return; handled = true;
+        let chosen = -1;
+        for(let i = 0; i < ev.results.length && chosen < 0; i++){
+          for(let j = 0; j < ev.results[i].length; j++){ const m = matchVoice(ev.results[i][j].transcript); if(m >= 0){ chosen = m; break; } }
+        }
+        endSR();
+        if(chosen >= 0){ addVoiceBubble("me", fill(node.options[chosen].chip)); proceedAfter(chosen, "voice"); }
+        else{ revealChips(); flashHint(); }
+      };
+      srObj.onerror = () => { handled = true; endSR(); };
+      srObj.onend = () => { if(!handled){ handled = true; endSR(); } };
+      srObj.start(); srActive = true; document.getElementById("micBtn").classList.add("rec");
+    }catch(e){ endSR(); }
+  }
+
+  // Start
+  renderContacts();
+  const who = params.get("who");
+  if(who && DATA){ const p = DATA.partners.find(x => x.key === who); if(p) openConvo(p); }
+  </script>
+</body>
+</html>
