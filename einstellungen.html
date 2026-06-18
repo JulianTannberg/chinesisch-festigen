@@ -49,6 +49,7 @@
         <a href="impressum.html">Impressum</a>
       </div>
     </section>
+    <p id="cfVersion" style="opacity:.5;font-size:13px;margin-top:20px;text-align:center;">Version: …</p>
   </main>
 
   <script src="common.js"></script>
@@ -79,6 +80,21 @@
     const n = (v === "__all") ? cfResetProgress() : cfResetProgress(v);
     $("resetStatus").textContent = `Zurückgesetzt (${n} Einträge gelöscht).`;
   });
+
+  // Sichtbare Version: liest den AKTIVEN Service-Worker-Cache-Namen (z. B. cf-v63).
+  // So lässt sich auf dem Gerät prüfen, welcher Stand wirklich live ist.
+  (function(){
+    const el = $("cfVersion");
+    if(!el) return;
+    if(window.caches && caches.keys){
+      caches.keys().then(keys => {
+        const v = keys.find(k => /^cf-v/.test(k));
+        el.textContent = "Version: " + (v || "—");
+      }).catch(() => { el.textContent = "Version: —"; });
+    }else{
+      el.textContent = "Version: —";
+    }
+  })();
   </script>
 </body>
 </html>
