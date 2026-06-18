@@ -1,0 +1,67 @@
+Erwartete Audio-Dateinamen – Kapitel 02
+(Ordner audio/, Endung .mp3 – beides in common.js änderbar. Satzzeichen sind Teil des Namens.)
+
+== VOKABELN (audio_02_vocable_<hanzi>) ==
+audio_02_vocable_请问.mp3
+audio_02_vocable_地铁.mp3
+audio_02_vocable_在.mp3
+audio_02_vocable_哪里.mp3
+audio_02_vocable_那里.mp3
+audio_02_vocable_这里.mp3
+audio_02_vocable_出口.mp3
+audio_02_vocable_哪个.mp3
+audio_02_vocable_去.mp3
+audio_02_vocable_换车.mp3
+audio_02_vocable_对.mp3
+audio_02_vocable_不客气.mp3
+audio_02_vocable_大学.mp3
+audio_02_vocable_男人.mp3
+audio_02_vocable_五道口.mp3
+audio_02_vocable_清华大学.mp3
+audio_02_vocable_站.mp3
+
+== EINZELZEICHEN Schreibtraining (audio_02_vocable_<zeichen>) ==
+audio_02_vocable_请.mp3
+audio_02_vocable_问.mp3
+audio_02_vocable_地.mp3
+audio_02_vocable_铁.mp3
+audio_02_vocable_哪.mp3
+audio_02_vocable_里.mp3
+audio_02_vocable_那.mp3
+audio_02_vocable_这.mp3
+audio_02_vocable_出.mp3
+audio_02_vocable_口.mp3
+audio_02_vocable_个.mp3
+audio_02_vocable_换.mp3
+audio_02_vocable_车.mp3
+audio_02_vocable_不.mp3
+audio_02_vocable_客.mp3
+audio_02_vocable_气.mp3
+audio_02_vocable_大.mp3
+audio_02_vocable_学.mp3
+audio_02_vocable_男.mp3
+audio_02_vocable_人.mp3
+audio_02_vocable_五.mp3
+audio_02_vocable_道.mp3
+audio_02_vocable_清.mp3
+audio_02_vocable_华.mp3
+audio_02_vocable_儿.mp3
+audio_02_vocable_看.mp3
+audio_02_vocable_你.mp3
+audio_02_vocable_一.mp3
+audio_02_vocable_谢.mp3
+audio_02_vocable_好.mp3
+audio_02_vocable_是.mp3
+
+== GESCHICHTE (audio_02_story_<sprecher>_<hanzi>) ==
+audio_02_story_suran_请问，地铁在哪里？.mp3
+audio_02_story_nanren_地铁在那儿。.mp3
+audio_02_story_suran_请问，去五道口在哪里换车？.mp3
+audio_02_story_nanren_看，在那儿。.mp3
+audio_02_story_nanren_你在这一站换车。.mp3
+audio_02_story_suran_这里？.mp3
+audio_02_story_nanren_对，这儿。.mp3
+audio_02_story_suran_谢谢。.mp3
+audio_02_story_nanren_不客气。.mp3
+audio_02_story_suran_你好，请问，去清华大学是哪个出口？.mp3
+audio_02_story_nanren_是 B 出口。.mp3
