@@ -141,6 +141,11 @@ const tasks = (topic.storyDialog || [])
   }))
   .filter(t => t.zhChars.length > 0 && t.deTokens.length > 0);
 
+// Ursprüngliche Satzanzahl (zählt für die Wertung). Falsch beantwortete Sätze
+// werden ans Ende angehängt (zum Üben), zählen aber nicht (_counted=false).
+let originalTotal = tasks.length;
+tasks.forEach(t => { t._counted = true; });
+
 // Distraktoren-Pools
 const zhCharPool = [...new Set(
   [...(topic.vocab || []), ...(topic.understandingVocab || [])]
@@ -186,16 +191,18 @@ function recordAttempt(ok){
   if(taskChecked) return;
   taskChecked = true;
   attempted++;
-  if(ok) firstCorrect++;
-}
-// Freischalt-Wertung nach Abschluss: gelöste Sätze / Gesamt.
-// Letzter Satz gelöst = 100 %. Bester Wert bleibt erhalten.
-// „Richtig: X %" (firstCorrect) bleibt nur die Qualitäts-Anzeige im Zähler.
-function markUebenProgress(){
-  const total = tasks.length || 1;
-  const pct = Math.round((idx + 1) / total * 100);
+  const t = current();
+  if(t && t._counted){
+    if(ok){
+      firstCorrect++;
+    }else{
+      // Beim ersten Mal falsch: Satz ans Ende anhängen (zum Üben), zählt nicht.
+      tasks.push(Object.assign({}, t, {_counted: false}));
+    }
+  }
+  // Wertung: nur beim ERSTEN Mal richtig zählt. 100 % = alle Sätze direkt richtig.
   const prev = cfGetScore(`ueben_${MODE}`) || 0;
-  cfSetScore(`ueben_${MODE}`, Math.max(prev, pct));
+  cfSetScore(`ueben_${MODE}`, Math.max(prev, Math.round(firstCorrect / (originalTotal || 1) * 100)));
 }
 
 function stateKey(){ return `cf_ueben_${MODE}_v1_${topic.id}`; }
@@ -246,7 +253,7 @@ function render(){
   }
   $("game").style.display = "";
   const t = current();
-  const pct = ` · Richtig: ${Math.round(firstCorrect / tasks.length * 100)} %`;
+  const pct = ` · Richtig: ${Math.round(firstCorrect / (originalTotal || 1) * 100)} %`;
   $("counter").textContent = `Satz ${idx + 1} von ${tasks.length}${pct}`;
 
   if(MODE === "hoeren"){
@@ -339,7 +346,6 @@ function colorAnswerTokens(ok){
 function taskSolved(viaSpeech){
   const t = current();
   recordAttempt(true);
-  markUebenProgress();
   cfPlayFeedback(true);
   setFeedback("ok", viaSpeech ? "Richtig gesprochen! 很好！" : "Richtig! Sehr gut gebaut.");
   colorAnswerTokens(true);
@@ -360,7 +366,7 @@ function check(){
     $("solutionBox").style.display = "block";
   }
 }
-function restartAll(){ idx = 0; attempted = 0; firstCorrect = 0; localStorage.removeItem(stateKey()); startTask(); }
+function restartAll(){ idx = 0; attempted = 0; firstCorrect = 0; tasks.length = originalTotal; tasks.forEach(t => { t._counted = true; }); localStorage.removeItem(stateKey()); startTask(); }
 
 /* Sprechen (nur Deutsch → Chinesisch, nur wenn der Browser es kann) */
 const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;

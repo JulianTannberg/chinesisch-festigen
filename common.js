@@ -416,3 +416,64 @@ function cfConfirm(message, opts){
     ov.addEventListener("click", function(e){ if(e.target === ov) close(false); });
   });
 }
+
+// ===== Feier bei 100 % im Kapitel (Konfetti + Lampions, chinesisch angehaucht) =====
+// Selbstständig, ohne Bibliothek. Overlay blockiert nichts (pointer-events:none)
+// und entfernt sich von allein.
+function cfCelebrate(opts){
+  opts = opts || {};
+  if(document.getElementById("cfCelebrate")) return; // läuft schon
+  if(!document.getElementById("cfCelebrateStyle")){
+    var st = document.createElement("style");
+    st.id = "cfCelebrateStyle";
+    st.textContent =
+      "#cfCelebrate{position:fixed;inset:0;z-index:99999;pointer-events:none;overflow:hidden;}" +
+      "#cfCelebrate .cfConf{position:absolute;top:-12vh;width:10px;height:14px;border-radius:2px;opacity:.95;animation:cfFall linear forwards;}" +
+      "#cfCelebrate .cfLamp{position:absolute;top:-10vh;font-size:34px;animation:cfDrop ease-in forwards;}" +
+      "#cfCelebrate .cfBanner{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%) scale(.4);" +
+        "text-align:center;color:#fff;font-weight:800;text-shadow:0 2px 10px rgba(0,0,0,.5);" +
+        "animation:cfPop .6s cubic-bezier(.2,1.4,.4,1) forwards, cfFade .8s ease 3.4s forwards;}" +
+      "#cfCelebrate .cfBanner .cfZh{font-size:46px;color:#ffd966;}" +
+      "#cfCelebrate .cfBanner .cfDe{font-size:22px;margin-top:6px;}" +
+      "@keyframes cfFall{to{transform:translateY(122vh) rotate(720deg);}}" +
+      "@keyframes cfDrop{to{transform:translateY(118vh);}}" +
+      "@keyframes cfPop{to{transform:translate(-50%,-50%) scale(1);}}" +
+      "@keyframes cfFade{to{opacity:0;}}";
+    document.head.appendChild(st);
+  }
+  var wrap = document.createElement("div");
+  wrap.id = "cfCelebrate";
+  wrap.setAttribute("aria-hidden", "true");
+  var colors = ["#e23b3b","#f5c518","#ffffff","#ff8a3d","#ffd966","#c0392b"];
+  var n = opts.pieces || 80;
+  for(var i = 0; i < n; i++){
+    var c = document.createElement("div");
+    c.className = "cfConf";
+    c.style.left = (Math.random() * 100) + "vw";
+    c.style.background = colors[(Math.random() * colors.length) | 0];
+    c.style.animationDuration = (2.2 + Math.random() * 2.2) + "s";
+    c.style.animationDelay = (Math.random() * 1.2) + "s";
+    if(Math.random() < 0.5) c.style.borderRadius = "50%";
+    wrap.appendChild(c);
+  }
+  // ein paar Lampions
+  var lamps = 5;
+  for(var k = 0; k < lamps; k++){
+    var l = document.createElement("div");
+    l.className = "cfLamp";
+    l.textContent = "🏮";
+    l.style.left = (8 + Math.random() * 84) + "vw";
+    l.style.animationDuration = (3 + Math.random() * 2) + "s";
+    l.style.animationDelay = (Math.random() * 1) + "s";
+    wrap.appendChild(l);
+  }
+  var banner = document.createElement("div");
+  banner.className = "cfBanner";
+  banner.innerHTML =
+    '<div class="cfZh">好极了！</div>' +
+    '<div class="cfDe">' + (opts.text || "Kapitel geschafft! 🎉") + '</div>';
+  wrap.appendChild(banner);
+  document.body.appendChild(wrap);
+  try{ if(typeof cfPlayFeedback === "function") cfPlayFeedback(true); }catch(e){}
+  setTimeout(function(){ if(wrap.parentNode) wrap.parentNode.removeChild(wrap); }, opts.duration || 4600);
+}

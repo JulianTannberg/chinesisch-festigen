@@ -138,6 +138,7 @@
     #trainQuizLayer{ z-index:1; }
     #trainHintLayer{ z-index:2; pointer-events:none; }
     .trainLevels{ grid-template-columns:repeat(3, minmax(0,1fr)); }
+    .trainLevels button.done{ box-shadow: inset 0 0 0 2px #4caf6e; }
     .writeTabs{ grid-template-columns:repeat(3, 1fr); }
   </style>
 </head>
@@ -183,6 +184,9 @@
           </div>
 
           <div class="traceStatus" id="trainStatus">&nbsp;</div>
+          <div style="text-align:center;">
+            <button id="trainAgainBtn" type="button" style="display:none;">Nochmal von vorne</button>
+          </div>
 
           <div class="cardBottom">
             <div class="stats statsRow">
@@ -992,7 +996,18 @@ const TRAIN_CFG = {
 const trainWords = learnWords; // gleiche Vokabelliste wie „Zeichen lernen“
 let trainLevel = localStorage.getItem(`cf_train_level_${topic.id}`) || "beginner";
 if(!TRAIN_CFG[trainLevel]) trainLevel = "beginner";
-let trainIdx = Math.min(Math.max(0, Number(localStorage.getItem(`cf_train_idx_${topic.id}`)) || 0), Math.max(0, trainWords.length - 1));
+// Position und Erledigt-Status werden PRO STUFE gemerkt.
+function trainPosKey(level){ return `cf_train_pos_${topic.id}_${level}`; }
+function trainDoneKey(level){ return `cf_train_done_${topic.id}_${level}`; }
+function loadTrainPos(level){
+  const raw = localStorage.getItem(trainPosKey(level));
+  // Migration: alte gemeinsame Position als Startwert nehmen, falls noch keine Stufen-Position existiert.
+  const fallback = Number(localStorage.getItem(`cf_train_idx_${topic.id}`)) || 0;
+  const n = raw === null ? fallback : Number(raw);
+  return Math.min(Math.max(0, n || 0), Math.max(0, trainWords.length - 1));
+}
+function trainLevelDone(level){ return localStorage.getItem(trainDoneKey(level)) === "1"; }
+let trainIdx = loadTrainPos(trainLevel);
 let trainChar = 0;
 let trainWriter = null;
 let trainToken = 0;
@@ -1021,7 +1036,7 @@ function updateTrainStats(){
 
 function saveTrain(){
   localStorage.setItem(`cf_train_level_${topic.id}`, trainLevel);
-  localStorage.setItem(`cf_train_idx_${topic.id}`, String(trainIdx));
+  localStorage.setItem(trainPosKey(trainLevel), String(trainIdx));
 }
 function setTrainStatus(text, kind){
   const el = $("trainStatus");
@@ -1035,9 +1050,14 @@ function cancelTrainWriter(){
   }
   trainWriter = null;
 }
+const TRAIN_LEVEL_LABEL = { beginner: "Anfänger", advanced: "Fortgeschritten", pro: "Profi" };
 function updateTrainLevelButtons(){
   document.querySelectorAll("#trainLevels button").forEach(b => {
-    b.classList.toggle("active", b.dataset.level === trainLevel);
+    const lv = b.dataset.level;
+    b.classList.toggle("active", lv === trainLevel);
+    const done = trainLevelDone(lv);
+    b.classList.toggle("done", done);
+    b.textContent = (TRAIN_LEVEL_LABEL[lv] || lv) + (done ? " ✓" : "");
   });
 }
 function clearTrainHint(){
@@ -1183,6 +1203,7 @@ function loadTrainWord(){
   trainToken++;
   trainChar = 0;
   trainHadMistake = false;
+  $("trainAgainBtn").style.display = "none";
   updateTrainStats();
   const w = trainWord();
   if(!w) return;
@@ -1195,15 +1216,25 @@ function loadTrainWord(){
   saveTrain();
   loadTrainChar();
 }
+// Eine Stufe komplett durch = erledigt (100 %). Klarer Abschluss statt stiller Loop.
+function finishTrainLevel(){
+  localStorage.setItem(trainDoneKey(trainLevel), "1");
+  cfSetScore("schreibtraining", 100, topic.id);
+  trainIdx = 0;
+  saveTrain();
+  trainStats.round++;
+  saveTrainStats();
+  updateTrainStats();
+  updateTrainLevelButtons();
+  setTrainStatus("🎉 Geschafft! Alle " + trainWords.length + " Zeichen in dieser Stufe.", "ok");
+  $("trainAgainBtn").style.display = "";
+}
 function nextTrainWord(){
   if(trainIdx >= trainWords.length - 1){
-    trainIdx = 0;
-    trainStats.round++;
-    saveTrainStats();
-    setTrainStatus("Alle Wörter durch – es geht wieder von vorne los.", "ok");
-  }else{
-    trainIdx++;
+    finishTrainLevel();
+    return;
   }
+  trainIdx++;
   loadTrainWord();
 }
 function ensureTraceInit(){
@@ -1220,11 +1251,19 @@ document.querySelectorAll("#trainLevels button").forEach(b => {
   b.addEventListener("click", () => {
     if(trainLevel === b.dataset.level) return;
     trainLevel = b.dataset.level;
+    trainIdx = loadTrainPos(trainLevel);
+    $("trainAgainBtn").style.display = "none";
     saveTrain();
     if(trainStarted) loadTrainWord(); else updateTrainLevelButtons();
   });
 });
 $("trainPlay").addEventListener("click", () => cfSpeakZh(trainWord() ? trainWord().zh : "", {rate:0.85}));
+$("trainAgainBtn").addEventListener("click", () => {
+  trainIdx = 0;
+  saveTrain();
+  $("trainAgainBtn").style.display = "none";
+  loadTrainWord();
+});
 updateTrainLevelButtons();
 
 /* ===== Hinweis: chinesische Tastatur einrichten ===== */

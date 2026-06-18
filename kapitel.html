@@ -87,6 +87,8 @@
 <script src="topics.js"></script>
 <script src="common.js"></script>
 <script src="profile.js"></script>
+<!-- TESTDATEI: Feier-Test-Knopf. Vor öffentlichem Upload diese Zeile UND feier_test.js löschen. -->
+<script src="feier_test.js"></script>
 <script>
   const topic = getTopic();
   applyTheme(topic, "Chinesisch festigen");
@@ -157,6 +159,20 @@
     spielen: avg([g("flash"), g("memory"), g("luecken")])
   };
   groupButtons.forEach(b => greenFill(b, groupScore[b.dataset.group]));
+
+  // Kapitel komplett (Gesamt 100 %) → einmalige Feier (gleiche Rechnung wie Freischaltung)
+  (function(){
+    const scoreNames = ["hoeren","lernen","tippen","schreibtraining","sprechen","ueben_hoeren","ueben_zhde","ueben_dezh","flash","memory","luecken"];
+    const vals = scoreNames.map(n => g(n)).filter(p => p !== null && p !== undefined);
+    const total = vals.length ? Math.round(vals.reduce((a,b) => a + b, 0) / vals.length) : null;
+    const key = "cf_celebrated_" + topic.id;
+    if(total === 100 && localStorage.getItem(key) !== "1"){
+      localStorage.setItem(key, "1");
+      if(typeof cfCelebrate === "function") setTimeout(() => cfCelebrate(), 350);
+    }else if(total !== null && total < 100 && localStorage.getItem(key) === "1"){
+      localStorage.removeItem(key); // nach Reset wieder feierfähig
+    }
+  })();
 </script>
 </body>
 </html>
