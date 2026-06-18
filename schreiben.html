@@ -767,7 +767,8 @@ function runLearnStep(){
   $("learnChoices").innerHTML = "";
   $("learnTraceArea").style.display = "none";
   $("learnMeta").style.display = "none";
-  $("learnHanzi").innerHTML = wordContextHTML(lWord);
+  // In den Mal-Schritten (lStep 2-4) das Zeichen oben verdecken, damit man nicht abschreibt.
+  $("learnHanzi").innerHTML = (lStep >= 2) ? wordMaskedHTML(lWord) : wordContextHTML(lWord);
 
   if(lStep === 0){
     $("learnPlay").style.display = "";
@@ -782,7 +783,7 @@ function runLearnStep(){
     $("learnQuestion").textContent = "";
     $("learnMeta").style.display = "";
     $("learnPinyin").textContent = lWord.pinyin;
-    $("learnDe").textContent = learnDeText(lWord);
+    $("learnDe").textContent = learnDeText(lWord, true);
     $("learnTraceArea").style.display = "";
     lRound = 1;
     lChar = 0;
@@ -937,6 +938,7 @@ function finishLearnWord(){
   $("learnChoices").innerHTML = "";
   $("learnTraceArea").style.display = "none";
   $("learnMeta").style.display = "";
+  $("learnHanzi").innerHTML = wordContextHTML(lWord);
   $("learnPinyin").textContent = lWord.pinyin;
   $("learnDe").textContent = learnDeText(lWord);
   $("learnPlay").style.display = "";

@@ -136,11 +136,10 @@ function readableText(bg){ return luminance(bg) > .58 ? "#0B1B2E" : "#FFFFFF"; }
 function isLinYue(name){ return /lin\s*yue|lín\s*yuè|林月|林悦|林越/i.test(name || ""); }
 function isSuRan(name){ return /su\s*ran|sū\s*rán|苏然|蘇然/i.test(name || ""); }
 function bubbleColor(speaker){
-  if(isLinYue(speaker)) return "#FFFFFF";
-  if(isSuRan(speaker)) return mixWithWhite(topic.accent, .42);
-  return mixWithWhite(topic.accent, .68);
+  // Hauptfigur 苏然 in Kapitelfarbe (links), alle anderen weiß (rechts) – wie ein Chat.
+  return isSuRan(speaker) ? mixWithWhite(topic.accent, .42) : "#FFFFFF";
 }
-function bubbleSide(speaker){ return isLinYue(speaker) ? "right" : "left"; }
+function bubbleSide(speaker){ return isSuRan(speaker) ? "left" : "right"; }
 
 // Hören zählt als „gehört": ein Wort (Vokabel) oder Satz (Geschichte) gilt
 // als gehört, sobald er angetippt oder im Durchlauf abgespielt wurde.

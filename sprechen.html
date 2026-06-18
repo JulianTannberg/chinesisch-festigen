@@ -397,7 +397,7 @@ function checkTranscript(alternatives, task){
     if(ok){ spStats.direct++; spStats.streak++; } else { spStats.streak = 0; }
     saveSpStats();
     updateSpStats();
-    cfSetScore("sprechen", tasks.length ? Math.round(spStats.direct / tasks.length * 100) : 0);
+    cfSetScore("sprechen", tasks.length ? Math.round(spStats.direct / tasks.length * 100) : 0, topic.id);
   }
   if(ok){
     cfPlayFeedback(true);
