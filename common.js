@@ -273,6 +273,93 @@ function cfGetScore(name, chapterId){
   return Number.isFinite(p) ? Math.max(0, Math.min(100, p)) : null;
 }
 
+// Alle wertbaren Aktivitäten eines Kapitels (eine Quelle der Wahrheit).
+var CF_SCORE_NAMES = ["hoeren","lernen","tippen","schreibtraining","sprechen",
+  "ueben_hoeren","ueben_zhde","ueben_dezh","flash","memory","luecken"];
+
+// Hat das Kapitel überhaupt Inhalt für diese Aktivität? (sonst nicht mitzählen)
+function cfActivityApplicable(topic, name){
+  if(!topic) return false;
+  const hasVocab = (topic.vocab || []).length > 0;
+  const hasStory = (topic.storyDialog || []).length > 0;
+  const hasGaps  = (topic.gapExercises || []).length > 0;
+  const hasChars = !!(window.CF_BAUSTEINE && window.CF_BAUSTEINE[topic.id] &&
+                      window.CF_BAUSTEINE[topic.id].chars &&
+                      Object.keys(window.CF_BAUSTEINE[topic.id].chars).length);
+  switch(name){
+    case "memory": case "flash": case "tippen": return hasVocab;
+    case "luecken": return hasGaps;
+    case "ueben_hoeren": case "ueben_zhde": case "ueben_dezh": case "sprechen": return hasStory;
+    case "hoeren": return hasVocab || hasStory;
+    case "lernen": case "schreibtraining": return hasChars;
+    default: return true;
+  }
+}
+
+// Mittel über die ANWENDBAREN Aktivitäten. Nicht gespielte zählen als 0,
+// d. h. eine Gruppe/ein Kapitel ist erst 100 %, wenn wirklich alles 100 % ist.
+// Gibt null zurück, wenn keine Aktivität anwendbar ist (leeres Kapitel).
+function cfGroupPercent(topic, names){
+  if(!topic) return null;
+  const appl = (names || []).filter(n => cfActivityApplicable(topic, n));
+  if(!appl.length) return null;
+  let sum = 0;
+  for(const n of appl){ sum += (cfGetScore(n, topic.id) || 0); }
+  return Math.round(sum / appl.length);
+}
+
+// Gesamtfortschritt eines Kapitels über alle anwendbaren Aktivitäten.
+function cfChapterPercent(topic){
+  return cfGroupPercent(topic, CF_SCORE_NAMES);
+}
+
+// Proper-Name-Reserve für Karten-Übungen: Namen, die GANZ bleiben sollen, aber
+// nicht als Verstehen-Vokabel im Kapitel stehen. Mehrzeichige Verstehen-Vokabeln
+// (understandingVocab) werden ohnehin automatisch zusammengehalten – die müssen
+// hier NICHT rein. AKTIVE Vokabeln (z. B. 北京, 上海, 德国) werden bewusst in
+// Einzelzeichen zerlegt, weil sie aktiv geübt werden – auch wenn sie hier stünden.
+var CF_PROPER_NAMES = [
+  "清华大学","五道口","苏然","林月","微信","支付宝","国庆节","北京烤鸭","中国","美国"
+];
+
+// Zerlegt einen chinesischen Satz in Karten-Token:
+//  • Verstehen-Vokabeln (mehrzeichig) und Reserve-Namen bleiben als EINE Karte.
+//  • AKTIVE Vokabeln werden zeichenweise getrennt (sie werden ja geübt).
+//  • alles andere ebenfalls zeichenweise.
+// topic (optional): liefert vocab + understandingVocab des Kapitels.
+function cfSplitZhTokens(zh, topic){
+  const strip = s => String(s || "").replace(/[\s。！？!?，,、；;：:·.…—–\-]/g, "");
+  const clean = strip(zh);
+
+  // aktive Vokabeln werden NICHT zusammengehalten (Übung)
+  const activeSet = new Set();
+  if(topic && Array.isArray(topic.vocab)){
+    for(const v of topic.vocab){ const z = strip(v && v.zh); if(z) activeSet.add(z); }
+  }
+
+  let keep = (window.CF_PROPER_NAMES || []).slice();
+  if(topic && Array.isArray(topic.understandingVocab)){
+    for(const v of topic.understandingVocab){
+      const z = strip(v && v.zh);
+      if(z.length >= 2) keep.push(z); // Einzelzeichen sind ohnehin schon eine Karte
+    }
+  }
+  // alles Aktive aus der „ganz lassen“-Liste entfernen → wird zerlegt
+  keep = [...new Set(keep.filter(Boolean))]
+    .filter(w => !activeSet.has(w))
+    .sort((a,b) => b.length - a.length);
+
+  const tokens = [];
+  let i = 0;
+  while(i < clean.length){
+    let matched = "";
+    for(const n of keep){ if(n && clean.startsWith(n, i)){ matched = n; break; } }
+    if(matched){ tokens.push(matched); i += matched.length; }
+    else { tokens.push(clean[i]); i += 1; }
+  }
+  return tokens;
+}
+
 // Reiter/Buttons anteilig grün einfärben (gleiche Optik wie die Karten).
 // pairs: Array aus [Selektor oder Element, ScoreName].
 function cfPaintTabScores(pairs, chapterId){

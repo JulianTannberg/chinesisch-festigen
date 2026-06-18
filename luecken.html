@@ -81,7 +81,9 @@ function uniqueBy(items, keyFn){
   });
 }
 function buildAutoGaps(topic){
-  const vocabPool = uniqueBy([...(topic.vocab || []), ...(topic.understandingVocab || [])]
+  // Nur AKTIVE Vokabeln verwenden – weder als Lückenwort noch als falsche Option.
+  // So kommen Verstehen-Wörter (z. B. Eigennamen wie 五道口 / 清华大学) nicht ins Spiel.
+  const vocabPool = uniqueBy([...(topic.vocab || [])]
     .filter(v => v && v.zh && stripPunctuation(v.zh).length >= 1)
     .map(v => ({...v, cleanZh: stripPunctuation(v.zh), displayZh: String(v.zh).trim()})), v => v.cleanZh)
     .filter(v => v.cleanZh)
@@ -127,7 +129,22 @@ function buildAutoGaps(topic){
   return uniqueBy(auto, g => `${g.prompt}|${g.answer}`);
 }
 function prepareGaps(topic){
-  const manual = (topic.gapExercises || []).map(g => ({...g, choices: shuffle(g.choices || [])}));
+  // Verstehen-Vokabeln dürfen nie als Lücke (Antwort) und nicht als falsche Option
+  // auftauchen – generisch über understandingVocab des Kapitels.
+  const active = new Set((topic.vocab || []).map(v => stripPunctuation(v.zh)));
+  const understanding = new Set((topic.understandingVocab || []).map(v => stripPunctuation(v.zh)));
+  const isUnderstanding = w => {
+    const s = stripPunctuation(w);
+    return understanding.has(s) && !active.has(s);
+  };
+
+  const manual = (topic.gapExercises || [])
+    .filter(g => !isUnderstanding(g.answer))               // Antwort nie Verstehen-Vokabel
+    .map(g => {
+      const ans = stripPunctuation(g.answer);
+      const choices = (g.choices || []).filter(c => stripPunctuation(c) === ans || !isUnderstanding(c));
+      return {...g, choices: shuffle(choices)};             // Verstehen-Optionen raus, Antwort bleibt
+    });
   const auto = buildAutoGaps(topic);
   return uniqueBy([...manual, ...auto], g => `${g.prompt}|${g.answer}`);
 }

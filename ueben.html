@@ -136,7 +136,7 @@ const tasks = (topic.storyDialog || [])
     zh: String(l.zh).trim(),
     pinyin: l.pinyin || "",
     de: String(l.de).trim(),
-    zhChars: [...stripZh(l.zh)],
+    zhChars: cfSplitZhTokens(l.zh, topic),
     deTokens: deWords(l.de)
   }))
   .filter(t => t.zhChars.length > 0 && t.deTokens.length > 0);
@@ -159,8 +159,10 @@ function buildTokens(task){
     const extras = shuffle(deWordPool.filter(w => !inSentence.has(w.toLowerCase()))).slice(0, 4);
     return [...task.deTokens, ...extras];
   }
-  const inSentence = new Set(task.zhChars);
-  const extras = shuffle(zhCharPool.filter(c => !inSentence.has(c))).slice(0, 4);
+  // Auch einzelne Zeichen aus Namen ausschließen, damit z. B. 华/学 nicht als
+  // Distraktor erscheinen, während 清华大学 schon als eine Karte da ist.
+  const sentenceChars = new Set(task.zhChars.join("").split(""));
+  const extras = shuffle(zhCharPool.filter(c => !sentenceChars.has(c))).slice(0, 4);
   return [...task.zhChars, ...extras];
 }
 function solutionString(task){

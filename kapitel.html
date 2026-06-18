@@ -87,8 +87,6 @@
 <script src="topics.js"></script>
 <script src="common.js"></script>
 <script src="profile.js"></script>
-<!-- TESTDATEI: Feier-Test-Knopf. Vor öffentlichem Upload diese Zeile UND feier_test.js löschen. -->
-<script src="feier_test.js"></script>
 <script>
   const topic = getTopic();
   applyTheme(topic, "Chinesisch festigen");
@@ -135,12 +133,11 @@
     el.appendChild(badge);
   }
   const g = name => cfGetScore(name, topic.id);
-  function avg(list){
-    const v = list.filter(x => x !== null && x !== undefined);
-    return v.length ? Math.round(v.reduce((a,b) => a + b, 0) / v.length) : null;
-  }
-  // Schreiben = Mittel aus „Zeichen lernen“, „Tippen“ und „Schreibtraining“
-  const writeScore = avg([g("lernen"), g("tippen"), g("schreibtraining")]);
+  // Schreiben = Mittel aus „Zeichen lernen“, „Tippen“ und „Schreibtraining“.
+  // Nicht gespielte zählen als 0; Badge erst, wenn mindestens eines begonnen wurde.
+  const writeNames = ["lernen","tippen","schreibtraining"];
+  const writeStarted = writeNames.some(n => g(n) !== null && g(n) !== undefined);
+  const writeScore = writeStarted ? cfGroupPercent(topic, writeNames) : null;
 
   paintScore("writeLink", writeScore);
   paintScore("speakLink", g("sprechen"));
@@ -152,19 +149,18 @@
   paintScore("gapLink", g("luecken"));
   paintScore("hearLink", g("hoeren"));
 
-  // Untere Reiter nach Gruppen-Mittel einfärben
+  // Untere Reiter nach Gruppen-Mittel einfärben.
+  // Nicht gespielte Aktivitäten zählen als 0 → Gruppe erst 100 %, wenn alles 100 % ist.
   const groupScore = {
-    lernen: avg([writeScore, g("sprechen"), g("hoeren")]),
-    ueben: avg([g("ueben_hoeren"), g("ueben_zhde"), g("ueben_dezh")]),
-    spielen: avg([g("flash"), g("memory"), g("luecken")])
+    lernen:  cfGroupPercent(topic, ["lernen","tippen","schreibtraining","sprechen","hoeren"]),
+    ueben:   cfGroupPercent(topic, ["ueben_hoeren","ueben_zhde","ueben_dezh"]),
+    spielen: cfGroupPercent(topic, ["flash","memory","luecken"])
   };
-  groupButtons.forEach(b => greenFill(b, groupScore[b.dataset.group]));
+  groupButtons.forEach(b => greenFill(b, groupScore[b.dataset.group] || 0));
 
   // Kapitel komplett (Gesamt 100 %) → einmalige Feier (gleiche Rechnung wie Freischaltung)
   (function(){
-    const scoreNames = ["hoeren","lernen","tippen","schreibtraining","sprechen","ueben_hoeren","ueben_zhde","ueben_dezh","flash","memory","luecken"];
-    const vals = scoreNames.map(n => g(n)).filter(p => p !== null && p !== undefined);
-    const total = vals.length ? Math.round(vals.reduce((a,b) => a + b, 0) / vals.length) : null;
+    const total = cfChapterPercent(topic);
     const key = "cf_celebrated_" + topic.id;
     if(total === 100 && localStorage.getItem(key) !== "1"){
       localStorage.setItem(key, "1");

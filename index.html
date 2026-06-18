@@ -32,11 +32,13 @@
     const topics = window.CF_TOPICS || [];
     const scoreNames = ["hoeren","lernen","tippen","schreibtraining","sprechen","ueben_hoeren","ueben_zhde","ueben_dezh","flash","memory","luecken"];
 
-    // Gesamt-Prozent eines Kapitels (Mittel aller gezählten Quoten) oder null
+    // Gesamt-Prozent eines Kapitels: nicht gespielte Aktivitäten zählen als 0
+    // (zentrale Rechnung aus common.js). null nur bei Kapiteln ganz ohne Inhalt.
     function chapterTotal(t){
-      const values = scoreNames.map(n => cfGetScore(n, t.id)).filter(p => p !== null);
-      if(!values.length) return null;
-      return Math.round(values.reduce((a,b) => a+b, 0) / values.length);
+      return cfChapterPercent(t);
+    }
+    function chapterStarted(t){
+      return scoreNames.some(n => cfGetScore(n, t.id) !== null);
     }
     function chapterComplete(t){
       const tot = chapterTotal(t);
@@ -61,7 +63,7 @@
       let scoreHtml = "";
       if(hasContent){
         const total = chapterTotal(t);
-        if(total !== null){
+        if(total !== null && chapterStarted(t)){
           if(total >= 100) el.classList.add("complete");
           scoreHtml = `
             <div class="chapterScore">${total} %</div>
