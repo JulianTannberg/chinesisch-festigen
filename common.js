@@ -92,7 +92,7 @@ window.CF_AUDIO = window.CF_AUDIO || {
   name: function(text){ return String(text == null ? "" : text).trim(); }, // Hanzi-Teil = exakt der Text
   // Sprecher-Kürzel für Story-Dateien (Hanzi-Name -> lateinisch). Erweiterbar.
   speakerId: function(name){
-    var m = {"苏然":"suran","林月":"linyue","suran":"suran","linyue":"linyue"};
+    var m = {"苏然":"suran","林月":"linyue","男人":"nanren","suran":"suran","linyue":"linyue","nanren":"nanren"};
     return m[name] || String(name == null ? "" : name).trim();
   }
 };

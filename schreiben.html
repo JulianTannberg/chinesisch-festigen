@@ -739,10 +739,18 @@ function wordContextHTML(item){
   for(const c of word){ html += (c === ch) ? `<span style="color:#ffce3a">${escapeHtml(c)}</span>` : escapeHtml(c); }
   return html;
 }
-// Bedeutung + Hinweis, in welchem Wort das Zeichen vorkommt
-function learnDeText(item){
+// Beim Malen verdecken wir das Zeichen, damit man es nicht oben abschreiben kann.
+// Platzhalter (▢) pro Zeichen zeigen nur, wie viele Zeichen das Wort hat.
+function wordMaskedHTML(item){
+  const word = item.word || item.zh; let html = "";
+  for(let i = 0; i < word.length; i++){ html += `<span style="color:#34465a">▢</span>`; }
+  return html;
+}
+// Bedeutung + Hinweis, in welchem Wort das Zeichen vorkommt.
+// hideHanzi=true beim Malen: nur die Bedeutung zeigen, nicht das Wort in Hanzi.
+function learnDeText(item, hideHanzi){
   let t = item.de || "";
-  if(item.word && item.word !== item.zh) t += ` · in ${item.word} (${item.wordDe})`;
+  if(!hideHanzi && item.word && item.word !== item.zh) t += ` · in ${item.word} (${item.wordDe})`;
   if(item.review) t += "  ⚑";
   return t;
 }
@@ -1007,7 +1015,8 @@ function updateTrainStats(){
   const rate = trainStats.attempted ? Math.round(trainStats.direct / trainStats.attempted * 100) : 0;
   $("trainRate").textContent = rate + "%";
   $("trainStreak").textContent = String(trainStats.streak);
-  cfSetScore("schreibtraining", rate, topic.id);
+  // Hinweis: Die Quote (rate) ist nur Anzeige. Die Freischalt-Wertung kommt
+  // aus dem Abschluss (alle Zeichen einmal durch), siehe advanceTrain().
 }
 
 function saveTrain(){
@@ -1157,6 +1166,14 @@ function advanceTrain(){
   }
   saveTrainStats();
   updateTrainStats();
+  // Freischalt-Wertung nach Abschluss: fertige Zeichen / Gesamt.
+  // Letztes Zeichen geschafft = 100 %. Bester Wert bleibt erhalten.
+  {
+    const total = trainWords.length || 1;
+    const pct = Math.round((trainIdx + 1) / total * 100);
+    const prev = cfGetScore("schreibtraining", topic.id) || 0;
+    cfSetScore("schreibtraining", Math.max(prev, pct), topic.id);
+  }
   cfPlayFeedback(true);
   setTrainStatus("Wort geschafft! 很好！", "ok");
   setTimeout(() => nextTrainWord(), 800);

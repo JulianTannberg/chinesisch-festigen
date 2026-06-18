@@ -187,7 +187,15 @@ function recordAttempt(ok){
   taskChecked = true;
   attempted++;
   if(ok) firstCorrect++;
-  cfSetScore(`ueben_${MODE}`, Math.round(firstCorrect / tasks.length * 100));
+}
+// Freischalt-Wertung nach Abschluss: gelöste Sätze / Gesamt.
+// Letzter Satz gelöst = 100 %. Bester Wert bleibt erhalten.
+// „Richtig: X %" (firstCorrect) bleibt nur die Qualitäts-Anzeige im Zähler.
+function markUebenProgress(){
+  const total = tasks.length || 1;
+  const pct = Math.round((idx + 1) / total * 100);
+  const prev = cfGetScore(`ueben_${MODE}`) || 0;
+  cfSetScore(`ueben_${MODE}`, Math.max(prev, pct));
 }
 
 function stateKey(){ return `cf_ueben_${MODE}_v1_${topic.id}`; }
@@ -211,6 +219,7 @@ function makeTokens(list){
   return shuffle(list.map(t => ({id: `t${tokenId++}`, text: t})));
 }
 function startTask(){
+  if(idx >= tasks.length){ render(); return; }
   const t = current();
   bank = makeTokens(buildTokens(t));
   answer = [];
@@ -222,6 +231,9 @@ function startTask(){
   $("speakHeard").textContent = "";
   setFeedback("neutral", "");
   render();
+  // Nach Öffnen und nach „Weiter" den Satz automatisch vorlesen –
+  // nur bei „Chinesisch hören" und „Chinesisch → Deutsch" und nur, wenn Ton an ist.
+  if(uebenSound && (MODE === "hoeren" || MODE === "zhde") && t && t.zh) cfSpeakZh(t.zh);
 }
 function render(){
   $("finish").classList.remove("show");
@@ -327,6 +339,7 @@ function colorAnswerTokens(ok){
 function taskSolved(viaSpeech){
   const t = current();
   recordAttempt(true);
+  markUebenProgress();
   cfPlayFeedback(true);
   setFeedback("ok", viaSpeech ? "Richtig gesprochen! 很好！" : "Richtig! Sehr gut gebaut.");
   colorAnswerTokens(true);
