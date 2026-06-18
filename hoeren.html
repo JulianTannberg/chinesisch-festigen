@@ -151,10 +151,14 @@ try{
 }catch(e){}
 function hoerenGrad(p){ return `linear-gradient(90deg, rgba(34,197,94,.32) ${p}%, rgba(34,197,94,0) ${p}%)`; }
 function recomputeHoeren(){
-  const totalW = (topic.vocab ? topic.vocab.length : 0) + (topic.understandingVocab ? topic.understandingVocab.length : 0);
-  const totalS = (topic.storyDialog ? topic.storyDialog.length : 0);
-  const heardW = Math.min(Object.keys(hoerenHeard.w).length, totalW);
-  const heardS = Math.min(Object.keys(hoerenHeard.s).length, totalS);
+  // Nach EINDEUTIGEN Hanzi zählen: doppelte Sätze (z. B. 谢谢 / 不客气 mehrfach)
+  // landen sonst auf demselben „gehört"-Schlüssel und 100 % wäre nie erreichbar.
+  const vocabZh = new Set([...(topic.vocab || []), ...(topic.understandingVocab || [])].map(v => v && v.zh).filter(Boolean));
+  const storyZh = new Set((topic.storyDialog || []).map(l => l && l.zh).filter(Boolean));
+  const totalW = vocabZh.size;
+  const totalS = storyZh.size;
+  const heardW = [...vocabZh].filter(z => hoerenHeard.w[z]).length;
+  const heardS = [...storyZh].filter(z => hoerenHeard.s[z]).length;
   const total = totalW + totalS;
   cfSetScore("hoeren", total ? Math.round((heardW + heardS) / total * 100) : 0, topic.id);
   const vt = document.querySelector('.tab[data-tab="vocab"]');
