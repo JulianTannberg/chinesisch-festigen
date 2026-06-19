@@ -1176,6 +1176,15 @@ img.contactAvatar{ object-fit:cover; padding:0; }
 .topbarEnd{ justify-content:flex-end; }
 .topbarIcons{ display:flex; gap:8px; align-items:center; }
 .settingsIcon svg{ width:22px; height:22px; display:block; }
+.topbarSticky{
+  position:sticky;
+  top:0;
+  z-index:30;
+  background:var(--chapter-bg);
+  padding-top:10px;
+  padding-bottom:10px;
+  margin-bottom:8px;
+}
 .setTitle{ font-size:18px; font-weight:800; margin-bottom:4px; }
 .setRow{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:10px; }
 .setRow .profileInput{ flex:1 1 180px; min-width:0; }

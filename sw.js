@@ -1,7 +1,7 @@
 // Chinesisch festigen – Service Worker
 // Bei jeder Änderung an der Website die Versionsnummer erhöhen,
 // damit alle Geräte die neuen Dateien laden.
-const CACHE = "cf-v70";
+const CACHE = "cf-v72";
 
 const SHELL = [
   "./",
@@ -16,6 +16,7 @@ const SHELL = [
   "./memory.html",
   "./luecken.html",
   "./ueben.html",
+  "./wiederholen.html",
   "./chat.html",
   "./einstellungen.html",
   "./fehler.html",

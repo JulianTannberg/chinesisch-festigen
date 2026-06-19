@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Zeichen wiederholen</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#03172B" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7/dist/hanzi-writer.min.js"></script>
+  <style>
+    .chapterCharRow{ margin:14px 0 20px; }
+    .chapterCharHead{
+      display:inline-block; padding:6px 14px; border-radius:999px;
+      font-weight:700; font-size:15px; margin-bottom:10px;
+    }
+    .charCells{ display:flex; flex-wrap:wrap; gap:10px; }
+    .charCell{
+      width:58px; height:58px; font-size:30px; line-height:1;
+      display:flex; align-items:center; justify-content:center;
+      border:2px solid var(--stroke); border-radius:14px;
+      background:var(--card); color:var(--chapter-text);
+      cursor:pointer; padding:0;
+    }
+    .charCell:hover{ background:var(--card-strong); }
+    .charCell.done{ border-color:var(--good); box-shadow:0 0 0 2px var(--good) inset; }
+    .charCell.locked{ opacity:.4; cursor:not-allowed; }
+    .charCell.locked:hover{ background:var(--card); }
+    .chapterCharRow.locked .chapterCharHead{ opacity:.75; }
+    .lockHint{ font-size:13px; color:var(--muted); margin:-4px 0 9px; }
+    .cfOverlay{
+      position:fixed; inset:0; background:rgba(0,0,0,.55);
+      display:none; align-items:center; justify-content:center;
+      z-index:60; padding:16px;
+    }
+    .cfOverlayCard{
+      background:#f4f6f8; color:#0f2233; border-radius:18px; padding:18px;
+      width:min(340px,100%); text-align:center; box-shadow:0 20px 60px rgba(0,0,0,.4);
+    }
+    .practiceRef{ font-size:24px; font-weight:700; margin-bottom:8px; }
+    .writerTarget{
+      width:260px; height:260px; margin:0 auto;
+      background:#fff; border-radius:14px; border:1px solid #d8dee4;
+    }
+    .practiceStatus{ margin:12px 0 14px; min-height:22px; font-weight:600; }
+    .practiceStatus.ok{ color:#15803d; }
+    .practiceStatus.bad{ color:#b91c1c; }
+    .practiceButtons{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+    .practiceButtons button{
+      min-height:44px; padding:10px 16px; border-radius:999px;
+      border:1px solid #cbd5e1; background:#fff; color:#0f2233;
+      font-size:15px; cursor:pointer;
+    }
+    .practiceButtons button:hover{ background:#eef2f6; }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="topbar topbarSticky" style="justify-content:space-between;">
+      <a class="back" href="index.html">← Übersicht</a>
+      <a class="miniBtn settingsIcon" href="einstellungen.html" aria-label="Einstellungen" title="Einstellungen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></a>
+    </div>
+    <h1>Zeichen wiederholen</h1>
+    <p class="subtitle">Tippe ein Zeichen an, um es zu schreiben – so oft du willst. Geübte Zeichen bekommen einen grünen Rahmen.</p>
+    <div id="charMount"></div>
+  </main>
+
+  <div id="practiceOverlay" class="cfOverlay">
+    <div class="cfOverlayCard">
+      <div class="practiceRef" id="practiceRef">–</div>
+      <div id="writerTarget" class="writerTarget"></div>
+      <div id="practiceStatus" class="practiceStatus">Schreib das Zeichen …</div>
+      <div class="practiceButtons">
+        <button id="btnDemo" type="button">Vormachen</button>
+        <button id="btnRedo" type="button">Nochmal</button>
+        <button id="btnClose" type="button">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="topics.js"></script>
+  <script src="common.js"></script>
+  <script>
+    const grid = document.getElementById("charMount");
+    const allTopics = (window.CF_TOPICS || []);
+    const contentTopics = allTopics.filter(t => t && topicHasContent(t));
+
+    function chapterChars(t){
+      const seen = new Set(), out = [];
+      (t.vocab || []).forEach(v => {
+        String(v && v.zh || "").split("").forEach(ch => {
+          if(/[\u4e00-\u9fff]/.test(ch) && !seen.has(ch)){ seen.add(ch); out.push(ch); }
+        });
+      });
+      return out;
+    }
+    function chapterComplete(t){ const p = cfChapterPercent(t); return p !== null && p >= 100; }
+    function doneKey(ch){ return "cf_review_done_" + ch; }
+    function isDone(ch){ try{ return localStorage.getItem(doneKey(ch)) === "1"; }catch(e){ return false; } }
+    function markDone(ch){
+      try{ localStorage.setItem(doneKey(ch), "1"); }catch(e){}
+      document.querySelectorAll('.charCell[data-ch="' + ch + '"]').forEach(el => {
+        if(!el.classList.contains("locked")) el.classList.add("done");
+      });
+    }
+
+    // Alle Kapitel MIT Inhalt anlegen. Freischaltung wie in der Übersicht:
+    // Kapitel 1 immer offen, jedes weitere erst, wenn das vorherige 100 % hat.
+    // Gesperrte Kapitel zeigen gesperrte (nicht übbare) Zeichen.
+    allTopics.forEach((t, i) => {
+      if(!topicHasContent(t)) return;            // 7–15 ohne Inhalt: noch nicht anlegen
+      const chars = chapterChars(t);
+      if(!chars.length) return;
+      const prev = i > 0 ? allTopics[i - 1] : null;
+      const unlocked = !prev || chapterComplete(prev);
+
+      const row = document.createElement("section");
+      row.className = "chapterCharRow" + (unlocked ? "" : " locked");
+
+      const head = document.createElement("div");
+      head.className = "chapterCharHead";
+      head.textContent = "Kapitel " + t.id + " · " + t.title + (unlocked ? "" : "  🔒");
+      head.style.background = `linear-gradient(135deg, ${t.accent}, rgba(255,255,255,.14))`;
+      head.style.color = t.textColor || "#fff";
+      row.appendChild(head);
+
+      if(!unlocked && prev){
+        const hint = document.createElement("div");
+        hint.className = "lockHint";
+        hint.textContent = "Erst Kapitel " + prev.id + " abschließen";
+        row.appendChild(hint);
+      }
+
+      const cells = document.createElement("div");
+      cells.className = "charCells";
+      chars.forEach(ch => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "charCell"
+          + (unlocked && isDone(ch) ? " done" : "")
+          + (unlocked ? "" : " locked");
+        b.dataset.ch = ch;
+        b.textContent = ch;
+        b.style.borderColor = t.accent;
+        if(unlocked){ b.addEventListener("click", () => openPractice(ch)); }
+        else { b.disabled = true; }
+        cells.appendChild(b);
+      });
+      row.appendChild(cells);
+      grid.appendChild(row);
+    });
+
+    if(!contentTopics.length){
+      grid.innerHTML = '<p class="subtitle">Noch keine Kapitel mit Inhalt vorhanden.</p>';
+    }
+
+    // ----- Übungs-Overlay (Hanzi Writer, Profi: aus dem Kopf) -----
+    const overlay = document.getElementById("practiceOverlay");
+    const refLabel = document.getElementById("practiceRef");
+    const statusEl = document.getElementById("practiceStatus");
+    let curChar = null, curWriter = null;
+    const WOPTS = {
+      width:260, height:260, padding:12,
+      showOutline:false, showCharacter:false,
+      strokeColor:"#0f2233", radicalColor:"#c0392b",
+      drawingColor:"#0f2233", drawingWidth:24,
+      leniency:1.15, showHintAfterMisses:9999
+    };
+    function setStatus(t, cls){ statusEl.textContent = t; statusEl.className = "practiceStatus" + (cls ? (" " + cls) : ""); }
+    function buildWriter(){
+      const target = document.getElementById("writerTarget");
+      target.innerHTML = "";
+      if(typeof HanziWriter === "undefined"){
+        setStatus("Schreib-Engine konnte nicht laden (offline?).", "bad");
+        return null;
+      }
+      curWriter = HanziWriter.create("writerTarget", curChar, WOPTS);
+      return curWriter;
+    }
+    function runQuiz(){
+      if(!curWriter) return;
+      setStatus("Schreib das Zeichen aus dem Kopf …");
+      let misses = 0;
+      curWriter.quiz({
+        onMistake(){
+          misses++;
+          if(misses % 3 === 0){ setStatus("Tipp: Probier „Vormachen“.", "bad"); }
+          else{ setStatus("Nicht ganz – probier den Strich nochmal.", "bad"); }
+        },
+        onCorrectStroke(){ if(statusEl.classList.contains("bad")) setStatus("Weiter so …"); },
+        onComplete(){ setStatus("Geschafft! 🎉", "ok"); markDone(curChar); }
+      });
+    }
+    function openPractice(ch){
+      curChar = ch;
+      refLabel.textContent = ch;
+      overlay.style.display = "flex";
+      document.documentElement.classList.add("noScroll");
+      if(buildWriter()) runQuiz();
+    }
+    function closePractice(){
+      overlay.style.display = "none";
+      document.documentElement.classList.remove("noScroll");
+      const target = document.getElementById("writerTarget");
+      if(target) target.innerHTML = "";
+      curWriter = null;
+    }
+    document.getElementById("btnDemo").addEventListener("click", () => {
+      if(!buildWriter()) return;
+      setStatus("Schau zu …");
+      try{ curWriter.animateCharacter({ onComplete(){ if(buildWriter()) runQuiz(); } }); }
+      catch(e){ runQuiz(); }
+    });
+    document.getElementById("btnRedo").addEventListener("click", () => { if(buildWriter()) runQuiz(); });
+    document.getElementById("btnClose").addEventListener("click", closePractice);
+    overlay.addEventListener("click", e => { if(e.target === overlay) closePractice(); });
+    document.addEventListener("keydown", e => {
+      if(e.key === "Escape" && overlay.style.display === "flex") closePractice();
+    });
+  </script>
+</body>
+</html>
