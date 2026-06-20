@@ -564,3 +564,15 @@ function cfCelebrate(opts){
   try{ if(typeof cfPlayFeedback === "function") cfPlayFeedback(true); }catch(e){}
   setTimeout(function(){ if(wrap.parentNode) wrap.parentNode.removeChild(wrap); }, opts.duration || 4600);
 }
+
+// Ausblendbarer Info-Hinweis mit kleiner Dauer-Zeile, die ihn wieder öffnet.
+// tipEl = große Box, lineEl = kleine Zeile, btnEl = "Verstanden"-Knopf.
+function cfWireInfoTip(tipEl, lineEl, btnEl, storageKey){
+  if(!tipEl || !lineEl) return;
+  const show = big => { tipEl.style.display = big ? "" : "none"; lineEl.style.display = big ? "none" : ""; };
+  let dismissed = false;
+  try{ dismissed = localStorage.getItem(storageKey) === "1"; }catch(e){}
+  show(!dismissed);
+  if(btnEl) btnEl.addEventListener("click", () => { try{ localStorage.setItem(storageKey, "1"); }catch(e){} show(false); });
+  lineEl.addEventListener("click", () => show(true)); // wieder anzeigen
+}

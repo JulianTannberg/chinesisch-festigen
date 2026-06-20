@@ -1185,6 +1185,12 @@ img.contactAvatar{ object-fit:cover; padding:0; }
   padding-bottom:10px;
   margin-bottom:8px;
 }
+.infoTip{ background:var(--card); border:1px solid var(--stroke); border-radius:14px; padding:12px 14px; margin:0 0 16px; }
+.infoTip p{ margin:0 0 10px; color:var(--muted); font-size:14px; line-height:1.5; }
+.infoTipBtn{ min-height:38px; padding:7px 14px; border-radius:999px; border:1px solid var(--stroke); background:var(--button-bg); color:var(--chapter-text); font-size:14px; cursor:pointer; }
+.infoTipBtn:hover{ background:var(--button-bg-hover); }
+.infoLine{ display:inline-flex; align-items:center; gap:6px; color:var(--muted); font-size:13px; margin:0 0 14px; cursor:pointer; background:none; border:none; padding:4px 0; }
+.infoLine:hover{ color:var(--chapter-text); text-decoration:underline; }
 .setTitle{ font-size:18px; font-weight:800; margin-bottom:4px; }
 .setRow{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:10px; }
 .setRow .profileInput{ flex:1 1 180px; min-width:0; }

@@ -158,6 +158,11 @@
 
     <!-- ============ PANEL: TIPPEN (dein bestehendes Quiz) ============ -->
     <section class="panel" id="panel-trace">
+      <div class="infoTip" id="trInfoTip">
+        <p>Es reicht, <strong>eine</strong> Stufe ganz zu schaffen (z. B. Anfänger <em>oder</em> Profi) – für 100 % musst du <strong>nicht</strong> alle drei machen. Du darfst natürlich trotzdem.</p>
+        <button class="infoTipBtn" id="trInfoBtn" type="button">Verstanden ✓</button>
+      </div>
+      <button class="infoLine" id="trInfoLine" type="button" style="display:none;">ⓘ Eine fertige Stufe reicht für 100 %</button>
       <section class="card">
         <div id="trainEmpty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Vokabeln eingetragen.</div>
         <div id="trainGame">
@@ -1299,6 +1304,14 @@ updateTrainLevelButtons();
   });
   document.getElementById("imeHintReopen").addEventListener("click", () => setHidden(false));
 })();
+</script>
+<script>
+  cfWireInfoTip(
+    document.getElementById("trInfoTip"),
+    document.getElementById("trInfoLine"),
+    document.getElementById("trInfoBtn"),
+    "cf_tip_schreibtraining"
+  );
 </script>
 </body>
 </html>

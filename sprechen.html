@@ -21,6 +21,12 @@
     <h1 id="title">Sprechen</h1>
     <p class="subtitle">Übe zuerst einzelne Sätze mit Spracherkennung. Daneben kannst du den Schülerdialog als KI-Gespräch starten.</p>
 
+    <div class="infoTip" id="spInfoTip">
+      <p>In <strong>„Sätze sprechen"</strong> sammelst du die Prozente für dieses Kapitel. <strong>Aussprache</strong> und <strong>KI sprechen</strong> sind nur zum Üben da und zählen nicht in die Prozentzahl.</p>
+      <button class="infoTipBtn" id="spInfoBtn" type="button">Verstanden ✓</button>
+    </div>
+    <button class="infoLine" id="spInfoLine" type="button" style="display:none;">ⓘ Nur „Sätze sprechen" zählt für die Prozente</button>
+
     <div class="tabbar speakTabbar">
       <button class="tab active" data-tab="satz" type="button">Sätze sprechen</button>
       <button class="tab" data-tab="aussprache" type="button">Aussprache</button>
@@ -682,6 +688,14 @@ $("copyOpenBtn").onclick = async () => {
   await copyPrompt();
   window.open("https://chatgpt.com/", "_blank", "noopener");
 };
+</script>
+<script>
+  cfWireInfoTip(
+    document.getElementById("spInfoTip"),
+    document.getElementById("spInfoLine"),
+    document.getElementById("spInfoBtn"),
+    "cf_tip_sprechen"
+  );
 </script>
 </body>
 </html>
