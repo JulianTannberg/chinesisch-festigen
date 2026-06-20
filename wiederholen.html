@@ -13,47 +13,29 @@
   <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7/dist/hanzi-writer.min.js"></script>
   <style>
     .chapterCharRow{ margin:14px 0 20px; }
-    .chapterCharHead{
-      display:inline-block; padding:6px 14px; border-radius:999px;
-      font-weight:700; font-size:15px; margin-bottom:10px;
-    }
+    .chapterCharHead{ display:inline-block; padding:6px 14px; border-radius:999px; font-weight:700; font-size:15px; margin-bottom:10px; }
     .charCells{ display:flex; flex-wrap:wrap; gap:10px; }
-    .charCell{
-      width:58px; height:58px; font-size:30px; line-height:1;
-      display:flex; align-items:center; justify-content:center;
-      border:2px solid var(--stroke); border-radius:14px;
-      background:var(--card); color:var(--chapter-text);
-      cursor:pointer; padding:0;
-    }
+    .charCell{ min-width:56px; height:56px; font-size:26px; line-height:1; display:flex; align-items:center; justify-content:center; border:2px solid var(--stroke); border-radius:14px; background:var(--card); color:var(--chapter-text); cursor:pointer; padding:0 12px; }
     .charCell:hover{ background:var(--card-strong); }
     .charCell.done{ border-color:var(--good); box-shadow:0 0 0 2px var(--good) inset; }
     .charCell.locked{ opacity:.4; cursor:not-allowed; }
     .charCell.locked:hover{ background:var(--card); }
     .chapterCharRow.locked .chapterCharHead{ opacity:.75; }
     .lockHint{ font-size:13px; color:var(--muted); margin:-4px 0 9px; }
-    .cfOverlay{
-      position:fixed; inset:0; background:rgba(0,0,0,.55);
-      display:none; align-items:center; justify-content:center;
-      z-index:60; padding:16px;
-    }
-    .cfOverlayCard{
-      background:#f4f6f8; color:#0f2233; border-radius:18px; padding:18px;
-      width:min(340px,100%); text-align:center; box-shadow:0 20px 60px rgba(0,0,0,.4);
-    }
-    .practiceRef{ font-size:24px; font-weight:700; margin-bottom:8px; }
-    .writerTarget{
-      width:260px; height:260px; margin:0 auto;
-      background:#fff; border-radius:14px; border:1px solid #d8dee4;
-    }
+    .tipBox{ background:var(--card); border:1px solid var(--stroke); border-radius:14px; padding:12px 14px; margin:0 0 18px; }
+    .tipBox p{ margin:0 0 10px; color:var(--muted); font-size:14px; line-height:1.5; }
+    .tipDismiss{ min-height:38px; padding:7px 14px; border-radius:999px; border:1px solid var(--stroke); background:var(--button-bg); color:var(--chapter-text); font-size:14px; cursor:pointer; }
+    .tipDismiss:hover{ background:var(--button-bg-hover); }
+    .cfOverlay{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:60; padding:16px; }
+    .cfOverlayCard{ background:#f4f6f8; color:#0f2233; border-radius:18px; padding:18px; width:min(340px,100%); text-align:center; box-shadow:0 20px 60px rgba(0,0,0,.4); }
+    .practicePinyin{ font-size:24px; font-weight:700; margin-bottom:2px; }
+    .practiceDe{ font-size:15px; color:#475569; margin-bottom:10px; }
+    .writerTarget{ width:260px; height:260px; margin:0 auto; background:#fff; border-radius:14px; border:1px solid #d8dee4; }
     .practiceStatus{ margin:12px 0 14px; min-height:22px; font-weight:600; }
     .practiceStatus.ok{ color:#15803d; }
     .practiceStatus.bad{ color:#b91c1c; }
     .practiceButtons{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
-    .practiceButtons button{
-      min-height:44px; padding:10px 16px; border-radius:999px;
-      border:1px solid #cbd5e1; background:#fff; color:#0f2233;
-      font-size:15px; cursor:pointer;
-    }
+    .practiceButtons button{ min-height:44px; padding:10px 16px; border-radius:999px; border:1px solid #cbd5e1; background:#fff; color:#0f2233; font-size:15px; cursor:pointer; }
     .practiceButtons button:hover{ background:#eef2f6; }
   </style>
 </head>
@@ -64,15 +46,19 @@
       <a class="miniBtn settingsIcon" href="einstellungen.html" aria-label="Einstellungen" title="Einstellungen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></a>
     </div>
     <h1>Zeichen wiederholen</h1>
-    <p class="subtitle">Tippe ein Zeichen an, um es zu schreiben – so oft du willst. Geübte Zeichen bekommen einen grünen Rahmen.</p>
+    <div id="tipBox" class="tipBox">
+      <p>Tippe ein Wort an und schreib es aus dem Kopf – nur nach Pinyin und Bedeutung, ohne Hanzi-Vorlage. Es wird <strong>nur grün, wenn du es ohne Fehler schreibst</strong>. So oft du willst.</p>
+      <button id="tipDismiss" class="tipDismiss" type="button">Verstanden ✓</button>
+    </div>
     <div id="charMount"></div>
   </main>
 
   <div id="practiceOverlay" class="cfOverlay">
     <div class="cfOverlayCard">
-      <div class="practiceRef" id="practiceRef">–</div>
+      <div class="practicePinyin" id="practicePinyin">–</div>
+      <div class="practiceDe" id="practiceDe"></div>
       <div id="writerTarget" class="writerTarget"></div>
-      <div id="practiceStatus" class="practiceStatus">Schreib das Zeichen …</div>
+      <div id="practiceStatus" class="practiceStatus">Schreib aus dem Kopf …</div>
       <div class="practiceButtons">
         <button id="btnDemo" type="button">Vormachen</button>
         <button id="btnRedo" type="button">Nochmal</button>
@@ -88,32 +74,33 @@
     const allTopics = (window.CF_TOPICS || []);
     const contentTopics = allTopics.filter(t => t && topicHasContent(t));
 
-    function chapterChars(t){
+    function wordChars(zh){ return String(zh || "").split("").filter(c => /[\u4e00-\u9fff]/.test(c)); }
+    function chapterWords(t){
       const seen = new Set(), out = [];
       (t.vocab || []).forEach(v => {
-        String(v && v.zh || "").split("").forEach(ch => {
-          if(/[\u4e00-\u9fff]/.test(ch) && !seen.has(ch)){ seen.add(ch); out.push(ch); }
-        });
+        if(!v || !v.zh || seen.has(v.zh)) return;
+        const chars = wordChars(v.zh);
+        if(!chars.length) return;                 // ohne Hanzi (z. B. WiFi) überspringen
+        seen.add(v.zh);
+        out.push({ zh:v.zh, pinyin:v.pinyin || "", de:v.de || "", chars });
       });
       return out;
     }
     function chapterComplete(t){ const p = cfChapterPercent(t); return p !== null && p >= 100; }
-    function doneKey(ch){ return "cf_review_done_" + ch; }
-    function isDone(ch){ try{ return localStorage.getItem(doneKey(ch)) === "1"; }catch(e){ return false; } }
-    function markDone(ch){
-      try{ localStorage.setItem(doneKey(ch), "1"); }catch(e){}
-      document.querySelectorAll('.charCell[data-ch="' + ch + '"]').forEach(el => {
-        if(!el.classList.contains("locked")) el.classList.add("done");
+    function doneKey(zh){ return "cf_review_done_" + zh; }
+    function isDone(zh){ try{ return localStorage.getItem(doneKey(zh)) === "1"; }catch(e){ return false; } }
+    function markDone(zh){
+      try{ localStorage.setItem(doneKey(zh), "1"); }catch(e){}
+      document.querySelectorAll(".charCell").forEach(el => {
+        if(el.dataset.zh === zh && !el.classList.contains("locked")) el.classList.add("done");
       });
     }
 
-    // Alle Kapitel MIT Inhalt anlegen. Freischaltung wie in der Übersicht:
-    // Kapitel 1 immer offen, jedes weitere erst, wenn das vorherige 100 % hat.
-    // Gesperrte Kapitel zeigen gesperrte (nicht übbare) Zeichen.
+    // Alle Kapitel mit Inhalt anlegen; Freischaltung wie in der Übersicht.
     allTopics.forEach((t, i) => {
-      if(!topicHasContent(t)) return;            // 7–15 ohne Inhalt: noch nicht anlegen
-      const chars = chapterChars(t);
-      if(!chars.length) return;
+      if(!topicHasContent(t)) return;             // 7–15 ohne Inhalt: noch nicht anlegen
+      const words = chapterWords(t);
+      if(!words.length) return;
       const prev = i > 0 ? allTopics[i - 1] : null;
       const unlocked = !prev || chapterComplete(prev);
 
@@ -136,16 +123,14 @@
 
       const cells = document.createElement("div");
       cells.className = "charCells";
-      chars.forEach(ch => {
+      words.forEach(w => {
         const b = document.createElement("button");
         b.type = "button";
-        b.className = "charCell"
-          + (unlocked && isDone(ch) ? " done" : "")
-          + (unlocked ? "" : " locked");
-        b.dataset.ch = ch;
-        b.textContent = ch;
+        b.className = "charCell" + (unlocked && isDone(w.zh) ? " done" : "") + (unlocked ? "" : " locked");
+        b.dataset.zh = w.zh;
+        b.textContent = w.zh;
         b.style.borderColor = t.accent;
-        if(unlocked){ b.addEventListener("click", () => openPractice(ch)); }
+        if(unlocked){ b.addEventListener("click", () => openPractice(w)); }
         else { b.disabled = true; }
         cells.appendChild(b);
       });
@@ -157,11 +142,21 @@
       grid.innerHTML = '<p class="subtitle">Noch keine Kapitel mit Inhalt vorhanden.</p>';
     }
 
-    // ----- Übungs-Overlay (Hanzi Writer, Profi: aus dem Kopf) -----
+    // ----- Hinweis-Box ausblenden (gemerkt) -----
+    const tipBox = document.getElementById("tipBox");
+    const TIP_KEY = "cf_review_tip_hidden";
+    try{ if(localStorage.getItem(TIP_KEY) === "1") tipBox.style.display = "none"; }catch(e){}
+    document.getElementById("tipDismiss").addEventListener("click", () => {
+      tipBox.style.display = "none";
+      try{ localStorage.setItem(TIP_KEY, "1"); }catch(e){}
+    });
+
+    // ----- Schreibübung: Prompt = Pinyin + Deutsch, kein Hanzi -----
     const overlay = document.getElementById("practiceOverlay");
-    const refLabel = document.getElementById("practiceRef");
+    const pinyinEl = document.getElementById("practicePinyin");
+    const deEl = document.getElementById("practiceDe");
     const statusEl = document.getElementById("practiceStatus");
-    let curChar = null, curWriter = null;
+    let curWord = null, curIdx = 0, curMistakes = 0, strokeMiss = 0, curWriter = null;
     const WOPTS = {
       width:260, height:260, padding:12,
       showOutline:false, showCharacter:false,
@@ -170,36 +165,48 @@
       leniency:1.15, showHintAfterMisses:9999
     };
     function setStatus(t, cls){ statusEl.textContent = t; statusEl.className = "practiceStatus" + (cls ? (" " + cls) : ""); }
-    function buildWriter(){
+    function makeWriterForCurrent(){
       const target = document.getElementById("writerTarget");
       target.innerHTML = "";
-      if(typeof HanziWriter === "undefined"){
-        setStatus("Schreib-Engine konnte nicht laden (offline?).", "bad");
-        return null;
-      }
-      curWriter = HanziWriter.create("writerTarget", curChar, WOPTS);
+      if(typeof HanziWriter === "undefined"){ setStatus("Schreib-Engine konnte nicht laden (offline?).", "bad"); return null; }
+      curWriter = HanziWriter.create("writerTarget", curWord.chars[curIdx], WOPTS);
       return curWriter;
     }
-    function runQuiz(){
+    function quizCurrent(){
       if(!curWriter) return;
-      setStatus("Schreib das Zeichen aus dem Kopf …");
-      let misses = 0;
+      strokeMiss = 0;
+      const prog = curWord.chars.length > 1 ? (" (Zeichen " + (curIdx + 1) + "/" + curWord.chars.length + ")") : "";
+      setStatus("Schreib aus dem Kopf" + prog + " …");
       curWriter.quiz({
         onMistake(){
-          misses++;
-          if(misses % 3 === 0){ setStatus("Tipp: Probier „Vormachen“.", "bad"); }
+          curMistakes++; strokeMiss++;
+          if(strokeMiss % 3 === 0){ setStatus("Tipp: „Vormachen“ zeigt die Striche.", "bad"); }
           else{ setStatus("Nicht ganz – probier den Strich nochmal.", "bad"); }
         },
         onCorrectStroke(){ if(statusEl.classList.contains("bad")) setStatus("Weiter so …"); },
-        onComplete(){ setStatus("Geschafft! 🎉", "ok"); markDone(curChar); }
+        onComplete(){
+          if(curIdx < curWord.chars.length - 1){
+            curIdx++;
+            setStatus("Gut! Nächstes Zeichen …", "ok");
+            setTimeout(() => { if(makeWriterForCurrent()) quizCurrent(); }, 420);
+          }else{
+            finishWord();
+          }
+        }
       });
     }
-    function openPractice(ch){
-      curChar = ch;
-      refLabel.textContent = ch;
+    function finishWord(){
+      if(curMistakes === 0){ setStatus("Geschafft – ohne Fehler! ✓", "ok"); markDone(curWord.zh); }
+      else{ setStatus("Geschafft, aber mit Fehlern. Für grün: „Nochmal“ ohne Fehler.", "bad"); }
+    }
+    function startAttempt(){ curIdx = 0; curMistakes = 0; if(makeWriterForCurrent()) quizCurrent(); }
+    function openPractice(w){
+      curWord = w;
+      pinyinEl.textContent = w.pinyin || "—";
+      deEl.textContent = w.de || "";
       overlay.style.display = "flex";
       document.documentElement.classList.add("noScroll");
-      if(buildWriter()) runQuiz();
+      startAttempt();
     }
     function closePractice(){
       overlay.style.display = "none";
@@ -209,17 +216,15 @@
       curWriter = null;
     }
     document.getElementById("btnDemo").addEventListener("click", () => {
-      if(!buildWriter()) return;
+      if(!makeWriterForCurrent()) return;
       setStatus("Schau zu …");
-      try{ curWriter.animateCharacter({ onComplete(){ if(buildWriter()) runQuiz(); } }); }
-      catch(e){ runQuiz(); }
+      try{ curWriter.animateCharacter({ onComplete(){ if(makeWriterForCurrent()) quizCurrent(); } }); }
+      catch(e){ quizCurrent(); }
     });
-    document.getElementById("btnRedo").addEventListener("click", () => { if(buildWriter()) runQuiz(); });
+    document.getElementById("btnRedo").addEventListener("click", startAttempt);   // ganze Vokabel neu, Fehler zurückgesetzt
     document.getElementById("btnClose").addEventListener("click", closePractice);
     overlay.addEventListener("click", e => { if(e.target === overlay) closePractice(); });
-    document.addEventListener("keydown", e => {
-      if(e.key === "Escape" && overlay.style.display === "flex") closePractice();
-    });
+    document.addEventListener("keydown", e => { if(e.key === "Escape" && overlay.style.display === "flex") closePractice(); });
   </script>
 </body>
 </html>
