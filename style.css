@@ -320,6 +320,8 @@ input.wrong{border-color:var(--bad);background:rgba(239,68,68,.18)}
 .listenApp .vocabCard{min-height:96px;}
 .listenApp .vocabCard .zh{font-size:clamp(32px, 7vw, 46px);}
 .modeSwitch{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 14px;}
+.toggleRow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%;}
+.toggleRow .toggleBtn{width:100%;text-align:center;justify-content:center;}
 .modeSwitch button{min-height:44px;padding:10px 8px;font-size:14px;line-height:1.2;white-space:normal;}
 @media(max-width:360px){.modeSwitch{gap:6px}.modeSwitch button{font-size:12.5px;padding:9px 6px;}}
 

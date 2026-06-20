@@ -598,36 +598,22 @@ render();
    5) Aus dem Kopf: keine Vorlage, keine Striche;
       Hilfe-Strich erst nach 2 Fehlversuchen (1×)
    ============================================================ */
-const _bau = (window.CF_BAUSTEINE && window.CF_BAUSTEINE[topic.id]) ? window.CF_BAUSTEINE[topic.id] : null;
-const learnWords = _bau
-  ? _bau.order
-      .filter(c => /[\u4e00-\u9fff]/.test(c) && _bau.chars[c])
-      .map((c, index) => {
-        const d = _bau.chars[c];
-        return {
-          index, zh: c,
-          pinyin: d.py || "",
-          de: d.de || "",
-          chars: [c],
-          word: d.word || c,
-          wordPy: d.wordPy || d.py || "",
-          wordDe: d.wordDe || d.de || "",
-          review: !!d.review
-        };
-      })
-  : (topic.vocab || [])
-      .filter(v => /[\u4e00-\u9fff]/.test(v.zh || ""))
-      .map((v, index) => ({
-        index,
-        zh: v.writeZh || v.zh || "",
-        pinyin: v.writePinyin || v.pinyin || "",
-        de: v.writeDe || v.de || "",
-        chars: [...String(v.writeZh || v.zh || "")].filter(c => /[\u4e00-\u9fff]/.test(c)),
-        word: v.writeZh || v.zh || "",
-        wordPy: v.writePinyin || v.pinyin || "",
-        wordDe: v.writeDe || v.de || ""
-      }))
-      .filter(w => w.chars.length > 0);
+// „Zeichen lernen“ und „Schreibtraining“ fragen das GANZE Wort ab – kein Zerlegen in
+// einzelne (oft bedeutungslose) Zeichen. Quelle: aktive Vokabeln des Kapitels.
+// Mehrzeichige Wörter werden Zeichen für Zeichen geschrieben, aber als ein Wort gelernt.
+const learnWords = (topic.vocab || [])
+  .filter(v => /[\u4e00-\u9fff]/.test(v.zh || ""))
+  .map((v, index) => ({
+    index,
+    zh: v.writeZh || v.zh || "",
+    pinyin: v.writePinyin || v.pinyin || "",
+    de: v.writeDe || v.de || "",
+    chars: [...String(v.writeZh || v.zh || "")].filter(c => /[\u4e00-\u9fff]/.test(c)),
+    word: v.writeZh || v.zh || "",
+    wordPy: v.writePinyin || v.pinyin || "",
+    wordDe: v.writeDe || v.de || ""
+  }))
+  .filter(w => w.chars.length > 0);
 
 const LEARN_DONE_KEY = `cf_learn_done_${topic.id}`;
 let learnDone = {};

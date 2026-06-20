@@ -27,8 +27,10 @@
           <input type="range" id="tempo" min="0.4" max="1.0" step="0.1" value="1.0">
           <strong id="tempoValue">1.0</strong>
         </label>
-        <button id="togglePinyin" class="toggleBtn" type="button" aria-pressed="false">Pinyin anzeigen</button>
-        <button id="toggleDeutsch" class="toggleBtn" type="button" aria-pressed="false">Deutsch anzeigen</button>
+        <div class="toggleRow">
+          <button id="togglePinyin" class="toggleBtn" type="button" aria-pressed="false">Pinyin ein</button>
+          <button id="toggleDeutsch" class="toggleBtn" type="button" aria-pressed="false">Deutsch ein</button>
+        </div>
         <button id="stopBtn" type="button">Stopp</button>
         <button id="playAllBtn" type="button">Geschichte abspielen</button>
       </div>
@@ -65,7 +67,7 @@ function toggleMeta(kind){
   const btn = document.getElementById(kind === "pinyin" ? "togglePinyin" : "toggleDeutsch");
   btn.classList.toggle("active", on);
   btn.setAttribute("aria-pressed", on ? "true" : "false");
-  btn.textContent = kind === "pinyin" ? (on ? "Pinyin ausblenden" : "Pinyin anzeigen") : (on ? "Deutsch ausblenden" : "Deutsch anzeigen");
+  btn.textContent = kind === "pinyin" ? (on ? "Pinyin aus" : "Pinyin ein") : (on ? "Deutsch aus" : "Deutsch ein");
 }
 document.getElementById("togglePinyin").onclick = () => toggleMeta("pinyin");
 document.getElementById("toggleDeutsch").onclick = () => toggleMeta("deutsch");
