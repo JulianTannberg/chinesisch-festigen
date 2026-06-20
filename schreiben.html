@@ -598,22 +598,38 @@ render();
    5) Aus dem Kopf: keine Vorlage, keine Striche;
       Hilfe-Strich erst nach 2 Fehlversuchen (1×)
    ============================================================ */
-// „Zeichen lernen“ und „Schreibtraining“ fragen das GANZE Wort ab – kein Zerlegen in
-// einzelne (oft bedeutungslose) Zeichen. Quelle: aktive Vokabeln des Kapitels.
-// Mehrzeichige Wörter werden Zeichen für Zeichen geschrieben, aber als ein Wort gelernt.
-const learnWords = (topic.vocab || [])
-  .filter(v => /[\u4e00-\u9fff]/.test(v.zh || ""))
-  .map((v, index) => ({
-    index,
-    zh: v.writeZh || v.zh || "",
-    pinyin: v.writePinyin || v.pinyin || "",
-    de: v.writeDe || v.de || "",
-    chars: [...String(v.writeZh || v.zh || "")].filter(c => /[\u4e00-\u9fff]/.test(c)),
-    word: v.writeZh || v.zh || "",
-    wordPy: v.writePinyin || v.pinyin || "",
-    wordDe: v.writeDe || v.de || ""
-  }))
-  .filter(w => w.chars.length > 0);
+const _bau = (window.CF_BAUSTEINE && window.CF_BAUSTEINE[topic.id]) ? window.CF_BAUSTEINE[topic.id] : null;
+// „Zeichen lernen“: jedes Zeichen EINZELN üben (mehrzeichige Wörter NICHT am Stück).
+// Dabei wird das GANZE Wort gezeigt und abgefragt (Pinyin + Bedeutung des Wortes),
+// aber nur das gerade geübte Zeichen ist markiert und wird geschrieben.
+const learnWords = _bau
+  ? _bau.order
+      .filter(c => /[\u4e00-\u9fff]/.test(c) && _bau.chars[c])
+      .map((c, index) => {
+        const d = _bau.chars[c];
+        return {
+          index, zh: c, chars: [c],
+          word: d.word || c,                 // ganzes Wort (Kontext)
+          pinyin: d.wordPy || d.py || "",    // Pinyin des WORTES
+          de: d.wordDe || d.de || "",        // Bedeutung des WORTES
+          wordPy: d.wordPy || d.py || "",
+          wordDe: d.wordDe || d.de || "",
+          review: !!d.review
+        };
+      })
+  : (topic.vocab || [])
+      .filter(v => /[\u4e00-\u9fff]/.test(v.zh || ""))
+      .flatMap((v, vi) => {
+        const word = v.writeZh || v.zh || "";
+        const py = v.writePinyin || v.pinyin || "";
+        const de = v.writeDe || v.de || "";
+        return [...String(word)]
+          .filter(c => /[\u4e00-\u9fff]/.test(c))
+          .map((c, ci) => ({
+            index: vi * 100 + ci, zh: c, chars: [c],
+            word, pinyin: py, de, wordPy: py, wordDe: de
+          }));
+      });
 
 const LEARN_DONE_KEY = `cf_learn_done_${topic.id}`;
 let learnDone = {};
@@ -734,11 +750,16 @@ function wordContextHTML(item){
   for(const c of word){ html += (c === ch) ? `<span style="color:#ffce3a">${escapeHtml(c)}</span>` : escapeHtml(c); }
   return html;
 }
-// Beim Malen verdecken wir das Zeichen, damit man es nicht oben abschreiben kann.
-// Platzhalter (▢) pro Zeichen zeigen nur, wie viele Zeichen das Wort hat.
+// Beim Malen bleibt das GANZE Wort sichtbar (Kontext). Nur das aktuell zu schreibende
+// Zeichen wird als markierter Platzhalter (goldenes ▢) verdeckt, damit man es nicht oben
+// abschreibt – die übrigen Zeichen bleiben als Orientierung sichtbar.
 function wordMaskedHTML(item){
-  const word = item.word || item.zh; let html = "";
-  for(let i = 0; i < word.length; i++){ html += `<span style="color:#34465a">▢</span>`; }
+  const word = item.word || item.zh, ch = item.zh; let html = "";
+  for(const c of word){
+    html += (c === ch)
+      ? `<span style="color:#ffce3a">▢</span>`
+      : `<span style="color:#7c8aa0">${escapeHtml(c)}</span>`;
+  }
   return html;
 }
 // Bedeutung + Hinweis, in welchem Wort das Zeichen vorkommt.
@@ -946,7 +967,7 @@ function finishLearnWord(){
     ? "Perfekt – ganz ohne Fehler! 太棒了！"
     : "Wort gelernt! 很好！", "ok");
   $("learnDoneBar").style.display = "";
-  cfSpeakZh(lWord.zh, {rate:0.85});
+  cfSpeakZh(lWord.word || lWord.zh, {rate:0.85});
 }
 function nextLearnWord(){
   const startIdx = learnWords.findIndex(w => w.zh === lWord.zh);
@@ -962,7 +983,7 @@ if(learnWords.length === 0){
 }else{
   renderLearnGrid();
 }
-$("learnPlay").addEventListener("click", () => cfSpeakZh(lWord ? lWord.zh : "", {rate:0.85}));
+$("learnPlay").addEventListener("click", () => cfSpeakZh(lWord ? (lWord.word || lWord.zh) : "", {rate:0.85}));
 $("learnExit").addEventListener("click", showLearnGrid);
 $("learnToGrid").addEventListener("click", showLearnGrid);
 $("learnNextWord").addEventListener("click", nextLearnWord);
