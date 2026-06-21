@@ -5,14 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
   <title>Su Rans Reise · Chinesisch festigen</title>
   <link rel="stylesheet" href="style.css" />
-  <meta name="theme-color" content="#03172B" />
+  <meta name="theme-color" content="#071D33" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" href="icons/icon-192.png" />
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="preload" as="image" href="suran-game.png" />
+  <link rel="preload" as="image" href="linyue-game.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Chinesisch" />
 </head>
-<body>
+<body class="jumpGamePage">
   <main class="app jumpApp">
     <div class="topbar">
       <a class="back" id="backLink" href="kapitel.html?id=01">← Zum Kapitel</a>
@@ -50,7 +52,7 @@
         <div class="jumpStartOverlay" id="startOverlay">
           <div class="jumpOverlayCard">
             <h2>Kapitel <span id="chapterNo"></span>: <span id="chapterTitle"></span></h2>
-            <p>Su Ran trifft Lin Yue am Bahnhof. Sammle nur die Wörter, die zum deutschen Satz gehören, und kehre zu ihr zurück.</p>
+            <p>Su Ran läuft am modernen Bahnhof parallel zu den Gleisen. Sammle nur die richtigen Wörter und kehre anschließend zu Lin Yue zurück.</p>
             <p class="jumpKeys">Computer: ← → und Leertaste · Handy/Tablet: links im großen Lauffeld wischen und halten · rechts tippen = Sprung · zweimal tippen = Doppelsprung</p>
             <button type="button" class="primaryBtn" id="startBtn">Spiel starten</button>
           </div>
@@ -75,10 +77,6 @@
               <div class="jumpWordBank" id="wordBank"></div>
             </div>
             <p class="jumpSentenceFeedback" id="sentenceFeedback"></p>
-            <div class="jumpSentenceActions">
-              <button type="button" class="secondaryBtn" id="sentenceResetBtn">Zurücksetzen</button>
-              <button type="button" class="primaryBtn" id="sentenceCheckBtn">Prüfen</button>
-            </div>
           </div>
 
         </div>

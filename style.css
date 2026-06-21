@@ -1766,9 +1766,8 @@ input, textarea, select, [contenteditable="true"]{
   .jumpSpeechBubbleSu{min-height:55px;padding:8px;gap:5px;border-radius:15px 15px 5px 15px}
   .jumpBuiltToken,.jumpWordToken{min-height:34px;padding:5px 8px;border-radius:10px;font-size:18px}
   .jumpWordBank{min-height:42px;margin-top:7px;padding:6px;gap:5px}
-  .jumpSentenceLabel{font-size:10px;margin-bottom:4px}
+  .jumpSentenceLabel{font-size:9px;margin-bottom:3px}
   .jumpSentenceBuildArea{min-height:58px;padding:6px}
-  .jumpSentencePlaceholder{font-size:10px}
   .jumpSentenceFeedback{font-size:11px;min-height:16px;margin:5px 0 0}
   .jumpSentenceActions{margin-top:6px;gap:6px}
   .jumpSentenceActions .primaryBtn,.jumpSentenceActions .secondaryBtn{min-height:34px;padding:5px 11px;font-size:11px}
@@ -1797,16 +1796,14 @@ input, textarea, select, [contenteditable="true"]{
   inset:0;
   z-index:34;
   pointer-events:none;
-  background:rgba(3,23,43,.16);
-  backdrop-filter:blur(3px);
-  -webkit-backdrop-filter:blur(3px);
+  background:transparent;
 }
 .jumpSceneBubble{
   position:absolute;
   max-width:min(300px,56vw);
   min-width:120px;
-  padding:10px 12px;
-  border-radius:18px;
+  padding:8px 10px;
+  border-radius:16px;
   border:2px solid rgba(16,38,59,.18);
   box-shadow:0 10px 24px rgba(0,0,0,.18);
   background:rgba(255,255,255,.97);
@@ -1867,31 +1864,39 @@ input, textarea, select, [contenteditable="true"]{
 .jumpSentenceTray{
   position:absolute;
   left:50%;
-  bottom:max(118px,calc(env(safe-area-inset-bottom) + 110px));
-  transform:translateX(-50%);
+  top:50%;
+  transform:translate(-50%,-50%);
   width:min(760px,88%);
-  max-height:min(58%,350px);
-  overflow:auto;
-  padding:14px;
-  border-radius:22px;
+  padding:12px;
+  border-radius:20px;
   border:1px solid rgba(16,38,59,.10);
-  background:rgba(248,244,239,.97);
+  background:rgba(248,244,239,.98);
   color:#10263b;
   box-shadow:0 18px 42px rgba(0,0,0,.24);
   pointer-events:auto;
+  overflow:visible;
 }
 .jumpSentenceCompose,.jumpSentenceBankWrap{
-  padding:10px 12px;
-  border-radius:18px;
+  padding:8px 10px;
+  border-radius:16px;
   background:rgba(255,255,255,.60);
   border:1px solid rgba(16,38,59,.08);
 }
-.jumpSentenceBankWrap{margin-top:10px}
+.jumpSentenceBankWrap{margin-top:8px}
 .jumpSentenceLabel{margin:0 0 6px;color:#5b7086;font-size:13px;font-weight:800;letter-spacing:.02em;text-transform:uppercase}
-.jumpSentenceBuildArea{min-height:78px;display:flex;align-items:center;justify-content:center;padding:10px;border-radius:14px;background:#eef2f5;border:2px solid rgba(49,72,94,.14)}
+.jumpSentenceBuildArea{min-height:64px;display:flex;align-items:center;justify-content:center;padding:7px;border-radius:14px;background:#eef2f5;border:2px solid rgba(49,72,94,.14)}
 .jumpSentenceTray .jumpBuiltSentence{justify-content:center}
 .jumpSentenceTray .jumpWordBank{margin-top:0}
-.jumpSentenceTray .jumpSentenceFeedback{min-height:24px;margin:10px 0 0;text-align:center;font-weight:850}
+.jumpInlineCheckBtn{
+  min-width:170px;
+  min-height:48px;
+  margin:auto;
+  background:#03172b;
+  color:#fff;
+  border-color:#03172b;
+  font-size:18px;
+}
+.jumpSentenceTray .jumpSentenceFeedback{min-height:0;margin:7px 0 0;text-align:center;font-weight:850}
 .jumpSceneContinue{
   position:absolute;
   left:50%;
@@ -1927,7 +1932,7 @@ input, textarea, select, [contenteditable="true"]{
   .jumpSceneBubbleBody{font-size:18px}
   .jumpSceneBubbleSu .jumpBuiltToken{min-height:31px;padding:4px 8px;font-size:18px}
   .jumpSceneBubbleSu .jumpSentencePlaceholder{font-size:11px}
-  .jumpSentenceTray{width:min(95%,95vw);max-height:min(61%,300px);padding:10px;border-radius:16px;bottom:max(92px,calc(env(safe-area-inset-bottom) + 84px))}
+  .jumpSentenceTray{top:50%;bottom:auto;width:min(92%,760px);padding:8px;border-radius:15px;overflow:visible}
   .jumpSceneContinue{bottom:max(98px,calc(env(safe-area-inset-bottom) + 92px))}
 }
 
@@ -2059,4 +2064,130 @@ input, textarea, select, [contenteditable="true"]{
     height:50px;
     font-size:28px;
   }
+}
+
+@media (max-height:520px) and (orientation:landscape){
+  .jumpSentenceTray{width:min(86%,760px);padding:7px;top:51%}
+  .jumpSentenceCompose,.jumpSentenceBankWrap{padding:6px 8px;border-radius:13px}
+  .jumpSentenceBankWrap{margin-top:6px}
+  .jumpSentenceLabel{font-size:8px;margin-bottom:2px}
+  .jumpSentenceBuildArea{min-height:44px;padding:3px}
+  .jumpBuiltToken,.jumpWordToken{min-height:31px;padding:4px 8px;border-radius:9px;font-size:17px}
+  .jumpWordBank{min-height:40px;padding:5px;gap:5px}
+  .jumpSentenceTray .jumpSentenceFeedback{font-size:10px;margin-top:4px}
+  .jumpInlineCheckBtn{min-width:145px;min-height:38px;font-size:15px;padding:5px 14px}
+}
+
+
+/* ===== Jump-and-Run V3: helles Anime-Bahnhofdesign ===== */
+.jumpGamePage{
+  background:#071d33;
+  color:#fff;
+}
+.jumpGamePage::before{
+  background:
+    radial-gradient(circle at 18% 4%,rgba(126,162,179,.30),transparent 30%),
+    radial-gradient(circle at 82% 0%,rgba(217,166,175,.18),transparent 24%),
+    linear-gradient(180deg,#071d33,#03172b);
+}
+.jumpGamePage .jumpApp{max-width:1320px;padding-top:12px}
+.jumpGamePage .jumpApp>.topbar{margin-bottom:8px}
+.jumpGamePage .jumpApp h1{font-size:clamp(22px,3.5vw,34px);margin:5px 0 3px}
+.jumpGamePage .jumpApp>.subtitle{margin-bottom:12px;font-size:14px}
+.jumpGamePage .bonusBadge,
+.jumpGamePage .back{
+  border-color:rgba(246,208,131,.58);
+  background:rgba(7,29,51,.70);
+  color:#f7e4c5;
+}
+.jumpViewport{
+  border:2px solid rgba(246,208,131,.72);
+  border-radius:20px;
+  background:#9fc3de;
+  box-shadow:0 18px 55px rgba(0,0,0,.34),0 0 0 5px rgba(246,208,131,.07);
+}
+#gameCanvas{background:#b9d7ec}
+.jumpHud{top:max(12px,env(safe-area-inset-top));left:max(12px,env(safe-area-inset-left));right:158px;gap:12px}
+.jumpHudTask,.jumpHudStats{
+  border:2px solid rgba(239,199,127,.82);
+  background:rgba(7,29,51,.92);
+  color:#f7e4c5;
+  border-radius:999px;
+  box-shadow:0 7px 20px rgba(3,23,43,.26);
+  backdrop-filter:blur(8px);
+}
+.jumpHudTask{padding:8px 14px;max-width:min(660px,70%)}
+.jumpHudTask strong{font-size:15px;color:#fff}
+.jumpHudStep{background:rgba(255,255,255,.14);color:#f7e4c5;padding:4px 9px}
+.jumpHudStats{padding:9px 14px;font-size:13px}
+.jumpFullscreenBtn{
+  top:max(12px,env(safe-area-inset-top));
+  border:2px solid rgba(239,199,127,.82);
+  border-radius:17px;
+  background:rgba(7,29,51,.94);
+  color:#fff3de;
+  min-height:42px;
+  padding:8px 13px;
+}
+.jumpMessage{
+  top:71px;
+  border:2px solid rgba(239,199,127,.68);
+  background:rgba(255,252,243,.97);
+  color:#152d43;
+  box-shadow:0 10px 28px rgba(7,29,51,.24);
+}
+.jumpStartOverlay,.jumpFinishOverlay{
+  background:rgba(3,23,43,.58);
+  backdrop-filter:blur(7px);
+}
+.jumpOverlayCard{
+  border:2px solid rgba(239,199,127,.72);
+  background:linear-gradient(160deg,rgba(255,253,247,.99),rgba(243,226,207,.98));
+  color:#132b40;
+  box-shadow:0 22px 70px rgba(0,0,0,.34);
+}
+.jumpOverlayCard .primaryBtn{background:#071d33;color:#fff3de;border-color:#071d33}
+.jumpOverlayCard .secondaryBtn{background:#fffaf2;color:#071d33;border-color:rgba(7,29,51,.25)}
+.jumpSentenceTray{
+  border:2px solid rgba(239,199,127,.74);
+  background:rgba(255,250,242,.98);
+  box-shadow:0 20px 58px rgba(3,23,43,.32);
+}
+.jumpSentenceCompose,.jumpSentenceBankWrap{background:rgba(255,255,255,.72)}
+.jumpSentenceBuildArea{background:#f3eee7}
+.jumpSceneBubble{
+  border-color:rgba(197,143,64,.72);
+  background:rgba(255,253,244,.98);
+  box-shadow:0 12px 30px rgba(7,29,51,.24),0 0 18px rgba(239,189,98,.18);
+}
+.jumpSceneBubbleLin{background:rgba(246,227,229,.98)}
+.jumpMoveGuide{
+  border:2px solid rgba(239,199,127,.66);
+  background:rgba(7,29,51,.40);
+  color:#f7e4c5;
+  opacity:.48;
+  box-shadow:0 6px 20px rgba(3,23,43,.20);
+}
+.jumpJumpArrow{
+  border:2px solid rgba(255,231,218,.76);
+  background:rgba(197,138,147,.72);
+  color:#fff8ef;
+  opacity:.72;
+  box-shadow:0 7px 22px rgba(3,23,43,.24),inset 0 0 0 5px rgba(255,255,255,.08);
+}
+.jumpMoveZone.moving-left .jumpMoveGuide,
+.jumpMoveZone.moving-right .jumpMoveGuide{background:rgba(7,29,51,.80);opacity:.94}
+.jumpJumpZone.active .jumpJumpArrow,
+.jumpJumpZone:active .jumpJumpArrow{background:rgba(197,138,147,.96);opacity:1}
+.jumpBelow{color:rgba(255,255,255,.74)}
+.jumpBelow .secondaryBtn{border-color:rgba(246,208,131,.45);background:rgba(255,255,255,.10)}
+
+@media(max-width:760px){
+  .jumpGamePage .jumpApp{padding-left:6px;padding-right:6px}
+  .jumpViewport{border-radius:14px;border-width:1.5px}
+  .jumpHud{right:113px;top:6px;left:6px;gap:5px}
+  .jumpHudTask{max-width:72%;padding:5px 7px;border-width:1px}
+  .jumpHudStats{padding:5px 7px;border-width:1px}
+  .jumpFullscreenBtn{top:6px;right:6px;min-height:36px;padding:6px 9px;border-width:1px}
+  .jumpMessage{top:53px}
 }

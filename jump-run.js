@@ -262,6 +262,15 @@
   let slipDirection = 1;
   let slipHazard = null;
 
+  // Ganzkörper-Sprites im neuen Chibi-/Anime-Design. Die bisherigen Avatare
+  // bleiben als Fallback erhalten, falls ein Bild noch nicht hochgeladen wurde.
+  const suRanSprite = new Image();
+  suRanSprite.decoding = "async";
+  suRanSprite.src = "suran-game.png";
+  const linYueSprite = new Image();
+  linYueSprite.decoding = "async";
+  linYueSprite.src = "linyue-game.png";
+
   const avatarSu = new Image();
   avatarSu.src = "avatars/suran.jpg";
   const avatarLin = new Image();
@@ -375,8 +384,8 @@
 
     const su = $("sceneSuBubble");
     const lin = $("sceneLinBubble");
-    const suPos = worldToScreen(player.x + player.w/2, player.y + sceneYOffset);
-    const linPos = worldToScreen(LINYUE_X, GROUND_Y - 72 + sceneYOffset);
+    const suPos = worldToScreen(player.x + player.w/2, player.y - 48 + sceneYOffset);
+    const linPos = worldToScreen(LINYUE_X, GROUND_Y - 132 + sceneYOffset);
     const marginX = 12;
     const minTop = 8;
     const maxTop = viewportRect.height - 180;
@@ -494,11 +503,6 @@
     });
     if(selectedTokenIds.length){
       body.appendChild(built);
-    }else{
-      const ph = document.createElement("div");
-      ph.className = "jumpSentencePlaceholder";
-      ph.textContent = "Tippe unten die Wörter in der richtigen Reihenfolge an.";
-      body.appendChild(ph);
     }
   }
 
@@ -770,7 +774,7 @@
     collectedTokenIds.add(c.id);
     spawnBurst(c.x + c.w/2, c.y + c.h/2, true);
     cfPlayFeedback(true);
-    cfSpeakZh(c.text, {rate:0.80});
+    cfSpeakZh(c.text, {rate:1.0});
     const meaning = c.meta && c.meta.de ? `<br>${safeHtml(c.meta.de)}` : "";
     showMessage(`<strong>${safeHtml(c.text)}</strong>${meaning}`, 1350);
     updateHud();
@@ -837,10 +841,13 @@
       bank.appendChild(btn);
     });
     if(!display.length){
-      const done = document.createElement("div");
-      done.className = "jumpSentencePlaceholder";
-      done.textContent = "Alle Wörter sind oben eingesetzt. Prüfe jetzt die Reihenfolge oder tippe oben auf ein Wort zum Zurücklegen.";
-      bank.appendChild(done);
+      const checkBtn = document.createElement("button");
+      checkBtn.type = "button";
+      checkBtn.className = "primaryBtn jumpInlineCheckBtn";
+      checkBtn.textContent = "Prüfen";
+      checkBtn.disabled = sentenceLocked;
+      checkBtn.addEventListener("click", checkSentence);
+      bank.appendChild(checkBtn);
     }
     updateScenePositions();
   }
@@ -898,7 +905,7 @@
     showSuSpeechBubble(mission().zh);
 
     speakZhParts(mission().audioParts || [mission().zh], {
-      rate:0.78,
+      rate:1.0,
       speaker:"suran"
     }, () => {
       setTimeout(() => {
@@ -919,7 +926,7 @@
       setTimeout(() => {
         showSuSpeechBubble(closing);
         cfSpeakZh(closing, {
-          rate:0.78,
+          rate:1.0,
           speaker:"suran",
           onend:() => { setTimeout(advanceMission, 450); }
         });
@@ -929,7 +936,7 @@
     if(reply){
       showLinSpeechBubble(reply);
       cfSpeakZh(reply, {
-        rate:0.78,
+        rate:1.0,
         speaker:"linyue",
         onend:finishConversation
       });
@@ -1186,162 +1193,213 @@
   }
 
   function drawBackground(){
-    const accent = topic.accent || "#03172B";
-    const topY = sceneYOffset;
     const floorY = GROUND_Y + sceneYOffset;
 
-    // Ruhige Bahnhof-Farbwelt aus der Buchpalette.
-    const wall = ctx.createLinearGradient(0,topY,0,floorY);
-    wall.addColorStop(0,"#24384a");
-    wall.addColorStop(.58,"#7e91a2");
-    wall.addColorStop(1,"#d6bca2");
-    ctx.fillStyle = wall;
+    // Helle, freundliche Bahnhofswelt wie im abgestimmten Entwurf.
+    const sky = ctx.createLinearGradient(0,0,0,VIEW_H);
+    sky.addColorStop(0,"#d8ecfb");
+    sky.addColorStop(.46,"#a9c9e5");
+    sky.addColorStop(1,"#eef3f4");
+    ctx.fillStyle = sky;
     ctx.fillRect(0,0,VIEW_W,VIEW_H);
 
     ctx.save();
     ctx.translate(0,sceneYOffset);
 
-    // Glasdach mit ruhigen, klaren Streben.
-    ctx.fillStyle = "rgba(222,231,236,.32)";
-    ctx.fillRect(0,0,VIEW_W,190);
-    ctx.strokeStyle = "rgba(30,42,52,.64)";
-    ctx.lineWidth = 8;
-    for(let x=-260;x<VIEW_W+320;x+=180){
-      ctx.beginPath();
-      ctx.moveTo(x,190);
-      ctx.lineTo(x+270,0);
-      ctx.stroke();
-    }
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = "rgba(246,227,229,.52)";
-    for(let y=38;y<190;y+=48){
-      ctx.beginPath();
-      ctx.moveTo(0,y);
-      ctx.lineTo(VIEW_W,y);
-      ctx.stroke();
-    }
-
-    // Große Fensterfront – leichtes Parallax-Scrolling.
-    const windowOffset = -((cameraX * .16) % 190);
-    for(let x=windowOffset-190;x<VIEW_W+190;x+=190){
-      ctx.fillStyle = "rgba(91,112,134,.52)";
-      ctx.fillRect(x,190,172,GROUND_Y-190);
-      ctx.strokeStyle = "rgba(246,227,229,.38)";
-      ctx.lineWidth = 3;
-      ctx.strokeRect(x,190,172,GROUND_Y-190);
-      ctx.beginPath(); ctx.moveTo(x+86,190); ctx.lineTo(x+86,GROUND_Y); ctx.stroke();
-      for(let yy=270;yy<GROUND_Y;yy+=72){
-        ctx.beginPath(); ctx.moveTo(x,yy); ctx.lineTo(x+172,yy); ctx.stroke();
+    // Stadt hinter der großen Glasfront: bewusst weich und ruhig gehalten.
+    const cityOffset = -((cameraX * .075) % 620);
+    for(let x=cityOffset-180, i=0; x<VIEW_W+220; x+=92, i++){
+      const h = 82 + (i % 5) * 28;
+      const y = GROUND_Y - h - 55;
+      ctx.fillStyle = i % 2 ? "rgba(91,125,158,.34)" : "rgba(72,105,139,.27)";
+      roundedRect(x,y,72,h,5); ctx.fill();
+      ctx.fillStyle = "rgba(232,243,250,.48)";
+      for(let wy=y+13; wy<y+h-8; wy+=18){
+        for(let wx=x+10; wx<x+62; wx+=17){
+          ctx.fillRect(wx,wy,7,7);
+        }
       }
     }
 
-    // Tragende Säulen.
-    const columnOffset = -((cameraX * .28) % 470);
-    for(let x=columnOffset-100;x<VIEW_W+300;x+=470){
-      ctx.fillStyle = "#31485e";
-      ctx.fillRect(x,150,48,GROUND_Y-150);
-      ctx.fillStyle = "#24384a";
-      ctx.fillRect(x-10,150,68,24);
-      ctx.fillRect(x-12,GROUND_Y-35,72,35);
+    // Glaswände und Dachkonstruktion.
+    ctx.fillStyle = "rgba(232,243,250,.34)";
+    ctx.fillRect(0,0,VIEW_W,GROUND_Y);
+    ctx.strokeStyle = "rgba(61,91,121,.38)";
+    ctx.lineWidth = 3;
+    const glassOffset = -((cameraX * .16) % 170);
+    for(let x=glassOffset-170; x<VIEW_W+170; x+=170){
+      ctx.beginPath(); ctx.moveTo(x,105); ctx.lineTo(x,GROUND_Y); ctx.stroke();
+    }
+    for(let y=105;y<GROUND_Y;y+=92){
+      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(VIEW_W,y); ctx.stroke();
     }
 
-    // Zug auf der hinteren linken Gleisseite.
-    const trainX = -260 - ((cameraX * .09) % 1050);
-    ctx.fillStyle = "rgba(255,253,249,.92)";
-    roundedRect(trainX,285,820,155,24); ctx.fill();
-    ctx.fillStyle = "#31485e";
-    ctx.fillRect(trainX,365,820,20);
-    for(let x=trainX+48;x<trainX+760;x+=118){
-      ctx.fillStyle = "#24384a";
-      roundedRect(x,308,82,48,7); ctx.fill();
-      ctx.strokeStyle = "#5b7086"; ctx.lineWidth=2; ctx.stroke();
+    // Lichtes Glasdach mit diagonalen Streben.
+    const roof = ctx.createLinearGradient(0,0,0,170);
+    roof.addColorStop(0,"rgba(245,250,253,.92)");
+    roof.addColorStop(1,"rgba(186,211,231,.42)");
+    ctx.fillStyle = roof;
+    ctx.fillRect(0,0,VIEW_W,170);
+    ctx.strokeStyle = "rgba(45,74,102,.68)";
+    ctx.lineWidth = 7;
+    const roofOffset = -((cameraX * .10) % 230);
+    for(let x=roofOffset-260;x<VIEW_W+300;x+=230){
+      ctx.beginPath(); ctx.moveTo(x,170); ctx.lineTo(x+190,0); ctx.stroke();
+    }
+    ctx.strokeStyle = "rgba(255,255,255,.72)";
+    ctx.lineWidth = 3;
+    for(let y=38;y<170;y+=44){
+      ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(VIEW_W,y);ctx.stroke();
     }
 
-    // Entfernte Reisende als unaufdringliche Silhouetten.
-    ctx.fillStyle = "rgba(30,42,52,.46)";
-    for(let i=0;i<18;i++){
-      const x = ((i*137 - cameraX*.12) % (VIEW_W+180)) - 90;
-      const h = 42 + (i%4)*7;
-      ctx.beginPath(); ctx.arc(x,GROUND_Y-h,6,0,Math.PI*2); ctx.fill();
-      ctx.fillRect(x-5,GROUND_Y-h+7,10,h-12);
+    // Moderner Zug parallel zur Laufrichtung. Durch Parallaxe bleibt er im Hintergrund.
+    const trainOffset = -420 - ((cameraX * .11) % 1320);
+    for(let tx=trainOffset-1320; tx<VIEW_W+900; tx+=1320){
+      ctx.save();
+      ctx.shadowColor = "rgba(20,50,77,.16)";
+      ctx.shadowBlur = 14;
+      const trainGrad = ctx.createLinearGradient(0,280,0,438);
+      trainGrad.addColorStop(0,"#ffffff");
+      trainGrad.addColorStop(.78,"#e8edf0");
+      trainGrad.addColorStop(1,"#d6e0e7");
+      ctx.fillStyle = trainGrad;
+      roundedRect(tx,282,1050,158,26); ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = "#2f5d87";
+      ctx.fillRect(tx,370,1050,18);
+      ctx.fillStyle = "#d9a6af";
+      ctx.fillRect(tx,390,1050,5);
+      for(let wx=tx+58; wx<tx+940; wx+=124){
+        ctx.fillStyle = "#24405b";
+        roundedRect(wx,310,86,48,9); ctx.fill();
+        ctx.fillStyle = "rgba(157,195,222,.42)";
+        roundedRect(wx+6,316,74,36,6); ctx.fill();
+      }
+      ctx.restore();
     }
+
+    // Dunkle Säulen rahmen die Szene und erzeugen Tiefe.
+    const columnOffset = -((cameraX * .30) % 500);
+    for(let x=columnOffset-90;x<VIEW_W+220;x+=500){
+      const columnGrad = ctx.createLinearGradient(x,0,x+58,0);
+      columnGrad.addColorStop(0,"#24384a");
+      columnGrad.addColorStop(.55,"#31485e");
+      columnGrad.addColorStop(1,"#1e2a34");
+      ctx.fillStyle = columnGrad;
+      ctx.fillRect(x,118,58,GROUND_Y-118);
+      ctx.fillStyle = "#1e2a34";
+      roundedRect(x-11,116,80,23,4);ctx.fill();
+      roundedRect(x-13,GROUND_Y-28,84,28,4);ctx.fill();
+      ctx.fillStyle = "rgba(255,255,255,.10)";
+      ctx.fillRect(x+8,138,5,GROUND_Y-175);
+    }
+
+    // Warmes Lichtband über dem Bahnsteig.
+    const light = ctx.createLinearGradient(0,330,0,floorY);
+    light.addColorStop(0,"rgba(255,244,218,0)");
+    light.addColorStop(1,"rgba(255,244,218,.42)");
+    ctx.fillStyle = light;
+    ctx.fillRect(0,300,VIEW_W,GROUND_Y-300);
 
     ctx.restore();
   }
 
   function drawStationFloor(){
-    ctx.fillStyle = "#e7ceba";
-    ctx.fillRect(0,GROUND_Y,WORLD_W,VIEW_H-GROUND_Y+120);
-    ctx.strokeStyle = "rgba(155,130,102,.56)";
+    const floorGrad = ctx.createLinearGradient(0,GROUND_Y,0,VIEW_H+80);
+    floorGrad.addColorStop(0,"#f1e4d7");
+    floorGrad.addColorStop(.68,"#dac5b0");
+    floorGrad.addColorStop(1,"#b99b80");
+    ctx.fillStyle = floorGrad;
+    ctx.fillRect(0,GROUND_Y,WORLD_W,VIEW_H-GROUND_Y+140);
+
+    // Große, ruhige Fliesen statt kleinteiligem Muster.
+    ctx.strokeStyle = "rgba(132,105,80,.32)";
     ctx.lineWidth = 2;
-    for(let x=0;x<WORLD_W;x+=92){
-      ctx.beginPath(); ctx.moveTo(x,GROUND_Y); ctx.lineTo(x,VIEW_H+100); ctx.stroke();
+    for(let x=0;x<WORLD_W;x+=118){
+      ctx.beginPath();ctx.moveTo(x,GROUND_Y);ctx.lineTo(x,GROUND_Y+58);ctx.stroke();
     }
-    for(let y=GROUND_Y;y<VIEW_H+100;y+=42){
-      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(WORLD_W,y); ctx.stroke();
+    for(let y=GROUND_Y+30;y<GROUND_Y+62;y+=30){
+      ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(WORLD_W,y);ctx.stroke();
     }
-    // Taktile Leitlinie am Bahnsteig.
-    ctx.fillStyle = "#ebbc6a";
-    ctx.fillRect(0,GROUND_Y+16,WORLD_W,15);
-    ctx.fillStyle = "rgba(155,130,102,.74)";
-    for(let x=8;x<WORLD_W;x+=22){
-      ctx.beginPath(); ctx.arc(x,GROUND_Y+23,3,0,Math.PI*2); ctx.fill();
+
+    // Taktile Leitlinie und klare Bahnsteigkante.
+    ctx.fillStyle = "#efbd62";
+    ctx.fillRect(0,GROUND_Y+13,WORLD_W,18);
+    ctx.fillStyle = "rgba(133,91,42,.55)";
+    for(let x=10;x<WORLD_W;x+=24){
+      ctx.beginPath();ctx.arc(x,GROUND_Y+22,3.1,0,Math.PI*2);ctx.fill();
     }
-    ctx.fillStyle = "#1e2a34";
-    ctx.fillRect(0,GROUND_Y+58,WORLD_W,80);
+    ctx.fillStyle = "#21364b";
+    ctx.fillRect(0,GROUND_Y+58,WORLD_W,82);
+    ctx.fillStyle = "#17283a";
+    ctx.fillRect(0,GROUND_Y+64,WORLD_W,10);
+
+    // Gleise laufen parallel zum Spielweg und verstärken die Seitenansicht.
+    ctx.fillStyle = "#0f1f2e";
+    ctx.fillRect(0,GROUND_Y+94,WORLD_W,12);
+    ctx.fillRect(0,GROUND_Y+126,WORLD_W,12);
+    ctx.fillStyle = "#6f5948";
+    for(let x=0;x<WORLD_W;x+=64){
+      ctx.fillRect(x,GROUND_Y+86,38,56);
+    }
+    ctx.fillStyle = "rgba(255,255,255,.22)";
+    ctx.fillRect(0,GROUND_Y+94,WORLD_W,3);
   }
 
   function drawStationPlatform(p){
-    // Einheitlicher oberer Rand: beige Sitz-/Ablagefläche mit dunkler Unterkante.
-    ctx.fillStyle = "#d6bca2";
-    roundedRect(p.x,p.y,p.w,p.h,8); ctx.fill();
-    ctx.strokeStyle = "#1e2a34";
+    // Schlichte Sprungbalken: keine Bänke, keine großen Aufbauten.
+    ctx.save();
+    ctx.shadowColor = "rgba(22,43,63,.22)";
+    ctx.shadowBlur = 12;
+    ctx.shadowOffsetY = 7;
+    const barGrad = ctx.createLinearGradient(0,p.y,0,p.y+p.h);
+    barGrad.addColorStop(0,"#f3d9b5");
+    barGrad.addColorStop(.55,"#d8b586");
+    barGrad.addColorStop(1,"#b88d61");
+    ctx.fillStyle = barGrad;
+    roundedRect(p.x,p.y,p.w,p.h,9);ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = "#20364b";
     ctx.lineWidth = 4;
     ctx.stroke();
-
-    ctx.fillStyle = "#31485e";
-    ctx.fillRect(p.x+8,p.y+p.h-2,p.w-16,10);
-
-    // Sehr schmale Stützen nur ganz außen. Der breite Mittelbereich bleibt frei,
-    // damit klar erkennbar ist, dass man unter der Ebene hindurchlaufen kann.
+    ctx.fillStyle = "#efbd62";
+    roundedRect(p.x+10,p.y+4,p.w-20,4,2);ctx.fill();
     ctx.fillStyle = "#24384a";
-    ctx.fillRect(p.x+14,p.y+p.h+8,8,42);
-    ctx.fillRect(p.x+p.w-22,p.y+p.h+8,8,42);
-
-    // Kleine goldene Kantenmarkierungen verbinden alle Ebenen optisch.
-    ctx.fillStyle = "#ebbc6a";
-    ctx.fillRect(p.x+12,p.y+4,p.w-24,4);
+    ctx.fillRect(p.x+8,p.y+p.h-1,p.w-16,9);
+    // Zwei sehr schmale Außenstützen lassen den Weg darunter frei.
+    ctx.fillStyle = "#2c4359";
+    ctx.fillRect(p.x+17,p.y+p.h+7,8,38);
+    ctx.fillRect(p.x+p.w-25,p.y+p.h+7,8,38);
+    ctx.restore();
   }
 
   function drawWetFloorHazards(){
-    for(const h of wetHazards){
-      // Nasse, spiegelnde Fläche.
-      const grad=ctx.createLinearGradient(h.x,GROUND_Y-5,h.x+h.w,GROUND_Y+34);
-      grad.addColorStop(0,"rgba(91,112,134,.15)");
-      grad.addColorStop(.5,"rgba(70,93,115,.62)");
-      grad.addColorStop(1,"rgba(246,227,229,.24)");
-      ctx.fillStyle=grad;
-      roundedRect(h.x,GROUND_Y-3,h.w,38,18);ctx.fill();
-      ctx.strokeStyle="rgba(49,72,94,.75)";ctx.lineWidth=3;ctx.stroke();
-      ctx.strokeStyle="rgba(255,255,255,.72)";ctx.lineWidth=2;
-      ctx.beginPath();ctx.moveTo(h.x+14,GROUND_Y+10);ctx.quadraticCurveTo(h.x+h.w*.45,GROUND_Y-2,h.x+h.w-12,GROUND_Y+12);ctx.stroke();
+    wetHazards.forEach((h,index) => {
+      const grad = ctx.createLinearGradient(h.x,GROUND_Y-4,h.x+h.w,GROUND_Y+30);
+      grad.addColorStop(0,"rgba(185,216,235,.12)");
+      grad.addColorStop(.45,"rgba(92,137,171,.48)");
+      grad.addColorStop(1,"rgba(231,244,250,.22)");
+      ctx.fillStyle = grad;
+      roundedRect(h.x,GROUND_Y-3,h.w,34,17);ctx.fill();
+      ctx.strokeStyle = "rgba(46,82,112,.52)";ctx.lineWidth=2.5;ctx.stroke();
+      ctx.strokeStyle = "rgba(255,255,255,.78)";ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(h.x+12,GROUND_Y+9);ctx.quadraticCurveTo(h.x+h.w*.45,GROUND_Y-2,h.x+h.w-10,GROUND_Y+10);ctx.stroke();
 
-      // Gelbes Warnschild links neben der nassen Stelle.
-      const sx=h.x-34, sy=GROUND_Y-72;
-      ctx.fillStyle="#ebbc6a";
-      ctx.beginPath();ctx.moveTo(sx,GROUND_Y);ctx.lineTo(sx+13,sy);ctx.lineTo(sx+45,sy);ctx.lineTo(sx+58,GROUND_Y);ctx.closePath();ctx.fill();
-      ctx.strokeStyle="#1e2a34";ctx.lineWidth=4;ctx.stroke();
-      ctx.fillStyle="#1e2a34";
-      ctx.beginPath();ctx.moveTo(sx+29,sy+16);ctx.lineTo(sx+40,sy+43);ctx.lineTo(sx+18,sy+43);ctx.closePath();ctx.fill();
-      ctx.fillStyle="#ebbc6a";ctx.fillRect(sx+27,sy+25,4,10);
+      // Kompaktes Warnschild; die Szene bleibt trotz Hindernis übersichtlich.
+      const sx=h.x-28, sy=GROUND_Y-59;
+      ctx.fillStyle="#efbd62";
+      ctx.beginPath();ctx.moveTo(sx,GROUND_Y);ctx.lineTo(sx+12,sy);ctx.lineTo(sx+38,sy);ctx.lineTo(sx+50,GROUND_Y);ctx.closePath();ctx.fill();
+      ctx.strokeStyle="#20364b";ctx.lineWidth=3;ctx.stroke();
+      ctx.fillStyle="#20364b";
+      ctx.beginPath();ctx.moveTo(sx+25,sy+14);ctx.lineTo(sx+34,sy+36);ctx.lineTo(sx+16,sy+36);ctx.closePath();ctx.fill();
+      ctx.fillStyle="#efbd62";ctx.fillRect(sx+23,sy+21,4,8);
 
-      // Kleine Absperrung am hinteren Rand; niedrig genug zum Überspringen.
-      ctx.fillStyle="#d9a6af";
-      ctx.fillRect(h.x+h.w-20,GROUND_Y-48,11,48);
-      ctx.fillStyle="#f6e3e5";
-      ctx.fillRect(h.x+h.w-25,GROUND_Y-45,38,10);
-      ctx.strokeStyle="#1e2a34";ctx.lineWidth=2;ctx.strokeRect(h.x+h.w-25,GROUND_Y-45,38,10);
-    }
+      // Kleine Reinigungsmarkierung nur an jeder zweiten Pfütze.
+      if(index % 2 === 1){
+        ctx.fillStyle="#d9a6af";ctx.fillRect(h.x+h.w-14,GROUND_Y-35,8,35);
+        ctx.fillStyle="#f6e3e5";roundedRect(h.x+h.w-20,GROUND_Y-35,26,7,3);ctx.fill();
+      }
+    });
   }
 
   function drawWorld(){
@@ -1366,108 +1424,123 @@
   }
 
   function drawStationSigns(){
-    ctx.fillStyle = "#03172b";
-    roundedRect(55,300,245,62,10); ctx.fill();
-    ctx.strokeStyle="#ebbc6a";ctx.lineWidth=3;ctx.stroke();
-    ctx.fillStyle = "#fffdf9";
-    ctx.font = '800 28px "Microsoft YaHei","Noto Sans SC",sans-serif';
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("北京南站",178,331);
+    // Stationsschild im Stil der dunklen HUD-Flächen.
+    ctx.save();
+    ctx.shadowColor="rgba(0,0,0,.16)";ctx.shadowBlur=10;
+    ctx.fillStyle = "#071d33";
+    roundedRect(62,286,260,60,12);ctx.fill();
+    ctx.shadowBlur=0;
+    ctx.strokeStyle="#efc77f";ctx.lineWidth=3;ctx.stroke();
+    ctx.fillStyle = "#f7e4c5";
+    ctx.font = '850 25px "Microsoft YaHei","Noto Sans SC",sans-serif';
+    ctx.textAlign = "center";ctx.textBaseline = "middle";
+    ctx.fillText("北京南站",192,311);
+    ctx.font = '700 12px system-ui,sans-serif';
+    ctx.fillStyle="rgba(247,228,197,.82)";
+    ctx.fillText("BEIJING SOUTH",192,332);
 
-    ctx.fillStyle="#24384a";ctx.fillRect(3238,300,16,170);
-    ctx.fillStyle="#03172b";roundedRect(3120,282,250,66,10);ctx.fill();
-    ctx.strokeStyle="#ebbc6a";ctx.lineWidth=3;ctx.stroke();
-    ctx.fillStyle="#fffdf9";
-    ctx.font='850 30px "Microsoft YaHei","Noto Sans SC",sans-serif';
-    ctx.fillText("地铁  →",3245,315);
+    ctx.fillStyle="#24384a";ctx.fillRect(3238,294,14,176);
+    ctx.fillStyle="#071d33";roundedRect(3110,276,270,68,12);ctx.fill();
+    ctx.strokeStyle="#efc77f";ctx.lineWidth=3;ctx.stroke();
+    ctx.fillStyle="#f7e4c5";
+    ctx.font='900 29px "Microsoft YaHei","Noto Sans SC",sans-serif';
+    ctx.fillText("↓  地铁",3245,310);
+    ctx.restore();
   }
 
   function drawLinYue(){
+    const feetY = GROUND_Y + 1;
+    const imageReady = linYueSprite.complete && linYueSprite.naturalWidth;
+    const drawH = 132;
+    const drawW = imageReady ? drawH * linYueSprite.naturalWidth / linYueSprite.naturalHeight : 60;
+
+    // Weicher Bodenschatten bindet den Sticker optisch in die Szene ein.
+    ctx.save();
+    ctx.fillStyle="rgba(20,42,62,.18)";
+    ctx.beginPath();ctx.ellipse(LINYUE_X,feetY+1,drawW*.38,7,0,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+
+    if(imageReady){
+      ctx.save();
+      ctx.translate(LINYUE_X,feetY);
+      ctx.drawImage(linYueSprite,-drawW/2,-drawH,drawW,drawH);
+      ctx.restore();
+      return;
+    }
+
+    // Fallback, falls das neue Bild noch nicht im gleichen Ordner liegt.
     const x = LINYUE_X - 23;
     const y = GROUND_Y - 72;
-    ctx.fillStyle = "#f6e3e5";
-    roundedRect(x+5,y+28,36,44,10);
-    ctx.fill();
-    ctx.fillStyle = "#7a3142";
-    ctx.fillRect(x+8,y+62,10,10);
-    ctx.fillRect(x+28,y+62,10,10);
-
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(x+23,y+18,19,0,Math.PI*2);
-    ctx.clip();
+    ctx.fillStyle = "#f6e3e5";roundedRect(x+5,y+28,36,44,10);ctx.fill();
+    ctx.save();ctx.beginPath();ctx.arc(x+23,y+18,19,0,Math.PI*2);ctx.clip();
     if(avatarLin.complete && avatarLin.naturalWidth) ctx.drawImage(avatarLin,x+4,y-1,38,38);
-    else {ctx.fillStyle="#edc2a4";ctx.fillRect(x+4,y-1,38,38);}
     ctx.restore();
-    ctx.strokeStyle = "rgba(255,255,255,.95)";
-    ctx.lineWidth = 3;
-    ctx.beginPath();ctx.arc(x+23,y+18,19,0,Math.PI*2);ctx.stroke();
-
   }
 
   function drawCollectibles(){
     for(const c of currentCollectibles){
       if(!c.active) continue;
-      ctx.shadowColor = "rgba(255,215,90,.72)";
-      ctx.shadowBlur = 16;
-      ctx.fillStyle = "rgba(255,251,230,.97)";
-      roundedRect(c.x,c.y,c.w,c.h,18);
-      ctx.fill();
+      ctx.save();
+      ctx.shadowColor = "rgba(239,189,98,.82)";
+      ctx.shadowBlur = 18;
+      const bubbleGrad = ctx.createLinearGradient(0,c.y,0,c.y+c.h);
+      bubbleGrad.addColorStop(0,"rgba(255,253,243,.99)");
+      bubbleGrad.addColorStop(1,"rgba(246,226,194,.98)");
+      ctx.fillStyle = bubbleGrad;
+      roundedRect(c.x,c.y,c.w,c.h,18);ctx.fill();
       ctx.shadowBlur = 0;
-      ctx.strokeStyle = "rgba(180,128,35,.82)";
-      ctx.lineWidth = 3;
-      ctx.stroke();
+      // Kleine Sprechblasenspitze statt eines schwebenden Rechtecks.
+      ctx.beginPath();
+      ctx.moveTo(c.x+c.w*.42,c.y+c.h-2);
+      ctx.lineTo(c.x+c.w*.50,c.y+c.h+11);
+      ctx.lineTo(c.x+c.w*.58,c.y+c.h-2);
+      ctx.closePath();ctx.fill();
+      ctx.strokeStyle = "#c58f40";ctx.lineWidth = 3;roundedRect(c.x,c.y,c.w,c.h,18);ctx.stroke();
       ctx.fillStyle = "#1e2a34";
       const len = Array.from(c.text).length;
       const size = len > 5 ? 17 : len > 3 ? 20 : 27;
-      ctx.font = `850 ${size}px "Microsoft YaHei","Noto Sans SC",sans-serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
+      ctx.font = `900 ${size}px "Microsoft YaHei","Noto Sans SC",sans-serif`;
+      ctx.textAlign = "center";ctx.textBaseline = "middle";
       ctx.fillText(c.text,c.x+c.w/2,c.y+c.h/2+1,c.w-12);
+      // Dezente Lichtpunkte wie im Entwurfsbild.
+      ctx.fillStyle="rgba(255,239,177,.95)";
+      ctx.beginPath();ctx.arc(c.x+c.w-5,c.y+4,3,0,Math.PI*2);ctx.fill();
+      ctx.restore();
     }
   }
 
   function drawSubway(){
     const x = SUBWAY_X;
+    ctx.save();
+    ctx.shadowColor="rgba(15,31,46,.24)";ctx.shadowBlur=18;
+    ctx.fillStyle="#263c51";roundedRect(x-80,248,246,222,20);ctx.fill();
+    ctx.shadowBlur=0;
+    const stone=ctx.createLinearGradient(x-60,0,x+150,0);
+    stone.addColorStop(0,"#d8c3ae");stone.addColorStop(.5,"#f0e4d8");stone.addColorStop(1,"#bda48e");
+    ctx.fillStyle=stone;roundedRect(x-59,272,204,198,13);ctx.fill();
+    ctx.fillStyle="#071d33";roundedRect(x-53,285,192,61,10);ctx.fill();
+    ctx.strokeStyle="#efc77f";ctx.lineWidth=3;ctx.stroke();
+    ctx.fillStyle="#f7e4c5";ctx.font='900 34px "Microsoft YaHei","Noto Sans SC",sans-serif';
+    ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("↓  地铁",x+43,316);
 
-    // Massiver, aber ruhiger U-Bahn-Eingang in Buchfarben.
-    ctx.fillStyle="#1e2a34";
-    roundedRect(x-72,255,230,215,18);ctx.fill();
-    ctx.fillStyle="#e7ceba";
-    roundedRect(x-52,278,190,192,12);ctx.fill();
-    ctx.fillStyle="#24384a";
-    roundedRect(x-45,290,176,58,9);ctx.fill();
-    ctx.strokeStyle="#ebbc6a";ctx.lineWidth=3;ctx.stroke();
-    ctx.fillStyle="#fffdf9";
-    ctx.font='900 36px "Microsoft YaHei","Noto Sans SC",sans-serif';
-    ctx.textAlign="center";ctx.textBaseline="middle";
-    ctx.fillText("地铁",x+43,320);
-
-    // Treppenöffnung.
-    ctx.fillStyle="#03172b";
-    ctx.fillRect(x-30,355,146,115);
-    ctx.fillStyle="#31485e";
-    for(let i=0;i<5;i++) ctx.fillRect(x-20+i*12,445-i*18,126-i*12,8);
-    ctx.strokeStyle="#f6d083";ctx.lineWidth=5;
-    ctx.beginPath();ctx.moveTo(x-22,368);ctx.lineTo(x-22,455);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(x+108,368);ctx.lineTo(x+108,455);ctx.stroke();
+    ctx.fillStyle="#0b2135";ctx.fillRect(x-34,354,164,116);
+    const stair=ctx.createLinearGradient(0,370,0,470);stair.addColorStop(0,"#31485e");stair.addColorStop(1,"#17283a");
+    ctx.fillStyle=stair;
+    for(let i=0;i<6;i++) ctx.fillRect(x-23+i*11,448-i*16,138-i*11,8);
+    ctx.strokeStyle="#e8cfac";ctx.lineWidth=4;
+    ctx.beginPath();ctx.moveTo(x-23,368);ctx.lineTo(x-23,456);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x+117,368);ctx.lineTo(x+117,456);ctx.stroke();
 
     if(!subwayUnlocked){
-      // Geschlossene Absperrung ohne zusätzliches deutsches Wort.
-      ctx.fillStyle="#9d5968";
-      ctx.fillRect(x-35,405,158,14);
-      ctx.fillRect(x-28,390,12,80);
-      ctx.fillRect(x+105,390,12,80);
+      ctx.fillStyle="#b96f7e";ctx.fillRect(x-37,405,166,13);
+      ctx.fillRect(x-30,390,11,80);ctx.fillRect(x+111,390,11,80);
       ctx.fillStyle="#f6e3e5";
-      for(let i=0;i<5;i++) ctx.fillRect(x-29+i*31,405,16,14);
+      for(let i=0;i<6;i++) ctx.fillRect(x-31+i*29,405,15,13);
     }else{
-      // Grüner Pfeil zeigt das offene Ziel.
-      ctx.fillStyle="rgba(34,197,94,.9)";
-      ctx.beginPath();
-      ctx.moveTo(x+43,365);ctx.lineTo(x+72,397);ctx.lineTo(x+55,397);ctx.lineTo(x+55,431);
-      ctx.lineTo(x+31,431);ctx.lineTo(x+31,397);ctx.lineTo(x+14,397);ctx.closePath();ctx.fill();
+      ctx.fillStyle="rgba(34,197,94,.92)";
+      ctx.beginPath();ctx.moveTo(x+43,365);ctx.lineTo(x+73,397);ctx.lineTo(x+56,397);ctx.lineTo(x+56,433);ctx.lineTo(x+30,433);ctx.lineTo(x+30,397);ctx.lineTo(x+13,397);ctx.closePath();ctx.fill();
     }
+    ctx.restore();
   }
 
   function drawParticles(){
@@ -1481,42 +1554,39 @@
   }
 
   function drawPlayer(){
-    const x = player.x;
-    const y = player.y;
-    const stunned = performance.now() < player.stunnedUntil;
+    const now = performance.now();
+    const stunned = now < player.stunnedUntil;
+    const walk = player.grounded && Math.abs(player.vx) > 5 && !stunned;
+    const step = walk ? Math.sin(now / 92) : 0;
+    const bob = walk ? Math.abs(step) * 2.6 : (player.grounded ? 0 : 1.5);
+    const feetX = player.x + player.w/2;
+    const feetY = player.y + player.h;
+    const imageReady = suRanSprite.complete && suRanSprite.naturalWidth;
+    const drawH = 124;
+    const drawW = imageReady ? drawH * suRanSprite.naturalWidth / suRanSprite.naturalHeight : 62;
+
     ctx.save();
-    if(stunned){
-      ctx.translate(x+player.w/2,y+player.h/2);
-      ctx.rotate(player.facing * Math.PI/2.6);
-      ctx.translate(-(x+player.w/2),-(y+player.h/2));
+    ctx.fillStyle="rgba(20,42,62,.20)";
+    ctx.beginPath();ctx.ellipse(feetX,feetY+2,drawW*.40,7,0,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+
+    if(imageReady){
+      ctx.save();
+      ctx.translate(feetX,feetY);
+      if(stunned) ctx.rotate(player.facing * Math.PI/2.65);
+      else ctx.rotate(step * .018 * (player.facing || 1));
+      // Die Vorlage blickt nach links; für die Laufrichtung nach rechts wird sie gespiegelt.
+      if(player.facing > 0) ctx.scale(-1,1);
+      ctx.drawImage(suRanSprite,-drawW/2,-drawH-bob,drawW,drawH);
+      ctx.restore();
+      return;
     }
 
-    ctx.fillStyle = "#31485e";
-    roundedRect(x+5,y+28,player.w-10,player.h-28,10);
-    ctx.fill();
-
-    const walk = player.grounded && Math.abs(player.vx) > 5 && !stunned;
-    const phase = Math.sin(performance.now()/80) * (walk ? 6 : 0);
-    ctx.strokeStyle = "#1e2a34";
-    ctx.lineWidth = 8;
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo(x+16,y+player.h-10);
-    ctx.lineTo(x+15+phase,y+player.h+1);
-    ctx.moveTo(x+player.w-16,y+player.h-10);
-    ctx.lineTo(x+player.w-15-phase,y+player.h+1);
-    ctx.stroke();
-
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(x+player.w/2,y+19,19,0,Math.PI*2);
-    ctx.clip();
+    // Kompakter Fallback aus dem bisherigen Avatar.
+    const x=player.x,y=player.y;
+    ctx.fillStyle="#31485e";roundedRect(x+5,y+28,player.w-10,player.h-28,10);ctx.fill();
+    ctx.save();ctx.beginPath();ctx.arc(x+player.w/2,y+19,19,0,Math.PI*2);ctx.clip();
     if(avatarSu.complete && avatarSu.naturalWidth) ctx.drawImage(avatarSu,x+3,y,38,38);
-    else {ctx.fillStyle="#efc3a4";ctx.fillRect(x+3,y,38,38);}
-    ctx.restore();
-    ctx.strokeStyle = "rgba(255,255,255,.94)";
-    ctx.lineWidth = 3;
-    ctx.beginPath();ctx.arc(x+player.w/2,y+19,19,0,Math.PI*2);ctx.stroke();
     ctx.restore();
   }
 
@@ -1672,8 +1742,6 @@
   window.addEventListener("orientationchange", () => setTimeout(syncCanvasAspect, 180), {passive:true});
 
   $("startBtn").addEventListener("click",startGame);
-  $("sentenceResetBtn").addEventListener("click",resetSentenceOrder);
-  $("sentenceCheckBtn").addEventListener("click",checkSentence);
   $("restartBtn").addEventListener("click",() => resetGame(false));
   $("playAgainBtn").addEventListener("click",() => resetGame(false));
   $("fullscreenBtn").addEventListener("click",toggleFullscreen);
