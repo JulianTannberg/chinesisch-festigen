@@ -1912,3 +1912,133 @@ input, textarea, select, [contenteditable="true"]{
   .jumpSentenceTray{width:min(95%,95vw);padding:8px;border-radius:16px;bottom:max(96px,calc(env(safe-area-inset-bottom) + 90px))}
   .jumpSceneContinue{bottom:max(98px,calc(env(safe-area-inset-bottom) + 92px))}
 }
+
+/* Mobile Steuerung: große unsichtbare Touchflächen, kleine Orientierungssymbole */
+.jumpTouchControls{
+  left:0;
+  right:0;
+  bottom:0;
+  height:42%;
+  grid-template-columns:62% 38%;
+  gap:0;
+}
+.jumpMoveZone,
+.jumpJumpZone{
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  backdrop-filter:none;
+  color:#fff;
+  transform:none;
+}
+.jumpMoveZone.moving-left,
+.jumpMoveZone.moving-right,
+.jumpJumpZone.active,
+.jumpJumpZone:active{
+  background:transparent;
+  color:#fff;
+  transform:none;
+}
+.jumpMoveGuide{
+  position:absolute;
+  left:max(14px,env(safe-area-inset-left));
+  bottom:max(12px,env(safe-area-inset-bottom));
+  width:118px;
+  height:54px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0;
+  padding:0 10px;
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:999px;
+  background:rgba(3,23,43,.18);
+  box-shadow:0 4px 14px rgba(0,0,0,.10);
+  opacity:.30;
+  transition:opacity .12s ease,background .12s ease,transform .12s ease;
+}
+.jumpMoveGuide strong{display:none}
+.jumpMoveGuide span{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font:900 25px/1 system-ui,sans-serif;
+  transition:transform .12s ease,opacity .12s ease;
+}
+.jumpMoveGuide span:last-child{text-align:center}
+.jumpMoveZone.moving-left .jumpMoveGuide,
+.jumpMoveZone.moving-right .jumpMoveGuide{
+  opacity:.88;
+  background:rgba(3,23,43,.55);
+  transform:scale(1.03);
+}
+.jumpMoveZone.moving-left .jumpMoveGuide span:first-child,
+.jumpMoveZone.moving-right .jumpMoveGuide span:last-child{
+  transform:scale(1.28);
+  opacity:1;
+}
+.jumpMoveZone.moving-left .jumpMoveGuide span:last-child,
+.jumpMoveZone.moving-right .jumpMoveGuide span:first-child{opacity:.38}
+
+.jumpJumpZone{
+  position:relative;
+  display:block;
+  min-width:0;
+  padding:0;
+}
+.jumpJumpArrow{
+  position:absolute;
+  right:max(16px,env(safe-area-inset-right));
+  bottom:max(10px,env(safe-area-inset-bottom));
+  width:62px;
+  height:62px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(255,255,255,.24);
+  border-radius:50%;
+  background:rgba(3,23,43,.18);
+  box-shadow:0 4px 14px rgba(0,0,0,.10);
+  font:900 34px/1 system-ui,sans-serif;
+  opacity:.32;
+  transition:opacity .12s ease,background .12s ease,transform .12s ease;
+}
+.jumpJumpZone strong{display:none}
+.jumpJumpZone.active .jumpJumpArrow,
+.jumpJumpZone:active .jumpJumpArrow{
+  opacity:.92;
+  background:rgba(3,23,43,.60);
+  transform:scale(.94);
+}
+
+@media (pointer:fine) and (min-width:800px){
+  .jumpTouchControls{opacity:.22}
+  .jumpTouchControls:hover{opacity:.55}
+}
+
+@media (max-width:760px){
+  .jumpTouchControls{
+    height:44%;
+    grid-template-columns:64% 36%;
+    left:0;
+    right:0;
+    bottom:0;
+    gap:0;
+  }
+  .jumpMoveZone,.jumpJumpZone{border-radius:0}
+  .jumpMoveGuide{
+    left:max(8px,env(safe-area-inset-left));
+    bottom:max(7px,env(safe-area-inset-bottom));
+    width:94px;
+    height:44px;
+    padding:0 7px;
+  }
+  .jumpMoveGuide span{font-size:21px}
+  .jumpJumpArrow{
+    right:max(9px,env(safe-area-inset-right));
+    bottom:max(7px,env(safe-area-inset-bottom));
+    width:50px;
+    height:50px;
+    font-size:28px;
+  }
+}

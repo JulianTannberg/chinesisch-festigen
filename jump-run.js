@@ -363,21 +363,71 @@
     const lin = $("sceneLinBubble");
     const suPos = worldToScreen(player.x + player.w/2, player.y + sceneYOffset);
     const linPos = worldToScreen(LINYUE_X, GROUND_Y - 72 + sceneYOffset);
+    const marginX = 12;
+    const minTop = 8;
+    const maxTop = viewportRect.height - 180;
+    const gap = 14;
+
+    function bubbleRect(el, anchorX, anchorY, side){
+      const w = el.offsetWidth || 220;
+      const h = el.offsetHeight || 86;
+      let x = side === "right"
+        ? anchorX - 22 * scale
+        : anchorX - w + 40 * scale;
+      let y = anchorY - 136 * scale;
+      x = clamp(x, marginX, viewportRect.width - w - marginX);
+      y = clamp(y, minTop, maxTop);
+      return {x, y, w, h};
+    }
+    function overlaps(a, b){
+      return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+    }
+    function applyRect(el, rect){
+      el.style.left = `${Math.round(rect.x)}px`;
+      el.style.top = `${Math.round(rect.y)}px`;
+    }
+
+    let suRect = null;
+    let linRect = null;
 
     if(su && !su.hidden){
-      const w = su.offsetWidth || 220;
-      const x = contentOffsetX + suPos.x * scale - w + 40 * scale;
-      const y = contentOffsetY + suPos.y * scale - 132 * scale;
-      su.style.left = `${clamp(x, 12, viewportRect.width - w - 12)}px`;
-      su.style.top = `${clamp(y, 8, viewportRect.height - 180)}px`;
+      const suAnchorX = contentOffsetX + suPos.x * scale;
+      const suAnchorY = contentOffsetY + suPos.y * scale;
+      suRect = bubbleRect(su, suAnchorX, suAnchorY, "left");
     }
     if(lin && !lin.hidden){
-      const w = lin.offsetWidth || 220;
-      const x = contentOffsetX + linPos.x * scale - 40 * scale;
-      const y = contentOffsetY + linPos.y * scale - 138 * scale;
-      lin.style.left = `${clamp(x, 12, viewportRect.width - w - 12)}px`;
-      lin.style.top = `${clamp(y, 8, viewportRect.height - 180)}px`;
+      const linAnchorX = contentOffsetX + linPos.x * scale;
+      const linAnchorY = contentOffsetY + linPos.y * scale;
+      // Standard: Lin Yues Blase rechts von ihrer Figur.
+      // Wenn Su Ran rechts von ihr steht, wird ihre Blase nach links verlagert.
+      const side = suPos.x >= linPos.x ? "left" : "right";
+      linRect = bubbleRect(lin, linAnchorX, linAnchorY, side);
     }
+
+    if(suRect && linRect && overlaps(suRect, linRect)){
+      if(suPos.x >= linPos.x){
+        suRect.y = clamp(Math.min(suRect.y, linRect.y - suRect.h - gap), minTop, maxTop);
+        if(overlaps(suRect, linRect)){
+          linRect.y = clamp(suRect.y + suRect.h + gap, minTop, maxTop);
+        }
+      }else{
+        linRect.y = clamp(Math.min(linRect.y, suRect.y - linRect.h - gap), minTop, maxTop);
+        if(overlaps(suRect, linRect)){
+          suRect.y = clamp(linRect.y + linRect.h + gap, minTop, maxTop);
+        }
+      }
+      if(overlaps(suRect, linRect)){
+        const verticalRoomAbove = Math.max(suRect.y, linRect.y) - minTop;
+        if(verticalRoomAbove > suRect.h + gap){
+          suRect.y = clamp(Math.min(suRect.y, linRect.y - suRect.h - gap), minTop, maxTop);
+        }else{
+          linRect.y = clamp(Math.max(linRect.y, suRect.y + suRect.h + gap), minTop, maxTop);
+        }
+      }
+    }
+
+    if(su && suRect) applyRect(su, suRect);
+    if(lin && linRect) applyRect(lin, linRect);
   }
 
   function syncCanvasAspect(){
