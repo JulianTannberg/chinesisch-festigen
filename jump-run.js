@@ -246,6 +246,7 @@
   let pseudoFullscreen = false;
   let sceneMode = "";
   let confettiTimer = 0;
+  let conversationPending = false;
 
   const avatarSu = new Image();
   avatarSu.src = "avatars/suran.jpg";
@@ -401,7 +402,6 @@
   function hideSceneOverlay(){
     $("sceneOverlay").hidden = true;
     $("sentenceTray").hidden = true;
-    $("sceneContinueWrap").hidden = true;
     showSceneBubble("sceneSuBubble", false);
     showSceneBubble("sceneLinBubble", false);
     sceneMode = "";
@@ -441,7 +441,6 @@
   function showSceneBuilder(){
     $("sceneOverlay").hidden = false;
     $("sentenceTray").hidden = false;
-    $("sceneContinueWrap").hidden = true;
     showSceneBubble("sceneSuBubble", true);
     showSceneBubble("sceneLinBubble", false);
     sceneMode = "build";
@@ -451,7 +450,6 @@
   function showSuSpeechBubble(text){
     $("sceneOverlay").hidden = false;
     $("sentenceTray").hidden = true;
-    $("sceneContinueWrap").hidden = true;
     setSceneBubbleHtml("sceneSuBubbleBody", safeHtml(text));
     showSceneBubble("sceneSuBubble", true);
     showSceneBubble("sceneLinBubble", false);
@@ -459,10 +457,9 @@
     updateScenePositions();
   }
 
-  function showLinSpeechBubble(text, withContinue){
+  function showLinSpeechBubble(text){
     $("sceneOverlay").hidden = false;
     $("sentenceTray").hidden = true;
-    $("sceneContinueWrap").hidden = !withContinue;
     showSceneBubble("sceneSuBubble", true);
     setSceneBubbleHtml("sceneLinBubbleBody", safeHtml(text));
     showSceneBubble("sceneLinBubble", true);
@@ -552,6 +549,7 @@
     selectedTokenIds = [];
     sentenceBankOrder = [];
     currentCollectibles.forEach(c => { c.active = true; });
+    conversationPending = false;
     placePlayerAtLinYue();
     if(reason === "water"){
       waterCount++;
@@ -575,6 +573,7 @@
     subwayUnlocked = false;
     finished = false;
     sentenceLocked = false;
+    conversationPending = false;
     particles.length = 0;
     placePlayerAtLinYue();
     hideSceneOverlay();
@@ -620,6 +619,7 @@
     sentenceMistakeMissions = new Set(state.sentenceMistakeMissions);
     finished = false;
     sentenceLocked = false;
+    conversationPending = false;
     particles.length = 0;
     placePlayerAtLinYue();
     hideSceneOverlay();
@@ -686,6 +686,7 @@
 
   function openSentenceTask(){
     if(paused || sentenceLocked || collectedCount() !== mission().tokens.length) return;
+    conversationPending = false;
     paused = true;
     pauseClock();
     sentenceLocked = false;
@@ -795,13 +796,11 @@
   function showReplyOrAdvance(){
     const reply = mission().replyZh;
     if(reply){
-      $("sceneContinueBtn").textContent = currentMission === missions.length - 1 ? "Zur U-Bahn" : "Weiter";
-      $("sceneContinueBtn").disabled = true;
-      showLinSpeechBubble(reply, true);
+      showLinSpeechBubble(reply);
       cfSpeakZh(reply, {
         rate:0.78,
         speaker:"linyue",
-        onend:() => { $("sceneContinueBtn").disabled = false; }
+        onend:() => { setTimeout(advanceMission, 450); }
       });
     }else{
       setTimeout(advanceMission, 350);
@@ -811,6 +810,7 @@
   function advanceMission(){
     hideSceneOverlay();
     sentenceLocked = false;
+    conversationPending = false;
     if(currentMission >= missions.length - 1){
       subwayUnlocked = true;
       paused = false;
@@ -898,7 +898,7 @@
 
     const stunned = now < player.stunnedUntil;
     let direction = 0;
-    if(!stunned){
+    if(!stunned && !conversationPending){
       if(input.left) direction -= 1;
       if(input.right) direction += 1;
     }
@@ -972,7 +972,14 @@
     if(!subwayUnlocked && collectedCount() === mission().tokens.length){
       const playerCenter = player.x + player.w/2;
       if(Math.abs(playerCenter - LINYUE_X) < 86){
-        openSentenceTask();
+        if(player.grounded){
+          openSentenceTask();
+        }else{
+          conversationPending = true;
+          input.left = false;
+          input.right = false;
+          player.vx = 0;
+        }
       }
     }
 
@@ -1129,15 +1136,6 @@
     ctx.lineWidth = 3;
     ctx.beginPath();ctx.arc(x+23,y+18,19,0,Math.PI*2);ctx.stroke();
 
-    ctx.fillStyle = "rgba(255,255,255,.94)";
-    roundedRect(LINYUE_X-70,y-52,140,38,12);
-    ctx.fill();
-    ctx.fillStyle = "#10263b";
-    ctx.font = "800 17px system-ui,sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    const label = subwayUnlocked ? "一路平安！" : (collectedCount() === mission().tokens.length ? "Komm zu mir!" : "林月 · Lin Yue");
-    ctx.fillText(label,LINYUE_X,y-33);
   }
 
   function drawCollectibles(){
@@ -1406,7 +1404,6 @@
   $("startBtn").addEventListener("click",startGame);
   $("sentenceResetBtn").addEventListener("click",resetSentenceOrder);
   $("sentenceCheckBtn").addEventListener("click",checkSentence);
-  $("sceneContinueBtn").addEventListener("click",advanceMission);
   $("restartBtn").addEventListener("click",() => resetGame(false));
   $("playAgainBtn").addEventListener("click",() => resetGame(false));
   $("fullscreenBtn").addEventListener("click",toggleFullscreen);
