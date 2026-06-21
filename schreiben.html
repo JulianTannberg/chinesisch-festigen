@@ -525,6 +525,8 @@ function check(){
     if(ok){ correct++; globalStreak++; } else { globalStreak = 0; }
     saveStreak();
     cfSetScore("tippen", vocab.length ? Math.round(correct / vocab.length * 100) : 0);
+    // Durchgearbeitet = jedes Wort wurde einmal getippt (egal ob richtig).
+    if(vocab.length && answered >= vocab.length) cfMarkDone("tippen", topic.id);
   }
   if(ok){
     setInputState("correct");
@@ -962,6 +964,9 @@ function finishLearnWord(){
   // Nur fehlerfrei gemeisterte Wörter zählen (Karte ganz grün = "perfect").
   const _doneCount = learnWords.filter(w => learnDone[w.zh] === "perfect").length;
   cfSetScore("lernen", learnWords.length ? Math.round(_doneCount / learnWords.length * 100) : 0, topic.id);
+  // Durchgearbeitet = jedes Zeichen wurde einmal gelernt (Status gesetzt,
+  // egal ob „perfect" oder „ok"). Für die Freischaltung, nicht für die Prozente.
+  if(learnWords.length && learnWords.every(w => learnDone[w.zh])) cfMarkDone("lernen", topic.id);
   cfPlayFeedback(true);
   setLearnStatus(lWordMistakes === 0
     ? "Perfekt – ganz ohne Fehler! 太棒了！"
@@ -1234,6 +1239,7 @@ function loadTrainWord(){
 function finishTrainLevel(){
   localStorage.setItem(trainDoneKey(trainLevel), "1");
   cfSetScore("schreibtraining", 100, topic.id);
+  cfMarkDone("schreibtraining", topic.id);
   trainIdx = 0;
   saveTrain();
   trainStats.round++;

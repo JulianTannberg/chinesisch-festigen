@@ -277,6 +277,19 @@ function cfGetScore(name, chapterId){
 var CF_SCORE_NAMES = ["hoeren","lernen","tippen","schreibtraining","sprechen",
   "ueben_hoeren","ueben_zhde","ueben_dezh","flash","memory","luecken"];
 
+// „Durchgearbeitet"-Markierung: eine Aktivität gilt als erledigt, sobald sie
+// EINMAL komplett durchgespielt wurde – unabhängig davon, wie viel davon richtig
+// war. (Prozente zählen weiter nur das, was beim ersten Mal richtig war.)
+// Dient allein der Freischaltung des nächsten Kapitels.
+function cfMarkDone(name, chapterId){
+  const id = chapterId || (typeof topic !== "undefined" && topic ? topic.id : "00");
+  try{ localStorage.setItem(`cf_done_v1_${id}_${name}`, "1"); }catch(e){}
+}
+function cfIsDone(name, chapterId){
+  const id = chapterId || (typeof topic !== "undefined" && topic ? topic.id : "00");
+  try{ return localStorage.getItem(`cf_done_v1_${id}_${name}`) === "1"; }catch(e){ return false; }
+}
+
 // Hat das Kapitel überhaupt Inhalt für diese Aktivität? (sonst nicht mitzählen)
 function cfActivityApplicable(topic, name){
   if(!topic) return false;
@@ -311,6 +324,17 @@ function cfGroupPercent(topic, names){
 // Gesamtfortschritt eines Kapitels über alle anwendbaren Aktivitäten.
 function cfChapterPercent(topic){
   return cfGroupPercent(topic, CF_SCORE_NAMES);
+}
+
+// Ist das Kapitel komplett DURCHGEARBEITET? D. h. jede anwendbare,
+// prozentgebende Aktivität wurde mindestens einmal bis zum Ende gespielt –
+// egal ob richtig oder falsch. Das ist die Bedingung für die Freischaltung
+// des nächsten Kapitels (NICHT 100 %). Gibt false bei leeren Kapiteln.
+function cfChapterWorkedThrough(topic){
+  if(!topic) return false;
+  const appl = CF_SCORE_NAMES.filter(n => cfActivityApplicable(topic, n));
+  if(!appl.length) return false;
+  return appl.every(n => cfIsDone(n, topic.id));
 }
 
 // Proper-Name-Reserve für Karten-Übungen: Namen, die GANZ bleiben sollen, aber
@@ -507,32 +531,50 @@ function cfConfirm(message, opts){
 // ===== Feier bei 100 % im Kapitel (Konfetti + Lampions, chinesisch angehaucht) =====
 // Selbstständig, ohne Bibliothek. Overlay blockiert nichts (pointer-events:none)
 // und entfernt sich von allein.
+function cfEnsureCelebrateStyle(){
+  if(document.getElementById("cfCelebrateStyle")) return;
+  var st = document.createElement("style");
+  st.id = "cfCelebrateStyle";
+  st.textContent =
+    "#cfCelebrate{position:fixed;inset:0;z-index:99999;pointer-events:none;overflow:hidden;}" +
+    "#cfCelebrate .cfConf{position:absolute;top:-12vh;width:10px;height:14px;border-radius:2px;opacity:.95;animation:cfFall linear forwards;}" +
+    // Lampion: hängt an einer dünnen Schnur und schwingt sanft hin und her,
+    // während er herabsinkt. transform-origin oben = Aufhängepunkt.
+    "#cfCelebrate .cfLamp{position:absolute;top:-12vh;font-size:34px;transform-origin:50% -28px;animation:cfDrop ease-in forwards;}" +
+    "#cfCelebrate .cfLamp span{display:inline-block;animation:cfSwing ease-in-out infinite alternate;}" +
+    "#cfCelebrate .cfLamp span::before{content:'';position:absolute;left:50%;top:-26px;width:2px;height:26px;background:rgba(255,210,120,.6);transform:translateX(-50%);}" +
+    // Kranich: fliegt quer über den Bildschirm, mit leichtem Flügelschlag.
+    "#cfCelebrate .cfCrane{position:absolute;font-size:30px;will-change:transform;animation:cfFlyR linear forwards;}" +
+    "#cfCelebrate .cfCrane.l{animation-name:cfFlyL;}" +
+    "#cfCelebrate .cfCrane span{display:inline-block;animation:cfFlap ease-in-out infinite alternate;}" +
+    "#cfCelebrate .cfBanner{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%) scale(.4);" +
+      "text-align:center;color:#fff;font-weight:800;text-shadow:0 2px 10px rgba(0,0,0,.5);" +
+      "animation:cfPop .6s cubic-bezier(.2,1.4,.4,1) forwards, cfFade .8s ease 3.4s forwards;}" +
+    "#cfCelebrate .cfBanner .cfZh{font-size:46px;color:#ffd966;}" +
+    "#cfCelebrate .cfBanner .cfDe{font-size:22px;margin-top:6px;}" +
+    "#cfCelebrate.soft .cfBanner .cfZh{font-size:38px;color:#bfe3c6;}" +
+    "@keyframes cfFall{to{transform:translateY(122vh) rotate(720deg);}}" +
+    "@keyframes cfDrop{to{transform:translateY(118vh);}}" +
+    "@keyframes cfSwing{from{transform:rotate(-16deg);}to{transform:rotate(16deg);}}" +
+    "@keyframes cfFlap{from{transform:scaleY(.78);}to{transform:scaleY(1.12);}}" +
+    "@keyframes cfFlyR{from{transform:translateX(-16vw);}to{transform:translateX(120vw);}}" +
+    "@keyframes cfFlyL{from{transform:translateX(16vw) scaleX(-1);}to{transform:translateX(-120vw) scaleX(-1);}}" +
+    "@keyframes cfPop{to{transform:translate(-50%,-50%) scale(1);}}" +
+    "@keyframes cfFade{to{opacity:0;}}";
+  document.head.appendChild(st);
+}
+
+// ===== Große Feier bei 100 % im Kapitel =====
+// Feuerwerk-/Konfetti-Regen, schwingende rote Lampions und fliegende Kraniche.
 function cfCelebrate(opts){
   opts = opts || {};
   if(document.getElementById("cfCelebrate")) return; // läuft schon
-  if(!document.getElementById("cfCelebrateStyle")){
-    var st = document.createElement("style");
-    st.id = "cfCelebrateStyle";
-    st.textContent =
-      "#cfCelebrate{position:fixed;inset:0;z-index:99999;pointer-events:none;overflow:hidden;}" +
-      "#cfCelebrate .cfConf{position:absolute;top:-12vh;width:10px;height:14px;border-radius:2px;opacity:.95;animation:cfFall linear forwards;}" +
-      "#cfCelebrate .cfLamp{position:absolute;top:-10vh;font-size:34px;animation:cfDrop ease-in forwards;}" +
-      "#cfCelebrate .cfBanner{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%) scale(.4);" +
-        "text-align:center;color:#fff;font-weight:800;text-shadow:0 2px 10px rgba(0,0,0,.5);" +
-        "animation:cfPop .6s cubic-bezier(.2,1.4,.4,1) forwards, cfFade .8s ease 3.4s forwards;}" +
-      "#cfCelebrate .cfBanner .cfZh{font-size:46px;color:#ffd966;}" +
-      "#cfCelebrate .cfBanner .cfDe{font-size:22px;margin-top:6px;}" +
-      "@keyframes cfFall{to{transform:translateY(122vh) rotate(720deg);}}" +
-      "@keyframes cfDrop{to{transform:translateY(118vh);}}" +
-      "@keyframes cfPop{to{transform:translate(-50%,-50%) scale(1);}}" +
-      "@keyframes cfFade{to{opacity:0;}}";
-    document.head.appendChild(st);
-  }
+  cfEnsureCelebrateStyle();
   var wrap = document.createElement("div");
   wrap.id = "cfCelebrate";
   wrap.setAttribute("aria-hidden", "true");
   var colors = ["#e23b3b","#f5c518","#ffffff","#ff8a3d","#ffd966","#c0392b"];
-  var n = opts.pieces || 80;
+  var n = opts.pieces || 90;
   for(var i = 0; i < n; i++){
     var c = document.createElement("div");
     c.className = "cfConf";
@@ -543,26 +585,83 @@ function cfCelebrate(opts){
     if(Math.random() < 0.5) c.style.borderRadius = "50%";
     wrap.appendChild(c);
   }
-  // ein paar Lampions
-  var lamps = 5;
+  // schwingende rote Lampions
+  var lamps = 6;
   for(var k = 0; k < lamps; k++){
     var l = document.createElement("div");
     l.className = "cfLamp";
-    l.textContent = "🏮";
-    l.style.left = (8 + Math.random() * 84) + "vw";
-    l.style.animationDuration = (3 + Math.random() * 2) + "s";
+    l.innerHTML = "<span>🏮</span>";
+    l.style.left = (6 + Math.random() * 86) + "vw";
+    l.style.animationDuration = (4.2 + Math.random() * 2.4) + "s";
     l.style.animationDelay = (Math.random() * 1) + "s";
+    l.querySelector("span").style.animationDuration = (1.4 + Math.random() * 0.9) + "s";
+    wrap.appendChild(l);
+  }
+  // fliegende Kraniche, von beiden Seiten
+  var cranes = 5;
+  for(var m = 0; m < cranes; m++){
+    var cr = document.createElement("div");
+    var leftDir = Math.random() < 0.5;
+    cr.className = "cfCrane" + (leftDir ? " l" : "");
+    cr.innerHTML = "<span>🕊️</span>";
+    cr.style.top = (8 + Math.random() * 46) + "vh";
+    cr.style.animationDuration = (5 + Math.random() * 3) + "s";
+    cr.style.animationDelay = (Math.random() * 1.6) + "s";
+    cr.querySelector("span").style.animationDuration = (0.32 + Math.random() * 0.22) + "s";
+    wrap.appendChild(cr);
+  }
+  var banner = document.createElement("div");
+  banner.className = "cfBanner";
+  banner.innerHTML =
+    '<div class="cfZh">' + (opts.zh || "好极了！") + '</div>' +
+    '<div class="cfDe">' + (opts.text || "Kapitel zu 100 % gemeistert! 🎉") + '</div>';
+  wrap.appendChild(banner);
+  document.body.appendChild(wrap);
+  try{ if(typeof cfPlayFeedback === "function") cfPlayFeedback(true); }catch(e){}
+  setTimeout(function(){ if(wrap.parentNode) wrap.parentNode.removeChild(wrap); }, opts.duration || 5200);
+}
+
+// ===== Dezente Feier, wenn ein Kapitel komplett DURCHGEARBEITET wurde =====
+// (alles einmal gespielt, aber noch nicht 100 % richtig). Sanfter als die
+// große 100-%-Feier: wenige Lampions, kein Feuerwerk, freundliche Botschaft.
+function cfCelebrateDone(opts){
+  opts = opts || {};
+  if(document.getElementById("cfCelebrate")) return;
+  cfEnsureCelebrateStyle();
+  var wrap = document.createElement("div");
+  wrap.id = "cfCelebrate";
+  wrap.className = "soft";
+  wrap.setAttribute("aria-hidden", "true");
+  var colors = ["#9bd3a7","#ffd966","#ffffff","#bfe3c6"];
+  for(var i = 0; i < 28; i++){
+    var c = document.createElement("div");
+    c.className = "cfConf";
+    c.style.left = (Math.random() * 100) + "vw";
+    c.style.background = colors[(Math.random() * colors.length) | 0];
+    c.style.animationDuration = (3 + Math.random() * 2) + "s";
+    c.style.animationDelay = (Math.random() * 1.4) + "s";
+    if(Math.random() < 0.6) c.style.borderRadius = "50%";
+    wrap.appendChild(c);
+  }
+  for(var k = 0; k < 3; k++){
+    var l = document.createElement("div");
+    l.className = "cfLamp";
+    l.innerHTML = "<span>🏮</span>";
+    l.style.left = (16 + Math.random() * 68) + "vw";
+    l.style.animationDuration = (4.6 + Math.random() * 2) + "s";
+    l.style.animationDelay = (Math.random() * 1) + "s";
+    l.querySelector("span").style.animationDuration = (1.6 + Math.random() * 0.8) + "s";
     wrap.appendChild(l);
   }
   var banner = document.createElement("div");
   banner.className = "cfBanner";
   banner.innerHTML =
-    '<div class="cfZh">好极了！</div>' +
-    '<div class="cfDe">' + (opts.text || "Kapitel geschafft! 🎉") + '</div>';
+    '<div class="cfZh">' + (opts.zh || "做到了！") + '</div>' +
+    '<div class="cfDe">' + (opts.text || "Stark – du hast dieses Kapitel komplett durchgearbeitet!") + '</div>';
   wrap.appendChild(banner);
   document.body.appendChild(wrap);
   try{ if(typeof cfPlayFeedback === "function") cfPlayFeedback(true); }catch(e){}
-  setTimeout(function(){ if(wrap.parentNode) wrap.parentNode.removeChild(wrap); }, opts.duration || 4600);
+  setTimeout(function(){ if(wrap.parentNode) wrap.parentNode.removeChild(wrap); }, opts.duration || 4200);
 }
 
 // Ausblendbarer Info-Hinweis mit kleiner Dauer-Zeile, die ihn wieder öffnet.

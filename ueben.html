@@ -250,6 +250,7 @@ function render(){
   if(idx >= tasks.length){
     $("game").style.display = "none";
     $("finish").classList.add("show");
+    cfMarkDone(`ueben_${MODE}`);
     save();
     return;
   }

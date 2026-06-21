@@ -267,6 +267,7 @@ function renderSpeechSentence(){
   if(idx >= tasks.length){
     $("game").style.display = "none";
     $("finish").classList.add("show");
+    cfMarkDone("sprechen");
     $("finishText").innerHTML = `Direkt erkannt: <strong>${correct}</strong> von <strong>${tasks.length}</strong>`;
     save();
     return;

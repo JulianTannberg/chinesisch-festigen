@@ -182,6 +182,7 @@ function render(){
   if(idx >= order.length){
     $("flashGame").style.display = "none";
     $("finish").classList.add("show");
+    cfMarkDone("flash");
     $("finishText").innerHTML = `Gewusst: <strong>${known}</strong> · Noch einmal angesehen: <strong>${again}</strong>`;
     saveState();
     return;
