@@ -2191,3 +2191,21 @@ input, textarea, select, [contenteditable="true"]{
   .jumpFullscreenBtn{top:6px;right:6px;min-height:36px;padding:6px 9px;border-width:1px}
   .jumpMessage{top:53px}
 }
+
+
+/* ===== Hotfix V4: unauffälligere Touch-Felder + hellere Fallback-Ansicht ===== */
+.jumpViewport{background:linear-gradient(180deg,#cfe5f4 0%,#aecfe7 46%,#f1f3f0 100%) !important;}
+#gameCanvas{background:linear-gradient(180deg,#d8ecfb 0%,#a9c9e5 48%,#eef3f4 100%) !important;}
+.jumpTouchControls{pointer-events:none;}
+.jumpMoveZone,.jumpJumpZone{background:transparent !important;border-color:transparent !important;box-shadow:none !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;}
+.jumpMoveZone{justify-content:flex-start;align-items:flex-end;padding:0 0 10px 10px;}
+.jumpMoveGuide{width:auto;min-width:170px;max-width:220px;padding:12px 18px;border-radius:999px;background:rgba(7,29,51,.14) !important;border:1.5px solid rgba(247,228,197,.28) !important;opacity:.16 !important;box-shadow:0 4px 12px rgba(3,23,43,.08) !important;}
+.jumpMoveGuide span{font-size:28px;}
+.jumpMoveGuide strong{font-size:11px;}
+.jumpJumpZone{align-items:flex-end;justify-content:flex-end;padding:0 12px 12px 0;}
+.jumpJumpArrow{width:86px;height:86px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:1.5px solid rgba(255,231,218,.38) !important;background:rgba(197,138,147,.18) !important;opacity:.24 !important;box-shadow:0 4px 14px rgba(3,23,43,.10) !important;}
+.jumpJumpZone strong{display:none !important;}
+.jumpMoveZone.moving-left .jumpMoveGuide,.jumpMoveZone.moving-right .jumpMoveGuide{background:rgba(7,29,51,.72) !important;border-color:rgba(239,199,127,.64) !important;opacity:.92 !important;box-shadow:0 8px 20px rgba(3,23,43,.24) !important;}
+.jumpJumpZone.active .jumpJumpArrow,.jumpJumpZone:active .jumpJumpArrow{background:rgba(197,138,147,.92) !important;border-color:rgba(255,231,218,.82) !important;opacity:1 !important;box-shadow:0 10px 22px rgba(3,23,43,.26) !important;}
+@media (hover:hover) and (pointer:fine){.jumpTouchControls{opacity:.18 !important}.jumpTouchControls:hover{opacity:.4 !important}}
+@media(max-width:760px){.jumpTouchControls{height:82px;left:8px;right:8px;bottom:6px;gap:8px;}.jumpMoveZone{padding:0 0 8px 8px;}.jumpMoveGuide{min-width:135px;max-width:170px;padding:9px 12px;}.jumpMoveGuide span{font-size:23px;}.jumpMoveGuide strong{font-size:9px;}.jumpJumpZone{padding:0 6px 6px 0;}.jumpJumpArrow{width:72px;height:72px;}}
