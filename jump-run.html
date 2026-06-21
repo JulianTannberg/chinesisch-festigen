@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Su Rans Reise · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#03172B" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Chinesisch" />
+</head>
+<body>
+  <main class="app jumpApp">
+    <div class="topbar">
+      <a class="back" id="backLink" href="kapitel.html?id=01">← Zum Kapitel</a>
+      <span class="bonusBadge">Bonusspiel</span>
+    </div>
+
+    <h1 id="title">Su Rans Reise</h1>
+    <p class="subtitle" id="subtitle">Sammle die Vokabeln und öffne die Tore.</p>
+
+    <section class="card jumpLocked" id="lockedPanel" hidden>
+      <div class="jumpLockIcon">🔒</div>
+      <h2>Noch nicht freigeschaltet</h2>
+      <p>Dieses Bonusspiel wird geöffnet, sobald du das Kapitel vollständig durchgearbeitet hast. Dann ist gleichzeitig das nächste Kapitel verfügbar.</p>
+      <a class="primaryBtn" id="lockedBack" href="kapitel.html?id=01">Zurück zum Kapitel</a>
+    </section>
+
+    <section id="gameArea" hidden>
+      <div class="jumpHud" aria-live="polite">
+        <span id="collectHud">Vokabeln: 0 / 6</span>
+        <span id="timeHud">Zeit: 0:00</span>
+        <span id="bestHud">Bestzeit: –</span>
+      </div>
+
+      <div class="jumpViewport" id="jumpViewport">
+        <canvas id="gameCanvas" width="960" height="540" aria-label="Jump-and-Run-Spiel"></canvas>
+        <div class="jumpMessage" id="jumpMessage" hidden></div>
+
+        <div class="jumpStartOverlay" id="startOverlay">
+          <div class="jumpOverlayCard">
+            <h2>Kapitel <span id="chapterNo"></span>: <span id="chapterTitle"></span></h2>
+            <p>Laufe mit Su Ran durch das Level. Sammle alle Hanzi und beantworte die Fragen an den Toren.</p>
+            <p class="jumpKeys">Computer: ← → und Leertaste · Handy: Tasten unter dem Spiel</p>
+            <button type="button" class="primaryBtn" id="startBtn">Spiel starten</button>
+          </div>
+        </div>
+
+        <div class="jumpFinishOverlay" id="finishOverlay" hidden>
+          <div class="jumpOverlayCard">
+            <div class="jumpFinishIcon">🏮</div>
+            <h2>Level geschafft!</h2>
+            <p id="finishText"></p>
+            <div class="jumpFinishActions">
+              <button type="button" class="primaryBtn" id="playAgainBtn">Noch einmal</button>
+              <a class="secondaryBtn" id="finishBack" href="kapitel.html?id=01">Zum Kapitel</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="jumpControls" aria-label="Spielsteuerung">
+        <button type="button" class="jumpControl" data-control="left" aria-label="Nach links">◀</button>
+        <button type="button" class="jumpControl" data-control="right" aria-label="Nach rechts">▶</button>
+        <button type="button" class="jumpControl jumpControlJump" data-control="jump" aria-label="Springen">Springen</button>
+      </div>
+
+      <div class="jumpBelow">
+        <p>Am besten funktioniert das Spiel auf Handy und Tablet im Querformat.</p>
+        <button type="button" class="secondaryBtn" id="restartBtn">Level neu starten</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="jumpQuiz" id="quizModal" hidden role="dialog" aria-modal="true" aria-labelledby="quizTitle">
+    <div class="jumpQuizCard">
+      <span class="bonusBadge">Tor-Aufgabe</span>
+      <h2 id="quizTitle">Was bedeutet …?</h2>
+      <div class="jumpQuizHanzi" id="quizHanzi"></div>
+      <div class="jumpQuizOptions" id="quizOptions"></div>
+      <p class="jumpQuizFeedback" id="quizFeedback"></p>
+    </div>
+  </div>
+
+  <script src="topics.js"></script>
+  <script src="common.js"></script>
+  <script src="jump-run.js"></script>
+</body>
+</html>

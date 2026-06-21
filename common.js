@@ -337,6 +337,18 @@ function cfChapterWorkedThrough(topic){
   return appl.every(n => cfIsDone(n, topic.id));
 }
 
+// Bonusspiel-Freischaltung: Das Kapitel ist komplett durchgearbeitet UND das
+// nächste Kapitel ist tatsächlich verfügbar. Beim letzten Kapitel genügt der
+// Abschluss des Kapitels. So entspricht die Belohnung exakt der Freischaltung
+// des nächsten Kapitels in der Kapitelübersicht.
+function cfBonusGameUnlocked(topic){
+  if(!topic || !cfChapterWorkedThrough(topic)) return false;
+  const topics = window.CF_TOPICS || [];
+  const i = topics.findIndex(t => t.id === topic.id);
+  const next = i >= 0 ? topics[i + 1] : null;
+  return !next || topicHasContent(next);
+}
+
 // Proper-Name-Reserve für Karten-Übungen: Namen, die GANZ bleiben sollen, aber
 // nicht als Verstehen-Vokabel im Kapitel stehen. Mehrzeichige Verstehen-Vokabeln
 // (understandingVocab) werden ohnehin automatisch zusammengehalten – die müssen

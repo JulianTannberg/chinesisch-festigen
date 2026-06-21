@@ -73,6 +73,11 @@
         <p class="modeTitle">Lückenspiel</p>
         <p class="modeText">Das passende Wort für die Lücke auswählen.</p>
       </a>
+      <a class="modeCard bonusGameCard" id="jumpLink">
+        <p class="modeTitle">Su Rans Reise</p>
+        <p class="modeText" id="jumpText">Als Belohnung durch das Kapitel springen, Vokabeln sammeln und kleine Tore öffnen.</p>
+        <span class="bonusBadge" id="jumpBadge">Bonusspiel</span>
+      </a>
     </section>
     </div>
 
@@ -102,6 +107,33 @@
   document.getElementById("flashLink").href = `flashkarten.html?id=${topic.id}`;
   document.getElementById("memoryLink").href = `memory.html?id=${topic.id}`;
   document.getElementById("gapLink").href = `luecken.html?id=${topic.id}`;
+
+  // Bonus-Jump-and-Run: wird erst freigeschaltet, wenn dieses Kapitel
+  // komplett durchgearbeitet ist. Es zählt absichtlich NICHT zum
+  // Kapitelabschluss, weil es erst danach als Belohnung verfügbar wird.
+  const jumpLink = document.getElementById("jumpLink");
+  const jumpText = document.getElementById("jumpText");
+  const jumpBadge = document.getElementById("jumpBadge");
+  // Versteckter Testmodus: kapitel.html?id=01&test=1
+  // Er öffnet nur das Bonusspiel und verändert keinen Lernfortschritt.
+  const jumpTestMode = new URLSearchParams(location.search).get("test") === "1";
+  const jumpUnlocked = jumpTestMode || cfBonusGameUnlocked(topic);
+  const jumpDone = localStorage.getItem(`cf_jump_done_v1_${topic.id}`) === "1";
+  if(jumpUnlocked){
+    jumpLink.href = `jump-run.html?id=${topic.id}${jumpTestMode ? "&test=1" : ""}`;
+    jumpBadge.textContent = jumpTestMode ? "Testmodus" : (jumpDone ? "Geschafft ✓" : "Freigeschaltet");
+    if(jumpTestMode){
+      jumpText.textContent = "Testversion: Du kannst das Spiel sofort ausprobieren. Ergebnisse und Bestzeit werden nicht gespeichert.";
+    }else if(jumpDone){
+      jumpLink.classList.add("complete");
+    }
+  }else{
+    jumpLink.classList.add("locked");
+    jumpLink.setAttribute("aria-disabled", "true");
+    jumpText.textContent = "Wird zusammen mit dem nächsten Kapitel freigeschaltet, sobald du dieses Kapitel vollständig durchgearbeitet hast.";
+    jumpBadge.textContent = "🔒 Noch gesperrt";
+    jumpLink.addEventListener("click", e => e.preventDefault());
+  }
 
   // Untere Reiter: nur einen Bereich zeigen, Seite bleibt fest
   document.documentElement.classList.add("noScroll");
