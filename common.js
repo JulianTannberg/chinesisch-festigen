@@ -543,10 +543,15 @@ function cfEnsureCelebrateStyle(){
     "#cfCelebrate .cfLamp{position:absolute;top:-12vh;font-size:34px;transform-origin:50% -28px;animation:cfDrop ease-in forwards;}" +
     "#cfCelebrate .cfLamp span{display:inline-block;animation:cfSwing ease-in-out infinite alternate;}" +
     "#cfCelebrate .cfLamp span::before{content:'';position:absolute;left:50%;top:-26px;width:2px;height:26px;background:rgba(255,210,120,.6);transform:translateX(-50%);}" +
-    // Kranich: fliegt quer über den Bildschirm, mit leichtem Flügelschlag.
-    "#cfCelebrate .cfCrane{position:absolute;font-size:30px;will-change:transform;animation:cfFlyR linear forwards;}" +
+    // Kranich: fliegt quer über den Bildschirm. Aquarell-Bild, das sanft auf
+    // und ab schwebt. Drei verschachtelte Transform-Ebenen, damit sie sich nicht
+    // gegenseitig überschreiben: .cfCrane = Flug (X), .craneBob = Schweben (Y),
+    // img = Spiegelung der Flugrichtung.
+    "#cfCelebrate .cfCrane{position:absolute;will-change:transform;animation:cfFlyR linear forwards;}" +
     "#cfCelebrate .cfCrane.l{animation-name:cfFlyL;}" +
-    "#cfCelebrate .cfCrane span{display:inline-block;animation:cfFlap ease-in-out infinite alternate;}" +
+    "#cfCelebrate .craneBob{animation:cfBob ease-in-out infinite alternate;}" +
+    "#cfCelebrate .cfCrane img{display:block;width:74px;height:auto;filter:drop-shadow(0 6px 10px rgba(0,0,0,.28));}" +
+    "#cfCelebrate .cfCrane.l img{transform:scaleX(-1);}" +
     "#cfCelebrate .cfBanner{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%) scale(.4);" +
       "text-align:center;color:#fff;font-weight:800;text-shadow:0 2px 10px rgba(0,0,0,.5);" +
       "animation:cfPop .6s cubic-bezier(.2,1.4,.4,1) forwards, cfFade .8s ease 3.4s forwards;}" +
@@ -556,9 +561,9 @@ function cfEnsureCelebrateStyle(){
     "@keyframes cfFall{to{transform:translateY(122vh) rotate(720deg);}}" +
     "@keyframes cfDrop{to{transform:translateY(118vh);}}" +
     "@keyframes cfSwing{from{transform:rotate(-16deg);}to{transform:rotate(16deg);}}" +
-    "@keyframes cfFlap{from{transform:scaleY(.78);}to{transform:scaleY(1.12);}}" +
+    "@keyframes cfBob{from{transform:translateY(-7px);}to{transform:translateY(7px);}}" +
     "@keyframes cfFlyR{from{transform:translateX(-16vw);}to{transform:translateX(120vw);}}" +
-    "@keyframes cfFlyL{from{transform:translateX(16vw) scaleX(-1);}to{transform:translateX(-120vw) scaleX(-1);}}" +
+    "@keyframes cfFlyL{from{transform:translateX(16vw);}to{transform:translateX(-120vw);}}" +
     "@keyframes cfPop{to{transform:translate(-50%,-50%) scale(1);}}" +
     "@keyframes cfFade{to{opacity:0;}}";
   document.head.appendChild(st);
@@ -597,17 +602,20 @@ function cfCelebrate(opts){
     l.querySelector("span").style.animationDuration = (1.4 + Math.random() * 0.9) + "s";
     wrap.appendChild(l);
   }
-  // fliegende Kraniche, von beiden Seiten
+  // fliegende Kraniche, von beiden Seiten (Aquarell-Bilder)
   var cranes = 5;
   for(var m = 0; m < cranes; m++){
     var cr = document.createElement("div");
-    var leftDir = Math.random() < 0.5;
+    var leftDir = Math.random() < 0.5; // true = fliegt nach links
     cr.className = "cfCrane" + (leftDir ? " l" : "");
-    cr.innerHTML = "<span>🕊️</span>";
-    cr.style.top = (8 + Math.random() * 46) + "vh";
+    // crane-1 schaut/fliegt nach rechts, crane-2 schaut/fliegt nach links.
+    var src = leftDir ? "icons/crane-2.png" : "icons/crane-1.png";
+    cr.innerHTML = '<div class="craneBob"><img src="' + src + '" alt="" /></div>';
+    cr.style.top = (6 + Math.random() * 48) + "vh";
     cr.style.animationDuration = (5 + Math.random() * 3) + "s";
     cr.style.animationDelay = (Math.random() * 1.6) + "s";
-    cr.querySelector("span").style.animationDuration = (0.32 + Math.random() * 0.22) + "s";
+    cr.querySelector("img").style.width = (58 + Math.random() * 34) + "px";
+    cr.querySelector(".craneBob").style.animationDuration = (1.5 + Math.random() * 1) + "s";
     wrap.appendChild(cr);
   }
   var banner = document.createElement("div");

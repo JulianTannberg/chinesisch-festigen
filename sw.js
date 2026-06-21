@@ -1,7 +1,7 @@
 // Chinesisch festigen – Service Worker
 // Bei jeder Änderung an der Website die Versionsnummer erhöhen,
 // damit alle Geräte die neuen Dateien laden.
-const CACHE = "cf-v78";
+const CACHE = "cf-v79";
 
 const SHELL = [
   "./",
@@ -36,7 +36,9 @@ const SHELL = [
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/icon-maskable-512.png",
-  "./icons/apple-touch-icon.png"
+  "./icons/apple-touch-icon.png",
+  "./icons/crane-1.png",
+  "./icons/crane-2.png"
 ];
 
 self.addEventListener("install", e => {
