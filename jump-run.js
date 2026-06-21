@@ -95,7 +95,8 @@
       tokens: ["请问", "地铁", "在", "哪里"],
       decoys: ["那儿", "手机", "北京", "微信"],
       cueZh: "",
-      replyZh: "地铁在那儿。"
+      replyZh: "地铁在那儿。",
+      closingZh: "谢谢！"
     }
   ];
 
@@ -845,15 +846,32 @@
 
   function showReplyOrAdvance(){
     const reply = mission().replyZh;
+    const closing = mission().closingZh;
+
+    const finishConversation = () => {
+      if(!closing){
+        setTimeout(advanceMission, 450);
+        return;
+      }
+      setTimeout(() => {
+        showSuSpeechBubble(closing);
+        cfSpeakZh(closing, {
+          rate:0.78,
+          speaker:"suran",
+          onend:() => { setTimeout(advanceMission, 450); }
+        });
+      }, 320);
+    };
+
     if(reply){
       showLinSpeechBubble(reply);
       cfSpeakZh(reply, {
         rate:0.78,
         speaker:"linyue",
-        onend:() => { setTimeout(advanceMission, 450); }
+        onend:finishConversation
       });
     }else{
-      setTimeout(advanceMission, 350);
+      finishConversation();
     }
   }
 
@@ -1162,7 +1180,7 @@
     ctx.fill();
     ctx.fillStyle = "#10263b";
     ctx.font = "850 22px system-ui,sans-serif";
-    ctx.fillText("地铁  →  U-Bahn",3250,347);
+    ctx.fillText("地铁  →",3250,347);
   }
 
   function drawLinYue(){
