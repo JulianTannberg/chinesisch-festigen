@@ -19,7 +19,6 @@
   if(testMode){
     const badge = document.querySelector(".topbar .bonusBadge");
     if(badge) badge.textContent = "Testmodus";
-    $("testSentenceBtn").hidden = false;
   }
 
   const unlocked = topicHasContent(topic) && (testMode || cfBonusGameUnlocked(topic));
@@ -37,10 +36,14 @@
 
   const canvas = $("gameCanvas");
   const ctx = canvas.getContext("2d");
-  const VIEW_W = canvas.width;
-  const VIEW_H = canvas.height;
+  const BASE_VIEW_W = 960;
+  const BASE_VIEW_H = 540;
+  let VIEW_W = BASE_VIEW_W;
+  let VIEW_H = BASE_VIEW_H;
+  let sceneYOffset = 0;
   const WORLD_W = 3600;
   const GROUND_Y = 470;
+  const BASE_ASPECT = BASE_VIEW_W / BASE_VIEW_H;
   const PLAYER_W = 44;
   const PLAYER_H = 68;
   const GRAVITY = 1850;
@@ -62,6 +65,9 @@
     {
       de: "Alles gut, danke. Ich habe auf mein Handy geschaut.",
       zh: "没事，谢谢。我看手机了。",
+      // Dieser Text liegt als zwei getrennte ElevenLabs-Dateien vor.
+      // Deshalb werden beide Teile nacheinander abgespielt.
+      audioParts: ["没事，谢谢。", "我看手机了。"],
       tokens: ["没事", "谢谢", "我", "看", "手机", "了"],
       decoys: ["对不起", "你", "叫", "北京"],
       cueZh: "你没事吧？",
@@ -162,6 +168,37 @@
     }
     return out;
   }
+  function createMixedBankOrder(tokens){
+    if(tokens.length <= 1) return tokens.map(t => t.id);
+    if(tokens.length === 2) return [tokens[1].id, tokens[0].id];
+
+    const targetIndex = new Map(tokens.map((token, index) => [token.id, index]));
+    const score = order => {
+      let samePosition = 0;
+      let correctNeighbours = 0;
+      for(let i = 0; i < order.length; i++){
+        if(targetIndex.get(order[i].id) === i) samePosition++;
+        if(i > 0 && targetIndex.get(order[i].id) === targetIndex.get(order[i - 1].id) + 1){
+          correctNeighbours++;
+        }
+      }
+      // Eine niedrige Punktzahl bedeutet: deutlich von der richtigen Reihenfolge entfernt.
+      return samePosition * 12 + correctNeighbours * 6 + (targetIndex.get(order[0].id) === 0 ? 4 : 0);
+    };
+
+    let best = shuffleCopy(tokens);
+    let bestScore = score(best);
+    for(let attempt = 0; attempt < 80; attempt++){
+      const candidate = shuffleCopy(tokens);
+      const candidateScore = score(candidate);
+      if(candidateScore < bestScore){
+        best = candidate;
+        bestScore = candidateScore;
+        if(bestScore === 0) break;
+      }
+    }
+    return best.map(t => t.id);
+  }
   function intersects(a, b){
     return a.x < b.x + b.w && a.x + a.w > b.x &&
            a.y < b.y + b.h && a.y + a.h > b.y;
@@ -194,6 +231,10 @@
   let currentCollectibles = [];
   let collectedTokenIds = new Set();
   let selectedTokenIds = [];
+  let sentenceBankOrder = [];
+  let stumbleCount = 0;
+  let waterCount = 0;
+  let sentenceMistakeMissions = new Set();
   let subwayUnlocked = false;
   let cameraX = Math.max(0, LINYUE_X - 420);
   let startTime = 0;
@@ -203,6 +244,8 @@
   let messageTimer = 0;
   let sentenceLocked = false;
   let pseudoFullscreen = false;
+  let sceneMode = "";
+  let confettiTimer = 0;
 
   const avatarSu = new Image();
   avatarSu.src = "avatars/suran.jpg";
@@ -211,6 +254,44 @@
 
   function bestKey(){ return `cf_jump_best_v2_${topic.id}`; }
   function doneKey(){ return `cf_jump_done_v2_${topic.id}`; }
+  function checkpointKey(){ return `cf_jump_checkpoint_v2_${topic.id}_${testMode ? "test" : "normal"}`; }
+  function clearCheckpoint(){
+    try{ sessionStorage.removeItem(checkpointKey()); }catch(_err){}
+  }
+  function saveCheckpoint(){
+    try{
+      sessionStorage.setItem(checkpointKey(), JSON.stringify({
+        currentMission,
+        subwayUnlocked,
+        stumbleCount,
+        waterCount,
+        sentenceMistakeMissions: Array.from(sentenceMistakeMissions),
+        elapsedMs: elapsed(),
+        savedAt: Date.now()
+      }));
+    }catch(_err){}
+  }
+  function readCheckpoint(){
+    try{
+      const raw = sessionStorage.getItem(checkpointKey());
+      if(!raw) return null;
+      const state = JSON.parse(raw);
+      if(!state || !Number.isInteger(state.currentMission)) return null;
+      if(state.currentMission < 0 || state.currentMission >= missions.length) return null;
+      return {
+        currentMission: state.currentMission,
+        subwayUnlocked: Boolean(state.subwayUnlocked),
+        stumbleCount: Math.max(0, Number(state.stumbleCount) || 0),
+        waterCount: Math.max(0, Number(state.waterCount) || 0),
+        sentenceMistakeMissions: Array.isArray(state.sentenceMistakeMissions)
+          ? state.sentenceMistakeMissions.filter(v => Number.isInteger(v) && v >= 0 && v < missions.length)
+          : [],
+        elapsedMs: Math.max(0, Number(state.elapsedMs) || 0)
+      };
+    }catch(_err){
+      return null;
+    }
+  }
   function getBest(){
     if(testMode) return null;
     const n = Number(localStorage.getItem(bestKey()));
@@ -226,6 +307,8 @@
     return Math.max(0, now - startTime - pausedTotal - currentPause);
   }
   function pauseClock(){
+    input.left = false;
+    input.right = false;
     if(!pausedAt) pausedAt = performance.now();
   }
   function resumeClock(){
@@ -246,6 +329,170 @@
       ? "Alle Sätze gelöst"
       : `Wörter: ${collectedCount()} / ${m.tokens.length}`;
     $("timeHud").textContent = `Zeit: ${formatTime(elapsed())}`;
+  }
+
+
+  function worldToScreen(x, y){
+    return {x: x - cameraX, y};
+  }
+
+  function clamp(value, min, max){ return Math.max(min, Math.min(max, value)); }
+
+  function setSceneBubbleHtml(id, html){
+    const el = $(id);
+    if(!el) return;
+    el.innerHTML = html;
+  }
+
+  function showSceneBubble(id, show = true){
+    const el = $(id);
+    if(el) el.hidden = !show;
+  }
+
+  function updateScenePositions(){
+    if($("sceneOverlay").hidden) return;
+    const viewportRect = $("jumpViewport").getBoundingClientRect();
+    const scale = Math.min(viewportRect.width / VIEW_W, viewportRect.height / VIEW_H);
+    const contentW = VIEW_W * scale;
+    const contentH = VIEW_H * scale;
+    const contentOffsetX = (viewportRect.width - contentW) / 2;
+    const contentOffsetY = (viewportRect.height - contentH) / 2;
+
+    const su = $("sceneSuBubble");
+    const lin = $("sceneLinBubble");
+    const suPos = worldToScreen(player.x + player.w/2, player.y + sceneYOffset);
+    const linPos = worldToScreen(LINYUE_X, GROUND_Y - 72 + sceneYOffset);
+
+    if(su && !su.hidden){
+      const w = su.offsetWidth || 220;
+      const x = contentOffsetX + suPos.x * scale - w + 40 * scale;
+      const y = contentOffsetY + suPos.y * scale - 132 * scale;
+      su.style.left = `${clamp(x, 12, viewportRect.width - w - 12)}px`;
+      su.style.top = `${clamp(y, 8, viewportRect.height - 180)}px`;
+    }
+    if(lin && !lin.hidden){
+      const w = lin.offsetWidth || 220;
+      const x = contentOffsetX + linPos.x * scale - 40 * scale;
+      const y = contentOffsetY + linPos.y * scale - 138 * scale;
+      lin.style.left = `${clamp(x, 12, viewportRect.width - w - 12)}px`;
+      lin.style.top = `${clamp(y, 8, viewportRect.height - 180)}px`;
+    }
+  }
+
+  function syncCanvasAspect(){
+    const viewport = $("jumpViewport");
+    if(!viewport) return;
+    const rect = viewport.getBoundingClientRect();
+    if(rect.width < 1 || rect.height < 1) return;
+
+    const actualAspect = rect.width / rect.height;
+    VIEW_W = BASE_VIEW_W;
+    VIEW_H = actualAspect < BASE_ASPECT
+      ? Math.round(BASE_VIEW_W / actualAspect)
+      : BASE_VIEW_H;
+    sceneYOffset = Math.max(0, (VIEW_H - BASE_VIEW_H) / 2);
+
+    if(canvas.width !== VIEW_W) canvas.width = VIEW_W;
+    if(canvas.height !== VIEW_H) canvas.height = VIEW_H;
+    cameraX = Math.max(0, Math.min(WORLD_W - VIEW_W, cameraX));
+    updateScenePositions();
+  }
+
+  function hideSceneOverlay(){
+    $("sceneOverlay").hidden = true;
+    $("sentenceTray").hidden = true;
+    $("sceneContinueWrap").hidden = true;
+    showSceneBubble("sceneSuBubble", false);
+    showSceneBubble("sceneLinBubble", false);
+    sceneMode = "";
+  }
+
+  function renderSuBuiltSentence(){
+    const body = $("sceneSuBubbleBody");
+    if(!body) return;
+    body.innerHTML = "";
+    const built = document.createElement("div");
+    built.className = "jumpBuiltSentence";
+    selectedTokenIds.forEach(id => {
+      const token = tokenById(id);
+      if(!token) return;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "jumpBuiltToken";
+      btn.textContent = token.text;
+      btn.disabled = sentenceLocked;
+      btn.addEventListener("click", () => {
+        if(sentenceLocked) return;
+        selectedTokenIds = selectedTokenIds.filter(v => v !== id);
+        renderSentenceBuilder();
+      });
+      built.appendChild(btn);
+    });
+    if(selectedTokenIds.length){
+      body.appendChild(built);
+    }else{
+      const ph = document.createElement("div");
+      ph.className = "jumpSentencePlaceholder";
+      ph.textContent = "Tippe die Wörter in der richtigen Reihenfolge an.";
+      body.appendChild(ph);
+    }
+  }
+
+  function showSceneBuilder(){
+    $("sceneOverlay").hidden = false;
+    $("sentenceTray").hidden = false;
+    $("sceneContinueWrap").hidden = true;
+    showSceneBubble("sceneSuBubble", true);
+    showSceneBubble("sceneLinBubble", false);
+    sceneMode = "build";
+    updateScenePositions();
+  }
+
+  function showSuSpeechBubble(text){
+    $("sceneOverlay").hidden = false;
+    $("sentenceTray").hidden = true;
+    $("sceneContinueWrap").hidden = true;
+    setSceneBubbleHtml("sceneSuBubbleBody", safeHtml(text));
+    showSceneBubble("sceneSuBubble", true);
+    showSceneBubble("sceneLinBubble", false);
+    sceneMode = "suSpeak";
+    updateScenePositions();
+  }
+
+  function showLinSpeechBubble(text, withContinue){
+    $("sceneOverlay").hidden = false;
+    $("sentenceTray").hidden = true;
+    $("sceneContinueWrap").hidden = !withContinue;
+    showSceneBubble("sceneSuBubble", true);
+    setSceneBubbleHtml("sceneLinBubbleBody", safeHtml(text));
+    showSceneBubble("sceneLinBubble", true);
+    sceneMode = "linReply";
+    updateScenePositions();
+  }
+
+  function clearConfetti(){
+    clearTimeout(confettiTimer);
+    const layer = $("confettiLayer");
+    if(layer) layer.innerHTML = "";
+  }
+
+  function launchConfetti(){
+    const layer = $("confettiLayer");
+    if(!layer) return;
+    layer.innerHTML = "";
+    const colors = ["#f6d083","#d9a6af","#f1d8cc","#5b7086","#ebbc6a","#ffffff"];
+    for(let i = 0; i < 72; i++){
+      const piece = document.createElement("span");
+      piece.className = "jumpConfetti";
+      piece.style.left = `${Math.random() * 100}%`;
+      piece.style.background = colors[i % colors.length];
+      piece.style.setProperty("--dx", `${(Math.random() * 220 - 110).toFixed(0)}px`);
+      piece.style.setProperty("--rot", `${(Math.random() * 820 - 410).toFixed(0)}deg`);
+      piece.style.animationDuration = `${2.8 + Math.random() * 1.8}s`;
+      piece.style.animationDelay = `${Math.random() * 0.35}s`;
+      layer.appendChild(piece);
+    }
+    confettiTimer = setTimeout(() => { layer.innerHTML = ""; }, 4600);
   }
 
   function showMessage(html, duration = 1450){
@@ -303,30 +550,36 @@
   function resetCurrentMission(reason){
     collectedTokenIds = new Set();
     selectedTokenIds = [];
+    sentenceBankOrder = [];
     currentCollectibles.forEach(c => { c.active = true; });
     placePlayerAtLinYue();
     if(reason === "water"){
+      waterCount++;
+      saveCheckpoint();
       showMessage("Ins Wasser gefallen – die Wörter dieses Satzes sind wieder weg.", 1800);
     }
     updateHud();
   }
 
   function resetGame(showStart){
+    clearCheckpoint();
+    clearConfetti();
     currentMission = 0;
     currentCollectibles = createMissionCollectibles(0);
     collectedTokenIds = new Set();
     selectedTokenIds = [];
+    sentenceBankOrder = [];
+    stumbleCount = 0;
+    waterCount = 0;
+    sentenceMistakeMissions = new Set();
     subwayUnlocked = false;
     finished = false;
     sentenceLocked = false;
     particles.length = 0;
     placePlayerAtLinYue();
-    $("sentenceOverlay").hidden = true;
-    $("replyOverlay").hidden = true;
-    $("missionOverlay").hidden = true;
+    hideSceneOverlay();
     $("finishOverlay").hidden = true;
     $("jumpMessage").hidden = true;
-    $("testSentenceBtn").hidden = !testMode;
     pausedTotal = 0;
     pausedAt = 0;
     if(showStart){
@@ -335,48 +588,59 @@
       $("startOverlay").hidden = false;
     }else{
       started = true;
-      paused = true;
+      paused = false;
       startTime = performance.now();
       $("startOverlay").hidden = true;
-      showMissionIntro();
+      showMessage("Sammle die Wörter und kehre zu Lin Yue zurück.", 1500);
     }
     updateHud();
   }
 
   function startGame(){
     started = true;
-    paused = true;
+    paused = false;
     finished = false;
     startTime = performance.now();
     pausedTotal = 0;
-    pausedAt = performance.now();
+    pausedAt = 0;
     $("startOverlay").hidden = true;
-    showMissionIntro();
+    hideSceneOverlay();
+    showMessage("Sammle die Wörter und kehre zu Lin Yue zurück.", 1500);
   }
 
-  function showMissionIntro(){
-    const m = mission();
-    paused = true;
-    pauseClock();
-    $("missionBadge").textContent = `Satz ${currentMission + 1} von ${missions.length}`;
-    $("missionPrompt").textContent = m.de;
-    if(m.cueZh){
-      $("partnerCueZh").textContent = m.cueZh;
-      $("partnerCue").hidden = false;
-      cfSpeakZh(m.cueZh, {rate:0.78});
+  function restoreCheckpoint(state){
+    currentMission = state.currentMission;
+    subwayUnlocked = state.subwayUnlocked;
+    currentCollectibles = subwayUnlocked ? [] : createMissionCollectibles(currentMission);
+    collectedTokenIds = new Set();
+    selectedTokenIds = [];
+    sentenceBankOrder = [];
+    stumbleCount = state.stumbleCount;
+    waterCount = state.waterCount;
+    sentenceMistakeMissions = new Set(state.sentenceMistakeMissions);
+    finished = false;
+    sentenceLocked = false;
+    particles.length = 0;
+    placePlayerAtLinYue();
+    hideSceneOverlay();
+    $("finishOverlay").hidden = true;
+    $("startOverlay").hidden = true;
+    $("jumpMessage").hidden = true;
+    started = true;
+    pausedTotal = 0;
+    pausedAt = 0;
+    startTime = performance.now() - state.elapsedMs;
+
+    if(subwayUnlocked){
+      paused = false;
+      showMessage("Fortgesetzt: Laufe jetzt zum U-Bahn-Eingang! →", 3000);
+      updateHud();
     }else{
-      $("partnerCue").hidden = true;
+      paused = false;
+      showMessage(`Fortgesetzt bei Satz ${currentMission + 1}.`, 1800);
     }
-    $("missionOverlay").hidden = false;
-    updateHud();
   }
 
-  function beginMissionSearch(){
-    $("missionOverlay").hidden = true;
-    paused = false;
-    resumeClock();
-    showMessage("Sammle nur die Wörter für den deutschen Satz.", 1500);
-  }
 
   function spawnBurst(x, y, good){
     for(let i = 0; i < 14; i++){
@@ -409,6 +673,8 @@
 
   function hitDecoy(c){
     c.active = false;
+    stumbleCount++;
+    saveCheckpoint();
     spawnBurst(c.x + c.w/2, c.y + c.h/2, false);
     player.stunnedUntil = performance.now() + 900;
     player.vx = 0;
@@ -424,9 +690,10 @@
     pauseClock();
     sentenceLocked = false;
     selectedTokenIds = [];
-    $("sentenceTitle").textContent = mission().de;
+    const correctTokens = currentCollectibles.filter(c => c.kind === "correct");
+    sentenceBankOrder = createMixedBankOrder(correctTokens);
     $("sentenceFeedback").textContent = "";
-    $("sentenceOverlay").hidden = false;
+    showSceneBuilder();
     renderSentenceBuilder();
   }
 
@@ -435,30 +702,17 @@
   }
 
   function renderSentenceBuilder(){
-    const built = $("builtSentence");
-    built.innerHTML = "";
-    selectedTokenIds.forEach(id => {
-      const token = tokenById(id);
-      if(!token) return;
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "jumpBuiltToken";
-      btn.textContent = token.text;
-      btn.disabled = sentenceLocked;
-      btn.addEventListener("click", () => {
-        if(sentenceLocked) return;
-        selectedTokenIds = selectedTokenIds.filter(v => v !== id);
-        renderSentenceBuilder();
-      });
-      built.appendChild(btn);
-    });
-    $("sentencePlaceholder").hidden = selectedTokenIds.length > 0;
+    renderSuBuiltSentence();
 
     const bank = $("wordBank");
     bank.innerHTML = "";
     const correctTokens = currentCollectibles.filter(c => c.kind === "correct");
-    const unselected = correctTokens.filter(c => !selectedTokenIds.includes(c.id));
-    const display = selectedTokenIds.length === 0 ? shuffleCopy(unselected) : unselected;
+    if(sentenceBankOrder.length !== correctTokens.length){
+      sentenceBankOrder = createMixedBankOrder(correctTokens);
+    }
+    const display = sentenceBankOrder
+      .map(id => tokenById(id))
+      .filter(token => token && !selectedTokenIds.includes(token.id));
     display.forEach(token => {
       const btn = document.createElement("button");
       btn.type = "button";
@@ -473,13 +727,33 @@
       });
       bank.appendChild(btn);
     });
+    updateScenePositions();
   }
 
   function resetSentenceOrder(){
     if(sentenceLocked) return;
     selectedTokenIds = [];
+    sentenceBankOrder = createMixedBankOrder(currentCollectibles.filter(c => c.kind === "correct"));
     $("sentenceFeedback").textContent = "";
     renderSentenceBuilder();
+    updateScenePositions();
+  }
+
+  function speakZhParts(parts, options, done){
+    const sequence = (Array.isArray(parts) ? parts : [parts]).filter(Boolean);
+    let index = 0;
+    const playNext = () => {
+      if(index >= sequence.length){
+        if(typeof done === "function") done();
+        return;
+      }
+      cfSpeakZh(sequence[index++], {
+        rate: options?.rate,
+        speaker: options?.speaker,
+        onend: playNext
+      });
+    };
+    playNext();
   }
 
   function checkSentence(){
@@ -492,8 +766,10 @@
     const selected = selectedTokenIds.map(id => tokenById(id)?.text || "");
     const correct = selected.every((text, i) => text === target[i]);
     if(!correct){
+      sentenceMistakeMissions.add(currentMission);
+      saveCheckpoint();
       $("sentenceFeedback").textContent = "Noch nicht richtig. Tippe Wörter in der Sprechblase an, um sie zurückzulegen.";
-      const bubble = document.querySelector(".jumpSpeechBubbleSu");
+      const bubble = $("sceneSuBubble");
       bubble.classList.remove("shake");
       void bubble.offsetWidth;
       bubble.classList.add("shake");
@@ -502,38 +778,30 @@
     }
 
     sentenceLocked = true;
-    $("sentenceFeedback").textContent = mission().zh;
-    document.querySelector(".jumpSpeechBubbleSu").classList.add("correct");
+    $("sentenceFeedback").textContent = "";
     cfPlayFeedback(true);
-    renderSentenceBuilder();
+    showSuSpeechBubble(mission().zh);
 
-    // Erst Su Rans vollständigen Satz abspielen. Zuvor wurde nach 1,05 Sekunden
-    // bereits Lin Yues Antwort gestartet und die erste Audiodatei dadurch nach
-    // dem anfänglichen „Ah“ abgebrochen.
-    cfSpeakZh(mission().zh, {
+    speakZhParts(mission().audioParts || [mission().zh], {
       rate:0.78,
-      speaker:"suran",
-      onend:() => {
-        setTimeout(() => {
-          $("sentenceOverlay").hidden = true;
-          document.querySelector(".jumpSpeechBubbleSu").classList.remove("correct");
-          showReplyOrAdvance();
-        }, 320);
-      }
+      speaker:"suran"
+    }, () => {
+      setTimeout(() => {
+        showReplyOrAdvance();
+      }, 320);
     });
   }
 
   function showReplyOrAdvance(){
     const reply = mission().replyZh;
     if(reply){
-      $("replyBubble").textContent = reply;
-      $("replyContinueBtn").textContent = currentMission === missions.length - 1 ? "Zur U-Bahn" : "Weiter";
-      $("replyContinueBtn").disabled = true;
-      $("replyOverlay").hidden = false;
+      $("sceneContinueBtn").textContent = currentMission === missions.length - 1 ? "Zur U-Bahn" : "Weiter";
+      $("sceneContinueBtn").disabled = true;
+      showLinSpeechBubble(reply, true);
       cfSpeakZh(reply, {
         rate:0.78,
         speaker:"linyue",
-        onend:() => { $("replyContinueBtn").disabled = false; }
+        onend:() => { $("sceneContinueBtn").disabled = false; }
       });
     }else{
       setTimeout(advanceMission, 350);
@@ -541,16 +809,17 @@
   }
 
   function advanceMission(){
-    $("replyOverlay").hidden = true;
+    hideSceneOverlay();
     sentenceLocked = false;
     if(currentMission >= missions.length - 1){
       subwayUnlocked = true;
-      $("testSentenceBtn").hidden = true;
       paused = false;
       resumeClock();
       currentCollectibles = [];
       collectedTokenIds = new Set();
       selectedTokenIds = [];
+      sentenceBankOrder = [];
+      saveCheckpoint();
       showMessage("Die U-Bahn ist gefunden – laufe jetzt zum Eingang! →", 2600);
       updateHud();
       return;
@@ -559,28 +828,53 @@
     currentCollectibles = createMissionCollectibles(currentMission);
     collectedTokenIds = new Set();
     selectedTokenIds = [];
+    sentenceBankOrder = [];
     placePlayerAtLinYue();
-    showMissionIntro();
+    saveCheckpoint();
+    paused = false;
+    resumeClock();
+    showMessage("Neuer Satz – sammle die richtigen Wörter.", 1400);
+    updateHud();
   }
 
   function completeGame(){
     if(finished) return;
     finished = true;
+    clearCheckpoint();
     paused = true;
     pauseClock();
     const result = elapsed();
     const oldBest = getBest();
     const isBest = !testMode && (!oldBest || result < oldBest);
+    const firstTryCount = missions.length - sentenceMistakeMissions.size;
+    const perfectRoute = stumbleCount === 0 && waterCount === 0;
+    const completelyFlawless = perfectRoute && firstTryCount === missions.length;
     if(!testMode){
       localStorage.setItem(doneKey(), "1");
       if(isBest) localStorage.setItem(bestKey(), String(Math.round(result)));
     }
+
+    $("finishCard").classList.toggle("jumpPerfectFinish", perfectRoute);
+    $("finishTitle").textContent = perfectRoute ? "Perfekter Lauf!" : "Level geschafft!";
+    $("finishIcon").textContent = perfectRoute ? "✨🚇✨" : "🚇";
+    $("perfectAward").hidden = !perfectRoute;
+    $("perfectAward").textContent = completelyFlawless
+      ? "Makellos: alle Sätze beim ersten Versuch – ohne Stolperer und Wasserlandung!"
+      : "Sicher ans Ziel: ohne Stolperer und Wasserlandung!";
     $("finishText").textContent = testMode
-      ? `Du hast alle ${missions.length} Sätze gebildet und die U-Bahn in ${formatTime(result)} erreicht. Im Testmodus wird nichts gespeichert.`
-      : `Du hast alle ${missions.length} Sätze gebildet und die U-Bahn in ${formatTime(result)} erreicht.${isBest ? " Neue Bestzeit!" : ""}`;
+      ? `Du hast die U-Bahn in ${formatTime(result)} erreicht. Im Testmodus wird nichts gespeichert.`
+      : `Du hast die U-Bahn in ${formatTime(result)} erreicht.${isBest ? " Neue Bestzeit!" : ""}`;
+    $("finishStats").innerHTML = `
+      <div class="jumpFinishStat"><strong>${firstTryCount}/${missions.length}</strong><span>Sätze beim ersten Versuch</span></div>
+      <div class="jumpFinishStat"><strong>${stumbleCount}</strong><span>Stolperer</span></div>
+      <div class="jumpFinishStat"><strong>${waterCount}</strong><span>Wasserlandungen</span></div>`;
     $("finishOverlay").hidden = false;
+    launchConfetti();
     cfPlayFeedback(true);
-    if(typeof cfCelebrateDone === "function") cfCelebrateDone();
+    if(typeof cfCelebrateDone === "function"){
+      cfCelebrateDone();
+      if(perfectRoute) setTimeout(() => cfCelebrateDone(), 700);
+    }
   }
 
   function requestJump(){
@@ -588,17 +882,6 @@
     input.jumpQueue = Math.min(2, input.jumpQueue + 1);
   }
 
-
-  function testOpenSentenceTask(){
-    if(!testMode || paused || finished || subwayUnlocked) return;
-    currentCollectibles.filter(c => c.kind === "correct").forEach(c => {
-      c.active = false;
-      collectedTokenIds.add(c.id);
-    });
-    placePlayerAtLinYue();
-    updateHud();
-    openSentenceTask();
-  }
 
   function update(dt, now){
     particles.forEach(p => {
@@ -669,7 +952,7 @@
       }
     }
 
-    if(player.y > VIEW_H + 125){
+    if(player.y > BASE_VIEW_H + 125){
       resetCurrentMission("water");
       return;
     }
@@ -699,6 +982,7 @@
 
     cameraX = Math.max(0, Math.min(WORLD_W - VIEW_W, player.x - 360));
     updateHud();
+    updateScenePositions();
   }
 
   function hexToRgb(hex){
@@ -740,6 +1024,9 @@
     ctx.fillStyle = sky;
     ctx.fillRect(0,0,VIEW_W,VIEW_H);
 
+    ctx.save();
+    ctx.translate(0, sceneYOffset);
+
     ctx.fillStyle = "rgba(255,245,210,.76)";
     ctx.beginPath();
     ctx.arc(800,88,43,0,Math.PI*2);
@@ -765,12 +1052,13 @@
       ctx.fillRect(x,GROUND_Y-h,78,h);
       ctx.fillRect(x+22,GROUND_Y-h-13,34,13);
     }
+    ctx.restore();
   }
 
   function drawWorld(){
     const accent = topic.accent || "#03172B";
     ctx.save();
-    ctx.translate(-cameraX,0);
+    ctx.translate(-cameraX,sceneYOffset);
 
     ctx.fillStyle = "rgba(55,137,177,.65)";
     ctx.fillRect(0,GROUND_Y+14,WORLD_W,VIEW_H-GROUND_Y);
@@ -975,15 +1263,8 @@
     lastFrame = now;
     update(dt,now);
     draw();
+    updateScenePositions();
     requestAnimationFrame(frame);
-  }
-
-  function setControl(name,active){
-    if(name === "jump"){
-      if(active) requestJump();
-      return;
-    }
-    input[name] = active;
   }
 
   window.addEventListener("keydown", e => {
@@ -996,35 +1277,83 @@
     if(e.key === "ArrowLeft" || e.key === "a" || e.key === "A") input.left = false;
     if(e.key === "ArrowRight" || e.key === "d" || e.key === "D") input.right = false;
   });
+
+  const moveZone = $("moveZone");
+  const jumpZone = $("jumpZone");
+  let movePointerId = null;
+  let moveStartX = 0;
+
+  function applyMoveDirection(direction){
+    input.left = direction < 0;
+    input.right = direction > 0;
+    moveZone.classList.toggle("moving-left", direction < 0);
+    moveZone.classList.toggle("moving-right", direction > 0);
+  }
+  function stopTouchMovement(){
+    movePointerId = null;
+    applyMoveDirection(0);
+  }
+  function directionForMoveEvent(e, allowSwipe){
+    const rect = moveZone.getBoundingClientRect();
+    const delta = e.clientX - moveStartX;
+    if(allowSwipe && Math.abs(delta) >= 18) return delta < 0 ? -1 : 1;
+    const localX = e.clientX - rect.left;
+    const deadZone = Math.min(42, rect.width * .10);
+    if(localX < rect.width / 2 - deadZone) return -1;
+    if(localX > rect.width / 2 + deadZone) return 1;
+    return 0;
+  }
+  moveZone.addEventListener("pointerdown", e => {
+    if(movePointerId !== null) return;
+    e.preventDefault();
+    e.stopPropagation();
+    movePointerId = e.pointerId;
+    moveStartX = e.clientX;
+    try{ moveZone.setPointerCapture(e.pointerId); }catch(_err){}
+    applyMoveDirection(directionForMoveEvent(e, false));
+  }, {passive:false});
+  moveZone.addEventListener("pointermove", e => {
+    if(e.pointerId !== movePointerId) return;
+    e.preventDefault();
+    applyMoveDirection(directionForMoveEvent(e, true));
+  }, {passive:false});
+  const endMove = e => {
+    if(e.pointerId !== movePointerId) return;
+    e.preventDefault();
+    stopTouchMovement();
+  };
+  moveZone.addEventListener("pointerup", endMove, {passive:false});
+  moveZone.addEventListener("pointercancel", endMove, {passive:false});
+  moveZone.addEventListener("lostpointercapture", endMove, {passive:false});
+  moveZone.addEventListener("contextmenu", e => e.preventDefault());
+
+  let jumpPointerId = null;
+  jumpZone.addEventListener("pointerdown", e => {
+    e.preventDefault();
+    e.stopPropagation();
+    if(jumpPointerId !== null) return;
+    jumpPointerId = e.pointerId;
+    try{ jumpZone.setPointerCapture(e.pointerId); }catch(_err){}
+    jumpZone.classList.add("active");
+    requestJump();
+  }, {passive:false});
+  const endJump = e => {
+    if(e.pointerId !== jumpPointerId) return;
+    e.preventDefault();
+    jumpPointerId = null;
+    jumpZone.classList.remove("active");
+  };
+  jumpZone.addEventListener("pointerup", endJump, {passive:false});
+  jumpZone.addEventListener("pointercancel", endJump, {passive:false});
+  jumpZone.addEventListener("lostpointercapture", endJump, {passive:false});
+  jumpZone.addEventListener("contextmenu", e => e.preventDefault());
+
   window.addEventListener("blur", () => {
     input.left = false;
     input.right = false;
-  });
-
-  const activePointers = new Map();
-  document.querySelectorAll("[data-control]").forEach(btn => {
-    const name = btn.dataset.control;
-    const down = e => {
-      e.preventDefault();
-      e.stopPropagation();
-      activePointers.set(e.pointerId,name);
-      try{ btn.setPointerCapture(e.pointerId); }catch(err){}
-      btn.classList.add("active");
-      setControl(name,true);
-    };
-    const up = e => {
-      e.preventDefault();
-      e.stopPropagation();
-      const stored = activePointers.get(e.pointerId) || name;
-      activePointers.delete(e.pointerId);
-      btn.classList.remove("active");
-      setControl(stored,false);
-    };
-    btn.addEventListener("pointerdown",down,{passive:false});
-    btn.addEventListener("pointerup",up,{passive:false});
-    btn.addEventListener("pointercancel",up,{passive:false});
-    btn.addEventListener("lostpointercapture",up,{passive:false});
-    btn.addEventListener("contextmenu",e => e.preventDefault());
+    stopTouchMovement();
+    jumpPointerId = null;
+    jumpZone.classList.remove("active");
   });
 
   function updateFullscreenButton(){
@@ -1037,6 +1366,8 @@
     $("jumpViewport").classList.toggle("jumpPseudoFullscreen",active);
     document.body.classList.toggle("jumpNoScroll",active);
     updateFullscreenButton();
+    requestAnimationFrame(syncCanvasAspect);
+    setTimeout(syncCanvasAspect, 120);
   }
   async function toggleFullscreen(){
     const viewport = $("jumpViewport");
@@ -1066,19 +1397,24 @@
       document.body.classList.remove("jumpNoScroll");
     }
     updateFullscreenButton();
+    requestAnimationFrame(syncCanvasAspect);
+    setTimeout(syncCanvasAspect, 120);
   });
+  window.addEventListener("resize", syncCanvasAspect, {passive:true});
+  window.addEventListener("orientationchange", () => setTimeout(syncCanvasAspect, 180), {passive:true});
 
   $("startBtn").addEventListener("click",startGame);
-  $("missionStartBtn").addEventListener("click",beginMissionSearch);
   $("sentenceResetBtn").addEventListener("click",resetSentenceOrder);
   $("sentenceCheckBtn").addEventListener("click",checkSentence);
-  $("replyContinueBtn").addEventListener("click",advanceMission);
+  $("sceneContinueBtn").addEventListener("click",advanceMission);
   $("restartBtn").addEventListener("click",() => resetGame(false));
   $("playAgainBtn").addEventListener("click",() => resetGame(false));
   $("fullscreenBtn").addEventListener("click",toggleFullscreen);
-  $("testSentenceBtn").addEventListener("click",testOpenSentenceTask);
 
-  resetGame(true);
+  const savedCheckpoint = readCheckpoint();
+  if(savedCheckpoint) restoreCheckpoint(savedCheckpoint);
+  else resetGame(true);
   updateFullscreenButton();
+  syncCanvasAspect();
   requestAnimationFrame(frame);
 })();

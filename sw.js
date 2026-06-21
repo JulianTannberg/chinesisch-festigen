@@ -1,7 +1,7 @@
 // Chinesisch festigen – Service Worker
 // Bei jeder Änderung an der Website die Versionsnummer erhöhen,
 // damit alle Geräte die neuen Dateien laden.
-const CACHE = "cf-v84-jump-v2-audio-jumps";
+const CACHE = "cf-v88-jump-v2-scene-bubbles-confetti";
 
 const SHELL = [
   "./",

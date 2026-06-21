@@ -45,76 +45,49 @@
         </div>
 
         <button type="button" class="jumpFullscreenBtn" id="fullscreenBtn" aria-label="Vollbild ein- oder ausschalten">⛶ Vollbild</button>
-        <button type="button" class="jumpTestBtn" id="testSentenceBtn" hidden>🧪 Satzaufgabe</button>
         <div class="jumpMessage" id="jumpMessage" hidden></div>
 
         <div class="jumpStartOverlay" id="startOverlay">
           <div class="jumpOverlayCard">
             <h2>Kapitel <span id="chapterNo"></span>: <span id="chapterTitle"></span></h2>
             <p>Su Ran trifft Lin Yue am Bahnhof. Sammle nur die Wörter, die zum deutschen Satz gehören, und kehre zu ihr zurück.</p>
-            <p class="jumpKeys">Computer: ← → und Leertaste · Handy/Tablet: links halten und rechts tippen · zweimal tippen = Doppelsprung</p>
+            <p class="jumpKeys">Computer: ← → und Leertaste · Handy/Tablet: links im großen Lauffeld wischen und halten · rechts tippen = Sprung · zweimal tippen = Doppelsprung</p>
             <button type="button" class="primaryBtn" id="startBtn">Spiel starten</button>
           </div>
         </div>
 
-        <div class="jumpMissionOverlay" id="missionOverlay" hidden>
-          <div class="jumpOverlayCard jumpMissionCard">
-            <span class="bonusBadge" id="missionBadge">Satz 1 von 5</span>
-            <div class="jumpPartnerCue" id="partnerCue" hidden>
-              <strong>Lin Yue:</strong>
-              <span id="partnerCueZh"></span>
-            </div>
-            <p class="jumpMissionLabel">Bilde diesen Satz:</p>
-            <h2 id="missionPrompt">Hallo, ich heiße Su Ran.</h2>
-            <p>Berühre die richtigen Wortblasen. Falsche Blasen musst du überspringen.</p>
-            <button type="button" class="primaryBtn" id="missionStartBtn">Wörter suchen</button>
+        <div class="jumpSceneOverlay" id="sceneOverlay" hidden aria-live="polite">
+          <div class="jumpSceneBubble jumpSceneBubbleSu" id="sceneSuBubble" hidden>
+            <div class="jumpSceneBubbleLabel">Su Ran</div>
+            <div class="jumpSceneBubbleBody" id="sceneSuBubbleBody"></div>
           </div>
-        </div>
 
-        <div class="jumpSentenceOverlay" id="sentenceOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="sentenceTitle">
-          <div class="jumpConversationStage">
-            <div class="jumpCharacter jumpCharacterLin">
-              <img src="avatars/linyue.jpg" alt="Lin Yue" />
-              <span>Lin Yue</span>
-            </div>
+          <div class="jumpSceneBubble jumpSceneBubbleLin" id="sceneLinBubble" hidden>
+            <div class="jumpSceneBubbleLabel">Lin Yue</div>
+            <div class="jumpSceneBubbleBody" id="sceneLinBubbleBody"></div>
+          </div>
 
-            <div class="jumpSpeechArea">
-              <p class="jumpSentenceGerman" id="sentenceTitle"></p>
-              <div class="jumpSpeechBubble jumpSpeechBubbleSu">
-                <div class="jumpBuiltSentence" id="builtSentence" aria-live="polite"></div>
-                <div class="jumpSentencePlaceholder" id="sentencePlaceholder">Tippe die Wörter in der richtigen Reihenfolge an.</div>
-              </div>
-              <div class="jumpWordBank" id="wordBank"></div>
-              <p class="jumpSentenceFeedback" id="sentenceFeedback"></p>
-              <div class="jumpSentenceActions">
-                <button type="button" class="secondaryBtn" id="sentenceResetBtn">Zurücksetzen</button>
-                <button type="button" class="primaryBtn" id="sentenceCheckBtn">Prüfen</button>
-              </div>
-            </div>
-
-            <div class="jumpCharacter jumpCharacterSu">
-              <img src="avatars/suran.jpg" alt="Su Ran" />
-              <span>Su Ran</span>
+          <div class="jumpSentenceTray" id="sentenceTray" hidden>
+            <div class="jumpWordBank" id="wordBank"></div>
+            <p class="jumpSentenceFeedback" id="sentenceFeedback"></p>
+            <div class="jumpSentenceActions">
+              <button type="button" class="secondaryBtn" id="sentenceResetBtn">Zurücksetzen</button>
+              <button type="button" class="primaryBtn" id="sentenceCheckBtn">Prüfen</button>
             </div>
           </div>
-        </div>
 
-        <div class="jumpReplyOverlay" id="replyOverlay" hidden>
-          <div class="jumpReplyCard">
-            <div class="jumpReplyPerson">
-              <img src="avatars/linyue.jpg" alt="Lin Yue" />
-              <strong>Lin Yue</strong>
-            </div>
-            <div class="jumpSpeechBubble jumpSpeechBubbleLin" id="replyBubble"></div>
-            <button type="button" class="primaryBtn" id="replyContinueBtn">Weiter</button>
+          <div class="jumpSceneContinue" id="sceneContinueWrap" hidden>
+            <button type="button" class="primaryBtn" id="sceneContinueBtn">Weiter</button>
           </div>
         </div>
 
         <div class="jumpFinishOverlay" id="finishOverlay" hidden>
-          <div class="jumpOverlayCard">
-            <div class="jumpFinishIcon">🚇</div>
-            <h2>Level geschafft!</h2>
+          <div class="jumpOverlayCard jumpFinishCard" id="finishCard">
+            <div class="jumpFinishIcon" id="finishIcon">🚇</div>
+            <h2 id="finishTitle">Level geschafft!</h2>
+            <div class="jumpPerfectAward" id="perfectAward" hidden></div>
             <p id="finishText"></p>
+            <div class="jumpFinishStats" id="finishStats" aria-label="Spielstatistik"></div>
             <div class="jumpFinishActions">
               <button type="button" class="primaryBtn" id="playAgainBtn">Noch einmal</button>
               <a class="secondaryBtn" id="finishBack" href="kapitel.html?id=01">Zum Kapitel</a>
@@ -122,12 +95,20 @@
           </div>
         </div>
 
+        <div class="jumpConfettiLayer" id="confettiLayer" aria-hidden="true"></div>
+
         <div class="jumpTouchControls" id="touchControls" aria-label="Spielsteuerung">
-          <div class="jumpDirectionPad" aria-label="Laufrichtung">
-            <button type="button" class="jumpControl" data-control="left" aria-label="Nach links laufen">◀</button>
-            <button type="button" class="jumpControl" data-control="right" aria-label="Nach rechts laufen">▶</button>
+          <div class="jumpMoveZone" id="moveZone" aria-label="Laufen: Finger aufsetzen, nach links oder rechts ziehen und halten">
+            <div class="jumpMoveGuide" aria-hidden="true">
+              <span>◀</span>
+              <strong>Wischen &amp; halten</strong>
+              <span>▶</span>
+            </div>
           </div>
-          <button type="button" class="jumpControl jumpControlJump" data-control="jump" aria-label="Springen">↑<span>Sprung</span></button>
+          <button type="button" class="jumpJumpZone" id="jumpZone" aria-label="Springen. Zweimal tippen für Doppelsprung.">
+            <span class="jumpJumpArrow">↑</span>
+            <strong>Tippen: Sprung</strong>
+          </button>
         </div>
       </div>
 
