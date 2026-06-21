@@ -459,15 +459,15 @@
     const rect = viewport.getBoundingClientRect();
     if(rect.width < 1 || rect.height < 1) return;
 
-    const actualAspect = rect.width / rect.height;
+    // Die Spielwelt bleibt immer im vorgesehenen 16:9-Koordinatensystem.
+    // Im Vollbild wird sie bei abweichendem Seitenverhältnis sauber zentriert,
+    // statt in der Höhe aufgebläht zu werden.
     VIEW_W = BASE_VIEW_W;
-    VIEW_H = actualAspect < BASE_ASPECT
-      ? Math.round(BASE_VIEW_W / actualAspect)
-      : BASE_VIEW_H;
-    sceneYOffset = Math.max(0, (VIEW_H - BASE_VIEW_H) / 2);
+    VIEW_H = BASE_VIEW_H;
+    sceneYOffset = 0;
 
-    if(canvas.width !== VIEW_W) canvas.width = VIEW_W;
-    if(canvas.height !== VIEW_H) canvas.height = VIEW_H;
+    if(canvas.width !== BASE_VIEW_W) canvas.width = BASE_VIEW_W;
+    if(canvas.height !== BASE_VIEW_H) canvas.height = BASE_VIEW_H;
     cameraX = Math.max(0, Math.min(WORLD_W - VIEW_W, cameraX));
     updateScenePositions();
   }
