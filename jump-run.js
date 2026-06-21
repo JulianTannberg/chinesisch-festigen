@@ -108,25 +108,43 @@
     {x: 2990, y: 345, w: 195, h: 24}
   ];
 
-  const missionSpots = [
+  // Richtige Wörter dürfen auch auf Plattformen liegen. Falsche Wörter stehen
+  // bewusst auf ebener Strecke und mit viel Abstand, damit ein normaler Sprung
+  // auf Handy und Tablet genügt. So bleibt der Doppelsprung eine Hilfe, aber
+  // keine zwingende Voraussetzung.
+  const missionCorrectSpots = [
     [
-      {x:1080,y:400},{x:1250,y:320},{x:1750,y:275},{x:1900,y:400},{x:1460,y:400}
+      {x:820,y:400},{x:2280,y:400}
     ],
     [
-      {x:840,y:265},{x:1120,y:320},{x:1250,y:400},{x:1740,y:275},{x:1930,y:400},
-      {x:2180,y:250},{x:2360,y:250},{x:2550,y:310},{x:2690,y:400},{x:1510,y:400}
+      {x:260,y:400},{x:860,y:265},{x:1240,y:400},{x:1710,y:275},{x:2250,y:250},{x:3020,y:280}
     ],
     [
-      {x:390,y:290},{x:610,y:400},{x:900,y:265},{x:1190,y:320},
-      {x:1800,y:275},{x:2250,y:250},{x:2600,y:310},{x:3020,y:280}
+      {x:390,y:290},{x:900,y:265},{x:1800,y:275},{x:2600,y:310}
     ],
     [
-      {x:230,y:400},{x:470,y:290},{x:820,y:265},{x:1180,y:400},
-      {x:1900,y:400},{x:2230,y:250},{x:2650,y:400},{x:3070,y:280}
+      {x:230,y:400},{x:820,y:265},{x:1900,y:400},{x:3070,y:280}
     ],
     [
-      {x:920,y:265},{x:1240,y:400},{x:1830,y:275},{x:2200,y:250},
-      {x:2580,y:310},{x:2910,y:400},{x:3070,y:280},{x:3290,y:400}
+      {x:920,y:265},{x:1830,y:275},{x:2580,y:310},{x:3290,y:400}
+    ]
+  ];
+
+  const missionDecoySpots = [
+    [
+      {x:1050,y:400},{x:1730,y:400},{x:2570,y:400}
+    ],
+    [
+      {x:500,y:400},{x:1080,y:400},{x:1940,y:400},{x:2660,y:400}
+    ],
+    [
+      {x:610,y:400},{x:1190,y:400},{x:2250,y:400},{x:3020,y:400}
+    ],
+    [
+      {x:470,y:400},{x:1180,y:400},{x:2230,y:400},{x:2650,y:400}
+    ],
+    [
+      {x:1240,y:400},{x:2200,y:400},{x:2910,y:400},{x:3130,y:400}
     ]
   ];
 
@@ -240,24 +258,26 @@
 
   function createMissionCollectibles(index){
     const m = missions[index];
+    const correctSpots = missionCorrectSpots[index];
+    const decoySpots = missionDecoySpots[index];
     const tokenObjects = m.tokens.map((text, i) => ({
       id: `m${index}-t${i}`,
       text,
       kind: "correct",
-      meta: vocabMap.get(text) || {zh:text, de:""}
+      meta: vocabMap.get(text) || {zh:text, de:""},
+      x: correctSpots[i % correctSpots.length].x,
+      y: correctSpots[i % correctSpots.length].y
     }));
     const decoyObjects = m.decoys.map((text, i) => ({
       id: `m${index}-d${i}`,
       text,
       kind: "decoy",
-      meta: vocabMap.get(text) || {zh:text, de:""}
+      meta: vocabMap.get(text) || {zh:text, de:""},
+      x: decoySpots[i % decoySpots.length].x,
+      y: decoySpots[i % decoySpots.length].y
     }));
-    const objects = shuffleCopy([...tokenObjects, ...decoyObjects]);
-    const spots = missionSpots[index];
-    return objects.map((obj, i) => ({
+    return [...tokenObjects, ...decoyObjects].map(obj => ({
       ...obj,
-      x: spots[i % spots.length].x,
-      y: spots[i % spots.length].y,
       w: Math.max(78, Math.min(132, 42 + textWidthEstimate(obj.text))),
       h: 50,
       active: true
@@ -485,13 +505,22 @@
     $("sentenceFeedback").textContent = mission().zh;
     document.querySelector(".jumpSpeechBubbleSu").classList.add("correct");
     cfPlayFeedback(true);
-    cfSpeakZh(mission().zh, {rate:0.78});
     renderSentenceBuilder();
-    setTimeout(() => {
-      $("sentenceOverlay").hidden = true;
-      document.querySelector(".jumpSpeechBubbleSu").classList.remove("correct");
-      showReplyOrAdvance();
-    }, 1050);
+
+    // Erst Su Rans vollständigen Satz abspielen. Zuvor wurde nach 1,05 Sekunden
+    // bereits Lin Yues Antwort gestartet und die erste Audiodatei dadurch nach
+    // dem anfänglichen „Ah“ abgebrochen.
+    cfSpeakZh(mission().zh, {
+      rate:0.78,
+      speaker:"suran",
+      onend:() => {
+        setTimeout(() => {
+          $("sentenceOverlay").hidden = true;
+          document.querySelector(".jumpSpeechBubbleSu").classList.remove("correct");
+          showReplyOrAdvance();
+        }, 320);
+      }
+    });
   }
 
   function showReplyOrAdvance(){
@@ -499,8 +528,13 @@
     if(reply){
       $("replyBubble").textContent = reply;
       $("replyContinueBtn").textContent = currentMission === missions.length - 1 ? "Zur U-Bahn" : "Weiter";
+      $("replyContinueBtn").disabled = true;
       $("replyOverlay").hidden = false;
-      cfSpeakZh(reply, {rate:0.78});
+      cfSpeakZh(reply, {
+        rate:0.78,
+        speaker:"linyue",
+        onend:() => { $("replyContinueBtn").disabled = false; }
+      });
     }else{
       setTimeout(advanceMission, 350);
     }
@@ -641,7 +675,13 @@
     }
 
     for(const c of currentCollectibles){
-      if(!c.active || !intersects(player, c)) continue;
+      if(!c.active) continue;
+      // Bei falschen Wörtern ist die tatsächliche Trefferfläche etwas kleiner
+      // als die sichtbare Blase. Das macht knappe Sprünge auf Touch-Geräten fairer.
+      const hitbox = c.kind === "decoy"
+        ? {x:c.x + 12, y:c.y + 7, w:Math.max(20,c.w - 24), h:c.h - 14}
+        : c;
+      if(!intersects(player, hitbox)) continue;
       if(c.kind === "correct") collectCorrect(c);
       else hitDecoy(c);
     }
