@@ -105,20 +105,23 @@
   // frisch gewischte Stellen, die übersprungen werden müssen.
   const platforms = [
     {x: 0, y: GROUND_Y, w: WORLD_W, h: 70, ground: true, type: "station-floor"},
-    {x: 250, y: 355, w: 220, h: 24, type: "bench"},
-    {x: 810, y: 330, w: 220, h: 24, type: "luggage-cart"},
-    {x: 1090, y: 385, w: 165, h: 24, type: "suitcases"},
-    {x: 1710, y: 340, w: 235, h: 24, type: "bench"},
-    {x: 2180, y: 315, w: 250, h: 24, type: "luggage-cart"},
-    {x: 2540, y: 375, w: 170, h: 24, type: "suitcases"},
-    {x: 2990, y: 345, w: 195, h: 24, type: "bench"}
+    // Einheitliche, von unten durchlässige Bahnhofsebenen. Die Unterkante liegt
+    // hoch genug, damit Su Ran sichtbar darunter durchlaufen kann.
+    {x: 250, y: 350, w: 220, h: 22, type: "station-platform"},
+    {x: 810, y: 300, w: 220, h: 22, type: "station-platform"},
+    {x: 1090, y: 350, w: 180, h: 22, type: "station-platform"},
+    {x: 1710, y: 320, w: 235, h: 22, type: "station-platform"},
+    {x: 2180, y: 290, w: 250, h: 22, type: "station-platform"},
+    {x: 2540, y: 350, w: 180, h: 22, type: "station-platform"},
+    {x: 2990, y: 320, w: 210, h: 22, type: "station-platform"}
   ];
 
   const wetHazards = [
     {x: 650, w: 110},
-    {x: 1320, w: 110},
-    {x: 2010, w: 110},
-    {x: 2740, w: 120}
+    // Rund um Lin Yue und den Startpunkt bleibt bewusst eine sichere Fläche.
+    {x: 1780, w: 120},
+    {x: 2440, w: 120},
+    {x: 3060, w: 120}
   ];
 
   // Richtige Wörter dürfen auch auf Plattformen liegen. Falsche Wörter stehen
@@ -256,6 +259,8 @@
   let conversationPending = false;
   let slipping = false;
   let slipResetAt = 0;
+  let slipDirection = 1;
+  let slipHazard = null;
 
   const avatarSu = new Image();
   avatarSu.src = "avatars/suran.jpg";
@@ -467,7 +472,7 @@
   }
 
   function renderSuBuiltSentence(){
-    const body = $("sceneSuBubbleBody");
+    const body = $("builtSentenceArea");
     if(!body) return;
     body.innerHTML = "";
     const built = document.createElement("div");
@@ -492,7 +497,7 @@
     }else{
       const ph = document.createElement("div");
       ph.className = "jumpSentencePlaceholder";
-      ph.textContent = "Tippe die Wörter in der richtigen Reihenfolge an.";
+      ph.textContent = "Tippe unten die Wörter in der richtigen Reihenfolge an.";
       body.appendChild(ph);
     }
   }
@@ -500,7 +505,7 @@
   function showSceneBuilder(){
     $("sceneOverlay").hidden = false;
     $("sentenceTray").hidden = false;
-    showSceneBubble("sceneSuBubble", true);
+    showSceneBubble("sceneSuBubble", false);
     showSceneBubble("sceneLinBubble", false);
     sceneMode = "build";
     updateScenePositions();
@@ -602,6 +607,8 @@
     player.stunnedUntil = 0;
     slipping = false;
     slipResetAt = 0;
+    slipDirection = 1;
+    slipHazard = null;
     cameraX = Math.max(0, Math.min(WORLD_W - VIEW_W, player.x - 330));
   }
 
@@ -617,6 +624,46 @@
       saveCheckpoint();
       showMessage("Ausgerutscht – die Wörter dieses Satzes sind wieder weg.", 1800);
     }
+    updateHud();
+  }
+
+  function finishSlip(){
+    const hazard = slipHazard;
+    const direction = slipDirection || player.facing || 1;
+
+    slipping = false;
+    slipResetAt = 0;
+    player.stunnedUntil = 0;
+
+    // Nur die Wörter des aktuellen Satzes gehen verloren. Bereits gelöste
+    // Sätze und Kontrollpunkte bleiben erhalten.
+    collectedTokenIds = new Set();
+    selectedTokenIds = [];
+    sentenceBankOrder = [];
+    currentCollectibles.forEach(c => { c.active = true; });
+    conversationPending = false;
+
+    // Su Ran rutscht in seiner bisherigen Laufrichtung vollständig über die
+    // nasse Stelle. Dadurch bleibt er nicht in einer Endlosschleife hängen.
+    if(hazard){
+      if(direction > 0){
+        player.x = hazard.x + hazard.w + 18;
+      }else{
+        player.x = hazard.x - player.w - 18;
+      }
+    }
+    player.x = Math.max(0, Math.min(WORLD_W - player.w, player.x));
+    player.y = GROUND_Y - PLAYER_H;
+    player.vx = 0;
+    player.vy = 0;
+    player.grounded = true;
+    player.jumpsLeft = 2;
+    player.facing = direction;
+    slipHazard = null;
+
+    waterCount++;
+    saveCheckpoint();
+    showMessage("Ausgerutscht – die Wörter dieses Satzes sind wieder weg.", 1800);
     updateHud();
   }
 
@@ -789,6 +836,12 @@
       });
       bank.appendChild(btn);
     });
+    if(!display.length){
+      const done = document.createElement("div");
+      done.className = "jumpSentencePlaceholder";
+      done.textContent = "Alle Wörter sind oben eingesetzt. Prüfe jetzt die Reihenfolge oder tippe oben auf ein Wort zum Zurücklegen.";
+      bank.appendChild(done);
+    }
     updateScenePositions();
   }
 
@@ -975,17 +1028,22 @@
     if(!started || paused || finished) return;
 
     if(slipping && now >= slipResetAt){
-      resetCurrentMission("slip");
+      finishSlip();
       return;
     }
 
     const stunned = now < player.stunnedUntil;
     let direction = 0;
-    if(!stunned && !conversationPending){
-      if(input.left) direction -= 1;
-      if(input.right) direction += 1;
+    if(slipping){
+      direction = slipDirection;
+      player.vx = slipDirection * 250;
+    }else{
+      if(!stunned && !conversationPending){
+        if(input.left) direction -= 1;
+        if(input.right) direction += 1;
+      }
+      player.vx = direction * RUN_SPEED;
     }
-    player.vx = direction * RUN_SPEED;
     if(direction) player.facing = direction;
 
     if(input.jumpQueue > 0 && !stunned){
@@ -1025,6 +1083,7 @@
     player.grounded = false;
 
     for(const p of platforms){
+      // Einweg-Ebene: von unten und seitlich keine Kollision, Landung nur von oben.
       const horizontal = player.x + player.w > p.x + 4 && player.x < p.x + p.w - 4;
       const currentBottom = player.y + player.h;
       if(horizontal && player.vy >= 0 && previousBottom <= p.y + 7 && currentBottom >= p.y){
@@ -1041,15 +1100,17 @@
       const wet = wetHazards.find(h => feetRight > h.x + 8 && feetLeft < h.x + h.w - 8);
       if(wet){
         slipping = true;
-        slipResetAt = now + 850;
+        slipHazard = wet;
+        slipDirection = Math.sign(player.vx) || player.facing || 1;
+        slipResetAt = now + 720;
         player.stunnedUntil = slipResetAt;
-        player.vx = player.facing * 115;
-        player.vy = -95;
+        player.vx = slipDirection * 250;
+        player.vy = -70;
         player.grounded = false;
         input.left = false;
         input.right = false;
         cfPlayFeedback(false);
-        showMessage("Vorsicht, frisch gewischt!", 850);
+        showMessage("Vorsicht, rutschig!", 850);
       }
     }
 
@@ -1230,40 +1291,26 @@
     ctx.fillRect(0,GROUND_Y+58,WORLD_W,80);
   }
 
-  function drawBench(p){
-    ctx.fillStyle = "#9b8266";
+  function drawStationPlatform(p){
+    // Einheitlicher oberer Rand: beige Sitz-/Ablagefläche mit dunkler Unterkante.
+    ctx.fillStyle = "#d6bca2";
     roundedRect(p.x,p.y,p.w,p.h,8); ctx.fill();
-    ctx.strokeStyle = "#1e2a34"; ctx.lineWidth=4; ctx.stroke();
+    ctx.strokeStyle = "#1e2a34";
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    ctx.fillStyle = "#31485e";
+    ctx.fillRect(p.x+8,p.y+p.h-2,p.w-16,10);
+
+    // Sehr schmale Stützen nur ganz außen. Der breite Mittelbereich bleibt frei,
+    // damit klar erkennbar ist, dass man unter der Ebene hindurchlaufen kann.
     ctx.fillStyle = "#24384a";
-    ctx.fillRect(p.x+25,p.y+p.h,p.w-50,15);
-    ctx.fillRect(p.x+32,p.y+p.h+10,13,70);
-    ctx.fillRect(p.x+p.w-45,p.y+p.h+10,13,70);
-  }
+    ctx.fillRect(p.x+14,p.y+p.h+8,8,42);
+    ctx.fillRect(p.x+p.w-22,p.y+p.h+8,8,42);
 
-  function drawLuggageCart(p){
-    ctx.fillStyle = "#465d73";
-    roundedRect(p.x,p.y,p.w,p.h,8); ctx.fill();
-    ctx.strokeStyle="#1e2a34";ctx.lineWidth=4;ctx.stroke();
-    ctx.strokeStyle="#24384a";ctx.lineWidth=7;
-    ctx.beginPath();ctx.moveTo(p.x+18,p.y);ctx.lineTo(p.x+8,p.y-66);ctx.lineTo(p.x+75,p.y-66);ctx.stroke();
-    ctx.fillStyle="#d6bca2";roundedRect(p.x+55,p.y-58,72,58,9);ctx.fill();
-    ctx.fillStyle="#d9a6af";roundedRect(p.x+132,p.y-42,64,42,8);ctx.fill();
-    ctx.fillStyle="#1e2a34";
-    ctx.beginPath();ctx.arc(p.x+38,p.y+p.h+14,13,0,Math.PI*2);ctx.fill();
-    ctx.beginPath();ctx.arc(p.x+p.w-38,p.y+p.h+14,13,0,Math.PI*2);ctx.fill();
-  }
-
-  function drawSuitcases(p){
-    const gap=8;
-    const w=(p.w-gap)/2;
-    ctx.fillStyle="#d6bca2";roundedRect(p.x,p.y,w,p.h,8);ctx.fill();
-    ctx.fillStyle="#5b7086";roundedRect(p.x+w+gap,p.y-28,w,p.h+28,8);ctx.fill();
-    ctx.strokeStyle="#1e2a34";ctx.lineWidth=4;
-    roundedRect(p.x,p.y,w,p.h,8);ctx.stroke();
-    roundedRect(p.x+w+gap,p.y-28,w,p.h+28,8);ctx.stroke();
-    ctx.fillStyle="#1e2a34";
-    ctx.fillRect(p.x+w*.34,p.y-16,w*.32,16);
-    ctx.fillRect(p.x+w+gap+w*.34,p.y-44,w*.32,16);
+    // Kleine goldene Kantenmarkierungen verbinden alle Ebenen optisch.
+    ctx.fillStyle = "#ebbc6a";
+    ctx.fillRect(p.x+12,p.y+4,p.w-24,4);
   }
 
   function drawWetFloorHazards(){
@@ -1305,9 +1352,7 @@
 
     for(const p of platforms){
       if(p.ground) continue;
-      if(p.type === "bench") drawBench(p);
-      else if(p.type === "luggage-cart") drawLuggageCart(p);
-      else drawSuitcases(p);
+      drawStationPlatform(p);
     }
 
     drawWetFloorHazards();

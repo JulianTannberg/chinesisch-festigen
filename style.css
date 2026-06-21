@@ -1766,6 +1766,8 @@ input, textarea, select, [contenteditable="true"]{
   .jumpSpeechBubbleSu{min-height:55px;padding:8px;gap:5px;border-radius:15px 15px 5px 15px}
   .jumpBuiltToken,.jumpWordToken{min-height:34px;padding:5px 8px;border-radius:10px;font-size:18px}
   .jumpWordBank{min-height:42px;margin-top:7px;padding:6px;gap:5px}
+  .jumpSentenceLabel{font-size:10px;margin-bottom:4px}
+  .jumpSentenceBuildArea{min-height:58px;padding:6px}
   .jumpSentencePlaceholder{font-size:10px}
   .jumpSentenceFeedback{font-size:11px;min-height:16px;margin:5px 0 0}
   .jumpSentenceActions{margin-top:6px;gap:6px}
@@ -1795,6 +1797,9 @@ input, textarea, select, [contenteditable="true"]{
   inset:0;
   z-index:34;
   pointer-events:none;
+  background:rgba(3,23,43,.16);
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
 }
 .jumpSceneBubble{
   position:absolute;
@@ -1862,16 +1867,29 @@ input, textarea, select, [contenteditable="true"]{
 .jumpSentenceTray{
   position:absolute;
   left:50%;
-  bottom:max(132px,calc(env(safe-area-inset-bottom) + 124px));
+  bottom:max(118px,calc(env(safe-area-inset-bottom) + 110px));
   transform:translateX(-50%);
-  width:min(700px,88%);
-  padding:12px;
-  border-radius:20px;
+  width:min(760px,88%);
+  max-height:min(58%,350px);
+  overflow:auto;
+  padding:14px;
+  border-radius:22px;
+  border:1px solid rgba(16,38,59,.10);
   background:rgba(248,244,239,.97);
   color:#10263b;
-  box-shadow:0 15px 36px rgba(0,0,0,.24);
+  box-shadow:0 18px 42px rgba(0,0,0,.24);
   pointer-events:auto;
 }
+.jumpSentenceCompose,.jumpSentenceBankWrap{
+  padding:10px 12px;
+  border-radius:18px;
+  background:rgba(255,255,255,.60);
+  border:1px solid rgba(16,38,59,.08);
+}
+.jumpSentenceBankWrap{margin-top:10px}
+.jumpSentenceLabel{margin:0 0 6px;color:#5b7086;font-size:13px;font-weight:800;letter-spacing:.02em;text-transform:uppercase}
+.jumpSentenceBuildArea{min-height:78px;display:flex;align-items:center;justify-content:center;padding:10px;border-radius:14px;background:#eef2f5;border:2px solid rgba(49,72,94,.14)}
+.jumpSentenceTray .jumpBuiltSentence{justify-content:center}
 .jumpSentenceTray .jumpWordBank{margin-top:0}
 .jumpSentenceTray .jumpSentenceFeedback{min-height:24px;margin:10px 0 0;text-align:center;font-weight:850}
 .jumpSceneContinue{
@@ -1909,7 +1927,7 @@ input, textarea, select, [contenteditable="true"]{
   .jumpSceneBubbleBody{font-size:18px}
   .jumpSceneBubbleSu .jumpBuiltToken{min-height:31px;padding:4px 8px;font-size:18px}
   .jumpSceneBubbleSu .jumpSentencePlaceholder{font-size:11px}
-  .jumpSentenceTray{width:min(95%,95vw);padding:8px;border-radius:16px;bottom:max(96px,calc(env(safe-area-inset-bottom) + 90px))}
+  .jumpSentenceTray{width:min(95%,95vw);max-height:min(61%,300px);padding:10px;border-radius:16px;bottom:max(92px,calc(env(safe-area-inset-bottom) + 84px))}
   .jumpSceneContinue{bottom:max(98px,calc(env(safe-area-inset-bottom) + 92px))}
 }
 
