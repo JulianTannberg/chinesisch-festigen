@@ -2743,10 +2743,526 @@ window.CF_TOPICS = [
     "short": "Restaurant, Bestellen, Tischetikette, 干杯, Bezahlen",
     "accent": "#F6E3E5",
     "textColor": "#0B1B2E",
-    "vocab": [],
-    "understandingVocab": [],
-    "storyDialog": [],
-    "studentDialog": []
+    "vocab": [
+      {
+        "zh": "饿",
+        "pinyin": "è",
+        "de": "hungrig"
+      },
+      {
+        "zh": "菜单",
+        "pinyin": "càidān",
+        "de": "Speisekarte",
+        "hint": "c → ts"
+      },
+      {
+        "zh": "要",
+        "pinyin": "yào",
+        "de": "wollen, möchten"
+      },
+      {
+        "zh": "来",
+        "pinyin": "lái",
+        "de": "hier: „bringen“ (beim Bestellen)"
+      },
+      {
+        "zh": "碗",
+        "pinyin": "wǎn",
+        "de": "Schale (Zählwort)"
+      },
+      {
+        "zh": "盘",
+        "pinyin": "pán",
+        "de": "Teller (Zählwort)"
+      },
+      {
+        "zh": "米饭",
+        "pinyin": "mǐfàn",
+        "de": "Reis"
+      },
+      {
+        "zh": "好吃",
+        "pinyin": "hǎochī",
+        "de": "lecker, schmeckt gut",
+        "hint": "ch → tsch"
+      },
+      {
+        "zh": "辣",
+        "pinyin": "là",
+        "de": "scharf"
+      },
+      {
+        "zh": "觉得",
+        "pinyin": "juéde",
+        "de": "finden, meinen",
+        "hint": "j → dsch"
+      },
+      {
+        "zh": "干杯",
+        "pinyin": "gānbēi",
+        "de": "Prost, anstoßen",
+        "hint": "g → harter g-Laut"
+      },
+      {
+        "zh": "茶",
+        "pinyin": "chá",
+        "de": "Tee",
+        "hint": "ch → tsch"
+      },
+      {
+        "zh": "喜欢",
+        "pinyin": "xǐhuan",
+        "de": "mögen, gern haben",
+        "hint": "x → ch"
+      },
+      {
+        "zh": "买单",
+        "pinyin": "mǎidān",
+        "de": "die Rechnung (zahlen)"
+      },
+      {
+        "zh": "下次",
+        "pinyin": "xiàcì",
+        "de": "nächstes Mal",
+        "hint": "x → ch / c → ts"
+      }
+    ],
+    "understandingVocab": [
+      {
+        "zh": "服务员",
+        "pinyin": "fúwùyuán",
+        "de": "Kellner/in, Bedienung"
+      },
+      {
+        "zh": "北京烤鸭",
+        "pinyin": "Běijīng kǎoyā",
+        "de": "Peking-Ente"
+      },
+      {
+        "zh": "饼",
+        "pinyin": "bǐng",
+        "de": "(dünner) Pfannkuchen, Fladen"
+      },
+      {
+        "zh": "份",
+        "pinyin": "fèn",
+        "de": "Portion (Zählwort)"
+      },
+      {
+        "zh": "点",
+        "pinyin": "diǎn",
+        "de": "bestellen, auswählen"
+      },
+      {
+        "zh": "推荐",
+        "pinyin": "tuījiàn",
+        "de": "empfehlen"
+      },
+      {
+        "zh": "小时候",
+        "pinyin": "xiǎoshíhou",
+        "de": "als Kind, in der Kindheit",
+        "hint": "x → ch"
+      },
+      {
+        "zh": "以茶代酒",
+        "pinyin": "yǐ chá dài jiǔ",
+        "de": "mit Tee statt Wein anstoßen",
+        "hint": "j → dsch"
+      },
+      {
+        "zh": "我请客",
+        "pinyin": "wǒ qǐngkè",
+        "de": "ich lade ein, ich gebe aus",
+        "hint": "q → tsch"
+      },
+      {
+        "zh": "够了",
+        "pinyin": "gòu le",
+        "de": "das reicht, genug"
+      }
+    ],
+    "storyDialog": [
+      {
+        "speaker": "苏然",
+        "zh": "我有点饿了。",
+        "pinyin": "Wǒ yǒudiǎn è le.",
+        "de": "Ich habe etwas Hunger."
+      },
+      {
+        "speaker": "林月",
+        "zh": "这家的北京烤鸭很有名。",
+        "pinyin": "Zhè jiā de Běijīng kǎoyā hěn yǒumíng.",
+        "de": "Die Peking-Ente hier ist berühmt."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你喜欢吃鸭子吗？",
+        "pinyin": "Nǐ xǐhuan chī yāzi ma?",
+        "de": "Magst du Ente?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "喜欢。",
+        "pinyin": "Xǐhuan.",
+        "de": "Ja, mag ich."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "菜单上有很多菜。",
+        "pinyin": "Càidān shàng yǒu hěn duō cài.",
+        "de": "Auf der Speisekarte stehen viele Gerichte."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你推荐什么？",
+        "pinyin": "Nǐ tuījiàn shénme?",
+        "de": "Was empfiehlst du?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "来一份北京烤鸭吧。",
+        "pinyin": "Lái yí fèn Běijīng kǎoyā ba.",
+        "de": "Lass uns eine Portion Peking-Ente nehmen."
+      },
+      {
+        "speaker": "林月",
+        "zh": "还有饼。",
+        "pinyin": "Hái yǒu bǐng.",
+        "de": "Und Pfannkuchen dazu."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "服务员，我们要一份北京烤鸭。",
+        "pinyin": "Fúwùyuán, wǒmen yào yí fèn Běijīng kǎoyā.",
+        "de": "Bedienung, wir möchten eine Portion Peking-Ente."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "来两碗米饭。",
+        "pinyin": "Lái liǎng wǎn mǐfàn.",
+        "de": "Und zwei Schalen Reis."
+      },
+      {
+        "speaker": "林月",
+        "zh": "再来一盘青菜。",
+        "pinyin": "Zài lái yì pán qīngcài.",
+        "de": "Und noch einen Teller Gemüse."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我们点的够了吗？",
+        "pinyin": "Wǒmen diǎn de gòu le ma?",
+        "de": "Haben wir genug bestellt?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "够了。",
+        "pinyin": "Gòu le.",
+        "de": "Ja, das reicht."
+      },
+      {
+        "speaker": "服务员",
+        "zh": "好的。",
+        "pinyin": "Hǎo de.",
+        "de": "In Ordnung."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "这个辣吗？",
+        "pinyin": "Zhège là ma?",
+        "de": "Ist das scharf?"
+      },
+      {
+        "speaker": "服务员",
+        "zh": "有一点辣。",
+        "pinyin": "Yǒu yìdiǎn là.",
+        "de": "Ein bisschen scharf."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "那不要了。",
+        "pinyin": "Nà bú yào le.",
+        "de": "Dann lieber nicht."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "很好吃。",
+        "pinyin": "Hěn hǎochī.",
+        "de": "Sehr lecker."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我也觉得很好吃。",
+        "pinyin": "Wǒ yě juéde hěn hǎochī.",
+        "de": "Ich finde es auch sehr lecker."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我小时候不喜欢鸭子，只喜欢饼。",
+        "pinyin": "Wǒ xiǎoshíhou bù xǐhuan yāzi, zhǐ xǐhuan bǐng.",
+        "de": "Als Kind mochte ich keine Ente, nur die Pfannkuchen."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "现在呢？",
+        "pinyin": "Xiànzài ne?",
+        "de": "Und jetzt?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "现在都喜欢。",
+        "pinyin": "Xiànzài dōu xǐhuan.",
+        "de": "Jetzt mag ich beides."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "来，干杯。",
+        "pinyin": "Lái, gānbēi.",
+        "de": "Komm, prost."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "以茶代酒。",
+        "pinyin": "Yǐ chá dài jiǔ.",
+        "de": "Mit Tee statt Wein."
+      },
+      {
+        "speaker": "林月",
+        "zh": "干杯。",
+        "pinyin": "Gānbēi.",
+        "de": "Prost."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "服务员，买单。",
+        "pinyin": "Fúwùyuán, mǎidān.",
+        "de": "Bedienung, die Rechnung bitte."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我来吧。",
+        "pinyin": "Wǒ lái ba.",
+        "de": "Ich zahle."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "不用。我请客。",
+        "pinyin": "Bú yòng. Wǒ qǐngkè.",
+        "de": "Nicht nötig. Ich lade ein."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你帮了我。",
+        "pinyin": "Nǐ bāng le wǒ.",
+        "de": "Du hast mir geholfen."
+      },
+      {
+        "speaker": "林月",
+        "zh": "好。那下次我请你。",
+        "pinyin": "Hǎo. Nà xiàcì wǒ qǐng nǐ.",
+        "de": "Gut. Dann lade ich dich nächstes Mal ein."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "好。",
+        "pinyin": "Hǎo.",
+        "de": "Abgemacht."
+      }
+    ],
+    "studentDialog": [
+      {
+        "speaker": "A",
+        "zh": "服务员，我要一份 ___ 。",
+        "pinyin": "Fúwùyuán, wǒ yào yí fèn ___.",
+        "de": "Bedienung, ich möchte eine Portion ___."
+      },
+      {
+        "speaker": "A",
+        "zh": "来两碗米饭。",
+        "pinyin": "Lái liǎng wǎn mǐfàn.",
+        "de": "Und zwei Schalen Reis."
+      },
+      {
+        "speaker": "服务员",
+        "zh": "好的。",
+        "pinyin": "Hǎo de.",
+        "de": "In Ordnung."
+      },
+      {
+        "speaker": "A",
+        "zh": "这个辣吗？",
+        "pinyin": "Zhège là ma?",
+        "de": "Ist das scharf?"
+      },
+      {
+        "speaker": "服务员",
+        "zh": "有一点辣。/ 不辣。",
+        "pinyin": "Yǒu yìdiǎn là. / Bú là.",
+        "de": "Ein bisschen scharf. / Nicht scharf."
+      },
+      {
+        "speaker": "A",
+        "zh": "很好吃。服务员，买单。",
+        "pinyin": "Hěn hǎochī. Fúwùyuán, mǎidān.",
+        "de": "Sehr lecker. Bedienung, die Rechnung bitte."
+      },
+      {
+        "speaker": "服务员",
+        "zh": "好的。",
+        "pinyin": "Hǎo de.",
+        "de": "In Ordnung."
+      }
+    ],
+    "storyDialogTitle": "Peking-Ente essen",
+    "studentDialogTitle": "Im Restaurant bestellen und bezahlen",
+    "studentDialogNote": "Die Lernenden spielen Gast (A) und Bedienung (服务员). A bestellt ein Gericht und Reis, fragt nach der Schärfe und zahlt am Ende. Gericht und Getränk können frei eingesetzt werden (z. B. 北京烤鸭, 米饭, 茶).",
+    "sentencePuzzles": [
+      {
+        "de": "Auf der Speisekarte stehen viele Gerichte.",
+        "zh": "菜单上有很多菜。",
+        "pinyin": "Càidān shàng yǒu hěn duō cài.",
+        "tokens": [
+          "菜单",
+          "上",
+          "有",
+          "很多",
+          "菜",
+          "。"
+        ]
+      },
+      {
+        "de": "Und zwei Schalen Reis.",
+        "zh": "来两碗米饭。",
+        "pinyin": "Lái liǎng wǎn mǐfàn.",
+        "tokens": [
+          "来",
+          "两",
+          "碗",
+          "米饭",
+          "。"
+        ]
+      },
+      {
+        "de": "Haben wir genug bestellt?",
+        "zh": "我们点的够了吗？",
+        "pinyin": "Wǒmen diǎn de gòu le ma?",
+        "tokens": [
+          "我们",
+          "点",
+          "的",
+          "够了",
+          "吗",
+          "？"
+        ]
+      },
+      {
+        "de": "Ich finde es auch sehr lecker.",
+        "zh": "我也觉得很好吃。",
+        "pinyin": "Wǒ yě juéde hěn hǎochī.",
+        "tokens": [
+          "我",
+          "也",
+          "觉得",
+          "很",
+          "好吃",
+          "。"
+        ]
+      },
+      {
+        "de": "Nächstes Mal lade ich dich ein.",
+        "zh": "那下次我请你。",
+        "pinyin": "Nà xiàcì wǒ qǐng nǐ.",
+        "tokens": [
+          "那",
+          "下次",
+          "我",
+          "请",
+          "你",
+          "。"
+        ]
+      }
+    ],
+    "gapExercises": [
+      {
+        "prompt": "我有点 ___ 了。",
+        "answer": "饿",
+        "choices": [
+          "饿",
+          "辣",
+          "茶",
+          "碗"
+        ],
+        "solution": "我有点饿了。",
+        "pinyin": "Wǒ yǒudiǎn è le.",
+        "de": "Ich habe etwas Hunger."
+      },
+      {
+        "prompt": "你 ___ 吃鸭子吗？",
+        "answer": "喜欢",
+        "choices": [
+          "喜欢",
+          "觉得",
+          "推荐",
+          "买单"
+        ],
+        "solution": "你喜欢吃鸭子吗？",
+        "pinyin": "Nǐ xǐhuan chī yāzi ma?",
+        "de": "Magst du Ente?"
+      },
+      {
+        "prompt": "来两 ___ 米饭。",
+        "answer": "碗",
+        "choices": [
+          "碗",
+          "盘",
+          "份",
+          "杯"
+        ],
+        "solution": "来两碗米饭。",
+        "pinyin": "Lái liǎng wǎn mǐfàn.",
+        "de": "Und zwei Schalen Reis."
+      },
+      {
+        "prompt": "这个 ___ 吗？",
+        "answer": "辣",
+        "choices": [
+          "辣",
+          "饿",
+          "好吃",
+          "干杯"
+        ],
+        "solution": "这个辣吗？",
+        "pinyin": "Zhège là ma?",
+        "de": "Ist das scharf?"
+      },
+      {
+        "prompt": "我也 ___ 很好吃。",
+        "answer": "觉得",
+        "choices": [
+          "觉得",
+          "喜欢",
+          "推荐",
+          "要"
+        ],
+        "solution": "我也觉得很好吃。",
+        "pinyin": "Wǒ yě juéde hěn hǎochī.",
+        "de": "Ich finde es auch sehr lecker."
+      },
+      {
+        "prompt": "那 ___ 我请你。",
+        "answer": "下次",
+        "choices": [
+          "下次",
+          "菜单",
+          "买单",
+          "干杯"
+        ],
+        "solution": "那下次我请你。",
+        "pinyin": "Nà xiàcì wǒ qǐng nǐ.",
+        "de": "Nächstes Mal lade ich dich ein."
+      }
+    ]
   },
   {
     "id": "08",
@@ -2754,10 +3270,530 @@ window.CF_TOPICS = [
     "short": "Familie und Studium, Berufe, Alter",
     "accent": "#D9A6AF",
     "textColor": "#0B1B2E",
-    "vocab": [],
-    "understandingVocab": [],
-    "storyDialog": [],
-    "studentDialog": []
+    "vocab": [
+      {
+        "zh": "爸爸",
+        "pinyin": "bàba",
+        "de": "Vater, Papa"
+      },
+      {
+        "zh": "妈妈",
+        "pinyin": "māma",
+        "de": "Mutter, Mama"
+      },
+      {
+        "zh": "哥哥",
+        "pinyin": "gēge",
+        "de": "älterer Bruder"
+      },
+      {
+        "zh": "弟弟",
+        "pinyin": "dìdi",
+        "de": "jüngerer Bruder"
+      },
+      {
+        "zh": "姐姐",
+        "pinyin": "jiějie",
+        "de": "ältere Schwester",
+        "hint": "j → dsch"
+      },
+      {
+        "zh": "妹妹",
+        "pinyin": "mèimei",
+        "de": "jüngere Schwester"
+      },
+      {
+        "zh": "老师",
+        "pinyin": "lǎoshī",
+        "de": "Lehrer/in",
+        "hint": "sh → sch"
+      },
+      {
+        "zh": "医生",
+        "pinyin": "yīshēng",
+        "de": "Arzt, Ärztin",
+        "hint": "sh → sch"
+      },
+      {
+        "zh": "学",
+        "pinyin": "xué",
+        "de": "lernen, studieren",
+        "hint": "x → ch"
+      },
+      {
+        "zh": "大学",
+        "pinyin": "dàxué",
+        "de": "Universität",
+        "hint": "x → ch"
+      },
+      {
+        "zh": "今年",
+        "pinyin": "jīnnián",
+        "de": "dieses Jahr"
+      },
+      {
+        "zh": "岁",
+        "pinyin": "suì",
+        "de": "Jahre (alt)"
+      },
+      {
+        "zh": "都",
+        "pinyin": "dōu",
+        "de": "alle, beide; jeweils",
+        "hint": "d → d (nicht „du“)"
+      },
+      {
+        "zh": "工作",
+        "pinyin": "gōngzuò",
+        "de": "arbeiten; Arbeit",
+        "hint": "z → ds"
+      },
+      {
+        "zh": "他们",
+        "pinyin": "tāmen",
+        "de": "sie (Plural)"
+      },
+      {
+        "zh": "做",
+        "pinyin": "zuò",
+        "de": "machen, tun",
+        "hint": "z → ds"
+      },
+      {
+        "zh": "给",
+        "pinyin": "gěi",
+        "de": "geben",
+        "hint": "g → harter g-Laut"
+      },
+      {
+        "zh": "忙",
+        "pinyin": "máng",
+        "de": "beschäftigt, viel zu tun"
+      }
+    ],
+    "understandingVocab": [
+      {
+        "zh": "工程师",
+        "pinyin": "gōngchéngshī",
+        "de": "Ingenieur/in",
+        "hint": "ch → tsch / sh → sch"
+      },
+      {
+        "zh": "经济",
+        "pinyin": "jīngjì",
+        "de": "Wirtschaft",
+        "hint": "j → dsch"
+      },
+      {
+        "zh": "设计",
+        "pinyin": "shèjì",
+        "de": "Design, gestalten",
+        "hint": "sh → sch"
+      },
+      {
+        "zh": "兄弟姐妹",
+        "pinyin": "xiōngdì jiěmèi",
+        "de": "Geschwister",
+        "hint": "x → ch"
+      },
+      {
+        "zh": "一个人",
+        "pinyin": "yí ge rén",
+        "de": "allein, eine Person"
+      },
+      {
+        "zh": "多大",
+        "pinyin": "duō dà",
+        "de": "wie alt"
+      },
+      {
+        "zh": "一样",
+        "pinyin": "yíyàng",
+        "de": "gleich, genauso"
+      },
+      {
+        "zh": "带",
+        "pinyin": "dài",
+        "de": "mitnehmen, mitbringen"
+      }
+    ],
+    "storyDialog": [
+      {
+        "speaker": "林月",
+        "zh": "你在上海学什么？",
+        "pinyin": "Nǐ zài Shànghǎi xué shénme?",
+        "de": "Was studierst du in Shanghai?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我学经济。",
+        "pinyin": "Wǒ xué jīngjì.",
+        "de": "Ich studiere Wirtschaft."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你呢？",
+        "pinyin": "Nǐ ne?",
+        "de": "Und du?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "我在清华大学学设计。",
+        "pinyin": "Wǒ zài Qīnghuá Dàxué xué shèjì.",
+        "de": "Ich studiere Design an der Tsinghua-Universität."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "清华大学很有名。",
+        "pinyin": "Qīnghuá Dàxué hěn yǒumíng.",
+        "de": "Die Tsinghua ist sehr berühmt."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你今年多大？",
+        "pinyin": "Nǐ jīnnián duō dà?",
+        "de": "Wie alt bist du dieses Jahr?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我今年二十一岁。",
+        "pinyin": "Wǒ jīnnián èrshíyī suì.",
+        "de": "Ich bin einundzwanzig."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你呢？",
+        "pinyin": "Nǐ ne?",
+        "de": "Und du?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "我也二十一岁。",
+        "pinyin": "Wǒ yě èrshíyī suì.",
+        "de": "Ich bin auch einundzwanzig."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你有兄弟姐妹吗？",
+        "pinyin": "Nǐ yǒu xiōngdì jiěmèi ma?",
+        "de": "Hast du Geschwister?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "没有。我是一个人。",
+        "pinyin": "Méiyǒu. Wǒ shì yí ge rén.",
+        "de": "Nein. Ich bin Einzelkind."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你呢？",
+        "pinyin": "Nǐ ne?",
+        "de": "Und du?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我也没有哥哥，没有弟弟，没有姐姐，也没有妹妹。",
+        "pinyin": "Wǒ yě méiyǒu gēge, méiyǒu dìdi, méiyǒu jiějie, yě méiyǒu mèimei.",
+        "de": "Ich habe auch keinen großen Bruder, keinen kleinen Bruder, keine große Schwester und auch keine kleine Schwester."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我们都是一个人。",
+        "pinyin": "Wǒmen dōu shì yí ge rén.",
+        "de": "Wir sind beide Einzelkinder."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "在中国，很多学生都是一个人。",
+        "pinyin": "Zài Zhōngguó, hěn duō xuésheng dōu shì yí ge rén.",
+        "de": "In China sind viele Studenten Einzelkinder."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你爸爸妈妈做什么工作？",
+        "pinyin": "Nǐ bàba māma zuò shénme gōngzuò?",
+        "de": "Was arbeiten deine Eltern?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我爸爸是工程师，我妈妈是老师。",
+        "pinyin": "Wǒ bàba shì gōngchéngshī, wǒ māma shì lǎoshī.",
+        "de": "Mein Vater ist Ingenieur, meine Mutter ist Lehrerin."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "他们都在上海工作。",
+        "pinyin": "Tāmen dōu zài Shànghǎi gōngzuò.",
+        "de": "Sie arbeiten beide in Shanghai."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你呢？",
+        "pinyin": "Nǐ ne?",
+        "de": "Und deine?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "我妈妈是医生。",
+        "pinyin": "Wǒ māma shì yīshēng.",
+        "de": "Meine Mutter ist Ärztin."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我爸爸也工作，很忙。",
+        "pinyin": "Wǒ bàba yě gōngzuò, hěn máng.",
+        "de": "Mein Vater arbeitet auch, er ist sehr beschäftigt."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你的钱是爸爸妈妈给的吗？",
+        "pinyin": "Nǐ de qián shì bàba māma gěi de ma?",
+        "de": "Gibt dir das Geld deine Familie?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "是。我们都一样。",
+        "pinyin": "Shì. Wǒmen dōu yíyàng.",
+        "de": "Ja. Bei uns ist das gleich."
+      },
+      {
+        "speaker": "林月",
+        "zh": "不早了。",
+        "pinyin": "Bù zǎo le.",
+        "de": "Es ist schon spät."
+      },
+      {
+        "speaker": "林月",
+        "zh": "明天我带你去一个胡同，好吗？",
+        "pinyin": "Míngtiān wǒ dài nǐ qù yí ge hútòng, hǎo ma?",
+        "de": "Morgen nehme ich dich zu einem Hutong mit, okay?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "好。",
+        "pinyin": "Hǎo.",
+        "de": "Gern."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "谢谢你。",
+        "pinyin": "Xièxie nǐ.",
+        "de": "Danke dir."
+      }
+    ],
+    "studentDialog": [
+      {
+        "speaker": "A",
+        "zh": "你学什么？",
+        "pinyin": "Nǐ xué shénme?",
+        "de": "Was studierst du?"
+      },
+      {
+        "speaker": "B",
+        "zh": "我学 ___ 。你呢？",
+        "pinyin": "Wǒ xué ___. Nǐ ne?",
+        "de": "Ich studiere ___. Und du?"
+      },
+      {
+        "speaker": "A",
+        "zh": "我学 ___ 。你今年多大？",
+        "pinyin": "Wǒ xué ___. Nǐ jīnnián duō dà?",
+        "de": "Ich studiere ___. Wie alt bist du?"
+      },
+      {
+        "speaker": "B",
+        "zh": "我今年 ___ 岁。",
+        "pinyin": "Wǒ jīnnián ___ suì.",
+        "de": "Ich bin ___ Jahre alt."
+      },
+      {
+        "speaker": "A",
+        "zh": "你有兄弟姐妹吗？",
+        "pinyin": "Nǐ yǒu xiōngdì jiěmèi ma?",
+        "de": "Hast du Geschwister?"
+      },
+      {
+        "speaker": "B",
+        "zh": "有。/ 没有，我是一个人。",
+        "pinyin": "Yǒu. / Méiyǒu, wǒ shì yí ge rén.",
+        "de": "Ja. / Nein, ich bin Einzelkind."
+      },
+      {
+        "speaker": "A",
+        "zh": "你爸爸妈妈做什么工作？",
+        "pinyin": "Nǐ bàba māma zuò shénme gōngzuò?",
+        "de": "Was arbeiten deine Eltern?"
+      },
+      {
+        "speaker": "B",
+        "zh": "我爸爸是 ___ ，我妈妈是 ___ 。",
+        "pinyin": "Wǒ bàba shì ___, wǒ māma shì ___.",
+        "de": "Mein Vater ist ___, meine Mutter ist ___."
+      }
+    ],
+    "storyDialogTitle": "Über Familie und Studium",
+    "studentDialogTitle": "Über Familie, Studium und Alter sprechen",
+    "studentDialogNote": "Die Lernenden (A und B) lernen sich kennen und fragen nach Studium, Alter und Familie. Fach, Alter und Berufe können frei eingesetzt werden (z. B. 经济, 设计; 工程师, 老师, 医生).",
+    "sentencePuzzles": [
+      {
+        "de": "Ich studiere Design an der Tsinghua-Universität.",
+        "zh": "我在清华大学学设计。",
+        "pinyin": "Wǒ zài Qīnghuá Dàxué xué shèjì.",
+        "tokens": [
+          "我",
+          "在",
+          "清华大学",
+          "学",
+          "设计",
+          "。"
+        ]
+      },
+      {
+        "de": "Wie alt bist du dieses Jahr?",
+        "zh": "你今年多大？",
+        "pinyin": "Nǐ jīnnián duō dà?",
+        "tokens": [
+          "你",
+          "今年",
+          "多大",
+          "？"
+        ]
+      },
+      {
+        "de": "Hast du Geschwister?",
+        "zh": "你有兄弟姐妹吗？",
+        "pinyin": "Nǐ yǒu xiōngdì jiěmèi ma?",
+        "tokens": [
+          "你",
+          "有",
+          "兄弟姐妹",
+          "吗",
+          "？"
+        ]
+      },
+      {
+        "de": "Wir sind beide Einzelkinder.",
+        "zh": "我们都是一个人。",
+        "pinyin": "Wǒmen dōu shì yí ge rén.",
+        "tokens": [
+          "我们",
+          "都",
+          "是",
+          "一个人",
+          "。"
+        ]
+      },
+      {
+        "de": "Was arbeiten deine Eltern?",
+        "zh": "你爸爸妈妈做什么工作？",
+        "pinyin": "Nǐ bàba māma zuò shénme gōngzuò?",
+        "tokens": [
+          "你",
+          "爸爸妈妈",
+          "做",
+          "什么",
+          "工作",
+          "？"
+        ]
+      },
+      {
+        "de": "Mein Vater ist Ingenieur, meine Mutter ist Lehrerin.",
+        "zh": "我爸爸是工程师，我妈妈是老师。",
+        "pinyin": "Wǒ bàba shì gōngchéngshī, wǒ māma shì lǎoshī.",
+        "tokens": [
+          "我",
+          "爸爸",
+          "是",
+          "工程师",
+          "，",
+          "我",
+          "妈妈",
+          "是",
+          "老师",
+          "。"
+        ]
+      }
+    ],
+    "gapExercises": [
+      {
+        "prompt": "我在清华大学 ___ 设计。",
+        "answer": "学",
+        "choices": [
+          "学",
+          "做",
+          "给",
+          "忙"
+        ],
+        "solution": "我在清华大学学设计。",
+        "pinyin": "Wǒ zài Qīnghuá Dàxué xué shèjì.",
+        "de": "Ich studiere Design an der Tsinghua-Universität."
+      },
+      {
+        "prompt": "我今年二十一 ___ 。",
+        "answer": "岁",
+        "choices": [
+          "岁",
+          "学",
+          "都",
+          "做"
+        ],
+        "solution": "我今年二十一岁。",
+        "pinyin": "Wǒ jīnnián èrshíyī suì.",
+        "de": "Ich bin einundzwanzig."
+      },
+      {
+        "prompt": "你有 ___ 吗？",
+        "answer": "兄弟姐妹",
+        "choices": [
+          "兄弟姐妹",
+          "工程师",
+          "大学",
+          "老师"
+        ],
+        "solution": "你有兄弟姐妹吗？",
+        "pinyin": "Nǐ yǒu xiōngdì jiěmèi ma?",
+        "de": "Hast du Geschwister?"
+      },
+      {
+        "prompt": "我们 ___ 是一个人。",
+        "answer": "都",
+        "choices": [
+          "都",
+          "也",
+          "很",
+          "在"
+        ],
+        "solution": "我们都是一个人。",
+        "pinyin": "Wǒmen dōu shì yí ge rén.",
+        "de": "Wir sind beide Einzelkinder."
+      },
+      {
+        "prompt": "我爸爸是 ___ 。",
+        "answer": "工程师",
+        "choices": [
+          "工程师",
+          "医生",
+          "老师",
+          "学生"
+        ],
+        "solution": "我爸爸是工程师。",
+        "pinyin": "Wǒ bàba shì gōngchéngshī.",
+        "de": "Mein Vater ist Ingenieur."
+      },
+      {
+        "prompt": "你爸爸妈妈 ___ 什么工作？",
+        "answer": "做",
+        "choices": [
+          "做",
+          "给",
+          "学",
+          "带"
+        ],
+        "solution": "你爸爸妈妈做什么工作？",
+        "pinyin": "Nǐ bàba māma zuò shénme gōngzuò?",
+        "de": "Was arbeiten deine Eltern?"
+      }
+    ]
   },
   {
     "id": "09",

@@ -343,8 +343,7 @@ function cfChapterWorkedThrough(topic){
 // hier NICHT rein. AKTIVE Vokabeln (z. B. 北京, 上海, 德国) werden bewusst in
 // Einzelzeichen zerlegt, weil sie aktiv geübt werden – auch wenn sie hier stünden.
 var CF_PROPER_NAMES = [
-  "清华大学","五道口","苏然","林月","微信","支付宝","国庆节","北京烤鸭","中国","美国"
-];
+  "清华大学","五道口","苏然","林月","微信","支付宝","国庆节","北京烤鸭","中国","美国","鸭子"];
 
 // Zerlegt einen chinesischen Satz in Karten-Token:
 //  • Verstehen-Vokabeln (mehrzeichig) und Reserve-Namen bleiben als EINE Karte.
