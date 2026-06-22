@@ -1411,77 +1411,57 @@
   }
 
   function drawStationPlatform(p){
-    // Leichte Trainingsbalken, optisch näher an der hellen Bahnhofswelt.
+    // Schlichte Sprungbalken: keine Bänke, keine großen Aufbauten.
     ctx.save();
-    const topY = p.y + 2;
-    const beamH = Math.max(15, p.h - 6);
-    ctx.shadowColor = "rgba(22,43,63,.18)";
-    ctx.shadowBlur = 10;
-    ctx.shadowOffsetY = 6;
-    const barGrad = ctx.createLinearGradient(0,topY,0,topY+beamH);
-    barGrad.addColorStop(0,"#f8e7ca");
-    barGrad.addColorStop(.52,"#e9c892");
-    barGrad.addColorStop(1,"#c89f6f");
+    ctx.shadowColor = "rgba(22,43,63,.22)";
+    ctx.shadowBlur = 12;
+    ctx.shadowOffsetY = 7;
+    const barGrad = ctx.createLinearGradient(0,p.y,0,p.y+p.h);
+    barGrad.addColorStop(0,"#f3d9b5");
+    barGrad.addColorStop(.55,"#d8b586");
+    barGrad.addColorStop(1,"#b88d61");
     ctx.fillStyle = barGrad;
-    roundedRect(p.x,topY,p.w,beamH,8);ctx.fill();
+    roundedRect(p.x,p.y,p.w,p.h,9);ctx.fill();
     ctx.shadowBlur = 0;
-    ctx.strokeStyle = "#30475f";
-    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#20364b";
+    ctx.lineWidth = 4;
     ctx.stroke();
-
-    ctx.fillStyle = "rgba(255,249,240,.78)";
-    roundedRect(p.x+10,topY+3,p.w-20,3,2);ctx.fill();
-    ctx.fillStyle = "rgba(36,56,74,.72)";
-    roundedRect(p.x+8,topY+beamH-4,p.w-16,4,2);ctx.fill();
-
-    const legXs = p.w >= 220
-      ? [p.x + 24, p.x + p.w/2 - 3, p.x + p.w - 30]
-      : [p.x + 22, p.x + p.w - 28];
-    for(const lx of legXs){
-      const legGrad = ctx.createLinearGradient(lx, topY+beamH, lx, topY+beamH+36);
-      legGrad.addColorStop(0,"#3c556d");
-      legGrad.addColorStop(1,"#223648");
-      ctx.fillStyle = legGrad;
-      roundedRect(lx, topY+beamH+4, 6, 34, 3); ctx.fill();
-      ctx.fillStyle = "rgba(255,255,255,.16)";
-      ctx.fillRect(lx+1, topY+beamH+7, 1, 26);
-    }
+    ctx.fillStyle = "#efbd62";
+    roundedRect(p.x+10,p.y+4,p.w-20,4,2);ctx.fill();
+    ctx.fillStyle = "#24384a";
+    ctx.fillRect(p.x+8,p.y+p.h-1,p.w-16,9);
+    // Zwei sehr schmale Außenstützen lassen den Weg darunter frei.
+    ctx.fillStyle = "#2c4359";
+    ctx.fillRect(p.x+17,p.y+p.h+7,8,38);
+    ctx.fillRect(p.x+p.w-25,p.y+p.h+7,8,38);
     ctx.restore();
   }
 
   function drawWetFloorHazards(){
     wetHazards.forEach((h,index) => {
-      const puddleY = GROUND_Y + 2;
-      const grad = ctx.createLinearGradient(h.x,puddleY,h.x+h.w,puddleY+22);
-      grad.addColorStop(0,"rgba(172,208,230,.10)");
-      grad.addColorStop(.45,"rgba(109,159,194,.32)");
-      grad.addColorStop(1,"rgba(231,244,250,.16)");
+      const grad = ctx.createLinearGradient(h.x,GROUND_Y-4,h.x+h.w,GROUND_Y+30);
+      grad.addColorStop(0,"rgba(185,216,235,.12)");
+      grad.addColorStop(.45,"rgba(92,137,171,.48)");
+      grad.addColorStop(1,"rgba(231,244,250,.22)");
       ctx.fillStyle = grad;
-      roundedRect(h.x,puddleY,h.w,22,11);ctx.fill();
-      ctx.strokeStyle = "rgba(70,108,136,.36)";ctx.lineWidth=1.8;ctx.stroke();
-      ctx.strokeStyle = "rgba(255,255,255,.58)";ctx.lineWidth=1.8;
-      ctx.beginPath();ctx.moveTo(h.x+12,puddleY+9);ctx.quadraticCurveTo(h.x+h.w*.48,puddleY-1,h.x+h.w-10,puddleY+8);ctx.stroke();
-      ctx.beginPath();ctx.moveTo(h.x+18,puddleY+15);ctx.quadraticCurveTo(h.x+h.w*.54,puddleY+5,h.x+h.w-18,puddleY+15);ctx.stroke();
+      roundedRect(h.x,GROUND_Y-3,h.w,34,17);ctx.fill();
+      ctx.strokeStyle = "rgba(46,82,112,.52)";ctx.lineWidth=2.5;ctx.stroke();
+      ctx.strokeStyle = "rgba(255,255,255,.78)";ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(h.x+12,GROUND_Y+9);ctx.quadraticCurveTo(h.x+h.w*.45,GROUND_Y-2,h.x+h.w-10,GROUND_Y+10);ctx.stroke();
 
-      // Kleineres Warnschild, damit es sich ruhiger in den Hintergrund einfügt.
-      const sx = h.x - 18;
-      const sy = GROUND_Y - 54;
-      ctx.save();
-      ctx.shadowColor = "rgba(22,43,63,.12)";
-      ctx.shadowBlur = 7;
+      // Kompaktes Warnschild; die Szene bleibt trotz Hindernis übersichtlich.
+      const sx=h.x-28, sy=GROUND_Y-59;
       ctx.fillStyle="#efbd62";
-      ctx.beginPath();ctx.moveTo(sx+2,GROUND_Y+1);ctx.lineTo(sx+15,sy);ctx.lineTo(sx+41,sy);ctx.lineTo(sx+54,GROUND_Y+1);ctx.closePath();ctx.fill();
-      ctx.shadowBlur = 0;
-      ctx.strokeStyle="#2c4258";ctx.lineWidth=2.5;ctx.stroke();
+      ctx.beginPath();ctx.moveTo(sx,GROUND_Y);ctx.lineTo(sx+12,sy);ctx.lineTo(sx+38,sy);ctx.lineTo(sx+50,GROUND_Y);ctx.closePath();ctx.fill();
+      ctx.strokeStyle="#20364b";ctx.lineWidth=3;ctx.stroke();
       ctx.fillStyle="#20364b";
-      ctx.beginPath();ctx.moveTo(sx+28,sy+11);ctx.lineTo(sx+36,sy+31);ctx.lineTo(sx+20,sy+31);ctx.closePath();ctx.fill();
-      ctx.fillStyle="#efbd62";ctx.fillRect(sx+26,sy+18,4,8);
-      ctx.restore();
+      ctx.beginPath();ctx.moveTo(sx+25,sy+14);ctx.lineTo(sx+34,sy+36);ctx.lineTo(sx+16,sy+36);ctx.closePath();ctx.fill();
+      ctx.fillStyle="#efbd62";ctx.fillRect(sx+23,sy+21,4,8);
 
       // Kleine Reinigungsmarkierung nur an jeder zweiten Pfütze.
       if(index % 2 === 1){
-        ctx.fillStyle="#c58a93";ctx.fillRect(h.x+h.w-11,GROUND_Y-30,6,30);
-        ctx.fillStyle="#f6e3e5";roundedRect(h.x+h.w-18,GROUND_Y-30,22,6,3);ctx.fill();
+        ctx.fillStyle="#d9a6af";ctx.fillRect(h.x+h.w-14,GROUND_Y-35,8,35);
+        ctx.fillStyle="#f6e3e5";roundedRect(h.x+h.w-20,GROUND_Y-35,26,7,3);ctx.fill();
       }
     });
   }
