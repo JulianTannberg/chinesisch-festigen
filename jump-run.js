@@ -42,7 +42,7 @@
   let VIEW_H = BASE_VIEW_H;
   let sceneYOffset = 0;
   const WORLD_W = 3600;
-  const GROUND_Y = 392;
+  const GROUND_Y = 470;
   const BASE_ASPECT = BASE_VIEW_W / BASE_VIEW_H;
   const PLAYER_W = 44;
   const PLAYER_H = 68;
@@ -54,6 +54,7 @@
   const SUBWAY_X = 3425;
   const BACKGROUND_TILE_W = WORLD_W / 4;
   const BACKGROUND_TILE_FILES = ["station-bg-1.png","station-bg-2.png","station-bg-3.png","station-bg-4.png"];
+  const BACKGROUND_TILE_Y_OFFSET = 78;
 
   const missions = [
     {
@@ -1315,8 +1316,8 @@
 
 
   function drawBackgroundSeamColumn(screenX){
-    const topY = 108;
-    const bottomY = GROUND_Y + 58 + sceneYOffset;
+    const topY = 108 + BACKGROUND_TILE_Y_OFFSET;
+    const bottomY = VIEW_H;
     const x = Math.round(screenX - 34);
     const w = 68;
     const grad = ctx.createLinearGradient(x,0,x+w,0);
@@ -1349,10 +1350,29 @@
       const screenX = i * BACKGROUND_TILE_W - cameraX;
       if(screenX > VIEW_W || screenX + BACKGROUND_TILE_W < 0) continue;
       if(img.complete && img.naturalWidth){
-        ctx.drawImage(img, Math.floor(screenX), 0, Math.ceil(BACKGROUND_TILE_W) + 2, VIEW_H);
+        ctx.drawImage(img, Math.floor(screenX), BACKGROUND_TILE_Y_OFFSET, Math.ceil(BACKGROUND_TILE_W) + 2, VIEW_H);
       }else{
         ctx.fillStyle = i % 2 ? "#bdd7ec" : "#d7eaf7";
-        ctx.fillRect(Math.floor(screenX), 0, Math.ceil(BACKGROUND_TILE_W) + 2, VIEW_H);
+        ctx.fillRect(Math.floor(screenX), BACKGROUND_TILE_Y_OFFSET, Math.ceil(BACKGROUND_TILE_W) + 2, VIEW_H);
+      }
+    }
+
+    // Die Hintergrundbilder sitzen bewusst etwas tiefer, damit Bahnsteig und Figuren sauber zusammenpassen.
+    if(BACKGROUND_TILE_Y_OFFSET > 0){
+      const topGrad = ctx.createLinearGradient(0,0,0,BACKGROUND_TILE_Y_OFFSET + 24);
+      topGrad.addColorStop(0, "#d4e8f7");
+      topGrad.addColorStop(1, "rgba(212,232,247,.45)");
+      ctx.fillStyle = topGrad;
+      ctx.fillRect(0,0,VIEW_W,BACKGROUND_TILE_Y_OFFSET + 10);
+      ctx.strokeStyle = "rgba(73,104,135,.28)";
+      ctx.lineWidth = 5;
+      for(let x=-70; x<VIEW_W+140; x+=190){
+        ctx.beginPath(); ctx.moveTo(x, BACKGROUND_TILE_Y_OFFSET + 8); ctx.lineTo(x+85, 0); ctx.stroke();
+      }
+      ctx.strokeStyle = "rgba(255,255,255,.54)";
+      ctx.lineWidth = 3;
+      for(let y=16; y<BACKGROUND_TILE_Y_OFFSET; y+=30){
+        ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(VIEW_W,y); ctx.stroke();
       }
     }
 
