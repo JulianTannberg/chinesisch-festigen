@@ -42,7 +42,7 @@
   let VIEW_H = BASE_VIEW_H;
   let sceneYOffset = 0;
   const WORLD_W = 3600;
-  const GROUND_Y = 470;
+  const GROUND_Y = 392;
   const BASE_ASPECT = BASE_VIEW_W / BASE_VIEW_H;
   const PLAYER_W = 44;
   const PLAYER_H = 68;
@@ -53,7 +53,7 @@
   const LINYUE_X = 1535;
   const SUBWAY_X = 3425;
   const BACKGROUND_TILE_W = WORLD_W / 4;
-  const BACKGROUND_TILE_FILES = ["./station-bg-1.png?v=96","./station-bg-2.png?v=96","./station-bg-3.png?v=96","./station-bg-4.png?v=96"];
+  const BACKGROUND_TILE_FILES = ["station-bg-1.png","station-bg-2.png","station-bg-3.png","station-bg-4.png"];
 
   const missions = [
     {
@@ -267,13 +267,6 @@
   const backgroundTileImages = BACKGROUND_TILE_FILES.map(src => {
     const img = new Image();
     img.decoding = "async";
-    img.dataset.retryDone = "0";
-    img.onerror = () => {
-      if(img.dataset.retryDone === "1") return;
-      img.dataset.retryDone = "1";
-      const separator = src.includes("?") ? "&" : "?";
-      setTimeout(() => { img.src = `${src}${separator}retry=${Date.now()}`; }, 700);
-    };
     img.src = src;
     return img;
   });
@@ -1344,17 +1337,7 @@
   function drawBackground(){
     const hasImage = backgroundTileImages.some(img => img.complete && img.naturalWidth);
     if(!hasImage){
-      const loadingGrad = ctx.createLinearGradient(0,0,0,VIEW_H);
-      loadingGrad.addColorStop(0,"#d8ecfb");
-      loadingGrad.addColorStop(.58,"#b8d6eb");
-      loadingGrad.addColorStop(1,"#edf3f5");
-      ctx.fillStyle = loadingGrad;
-      ctx.fillRect(0,0,VIEW_W,VIEW_H);
-      ctx.fillStyle = "rgba(7,29,51,.72)";
-      ctx.font = '700 18px system-ui, sans-serif';
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("Bahnhof-Hintergrund wird geladen …", VIEW_W / 2, VIEW_H / 2);
+      drawBackgroundFallback();
       return;
     }
 
@@ -1428,41 +1411,27 @@
   }
 
   function drawStationPlatform(p){
-    // Leichte Trainingsbalken, optisch näher an der hellen Bahnhofswelt.
+    // Einfache Sprungbalken ohne Füße, damit sie nicht wie Bänke wirken.
     ctx.save();
-    const topY = p.y + 2;
-    const beamH = Math.max(15, p.h - 6);
-    ctx.shadowColor = "rgba(22,43,63,.18)";
-    ctx.shadowBlur = 10;
-    ctx.shadowOffsetY = 6;
+    const topY = p.y + 3;
+    const beamH = Math.max(14, p.h - 8);
+    ctx.shadowColor = "rgba(22,43,63,.16)";
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetY = 4;
     const barGrad = ctx.createLinearGradient(0,topY,0,topY+beamH);
-    barGrad.addColorStop(0,"#f8e7ca");
-    barGrad.addColorStop(.52,"#e9c892");
-    barGrad.addColorStop(1,"#c89f6f");
+    barGrad.addColorStop(0,"#faecd4");
+    barGrad.addColorStop(.55,"#e7c58b");
+    barGrad.addColorStop(1,"#c89962");
     ctx.fillStyle = barGrad;
-    roundedRect(p.x,topY,p.w,beamH,8);ctx.fill();
+    roundedRect(p.x,topY,p.w,beamH,9);ctx.fill();
     ctx.shadowBlur = 0;
     ctx.strokeStyle = "#30475f";
     ctx.lineWidth = 3;
     ctx.stroke();
-
-    ctx.fillStyle = "rgba(255,249,240,.78)";
+    ctx.fillStyle = "rgba(255,250,243,.82)";
     roundedRect(p.x+10,topY+3,p.w-20,3,2);ctx.fill();
-    ctx.fillStyle = "rgba(36,56,74,.72)";
-    roundedRect(p.x+8,topY+beamH-4,p.w-16,4,2);ctx.fill();
-
-    const legXs = p.w >= 220
-      ? [p.x + 24, p.x + p.w/2 - 3, p.x + p.w - 30]
-      : [p.x + 22, p.x + p.w - 28];
-    for(const lx of legXs){
-      const legGrad = ctx.createLinearGradient(lx, topY+beamH, lx, topY+beamH+36);
-      legGrad.addColorStop(0,"#3c556d");
-      legGrad.addColorStop(1,"#223648");
-      ctx.fillStyle = legGrad;
-      roundedRect(lx, topY+beamH+4, 6, 34, 3); ctx.fill();
-      ctx.fillStyle = "rgba(255,255,255,.16)";
-      ctx.fillRect(lx+1, topY+beamH+7, 1, 26);
-    }
+    ctx.fillStyle = "rgba(36,56,74,.68)";
+    roundedRect(p.x+12,topY+beamH-4,p.w-24,4,2);ctx.fill();
     ctx.restore();
   }
 
