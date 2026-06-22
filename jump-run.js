@@ -53,7 +53,7 @@
   const LINYUE_X = 1535;
   const SUBWAY_X = 3425;
   const BACKGROUND_TILE_W = WORLD_W / 4;
-  const BACKGROUND_TILE_FILES = ["station-bg-1.png","station-bg-2.png","station-bg-3.png","station-bg-4.png"];
+  const BACKGROUND_TILE_FILES = ["./station-bg-1.png?v=96","./station-bg-2.png?v=96","./station-bg-3.png?v=96","./station-bg-4.png?v=96"];
 
   const missions = [
     {
@@ -267,6 +267,13 @@
   const backgroundTileImages = BACKGROUND_TILE_FILES.map(src => {
     const img = new Image();
     img.decoding = "async";
+    img.dataset.retryDone = "0";
+    img.onerror = () => {
+      if(img.dataset.retryDone === "1") return;
+      img.dataset.retryDone = "1";
+      const separator = src.includes("?") ? "&" : "?";
+      setTimeout(() => { img.src = `${src}${separator}retry=${Date.now()}`; }, 700);
+    };
     img.src = src;
     return img;
   });
@@ -1337,7 +1344,17 @@
   function drawBackground(){
     const hasImage = backgroundTileImages.some(img => img.complete && img.naturalWidth);
     if(!hasImage){
-      drawBackgroundFallback();
+      const loadingGrad = ctx.createLinearGradient(0,0,0,VIEW_H);
+      loadingGrad.addColorStop(0,"#d8ecfb");
+      loadingGrad.addColorStop(.58,"#b8d6eb");
+      loadingGrad.addColorStop(1,"#edf3f5");
+      ctx.fillStyle = loadingGrad;
+      ctx.fillRect(0,0,VIEW_W,VIEW_H);
+      ctx.fillStyle = "rgba(7,29,51,.72)";
+      ctx.font = '700 18px system-ui, sans-serif';
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("Bahnhof-Hintergrund wird geladen …", VIEW_W / 2, VIEW_H / 2);
       return;
     }
 

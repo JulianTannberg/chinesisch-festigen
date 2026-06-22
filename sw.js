@@ -1,7 +1,7 @@
 // Chinesisch festigen – Service Worker
 // Bei jeder Änderung an der Website die Versionsnummer erhöhen,
 // damit alle Geräte die neuen Dateien laden.
-const CACHE = "cf-v95-jump-v5-obstacles-tuned";
+const CACHE = "cf-v96-jump-background-cache-fix";
 
 const SHELL = [
   "./",
@@ -17,10 +17,10 @@ const SHELL = [
   "./luecken.html",
   "./jump-run.html",
   "./jump-run.js",
-  "./station-bg-1.png",
-  "./station-bg-2.png",
-  "./station-bg-3.png",
-  "./station-bg-4.png",
+  "./station-bg-1.png?v=96",
+  "./station-bg-2.png?v=96",
+  "./station-bg-3.png?v=96",
+  "./station-bg-4.png?v=96",
   "./suran-game.png",
   "./linyue-game.png",
   "./ueben.html",
@@ -50,7 +50,18 @@ const SHELL = [
 ];
 
 self.addEventListener("install", e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  e.waitUntil((async () => {
+    const cache = await caches.open(CACHE);
+    await Promise.all(SHELL.map(async url => {
+      try{
+        const response = await fetch(url, {cache:"reload"});
+        if(response && response.ok) await cache.put(url, response.clone());
+      }catch(_err){
+        // Eine einzelne noch nicht veröffentlichte Datei darf das Update nicht blockieren.
+      }
+    }));
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener("activate", e => {
@@ -81,6 +92,25 @@ self.addEventListener("fetch", e => {
 
   if(url.origin !== location.origin) return;
 
+  // Die vier Bahnhofsbilder immer zuerst frisch anfordern. Frühere Versionen
+  // konnten eine vorübergehende 404-Antwort im Cache festhalten.
+  if(/station-bg-[1-4]\.png$/.test(url.pathname)){
+    e.respondWith((async () => {
+      const cache = await caches.open(CACHE);
+      try{
+        const response = await fetch(e.request, {cache:"no-store"});
+        if(response && response.ok){
+          await cache.put(e.request, response.clone());
+          return response;
+        }
+      }catch(_err){}
+      return (await cache.match(e.request)) ||
+             (await cache.match(url.pathname, {ignoreSearch:true})) ||
+             new Response("Hintergrundbild fehlt", {status:404});
+    })());
+    return;
+  }
+
   // HTML, JS und CSS: erst Netz (damit Updates ankommen), sonst Cache.
   // Nur große, selten geänderte Dateien (Bilder, Audio, Fonts) bleiben cache-first.
   const p = url.pathname;
@@ -102,8 +132,10 @@ self.addEventListener("fetch", e => {
   // Rest: Cache zuerst, Netz als Ergänzung
   e.respondWith(
     caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
-      const copy = res.clone();
-      caches.open(CACHE).then(c => c.put(e.request, copy));
+      if(res && res.ok){
+        const copy = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, copy));
+      }
       return res;
     }))
   );
