@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Sprechen · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#03172B" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Chinesisch" />
+
+</head>
+<body>
+  <main class="app">
+    <div class="topbar">
+      <a class="back" id="back">← Kapitel</a>
+    </div>
+    <h1 id="title">Sprechen</h1>
+    <p class="subtitle">Übe zuerst einzelne Sätze mit Spracherkennung. Daneben kannst du den Schülerdialog als KI-Gespräch starten.</p>
+
+    <div class="infoTip" id="spInfoTip">
+      <p>In <strong>„Sätze sprechen"</strong> sammelst du die Prozente für dieses Kapitel. <strong>Aussprache</strong> und <strong>KI sprechen</strong> sind nur zum Üben da und zählen nicht in die Prozentzahl.</p>
+      <button class="infoTipBtn" id="spInfoBtn" type="button">Verstanden ✓</button>
+    </div>
+    <button class="infoLine" id="spInfoLine" type="button" style="display:none;">ⓘ Nur „Sätze sprechen" zählt für die Prozente</button>
+
+    <div class="tabbar speakTabbar">
+      <button class="tab active" data-tab="satz" type="button">Sätze sprechen</button>
+      <button class="tab" data-tab="aussprache" type="button">Aussprache</button>
+      <button class="tab" data-tab="ki" type="button">KI sprechen</button>
+    </div>
+
+    <section class="panel active" id="panel-satz">
+      <section class="card flexCard speechCheckCard">
+        <div id="unsupported" class="empty" style="display:none;">
+          Auf diesem Gerät (z.&nbsp;B. iPhone/iPad) gibt es keine direkte Spracherkennung im Browser.
+          Du kannst trotzdem sprechen: Tippe unten in das Eingabefeld und wähle auf der Tastatur das
+          <strong>Mikrofon-Symbol</strong> – dann diktierst du den Satz und er erscheint als Text.
+          Wichtig: Vorher unten mit der Weltkugel-Taste auf die <strong>chinesische Tastatur</strong> wechseln,
+          sonst versteht das Diktat nur Deutsch.
+        </div>
+
+        <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Sprechsätze eingetragen.</div>
+
+        <div id="game" class="gameFlex">
+          <div class="puzzleTopline">
+            <div class="small" id="counter">Satz –</div>
+          </div>
+
+          <div class="promptMini">Sag auf Chinesisch:</div>
+          <div class="speakGerman" id="germanPrompt">–</div>
+
+          <div class="actionBar">
+            <button id="recordBtn" class="recordBtn" type="button">Halten &amp; sprechen</button>
+            <button id="hearBtn" type="button">Lösung anhören</button>
+            <span class="spacer"></span>
+            <button id="nextBtn" type="button" disabled>Weiter →</button>
+          </div>
+
+          <div class="inputRow" id="dictateRow" style="display:none;">
+            <input id="dictateInput" lang="zh" type="text" placeholder="Hier tippen oder diktieren …" autocomplete="off" spellcheck="false" />
+            <button id="dictateCheck" type="button" disabled>Prüfen</button>
+          </div>
+
+          <div id="transcriptBox">
+            <div class="small">Erkannt:</div>
+            <div class="speakTranscript" id="transcript">Noch nichts aufgenommen.</div>
+          </div>
+          <div class="feedback neutral" id="feedback"></div>
+          <div class="small" id="micHint"></div>
+
+          <div class="speakExpected" id="expectedBox">
+            <div class="small">Erwarteter Satz:</div>
+            <div class="zh" id="expectedZh">–</div>
+            <div class="pinyin" id="expectedPinyin">–</div>
+            <div class="de" id="expectedDe">–</div>
+          </div>
+
+          <div class="cardBottom">
+            <div class="stats statsRow">
+              <div class="stat"><div class="statK">Runde</div><div class="statV" id="sprRound">1</div></div>
+              <div class="stat"><div class="statK">Direkt richtig</div><div class="statV" id="sprDirect">0</div></div>
+              <div class="stat"><div class="statK">Quote</div><div class="statV" id="sprRate">0%</div></div>
+              <div class="stat"><div class="statK">Serie</div><div class="statV" id="sprStreak">0</div></div>
+            </div>
+            <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
+          </div>
+        </div>
+
+        <div class="finish" id="finish">
+          <p class="finishTitle">Sätze geschafft!</p>
+          <p class="finishText" id="finishText">Du hast alle Sätze gesprochen.</p>
+          <div class="toolbar" style="justify-content:center;margin-top:18px;">
+            <button id="finishRestart" type="button">Noch einmal üben</button>
+            <a class="miniBtn" id="finishBack">Zurück zum Kapitel</a>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section class="panel" id="panel-aussprache">
+      <section class="card">
+        <p class="small" style="margin-top:0;">Höre das Vorbild an, nimm dich selbst auf und vergleiche. Hier wird (noch) nicht bewertet – es geht ums Zuhören und Nachsprechen.</p>
+        <div id="aussEmpty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Sätze eingetragen.</div>
+        <div id="aussGame">
+          <div class="puzzleTopline"><div class="small" id="aussCounter">Satz –</div></div>
+          <div class="aussGrid">
+            <div class="card2">
+              <div class="small">Vorbild – anhören</div>
+              <div class="zh" id="aussZh">–</div>
+              <div class="pinyin" id="aussPinyin">–</div>
+              <div class="de" id="aussDe">–</div>
+              <button id="aussPlayModel" type="button">▶ Anhören</button>
+            </div>
+            <div class="card2">
+              <div class="small">Du – aufnehmen &amp; vergleichen</div>
+              <button id="aussRecord" class="recordBtn" type="button">● Aufnehmen</button>
+              <button id="aussPlayMine" type="button" disabled>▶ Meine Aufnahme</button>
+              <div class="small" id="aussMicNote"></div>
+            </div>
+          </div>
+          <div class="actionBar">
+            <button id="aussPrev" type="button">← Zurück</button>
+            <span class="spacer"></span>
+            <button id="aussNext" type="button">Weiter →</button>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section class="panel" id="panel-ki">
+      <section class="card">
+        <p class="small" style="margin-top:0;">Der Prompt nutzt nur den Schülerdialog dieses Kapitels. Die KI beginnt zuerst nur mit „你好！“ und startet den Dialog danach langsam.</p>
+
+        <div id="dialogPreview" class="dialog" style="margin-bottom:16px;"></div>
+
+        <div class="small" style="margin-bottom:8px;">Prompt zum Kopieren:</div>
+        <textarea class="promptBox" id="prompt" readonly></textarea>
+
+        <div class="toolbar">
+          <button id="copyOpenBtn" type="button">Prompt kopieren & ChatGPT öffnen</button>
+          <button id="copyBtn" type="button">Nur kopieren</button>
+          <button id="openBtn" type="button">Nur ChatGPT öffnen</button>
+          <span class="small" id="copyStatus"></span>
+        </div>
+        <p class="small">Falls ChatGPT den Text nicht automatisch übernimmt: Prompt kopieren, ChatGPT öffnen, in das Nachrichtenfeld einfügen und senden.</p>
+      </section>
+    </section>
+  </main>
+
+<script src="topics.js"></script>
+<script src="common.js"></script>
+<script src="profile.js"></script>
+<script>
+const topic = getTopic();
+applyTheme(topic, "Sprechen");
+document.documentElement.classList.add("noScroll");
+const $ = id => document.getElementById(id);
+$("back").href = `kapitel.html?id=${topic.id}`;
+$("finishBack").href = `kapitel.html?id=${topic.id}`;
+$("title").textContent = `${topic.id}. ${topic.title} · Sprechen`;
+
+/* ===== Reiter ===== */
+const tabButtons = [...document.querySelectorAll(".tab")];
+function activateTab(name){
+  tabButtons.forEach(btn => btn.classList.toggle("active", btn.dataset.tab === name));
+  document.querySelectorAll(".panel").forEach(panel => panel.classList.remove("active"));
+  const panel = document.getElementById(`panel-${name}`);
+  if(panel) panel.classList.add("active");
+  const params = new URLSearchParams(location.search);
+  params.set("id", topic.id);
+  if(name === "satz") params.delete("tab");
+  else params.set("tab", name);
+  history.replaceState(null, "", `${location.pathname}?${params.toString()}`);
+}
+tabButtons.forEach(btn => btn.addEventListener("click", () => activateTab(btn.dataset.tab)));
+const _tp = new URLSearchParams(location.search).get("tab");
+const initialTab = (_tp === "ki" || _tp === "aussprache") ? _tp : "satz";
+activateTab(initialTab);
+cfPaintTabScores([['.tab[data-tab="satz"]', "sprechen"]], topic.id);
+
+/* ===== Teil 1: Sätze sprechen ===== */
+// Auf iPhone/iPad meldet Safari die Spracherkennung zwar als vorhanden,
+// sie funktioniert dort aber nicht (Mikrofon bleibt hängen). Deshalb wird
+// sie auf iOS-Geräten gar nicht erst benutzt.
+const Recognition = cfIsIOS() ? null : (window.SpeechRecognition || window.webkitSpeechRecognition);
+let recognition = null;
+let recording = false;
+let idx = 0;
+let correct = 0;
+let micPrepared = false;
+let failedAttempts = 0;
+let attemptIndex = -1;
+
+function normalizeZh(s){
+  return String(s || "")
+    .replace(/[\s。！？!?，,、；;：:·.]/g, "")
+    .replace(/[妳]/g, "你")
+    .trim();
+}
+function exerciseName(){ return window.CF_PROFILE?.getName?.() || ""; }
+function makeNameFlexible(task){
+  // Selbstvorstellung: 苏然 wird durch den eigenen Namen ersetzt.
+  // Vorbild-Audio bleibt aber Sū Ráns Originalaufnahme (audioZh) – Variante A.
+  if(task.zh && task.zh.indexOf("我叫苏然") !== -1){
+    const name = exerciseName();
+    const deName = name || "…";
+    const zhName = name || "……";
+    const baseDe = task.de || "Hallo, ich heiße Sū Rán.";
+    return {
+      ...task,
+      audioZh: task.zh,                                   // Vorbild bleibt "你好，我叫苏然。"
+      model: { zh: task.zh, pinyin: task.pinyin || "", de: task.de || "" }, // Original (Sū Rán) für die Aussprache
+      zh: task.zh.replace("苏然", zhName),
+      de: baseDe.replace(/Sū Rán|Su Ran|苏然/g, deName),
+      displayDe: name
+        ? baseDe.replace(/Sū Rán|Su Ran|苏然/g, name)
+        : "Hallo, ich heiße … (deinen Namen einsetzen).",
+      pinyin: (task.pinyin || "").replace(/Sū Rán|Su Ran/g, deName),
+      acceptMode: "woJiaoName"
+    };
+  }
+  return task;
+}
+function buildTasks(topic){
+  const fromExplicit = (topic.speechSentences || []).filter(x => x && x.de && x.zh).map(makeNameFlexible);
+  if(fromExplicit.length) return fromExplicit;
+
+  const fromPuzzle = (topic.sentencePuzzles || []).filter(x => x && x.de && x.zh).map(makeNameFlexible);
+  if(fromPuzzle.length) return fromPuzzle;
+
+  return (topic.storyDialog || [])
+    .filter(x => x && x.de && x.zh && normalizeZh(x.zh).length <= 16)
+    .map(x => makeNameFlexible({de:x.de, zh:x.zh, pinyin:x.pinyin || ""}));
+}
+const tasks = buildTasks(topic);
+// Feste Gesamtzahl der Sätze – bleibt der Bezug für den Prozent-Score,
+// auch wenn falsche Sätze zum Wiederholen hinten angehängt werden.
+const originalTotal = tasks.length;
+// Anzahl der Sätze, die beim ersten Versuch ihres zählenden Exemplars richtig waren.
+let firstCorrect = 0;
+
+function stateKey(){ return `cf_speak_sentence_state_v1_${topic.id}`; }
+function save(){ localStorage.setItem(stateKey(), JSON.stringify({idx, correct, firstCorrect, savedAt:Date.now()})); }
+function load(){
+  try{
+    const s = JSON.parse(localStorage.getItem(stateKey()) || "{}");
+    idx = Math.max(0, Math.min(Number(s.idx)||0, tasks.length));
+    correct = Math.max(0, Number(s.correct)||0);
+    firstCorrect = Math.max(0, Number(s.firstCorrect)||0);
+  }catch(e){ idx = 0; correct = 0; firstCorrect = 0; }
+}
+function setFeedback(kind, text){
+  const el = $("feedback");
+  el.className = `feedback ${kind}`;
+  el.textContent = text || "";
+}
+function setMicHint(text){
+  const el = $("micHint");
+  if(el) el.textContent = text || "";
+}
+function current(){ return tasks[idx]; }
+function renderSpeechSentence(){
+  $("finish").classList.remove("show");
+  if(!tasks.length){
+    $("game").style.display = "none";
+    $("empty").style.display = "block";
+    return;
+  }
+  if(idx >= tasks.length){
+    $("game").style.display = "none";
+    $("finish").classList.add("show");
+    cfMarkDone("sprechen");
+    $("finishText").innerHTML = `Direkt erkannt: <strong>${correct}</strong> von <strong>${originalTotal}</strong>`;
+    save();
+    return;
+  }
+  if(attemptIndex !== idx){
+    failedAttempts = 0;
+    attemptIndex = idx;
+  }
+  const t = current();
+  $("game").style.display = "";
+  $("counter").textContent = `Satz ${idx+1} von ${tasks.length}`;
+  $("germanPrompt").textContent = t.displayDe || t.de || "";
+  $("transcript").textContent = "Noch nichts aufgenommen.";
+  spTried = false;
+  if($("dictateInput")){
+    $("dictateInput").value = "";
+    $("dictateCheck").dataset.mode = "";
+    $("dictateCheck").textContent = "Prüfen";
+    $("dictateCheck").disabled = true;
+  }
+  $("expectedZh").textContent = t.zh || "";
+  $("expectedPinyin").textContent = t.pinyin || "";
+  $("expectedDe").textContent = t.displayDe || t.de || "";
+  $("expectedBox").classList.remove("show");
+  $("nextBtn").disabled = true;
+  setFeedback("neutral", "");
+  setMicHint(micPrepared ? "Mikrofon ist vorbereitet." : "");
+  $("progressFill").style.width = `${Math.round(idx / tasks.length * 100)}%`;
+  save();
+}
+function createRecognition(task){
+  const r = new Recognition();
+  r.lang = "zh-CN";
+  r.interimResults = false;
+  r.maxAlternatives = 3;
+  r.onresult = (event) => {
+    const alternatives = Array.from(event.results[0] || []).map(a => a.transcript || "").filter(Boolean);
+    const heard = alternatives[0] || "";
+    $("transcript").textContent = heard || "Nichts erkannt.";
+    checkTranscript(alternatives, task);
+  };
+  r.onerror = (event) => {
+    $("transcript").textContent = "Nicht erkannt.";
+    if(event.error === "not-allowed"){
+      setFeedback("bad", "Mikrofonzugriff wurde nicht erlaubt. Öffne die Seite am besten über GitHub Pages/HTTPS oder localhost, nicht direkt als Datei.");
+    }else if(event.error === "no-speech"){
+      setFeedback("bad", "Ich habe nichts gehört. Drück auf Aufnehmen und sprich direkt los.");
+    }else{
+      setFeedback("bad", "Das hat nicht geklappt. Versuch es noch einmal.");
+    }
+  };
+  r.onend = () => {
+    recording = false;
+    $("recordBtn").classList.remove("recording");
+    $("recordBtn").textContent = "Halten & sprechen";
+  };
+  return r;
+}
+async function prepareMicrophoneOnce(){
+  if(micPrepared) return true;
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    micPrepared = true;
+    return true;
+  }
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    stream.getTracks().forEach(track => track.stop());
+    micPrepared = true;
+    setMicHint("Mikrofon ist vorbereitet.");
+    return true;
+  }catch(e){
+    setMicHint("Mikrofon konnte nicht vorbereitet werden.");
+    setFeedback("bad", "Mikrofonzugriff wurde nicht erlaubt.");
+    return false;
+  }
+}
+let pttReleased = false;
+function stopRecording(){ pttReleased = true; cfNoSelect(false); if(recognition && recording){ try{ recognition.stop(); }catch(e){} } }
+async function startRecording(){
+  if(!Recognition || recording) return;
+  pttReleased = false;
+  cfNoSelect(true);
+  const okMic = await prepareMicrophoneOnce();
+  if(!okMic) return;
+
+  const t = current();
+  recognition = createRecognition(t);
+  recording = true;
+  $("recordBtn").classList.add("recording");
+  $("recordBtn").textContent = "Sprich … (loslassen)";
+  $("transcript").textContent = "Jetzt sprechen.";
+  setFeedback("neutral", "Halten und langsam, deutlich sprechen.");
+  try{ recognition.start(); if(pttReleased){ try{ recognition.stop(); }catch(e){} } }
+  catch(e){
+    recording = false;
+    $("recordBtn").classList.remove("recording");
+    $("recordBtn").textContent = "Halten & sprechen";
+    setFeedback("bad", "Die Aufnahme konnte nicht gestartet werden. Versuch es noch einmal.");
+  }
+}
+let spTried = false;
+let spStats = { round: 1, attempted: 0, direct: 0, streak: 0 };
+try{
+  const s = JSON.parse(localStorage.getItem(`cf_speak_stats_${topic.id}`) || "{}");
+  spStats.round = Math.max(1, Number(s.round) || 1);
+  spStats.attempted = Math.max(0, Number(s.attempted) || 0);
+  spStats.direct = Math.max(0, Number(s.direct) || 0);
+  spStats.streak = Math.max(0, Number(s.streak) || 0);
+}catch(e){}
+function saveSpStats(){
+  localStorage.setItem(`cf_speak_stats_${topic.id}`, JSON.stringify(spStats));
+}
+function updateSpStats(){
+  $("sprRound").textContent = String(spStats.round);
+  $("sprDirect").textContent = String(spStats.direct);
+  $("sprRate").textContent = (spStats.attempted ? Math.round(spStats.direct / spStats.attempted * 100) : 0) + "%";
+  $("sprStreak").textContent = String(spStats.streak);
+}
+function checkTranscript(alternatives, task){
+  const heardNorms = alternatives.map(normalizeZh).filter(Boolean);
+  let ok = false;
+
+  if(task.acceptMode === "woJiaoName"){
+    ok = heardNorms.some(h => h.includes("我叫"));
+  }else{
+    const accepted = [task.zh, ...(task.accept || [])].map(normalizeZh).filter(Boolean);
+    // Es zählt nur der komplette Satz, nicht ein Teil davon.
+    ok = heardNorms.some(h => accepted.some(a => h === a));
+  }
+
+  if(!spTried){
+    spTried = true;
+    spStats.attempted++;
+    if(ok){ spStats.direct++; spStats.streak++; } else { spStats.streak = 0; }
+    saveSpStats();
+    updateSpStats();
+    // Wertung: nur ein „zählendes" Satz-Exemplar (_counted) erhöht firstCorrect.
+    // Beim ersten Mal falsch: Exemplar zählt nicht und wird hinten neu angehängt
+    // (am Ende aller noch offenen Sätze). Schafft man die Wiederholung beim ersten
+    // Versuch, erhöht SIE dann firstCorrect → Prozentzahl steigt.
+    const t0 = current();
+    if(t0 && t0._counted !== false){
+      if(ok){
+        firstCorrect++;
+      }else{
+        tasks.push(Object.assign({}, t0, {_counted:false}));
+      }
+    }
+    cfSetScore("sprechen", originalTotal ? Math.round(firstCorrect / originalTotal * 100) : 0, topic.id);
+  }
+  if(ok){
+    cfPlayFeedback(true);
+    correct++;
+    failedAttempts = 0;
+    setFeedback("ok", task.acceptMode === "woJiaoName" ? "Richtig erkannt: 我叫… passt. Dein eigener Name ist in Ordnung." : "Richtig erkannt. Gut gesprochen.");
+    $("nextBtn").disabled = false;
+  }else{
+    cfPlayFeedback(false);
+    failedAttempts++;
+    $("expectedBox").classList.add("show");
+    if(failedAttempts >= 3) $("nextBtn").disabled = false;
+
+    if(failedAttempts === 3){
+      setFeedback("bad", task.acceptMode === "woJiaoName" ? "Noch nicht erkannt. Ich spreche dir die Struktur einmal langsam vor." : "Noch nicht erkannt. Ich spreche dir den Satz einmal langsam vor; danach versuchst du ihn noch einmal.");
+      setTimeout(() => speakZh(task.audioZh || task.zh || "", 0.65), 350);
+    }else if(failedAttempts >= 5){
+      setFeedback("bad", "Das ist ein schwieriger Satz. Hör ihn dir langsam an, lies die Lösung und versuch ihn danach noch einmal. Du darfst auch weitergehen.");
+      setTimeout(() => speakZh(task.audioZh || task.zh || "", 0.6), 350);
+    }else{
+      setFeedback("bad", task.acceptMode === "woJiaoName" ? "Noch nicht erkannt. Wichtig ist: 我叫 + dein Name." : "Noch nicht erkannt. Sprich langsam und deutlich oder zeig dir die Lösung an.");
+    }
+  }
+  save();
+}
+function speakZh(text, rate = 0.9){
+  cfSpeakZh(text, { rate: rate });
+}
+function nextSpeechSentence(){ idx++; renderSpeechSentence(); }
+function restartSpeechSentence(){
+  idx = 0;
+  correct = 0;
+  firstCorrect = 0;
+  tasks.length = 0;
+  buildTasks(topic).forEach(t => tasks.push(t));
+  spStats.round++;
+  saveSpStats();
+  updateSpStats();
+  localStorage.removeItem(stateKey());
+  renderSpeechSentence();
+}
+
+(function(){
+  const _rb = $("recordBtn"); _rb.style.touchAction = "none";
+  _rb.addEventListener("pointerdown", e => { e.preventDefault(); startRecording(); });
+  _rb.addEventListener("pointerup", stopRecording);
+  _rb.addEventListener("pointerleave", stopRecording);
+  _rb.addEventListener("pointercancel", stopRecording);
+  _rb.addEventListener("contextmenu", e => e.preventDefault());
+})();
+$("hearBtn").addEventListener("click", () => speakZh(current()?.audioZh || current()?.zh || ""));
+$("nextBtn").addEventListener("click", nextSpeechSentence);
+$("finishRestart").addEventListener("click", restartSpeechSentence);
+if(window.speechSynthesis) speechSynthesis.onvoiceschanged = () => {};
+
+/* Diktat-Modus: Geräte ohne SpeechRecognition (iPhone/iPad) */
+if(!Recognition){
+  $("unsupported").style.display = "block";
+  $("recordBtn").style.display = "none";
+  $("dictateRow").style.display = "";
+  // Im Diktat-Modus gibt es nur einen Knopf: Prüfen wird zu Weiter.
+  $("nextBtn").style.display = "none";
+  // „Erkannt:" auf iOS ausblenden – dort steht nur dasselbe wie die Eingabe.
+  if($("transcriptBox")) $("transcriptBox").style.display = "none";
+}
+function checkDictation(){
+  const val = ($("dictateInput").value || "").trim();
+  if(!val) return;
+  checkTranscript([val], current());
+}
+function resetDictateButton(){
+  $("dictateCheck").dataset.mode = "";
+  $("dictateCheck").textContent = "Prüfen";
+  $("dictateCheck").disabled = !($("dictateInput").value || "").trim();
+}
+function handleDictate(){
+  if($("dictateCheck").dataset.mode === "next"){
+    // Weiter zum nächsten Satz
+    nextSpeechSentence();
+    return;
+  }
+  checkDictation();
+  // Richtig (oder nach 3 Fehlversuchen freigegeben) -> Knopf wird zu Weiter
+  if(!$("nextBtn").disabled){
+    $("dictateCheck").dataset.mode = "next";
+    $("dictateCheck").textContent = "Weiter →";
+    $("dictateCheck").disabled = false;
+  }
+}
+$("dictateInput").addEventListener("input", () => {
+  if($("dictateCheck").dataset.mode !== "next"){
+    $("dictateCheck").disabled = !($("dictateInput").value || "").trim();
+  }
+});
+$("dictateCheck").addEventListener("click", handleDictate);
+$("dictateInput").addEventListener("keydown", e => {
+  if(e.key === "Enter"){ e.preventDefault(); handleDictate(); }
+});
+
+load();
+updateSpStats();
+renderSpeechSentence();
+
+/* ===== Teil: Aussprache üben (anhören + selbst aufnehmen + vergleichen) ===== */
+(function(){
+  const aCanRecord = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+  let aIdx = 0, aStream = null, aRec = null, aChunks = [], aURL = null, aRecording = false, aAutoStop = null;
+
+  function aReset(){
+    if(aURL){ try{ URL.revokeObjectURL(aURL); }catch(e){} aURL = null; }
+    $("aussPlayMine").disabled = true;
+    $("aussRecord").textContent = "🎤 Halten & sprechen";
+    aRecording = false;
+  }
+  function aRender(){
+    if(!tasks.length){ $("aussEmpty").style.display = "block"; $("aussGame").style.display = "none"; return; }
+    const t = tasks[aIdx];
+    const m = t.model || null;
+    $("aussZh").textContent = m ? m.zh : t.zh;
+    $("aussPinyin").textContent = m ? m.pinyin : (t.pinyin || "");
+    $("aussDe").textContent = m ? m.de : (t.displayDe || t.de || "");
+    $("aussCounter").textContent = `Satz ${aIdx+1} von ${tasks.length}`;
+    aReset();
+    $("aussRecord").style.display = aCanRecord ? "" : "none";
+    $("aussMicNote").textContent = aCanRecord ? "Zum Sprechen gedrückt halten, zum Beenden loslassen." : "Aufnahme auf diesem Gerät nicht möglich.";
+  }
+  function aStop(){ if(aAutoStop){ clearTimeout(aAutoStop); aAutoStop = null; } if(aRec && aRec.state !== "inactive"){ try{ aRec.stop(); }catch(e){} } }
+  // Push-to-Talk: gedrückt halten zum Sprechen, loslassen zum Beenden.
+  let aHoldWanted = false, aStartPending = false;
+  async function aHoldStart(e){
+    if(e){ e.preventDefault(); }
+    if(!aCanRecord || aRecording || aStartPending) return;
+    aHoldWanted = true; aStartPending = true; cfNoSelect(true);
+    try{ aStream = await navigator.mediaDevices.getUserMedia({audio:true}); }
+    catch(err){ $("aussMicNote").textContent = "Kein Mikrofon-Zugriff."; aStartPending = false; aHoldWanted = false; return; }
+    if(!aHoldWanted){ aStream.getTracks().forEach(x => x.stop()); aStream = null; aStartPending = false; return; }
+    aChunks = [];
+    try{
+      aRec = new MediaRecorder(aStream);
+      aRec.ondataavailable = ev => { if(ev.data && ev.data.size) aChunks.push(ev.data); };
+      aRec.onstop = () => {
+        try{ if(aChunks.length) aURL = URL.createObjectURL(new Blob(aChunks, {type: aChunks[0].type || "audio/webm"})); }catch(e){}
+        if(aStream){ aStream.getTracks().forEach(x => x.stop()); aStream = null; }
+        aRec = null; aRecording = false;
+        $("aussRecord").textContent = "🎤 Halten & sprechen";
+        $("aussPlayMine").disabled = !aURL;
+        if(aURL){ try{ new Audio(aURL).play(); }catch(e){} }
+      };
+      aRec.start(); aRecording = true; $("aussRecord").textContent = "● Aufnahme … loslassen";
+      aAutoStop = setTimeout(aStop, 10000); // Sicherheitslimit 10 s
+    }catch(e){ $("aussMicNote").textContent = "Aufnahme nicht möglich."; if(aStream){ aStream.getTracks().forEach(x => x.stop()); aStream = null; } }
+    aStartPending = false;
+  }
+  function aHoldEnd(){ aHoldWanted = false; cfNoSelect(false); aStop(); }
+  $("aussPlayModel").addEventListener("click", () => { const t = tasks[aIdx]; if(t) cfSpeakZh(t.audioZh || t.zh, {rate:0.9}); });
+  const _arb = $("aussRecord");
+  _arb.style.touchAction = "none";
+  _arb.addEventListener("pointerdown", aHoldStart);
+  _arb.addEventListener("pointerup", aHoldEnd);
+  _arb.addEventListener("pointerleave", aHoldEnd);
+  _arb.addEventListener("pointercancel", aHoldEnd);
+  _arb.addEventListener("contextmenu", e => e.preventDefault());
+  $("aussPlayMine").addEventListener("click", () => { if(aURL){ try{ new Audio(aURL).play(); }catch(e){} } });
+  $("aussPrev").addEventListener("click", () => { if(!tasks.length) return; aStop(); aIdx = (aIdx - 1 + tasks.length) % tasks.length; aRender(); });
+  $("aussNext").addEventListener("click", () => { if(!tasks.length) return; aStop(); aIdx = (aIdx + 1) % tasks.length; aRender(); });
+  aRender();
+})();
+
+/* ===== Teil 2: KI sprechen ===== */
+function buildPrompt(){
+  const lines = topic.studentDialog || [];
+  const dialogText = lines.length
+    ? lines.map(l => `${l.speaker || "Rolle"}: ${l.zh}${l.de ? " — " + l.de : ""}`).join("\n")
+    : "[Hier fehlt noch der Schülerdialog dieses Kapitels.]";
+  const dialogTitle = topic.studentDialogTitle || `Kapitel ${topic.id} – ${topic.title}`;
+  const dialogNote = topic.studentDialogNote ? `\nHINWEIS ZUM DIALOG:\n${topic.studentDialogNote}\n` : "";
+  const learnerName = window.CF_PROFILE?.getName?.() || "";
+  const nameBlock = learnerName
+    ? `\nGESPEICHERTER NAME DER LERNENDEN PERSON:\n${learnerName}\nWenn ein Namenssatz geübt wird, darf dieser Name in lateinischen Buchstaben verwendet werden, z. B. 我叫 ${learnerName}。\n`
+    : "\nGESPEICHERTER NAME DER LERNENDEN PERSON:\nEs ist noch kein Name gespeichert. Bei Namenslücken darf die lernende Person einen eigenen Namen einsetzen.\n";
+
+  return `Du bist mein chinesischer Gesprächspartner und Sprachtrainer (Putonghua).
+
+Ziel:
+Ich übe den Schülerdialog aus Kapitel ${topic.id} „${topic.title}“ allein mit dir. Lernen steht über Unterhaltung.
+
+Niveau:
+HSK2 / frühes HSK3. Ich verstehe noch keine chinesischen Grammatikerklärungen.
+
+Rollen:
+- Du übernimmst NUR Rolle A.
+- Ich übernehme Rolle B.
+- Sprich im Dialog Chinesisch. Erklärungen und Korrekturen auf Deutsch.
+
+WICHTIGER START:
+- Deine erste Antwort besteht ausschließlich aus: 你好！
+- Schreibe am Anfang keine Erklärung, keine Rollenübersicht und noch keine erste Dialogzeile.
+- Warte danach auf meine Antwort.
+- Erst nach meiner Antwort beginnst du mit der ersten passenden Zeile von Rolle A.
+
+DIALOGTITEL:
+${dialogTitle}${dialogNote}${nameBlock}
+DIALOGGRUNDLAGE — NUR DIESE SÄTZE ÜBEN:
+${dialogText}
+
+REGELN FÜR DEN DIALOG:
+- Bleibe streng bei diesen Sätzen und Satzmustern.
+- Erfinde keine neuen Fragen, keine neuen Situationen und keine neuen schwierigen Wörter.
+- Wenn ein Satz Lücken mit …… enthält, darfst du einfache Platzhalter akzeptieren, zum Beispiel einen Namen oder ein Land.
+- Wenn eine Namenslücke vorkommt und oben ein gespeicherter Name steht, nutze diesen Namen in lateinischen Buchstaben, z. B. 我叫 Vanessa。
+- Prüfe bei Namenssätzen nicht den Namen streng; wichtig ist die Struktur 我叫… .
+- Wenn Rolle B mehrere Antwortvarianten hat, akzeptiere genau die passende Variante.
+- Stelle nur dann eine Zusatzfrage, wenn sie als Rolle A in der Dialoggrundlage steht.
+- Wenn ich etwas schreibe, das inhaltlich passt, akzeptiere es auch mit kleinen Abweichungen.
+- Korrigiere maximal EINEN Hauptfehler pro Antwort.
+- Erkläre den Fehler kurz auf Deutsch.
+- Gib danach eine natürliche chinesische Korrektur.
+- Bitte mich danach kurz, den korrigierten Satz zu wiederholen.
+
+AUSSPRACHE UND TÖNE:
+- Wenn ich per Stimme antworte, achte auch auf meine Aussprache.
+- Achte besonders auf chinesische Töne.
+- Wenn ein Ton wahrscheinlich falsch war, nenne genau das betroffene Wort.
+- Gib dann die richtige Pinyin-Schreibung mit Tonzeichen.
+- Korrigiere maximal EINEN Aussprache- oder Tonfehler pro Antwort.
+- Sei nicht zu streng, aber weise auf wichtige Tonfehler hin.
+- Wenn die Aussprache verständlich war, lobe kurz.
+- Wenn du unsicher bist, sage ehrlich: „Ich bin mir nicht ganz sicher, aber es klang ungefähr wie …“
+
+PINYIN:
+- Pinyin nur, wenn ich ausdrücklich darum bitte oder wenn du einen Aussprache-/Tonfehler korrigierst.
+- Wenn ich vom Dialog abweiche, führe mich freundlich zurück zu genau diesem Schülerdialog.`;
+}
+$("prompt").value = buildPrompt();
+
+const preview = $("dialogPreview");
+const lines = topic.studentDialog || [];
+if(topic.studentDialogTitle){
+  const title = document.createElement("div");
+  title.className = "sectionTitle";
+  title.textContent = topic.studentDialogTitle;
+  preview.appendChild(title);
+}
+if(topic.studentDialogNote){
+  const note = document.createElement("div");
+  note.className = "small";
+  note.style.marginBottom = "10px";
+  note.textContent = topic.studentDialogNote;
+  preview.appendChild(note);
+}
+if(lines.length === 0){
+  preview.innerHTML = `<div class="empty">Für dieses Kapitel ist noch kein Schülerdialog eingetragen.</div>`;
+}else{
+  lines.forEach(l => {
+    const row = document.createElement("div");
+    row.className = "bubbleRow left";
+    row.innerHTML = `
+      <div class="speechBubble" style="background:rgba(255,255,255,.18);color:var(--chapter-text)">
+        <div class="speaker">${escapeHtml(l.speaker || "")}</div>
+        <div class="speechText">${escapeHtml(l.zh || "")}</div>
+        ${l.pinyin ? `<div class="speechPinyin">${escapeHtml(l.pinyin)}</div>` : ""}
+        ${l.de ? `<div class="speechDe">${escapeHtml(l.de)}</div>` : ""}
+      </div>
+    `;
+    preview.appendChild(row);
+  });
+}
+
+async function copyPrompt(){
+  const txt = $("prompt").value;
+  try{
+    await navigator.clipboard.writeText(txt);
+  }catch(e){
+    const el = $("prompt");
+    el.focus();
+    el.select();
+    document.execCommand("copy");
+  }
+  $("copyStatus").textContent = "Kopiert.";
+  setTimeout(() => $("copyStatus").textContent = "", 1500);
+}
+$("copyBtn").onclick = copyPrompt;
+$("openBtn").onclick = () => window.open("https://chatgpt.com/", "_blank", "noopener");
+$("copyOpenBtn").onclick = async () => {
+  await copyPrompt();
+  window.open("https://chatgpt.com/", "_blank", "noopener");
+};
+</script>
+<script>
+  cfWireInfoTip(
+    document.getElementById("spInfoTip"),
+    document.getElementById("spInfoLine"),
+    document.getElementById("spInfoBtn"),
+    "cf_tip_sprechen"
+  );
+</script>
+</body>
+</html>

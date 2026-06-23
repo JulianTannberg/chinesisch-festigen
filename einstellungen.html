@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Einstellungen · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#03172B" />
+  <link rel="manifest" href="manifest.webmanifest" />
+</head>
+<body>
+  <main class="app">
+    <div class="topbar"><a class="back" href="index.html">← Übersicht</a></div>
+    <h1>Einstellungen</h1>
+
+    <section class="card">
+      <div class="setTitle">Dein Name für Übungen</div>
+      <p class="small">Wird nur in diesem Browser gespeichert und bei Namenssätzen eingesetzt.</p>
+      <div class="setRow">
+        <input class="profileInput" id="nameInput" type="text" autocomplete="given-name" placeholder="z. B. Vanessa" />
+        <button id="nameSave" type="button">Speichern</button>
+      </div>
+      <div class="small" id="nameStatus"></div>
+    </section>
+
+    <section class="card">
+      <div class="setTitle">Fortschritt zurücksetzen</div>
+      <p class="small">Löscht Prozente und Statistiken. Dein Name bleibt erhalten.</p>
+      <div class="setRow">
+        <select id="resetChapter" class="profileInput"></select>
+        <button id="resetBtn" type="button" class="dangerBtn">Zurücksetzen</button>
+      </div>
+      <div class="small" id="resetStatus"></div>
+    </section>
+
+    <section class="card">
+      <div class="setTitle">Fehler melden</div>
+      <p class="small">Etwas stimmt nicht? Sag uns kurz Bescheid.</p>
+      <div class="setLinks">
+        <a href="fehler.html">Fehler melden</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="setTitle">Rechtliches</div>
+      <div class="setLinks">
+        <a href="datenschutz.html">Datenschutz</a>
+        <a href="agb.html">Nutzungsbedingungen (AGB)</a>
+        <a href="impressum.html">Impressum</a>
+      </div>
+    </section>
+    <p id="cfVersion" style="opacity:.5;font-size:13px;margin-top:20px;text-align:center;">Version: …</p>
+  </main>
+
+  <script src="common.js"></script>
+  <script src="topics.js"></script>
+  <script src="profile.js"></script>
+  <script>
+  const $ = id => document.getElementById(id);
+
+  // --- Name ---
+  function refreshName(){
+    const n = CF_PROFILE.getName();
+    $("nameInput").value = n;
+    $("nameStatus").textContent = n ? `Gespeichert: ${n}` : "Noch kein Name gespeichert.";
+  }
+  $("nameSave").addEventListener("click", () => { CF_PROFILE.setName($("nameInput").value); refreshName(); });
+  $("nameInput").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); CF_PROFILE.setName($("nameInput").value); refreshName(); } });
+  refreshName();
+
+  // --- Fortschritt zurücksetzen ---
+  const sel = $("resetChapter");
+  const topics = (window.CF_TOPICS || []).filter(t => (typeof topicHasContent === "function") ? topicHasContent(t) : true);
+  sel.innerHTML = `<option value="__all">Alle Kapitel</option>` +
+    topics.map(t => `<option value="${t.id}">${escapeHtml(t.id + ". " + (t.title || ""))}</option>`).join("");
+  $("resetBtn").addEventListener("click", async () => {
+    const v = sel.value;
+    const label = v === "__all" ? "ALLE Kapitel" : ("Kapitel " + v);
+    if(!(await cfConfirm(`Fortschritt von ${label} wird gelöscht.\n\nProzente und Statistiken werden zurückgesetzt. Dein Name bleibt erhalten.`, {title:"Fortschritt zurücksetzen?"}))) return;
+    const n = (v === "__all") ? cfResetProgress() : cfResetProgress(v);
+    $("resetStatus").textContent = `Zurückgesetzt (${n} Einträge gelöscht).`;
+  });
+
+  // Sichtbare Version: liest den AKTIVEN Service-Worker-Cache-Namen (z. B. cf-v63).
+  // So lässt sich auf dem Gerät prüfen, welcher Stand wirklich live ist.
+  (function(){
+    const el = $("cfVersion");
+    if(!el) return;
+    if(window.caches && caches.keys){
+      caches.keys().then(keys => {
+        const v = keys.find(k => /^cf-v/.test(k));
+        el.textContent = "Version: " + (v || "—");
+      }).catch(() => { el.textContent = "Version: —"; });
+    }else{
+      el.textContent = "Version: —";
+    }
+  })();
+  </script>
+</body>
+</html>
