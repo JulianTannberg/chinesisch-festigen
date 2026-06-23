@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Weiterleitung · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#03172B" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Chinesisch" />
+
+</head>
+<body>
+  <main class="app">
+    <section class="card">
+      <p>Diese Übung liegt jetzt unter <strong>Sprechen</strong>.</p>
+      <p><a class="miniBtn" id="go">Zur Sprechübung</a></p>
+    </section>
+  </main>
+<script>
+  const params = new URLSearchParams(location.search);
+  const id = (params.get("id") || "01").padStart(2,"0");
+  const target = `sprechen.html?id=${id}`;
+  document.getElementById("go").href = target;
+  location.replace(target);
+</script>
+</body>
+</html>
