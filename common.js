@@ -272,6 +272,14 @@ function cfGetScore(name, chapterId){
   const p = Number(raw);
   return Number.isFinite(p) ? Math.max(0, Math.min(100, p)) : null;
 }
+// Wie cfSetScore, aber der Wert kann nur STEIGEN, nie fallen. Wird im
+// „Fehler wiederholen“-Modus benutzt: ein zweiter Durchgang darf den
+// Punktestand verbessern, aber niemals verschlechtern.
+function cfRaiseScore(name, percent, chapterId){
+  const cur = cfGetScore(name, chapterId);
+  const p = Math.max(0, Math.min(100, Math.round(Number(percent) || 0)));
+  if(cur === null || p > cur) cfSetScore(name, p, chapterId);
+}
 
 // Alle wertbaren Aktivitäten eines Kapitels (eine Quelle der Wahrheit).
 var CF_SCORE_NAMES = ["hoeren","lernen","tippen","schreibtraining","sprechen",

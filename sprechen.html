@@ -95,6 +95,7 @@
           <p class="finishText" id="finishText">Du hast alle Sätze gesprochen.</p>
           <div class="toolbar" style="justify-content:center;margin-top:18px;">
             <button id="finishRestart" type="button">Noch einmal üben</button>
+            <button id="finishRetry" type="button" style="display:none;">Fehler wiederholen</button>
             <a class="miniBtn" id="finishBack">Zurück zum Kapitel</a>
           </div>
         </div>
@@ -237,11 +238,15 @@ function buildTasks(topic){
     .map(x => makeNameFlexible({de:x.de, zh:x.zh, pinyin:x.pinyin || ""}));
 }
 const tasks = buildTasks(topic);
-// Feste Gesamtzahl der Sätze – bleibt der Bezug für den Prozent-Score,
-// auch wenn falsche Sätze zum Wiederholen hinten angehängt werden.
+const originalTasks = tasks.slice();
+// Feste Gesamtzahl der Sätze – bleibt der Bezug für den Prozent-Score.
+// Falsche Sätze werden nicht mehr angehängt, sondern in „wrong“ gesammelt und
+// können am Ende über „Fehler wiederholen“ gezielt erneut gesprochen werden.
 const originalTotal = tasks.length;
-// Anzahl der Sätze, die beim ersten Versuch ihres zählenden Exemplars richtig waren.
+// Anzahl der Sätze, die beim ersten Versuch richtig waren.
 let firstCorrect = 0;
+let retryMode = false; // false = normaler Durchgang, true = „Fehler wiederholen“
+let wrong = [];        // im aktuellen Durchgang falsch gesprochene Sätze
 
 function stateKey(){ return `cf_speak_sentence_state_v1_${topic.id}`; }
 function save(){ localStorage.setItem(stateKey(), JSON.stringify({idx, correct, firstCorrect, savedAt:Date.now()})); }
@@ -273,8 +278,13 @@ function renderSpeechSentence(){
   if(idx >= tasks.length){
     $("game").style.display = "none";
     $("finish").classList.add("show");
-    cfMarkDone("sprechen");
-    $("finishText").innerHTML = `Direkt erkannt: <strong>${correct}</strong> von <strong>${originalTotal}</strong>`;
+    if(!retryMode) cfMarkDone("sprechen");
+    const falsch = wrong.length;
+    $("finishText").innerHTML =
+      `Direkt erkannt: <strong>${firstCorrect}</strong> von <strong>${originalTotal}</strong>` +
+      (falsch ? ` · Noch offen: <strong>${falsch}</strong>` : "");
+    const retryBtn = $("finishRetry");
+    if(retryBtn) retryBtn.style.display = wrong.length > 0 ? "" : "none";
     save();
     return;
   }
@@ -410,19 +420,17 @@ function checkTranscript(alternatives, task){
     if(ok){ spStats.direct++; spStats.streak++; } else { spStats.streak = 0; }
     saveSpStats();
     updateSpStats();
-    // Wertung: nur ein „zählendes" Satz-Exemplar (_counted) erhöht firstCorrect.
-    // Beim ersten Mal falsch: Exemplar zählt nicht und wird hinten neu angehängt
-    // (am Ende aller noch offenen Sätze). Schafft man die Wiederholung beim ersten
-    // Versuch, erhöht SIE dann firstCorrect → Prozentzahl steigt.
+    // Wertung: nur der erste Versuch eines Satzes zählt. Richtig → firstCorrect++.
+    // Falsch → Satz für die „Fehler wiederholen“-Runde sammeln (nicht anhängen).
     const t0 = current();
-    if(t0 && t0._counted !== false){
-      if(ok){
-        firstCorrect++;
-      }else{
-        tasks.push(Object.assign({}, t0, {_counted:false}));
-      }
+    if(ok){
+      firstCorrect++;
+    }else{
+      wrong.push(t0);
     }
-    cfSetScore("sprechen", originalTotal ? Math.round(firstCorrect / originalTotal * 100) : 0, topic.id);
+    const pct = originalTotal ? Math.round(firstCorrect / originalTotal * 100) : 0;
+    if(retryMode) cfRaiseScore("sprechen", pct, topic.id);
+    else cfSetScore("sprechen", pct, topic.id);
   }
   if(ok){
     cfPlayFeedback(true);
@@ -453,14 +461,29 @@ function speakZh(text, rate = 0.9){
 }
 function nextSpeechSentence(){ idx++; renderSpeechSentence(); }
 function restartSpeechSentence(){
+  retryMode = false;
   idx = 0;
   correct = 0;
   firstCorrect = 0;
+  wrong = [];
   tasks.length = 0;
-  buildTasks(topic).forEach(t => tasks.push(t));
+  originalTasks.forEach(t => tasks.push(t));
   spStats.round++;
   saveSpStats();
   updateSpStats();
+  localStorage.removeItem(stateKey());
+  renderSpeechSentence();
+}
+function startRetrySpeech(){
+  // Nur die zuletzt falschen Sätze erneut sprechen. Punktestand kann dabei
+  // nur steigen (cfRaiseScore). firstCorrect bleibt erhalten.
+  const todo = wrong.slice();
+  if(!todo.length){ restartSpeechSentence(); return; }
+  retryMode = true;
+  wrong = [];
+  idx = 0;
+  tasks.length = 0;
+  todo.forEach(t => tasks.push(t));
   localStorage.removeItem(stateKey());
   renderSpeechSentence();
 }
@@ -476,6 +499,7 @@ function restartSpeechSentence(){
 $("hearBtn").addEventListener("click", () => speakZh(current()?.audioZh || current()?.zh || ""));
 $("nextBtn").addEventListener("click", nextSpeechSentence);
 $("finishRestart").addEventListener("click", restartSpeechSentence);
+$("finishRetry").addEventListener("click", startRetrySpeech);
 if(window.speechSynthesis) speechSynthesis.onvoiceschanged = () => {};
 
 /* Diktat-Modus: Geräte ohne SpeechRecognition (iPhone/iPad) */

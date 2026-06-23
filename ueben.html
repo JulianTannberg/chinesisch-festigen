@@ -81,6 +81,7 @@
         <p class="finishText" id="finishText">Du hast alle Sätze gebaut.</p>
         <div class="toolbar" style="justify-content:center;margin-top:18px;">
           <button id="finishRestart" type="button">Noch einmal üben</button>
+          <button id="finishRetry" type="button" style="display:none;">Fehler wiederholen</button>
           <a class="miniBtn" id="finishBack">Zurück zum Kapitel</a>
         </div>
       </div>
@@ -141,10 +142,11 @@ const tasks = (topic.storyDialog || [])
   }))
   .filter(t => t.zhChars.length > 0 && t.deTokens.length > 0);
 
-// Ursprüngliche Satzanzahl (zählt für die Wertung). Falsch beantwortete Sätze
-// werden ans Ende angehängt (zum Üben), zählen aber nicht (_counted=false).
+// Ursprüngliche Satzliste (zählt für die Wertung). Falsch beantwortete Sätze
+// werden NICHT mehr angehängt, sondern in „wrong“ gesammelt und können am Ende
+// gezielt über „Fehler wiederholen“ noch einmal gespielt werden.
 let originalTotal = tasks.length;
-tasks.forEach(t => { t._counted = true; });
+const originalTasks = tasks.slice();
 
 // Distraktoren-Pools
 const zhCharPool = [...new Set(
@@ -189,26 +191,27 @@ let solvedBySpeech = false;
 let taskChecked = false;
 let attempted = 0;
 let firstCorrect = 0;
+let retryMode = false;   // false = normaler Durchgang, true = „Fehler wiederholen“
+let wrong = [];          // im aktuellen Durchgang falsch beantwortete Sätze
 function recordAttempt(ok){
   if(taskChecked) return;
   taskChecked = true;
   attempted++;
   const t = current();
   if(ok){
-    // Richtig beim ersten Versuch dieses Exemplars – egal ob Original oder
-    // wiederholtes (angehängtes) Exemplar: zählt als geschafft. Da jeder falsche
-    // Satz genau einmal als „offenes" Exemplar existiert, kann firstCorrect nie
-    // über originalTotal steigen.
+    // Richtig beim ersten (und einzigen) Versuch dieses Satzes.
+    // firstCorrect bleibt über normalen Durchgang und Wiederhol-Durchgänge
+    // erhalten und kann so bis originalTotal (= 100 %) steigen.
     firstCorrect++;
   }else{
-    // Falsch: Satz ans Ende anhängen (am Ende aller noch offenen Sätze),
-    // damit er später erneut drankommt.
-    tasks.push(Object.assign({}, t, {_counted: false}));
+    // Falsch: Satz für die spätere „Fehler wiederholen“-Runde sammeln.
+    wrong.push(t);
   }
-  // Wertung wird bei jeder Lösung neu berechnet (kann durch geschaffte
-  // Wiederholungen steigen). 100 % = alle Sätze (irgendwann beim ersten
-  // Versuch ihres Exemplars) richtig.
-  cfSetScore(`ueben_${MODE}`, Math.round(firstCorrect / (originalTotal || 1) * 100));
+  // Wertung. Im normalen Durchgang darf sie auch sinken (cfSetScore),
+  // im Wiederhol-Modus kann sie nur steigen (cfRaiseScore).
+  const pct = Math.round(firstCorrect / (originalTotal || 1) * 100);
+  if(retryMode) cfRaiseScore(`ueben_${MODE}`, pct);
+  else cfSetScore(`ueben_${MODE}`, pct);
 }
 
 function stateKey(){ return `cf_ueben_${MODE}_v1_${topic.id}`; }
@@ -254,7 +257,13 @@ function render(){
   if(idx >= tasks.length){
     $("game").style.display = "none";
     $("finish").classList.add("show");
-    cfMarkDone(`ueben_${MODE}`);
+    if(!retryMode) cfMarkDone(`ueben_${MODE}`);
+    const falsch = wrong.length;
+    $("finishText").innerHTML =
+      `Direkt richtig: <strong>${firstCorrect}</strong> von <strong>${originalTotal}</strong>` +
+      (falsch ? ` · Noch offen: <strong>${falsch}</strong>` : "");
+    const retryBtn = $("finishRetry");
+    if(retryBtn) retryBtn.style.display = wrong.length > 0 ? "" : "none";
     save();
     return;
   }
@@ -373,7 +382,27 @@ function check(){
     $("solutionBox").style.display = "block";
   }
 }
-function restartAll(){ idx = 0; attempted = 0; firstCorrect = 0; tasks.length = originalTotal; tasks.forEach(t => { t._counted = true; }); localStorage.removeItem(stateKey()); startTask(); }
+function restartAll(){
+  retryMode = false;
+  idx = 0; attempted = 0; firstCorrect = 0; wrong = [];
+  tasks.length = 0;
+  originalTasks.forEach(t => tasks.push(t));
+  localStorage.removeItem(stateKey());
+  startTask();
+}
+function startRetry(){
+  // Nur die zuletzt falschen Sätze noch einmal spielen. Punktestand kann
+  // dabei nur steigen (cfRaiseScore). firstCorrect wird NICHT zurückgesetzt.
+  const todo = wrong.slice();
+  if(!todo.length){ restartAll(); return; }
+  retryMode = true;
+  wrong = [];
+  idx = 0;
+  tasks.length = 0;
+  todo.forEach(t => tasks.push(t));
+  localStorage.removeItem(stateKey());
+  startTask();
+}
 
 /* Sprechen (nur Deutsch → Chinesisch, nur wenn der Browser es kann) */
 const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -440,6 +469,7 @@ $("nextTaskBtn").addEventListener("click", () => {
   startTask();
 });
 $("finishRestart").addEventListener("click", restartAll);
+$("finishRetry").addEventListener("click", startRetry);
 
 load();
 if(tasks.length && idx < tasks.length) startTask(); else render();
