@@ -1012,7 +1012,45 @@ const TRAIN_CFG = {
   advanced:  { outline: true,  demo: false, info: "Mit Vorlage, ohne vorgezeigte Striche" },
   pro:       { outline: false, demo: false, info: "Aus dem Kopf – Hilfe nach 3 Fehlern" }
 };
-const trainWords = learnWords; // gleiche Vokabelliste wie „Zeichen lernen“
+// Schreibtraining: Wörter werden AM STÜCK geübt – bei mehrteiligen Wörtern
+// (z. B. 你呢, 对不起) kommen alle Zeichen des Wortes nacheinander. So ist immer
+// klar, welches Zeichen gemeint ist, und kein Zeichen wird ausgelassen.
+//
+// Datenmodell: In den Bausteinen ist jedes ZEICHEN einzeln definiert; ein
+// mehrteiliges Wort erkennt man am gemeinsamen word-Feld (z. B. tragen 对 und 起
+// beide word:"对不起"). Wir gruppieren deshalb nach dem word-Feld und nehmen die
+// Zeichen direkt aus dem Wortstring – nicht aus order (dort stehen sie evtl. nicht
+// nebeneinander, und Zwischenzeichen wie 不 haben eine eigene Bedeutung).
+const trainWords = (() => {
+  const out = [];
+  const seen = new Set();
+  const pushWord = (word, py, de, review) => {
+    const chars = [...String(word || "")].filter(c => /[\u4e00-\u9fff]/.test(c));
+    if(!chars.length) return;
+    const key = chars.join("");
+    if(seen.has(key)) return;          // jedes Wort nur einmal
+    seen.add(key);
+    out.push({
+      index: out.length, zh: key, chars,
+      word: key, pinyin: py || "", de: de || "",
+      wordPy: py || "", wordDe: de || "", review: !!review
+    });
+  };
+  if(_bau && _bau.chars){
+    // Reihenfolge: erstes Vorkommen eines zum Wort gehörenden Zeichens in order.
+    (_bau.order || [])
+      .filter(c => /[\u4e00-\u9fff]/.test(c) && _bau.chars[c])
+      .forEach(c => {
+        const d = _bau.chars[c];
+        pushWord(d.word || c, d.wordPy || d.py || "", d.wordDe || d.de || "", d.review);
+      });
+  }else{
+    (topic.vocab || [])
+      .filter(v => /[\u4e00-\u9fff]/.test(v.zh || ""))
+      .forEach(v => pushWord(v.writeZh || v.zh || "", v.writePinyin || v.pinyin || "", v.writeDe || v.de || ""));
+  }
+  return out;
+})();
 let trainLevel = localStorage.getItem(`cf_train_level_${topic.id}`) || "beginner";
 if(!TRAIN_CFG[trainLevel]) trainLevel = "beginner";
 // Position und Erledigt-Status werden PRO STUFE gemerkt.
@@ -1025,8 +1063,7 @@ function loadTrainPos(level){
   const n = raw === null ? fallback : Number(raw);
   return Math.min(Math.max(0, n || 0), Math.max(0, trainWords.length - 1));
 }
-function trainLevelDone(level){ return localStorage.getItem(trainDoneKey(level)) === "1"; }
-let trainIdx = loadTrainPos(trainLevel);
+
 let trainChar = 0;
 let trainWriter = null;
 let trainToken = 0;
@@ -1062,7 +1099,10 @@ function setTrainStatus(text, kind){
   el.textContent = text || "\u00A0";
   el.className = "traceStatus" + (kind ? " " + kind : "");
 }
-function trainWord(){ return trainWords[trainIdx]; }
+function trainWord(){
+  if(trainRetryMode) return trainWords[trainQueue[trainQPos]];
+  return trainWords[trainIdx];
+}
 function cancelTrainWriter(){
   if(trainWriter && typeof trainWriter.cancelQuiz === "function"){
     try{ trainWriter.cancelQuiz(); }catch(e){}
@@ -1159,6 +1199,7 @@ function loadTrainChar(){
       onMistake(){
         if(token !== trainToken) return;
         trainHadMistake = true;
+        trainCharMistake = true;
         strokeMisses++;
         if(strokeMisses % 3 === 0){
           setTrainStatus("Schau her, so geht dieser Strich:", "bad");
@@ -1190,29 +1231,26 @@ function loadTrainChar(){
 }
 function advanceTrain(){
   const w = trainWord();
+  // Erstversuch-Fehler dieses Zeichens festhalten.
+  if(trainCharMistake) trainWordHadFirstMiss = true;
   if(trainChar < w.chars.length - 1){
     trainChar++;
+    trainCharMistake = false;
     setTrainStatus("Gut! Nächstes Zeichen …", "ok");
     setTimeout(loadTrainChar, 450);
     return;
   }
   trainStats.attempted++;
-  if(trainHadMistake){
+  const curWordIdx = trainRetryMode ? trainQueue[trainQPos] : trainIdx;
+  if(trainWordHadFirstMiss){
     trainStats.streak = 0;
+    if(!trainWrong.includes(curWordIdx)) trainWrong.push(curWordIdx); // Wort zum Wiederholen sammeln
   }else{
     trainStats.direct++;
     trainStats.streak++;
   }
   saveTrainStats();
   updateTrainStats();
-  // Freischalt-Wertung nach Abschluss: fertige Zeichen / Gesamt.
-  // Letztes Zeichen geschafft = 100 %. Bester Wert bleibt erhalten.
-  {
-    const total = trainWords.length || 1;
-    const pct = Math.round((trainIdx + 1) / total * 100);
-    const prev = cfGetScore("schreibtraining", topic.id) || 0;
-    cfSetScore("schreibtraining", Math.max(prev, pct), topic.id);
-  }
   cfPlayFeedback(true);
   setTrainStatus("Wort geschafft! 很好！", "ok");
   setTimeout(() => nextTrainWord(), 800);
@@ -1222,15 +1260,21 @@ function loadTrainWord(){
   trainToken++;
   trainChar = 0;
   trainHadMistake = false;
+  trainCharMistake = false;
+  trainWordHadFirstMiss = false;
   $("trainAgainBtn").style.display = "none";
   updateTrainStats();
   const w = trainWord();
   if(!w) return;
-  $("trainCounter").textContent = `Zeichen ${trainIdx + 1} von ${trainWords.length}`;
+  const totalNow = trainRetryMode ? trainQueue.length : trainWords.length;
+  const posNow = trainRetryMode ? (trainQPos + 1) : (trainIdx + 1);
+  $("trainCounter").textContent = trainRetryMode
+    ? `Wiederholung · ${posNow} von ${totalNow}`
+    : `Zeichen ${posNow} von ${totalNow}`;
   // Deutsch als Aufgabe zeigen – das Hanzi würde das Abschreiben erlauben.
   $("trainHanzi").textContent = w.pinyin;
   $("trainPinyin").textContent = w.de + (w.review ? "  ⚑" : "");
-  $("trainDe").textContent = (w.word && w.word !== w.zh) ? `in „${w.wordPy}“ (${w.wordDe})` : "";
+  $("trainDe").textContent = (w.word && w.chars.length > 1) ? `„${w.wordPy}“ – ${w.chars.length} Zeichen` : "";
   updateTrainLevelButtons();
   saveTrain();
   loadTrainChar();
@@ -1240,21 +1284,76 @@ function finishTrainLevel(){
   localStorage.setItem(trainDoneKey(trainLevel), "1");
   cfSetScore("schreibtraining", 100, topic.id);
   cfMarkDone("schreibtraining", topic.id);
+  trainRetryMode = false;
+  trainQueue = trainWords.map((_, i) => i);
+  trainQPos = 0;
+  trainWrong = [];
   trainIdx = 0;
   saveTrain();
   trainStats.round++;
   saveTrainStats();
   updateTrainStats();
   updateTrainLevelButtons();
-  setTrainStatus("🎉 Geschafft! Alle " + trainWords.length + " Zeichen in dieser Stufe.", "ok");
+  setTrainStatus("🎉 Geschafft! Alle " + trainWords.length + " Wörter beim ersten Versuch – diese Stufe ist auf 100 %.", "ok");
+  $("trainAgainBtn").textContent = "Nochmal von vorne";
   $("trainAgainBtn").style.display = "";
 }
+// Kompletter Neustart der Stufe (von vorne, alle Wörter).
+function restartTrainLevel(){
+  trainRetryMode = false;
+  trainQueue = trainWords.map((_, i) => i);
+  trainQPos = 0;
+  trainWrong = [];
+  trainIdx = 0;
+  trainStats.round++;
+  saveTrainStats();
+  updateTrainStats();
+  $("trainAgainBtn").textContent = "Nochmal von vorne";
+  loadTrainWord();
+}
 function nextTrainWord(){
+  if(trainRetryMode){
+    // Im Wiederhol-Durchgang die Queue durchlaufen.
+    if(trainQPos >= trainQueue.length - 1){
+      endTrainPass();
+      return;
+    }
+    trainQPos++;
+    loadTrainWord();
+    return;
+  }
   if(trainIdx >= trainWords.length - 1){
-    finishTrainLevel();
+    endTrainPass();
     return;
   }
   trainIdx++;
+  loadTrainWord();
+}
+// Ende eines Durchgangs (normal oder Wiederholung) auswerten.
+function endTrainPass(){
+  if(trainWrong.length === 0){
+    // Alle Wörter beim ersten Versuch richtig → Stufe geschafft, 100 %.
+    finishTrainLevel();
+    return;
+  }
+  // Es gab Fehler – Gelegenheit zum Wiederholen anbieten.
+  const offen = trainWrong.length;
+  setTrainStatus(`Durchgang fertig. Noch ${offen} Wort${offen === 1 ? "" : "e"} mit Fehlern – wiederhole sie für 100 %.`, "bad");
+  $("trainAgainBtn").textContent = "Fehler wiederholen";
+  $("trainAgainBtn").style.display = "";
+  $("trainGame").querySelectorAll(".traceLayer").forEach(l => l.innerHTML = "");
+}
+// Wiederhol-Durchgang mit den zuletzt falschen Wörtern starten.
+function startTrainRetry(){
+  if(!trainWrong.length){ restartTrainLevel(); return; }
+  trainRetryMode = true;
+  trainQueue = trainWrong.slice();
+  trainWrong = [];
+  trainQPos = 0;
+  trainStats.round++;
+  saveTrainStats();
+  updateTrainStats();
+  $("trainAgainBtn").textContent = "Noch einmal";
   loadTrainWord();
 }
 function ensureTraceInit(){
@@ -1265,12 +1364,25 @@ function ensureTraceInit(){
     $("trainEmpty").style.display = "block";
     return;
   }
+  // Immer mit einem vollständigen Durchgang von vorne beginnen, damit „100 %“
+  // wirklich bedeutet: alle Wörter dieser Stufe in einem Durchgang beim ersten
+  // Versuch richtig. (Sonst könnte ein Wiedereinstieg am Ende fälschlich 100 %
+  // auslösen.)
+  trainRetryMode = false;
+  trainQueue = trainWords.map((_, i) => i);
+  trainQPos = 0;
+  trainWrong = [];
+  trainIdx = 0;
   loadTrainWord();
 }
 document.querySelectorAll("#trainLevels button").forEach(b => {
   b.addEventListener("click", () => {
     if(trainLevel === b.dataset.level) return;
     trainLevel = b.dataset.level;
+    trainRetryMode = false;
+    trainQueue = trainWords.map((_, i) => i);
+    trainQPos = 0;
+    trainWrong = [];
     trainIdx = loadTrainPos(trainLevel);
     $("trainAgainBtn").style.display = "none";
     saveTrain();
@@ -1279,10 +1391,10 @@ document.querySelectorAll("#trainLevels button").forEach(b => {
 });
 $("trainPlay").addEventListener("click", () => cfSpeakZh(trainWord() ? trainWord().zh : "", {rate:0.85}));
 $("trainAgainBtn").addEventListener("click", () => {
-  trainIdx = 0;
-  saveTrain();
   $("trainAgainBtn").style.display = "none";
-  loadTrainWord();
+  // Wenn es noch gesammelte Fehler gibt, diese wiederholen; sonst Neustart.
+  if(trainWrong.length > 0) startTrainRetry();
+  else restartTrainLevel();
 });
 updateTrainLevelButtons();
 
