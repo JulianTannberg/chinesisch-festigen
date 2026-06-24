@@ -133,6 +133,7 @@ function deWords(s){
 // Aufgaben aus allen Dialogzeilen des Kapitels
 const tasks = (topic.storyDialog || [])
   .filter(l => l.zh && l.de)
+  .filter(l => String(l.zh).indexOf("我叫") === -1)   // Selbstvorstellung (eigener Name) raus
   .map(l => ({
     zh: String(l.zh).trim(),
     pinyin: l.pinyin || "",

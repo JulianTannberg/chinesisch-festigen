@@ -147,7 +147,14 @@ function prepareGaps(topic){
       return {...g, choices: shuffle(choices)};             // Verstehen-Optionen raus, Antwort bleibt
     });
   const auto = buildAutoGaps(topic);
-  return uniqueBy([...manual, ...auto], g => `${g.prompt}|${g.answer}`);
+  // Selbstvorstellungs-Satz mit eigenem Namen (我叫…) komplett raus – aus beiden
+  // Quellen (manuelle Übungen und Auto-Lücken aus dem Dialog).
+  const noName = g => {
+    const sol = stripPunctuation(g.solution || "");
+    const pr  = stripPunctuation(g.prompt || "");
+    return !sol.includes("我叫") && !pr.includes("我叫");
+  };
+  return uniqueBy([...manual, ...auto].filter(noName), g => `${g.prompt}|${g.answer}`);
 }
 
 function personalizeGap(g){
@@ -164,7 +171,7 @@ function personalizeGap(g){
     de: replaceText(g.de)
   };
 }
-const gaps = prepareGaps(topic).map(personalizeGap);
+const gaps = prepareGaps(topic);
 const originalGaps = gaps.slice();
 // Feste Gesamtzahl der Aufgaben – bleibt der Bezug für den Prozent-Score.
 // Falsche Aufgaben werden nicht mehr angehängt, sondern in „wrong“ gesammelt
@@ -213,13 +220,16 @@ function render(){
   hadWrong = false;
   const g = gaps[idx];
   $("game").style.display="";
-  const pct = originalTotal ? ` · Richtig: ${Math.round(correct / originalTotal * 100)} %` : "";
+  const pct = retryMode
+    ? " · Wiederholung"
+    : (originalTotal ? ` · Richtig: ${Math.round(correct / originalTotal * 100)} %` : "");
   $("counter").textContent = `Aufgabe ${idx+1} von ${gaps.length}${pct}`;
   const german = String(g.de || "").trim();
   $("gapGerman").textContent = german;
   $("gapGerman").style.display = german ? "block" : "none";
   $("sentence").innerHTML = escapeHtml(g.prompt || "").replace("___", '<span class="gapBlank" id="gapBlank">___</span>');
   $("nextBtn").disabled = true;
+  $("nextBtn").textContent = "Weiter →";
   setFeedback("neutral", "");
   $("progressFill").style.width = `${Math.round(idx / gaps.length * 100)}%`;
   const c = $("choices");
@@ -252,7 +262,9 @@ function choose(choice, btn){
     setFeedback("ok", hadWrong ? "Jetzt richtig!" : "Richtig!");
     const pctOk = originalTotal ? Math.round(correct / originalTotal * 100) : 0;
     if(retryMode) cfRaiseScore("luecken", pctOk); else cfSetScore("luecken", pctOk);
-    $("nextBtn").disabled = false;
+    const nb = $("nextBtn");
+    nb.disabled = false;
+    nb.textContent = (idx + 1 >= gaps.length) ? "Geschafft! →" : "Weiter →";
   }else{
     // Falsch: nur dieses Wort wird rot, die Lücke bleibt leer.
     // Das richtige Wort muss noch gefunden werden.

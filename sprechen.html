@@ -227,14 +227,18 @@ function makeNameFlexible(task){
   return task;
 }
 function buildTasks(topic){
-  const fromExplicit = (topic.speechSentences || []).filter(x => x && x.de && x.zh).map(makeNameFlexible);
+  // Selbstvorstellungs-Satz mit eigenem Namen (我叫…) wird ausgeschlossen –
+  // geübt werden nur die Sätze aus der Story.
+  const noName = x => x && x.zh && x.zh.indexOf("我叫") === -1;
+  const fromExplicit = (topic.speechSentences || []).filter(x => x && x.de && x.zh).filter(noName).map(makeNameFlexible);
   if(fromExplicit.length) return fromExplicit;
 
-  const fromPuzzle = (topic.sentencePuzzles || []).filter(x => x && x.de && x.zh).map(makeNameFlexible);
+  const fromPuzzle = (topic.sentencePuzzles || []).filter(x => x && x.de && x.zh).filter(noName).map(makeNameFlexible);
   if(fromPuzzle.length) return fromPuzzle;
 
   return (topic.storyDialog || [])
     .filter(x => x && x.de && x.zh && normalizeZh(x.zh).length <= 16)
+    .filter(noName)
     .map(x => makeNameFlexible({de:x.de, zh:x.zh, pinyin:x.pinyin || ""}));
 }
 const tasks = buildTasks(topic);
