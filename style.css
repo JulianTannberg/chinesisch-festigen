@@ -1751,12 +1751,12 @@ input, textarea, select, [contenteditable="true"]{
   .jumpTestBtn{top:43px;right:6px;min-height:29px;padding:4px 7px;font-size:9px}
   .jumpMessage{top:48px;font-size:12px;padding:7px 10px}
   .jumpMessage strong{font-size:18px}
-  .jumpTouchControls{height:86px;grid-template-columns:minmax(0,1.65fr) minmax(112px,.8fr);gap:9px;left:7px;right:7px;bottom:6px}
-  .jumpMoveZone{border-radius:19px}
-  .jumpMoveGuide{padding:0 12px;gap:8px}
+  .jumpTouchControls{height:auto;top:0;bottom:0;left:0;right:0;grid-template-columns:1fr 1fr;gap:0}
+  .jumpMoveZone{border-radius:0}
+  .jumpMoveGuide{padding:8px 12px;gap:8px}
   .jumpMoveGuide span{font-size:27px}
   .jumpMoveGuide strong{font-size:10px}
-  .jumpJumpZone{border-radius:22px}
+  .jumpJumpZone{border-radius:0}
   .jumpJumpArrow{font-size:31px}
   .jumpJumpZone strong{font-size:9px}
   .jumpStartOverlay,.jumpMissionOverlay,.jumpSentenceOverlay,.jumpReplyOverlay,.jumpFinishOverlay{padding:7px}
@@ -1788,7 +1788,7 @@ input, textarea, select, [contenteditable="true"]{
   .jumpReplyCard .primaryBtn{min-height:35px;padding:6px 13px;font-size:11px}
 }
 @media (max-height:470px){
-  .jumpTouchControls{height:76px;bottom:5px;gap:8px}
+  .jumpTouchControls{height:auto;top:0;bottom:0}
   .jumpMoveGuide strong{font-size:9px}
   .jumpMoveGuide span{font-size:24px}
   .jumpJumpArrow{font-size:27px}
@@ -1946,13 +1946,16 @@ input, textarea, select, [contenteditable="true"]{
   .jumpSceneContinue{bottom:max(98px,calc(env(safe-area-inset-bottom) + 92px))}
 }
 
-/* Mobile Steuerung: große unsichtbare Touchflächen, kleine Orientierungssymbole */
+/* Mobile Steuerung: linke Bildhälfte = laufen, rechte Bildhälfte = springen.
+   Die Touchflächen füllen die GANZE Höhe (top:0;bottom:0), die Orientierungs-
+   symbole bleiben als kleine, dezente Pillen unten. */
 .jumpTouchControls{
   left:0;
   right:0;
+  top:0;
   bottom:0;
-  height:42%;
-  grid-template-columns:62% 38%;
+  height:auto;
+  grid-template-columns:1fr 1fr;
   gap:0;
 }
 .jumpMoveZone,
@@ -2051,10 +2054,11 @@ input, textarea, select, [contenteditable="true"]{
 
 @media (max-width:760px){
   .jumpTouchControls{
-    height:44%;
-    grid-template-columns:64% 36%;
+    height:auto;
+    grid-template-columns:1fr 1fr;
     left:0;
     right:0;
+    top:0;
     bottom:0;
     gap:0;
   }
@@ -2286,5 +2290,4 @@ input, textarea, select, [contenteditable="true"]{
   }
 }
 
-/* ===== Spiel-Icon in der Topbar (Bonusspiel) ===== */
-.gameIcon{ font-size:20px; line-height:1; }
+/* ===== Spiel-Icon in der Topbar (Bonusspiel) – nutzt settingsIcon-SVG-Stil ===== */
