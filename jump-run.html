@@ -57,7 +57,8 @@
           <div class="jumpOverlayCard">
             <h2>Kapitel <span id="chapterNo"></span>: <span id="chapterTitle"></span></h2>
             <p>Sammle die richtigen Wörter und kehre anschließend zu Lin Yue zurück.</p>
-            <p class="jumpKeys">Computer: ← → und Leertaste · Handy/Tablet: links im großen Lauffeld wischen und halten · rechts tippen = Sprung · zweimal tippen = Doppelsprung</p>
+            <p class="jumpKeys">Computer: ← → und Leertaste · Handy/Tablet: linke Bildhälfte = laufen (tippen &amp; halten), rechte Bildhälfte = springen (zweimal tippen = Doppelsprung)</p>
+            <p class="jumpLevelHint">Weitere Level erscheinen hier, sobald du die nächsten Kapitel freischaltest.</p>
             <button type="button" class="primaryBtn" id="startBtn">Spiel starten</button>
           </div>
         </div>
@@ -102,23 +103,22 @@
         <div class="jumpConfettiLayer" id="confettiLayer" aria-hidden="true"></div>
 
         <div class="jumpTouchControls" id="touchControls" aria-label="Spielsteuerung">
-          <div class="jumpMoveZone" id="moveZone" aria-label="Laufen: Finger aufsetzen, nach links oder rechts ziehen und halten">
+          <div class="jumpMoveZone" id="moveZone" aria-label="Laufen: in der linken Bildhälfte tippen und halten, links oder rechts für die Richtung">
             <div class="jumpMoveGuide" aria-hidden="true">
               <span>◀</span>
-              <strong>Wischen &amp; halten</strong>
+              <strong>Laufen</strong>
               <span>▶</span>
             </div>
           </div>
-          <button type="button" class="jumpJumpZone" id="jumpZone" aria-label="Springen. Zweimal tippen für Doppelsprung.">
+          <button type="button" class="jumpJumpZone" id="jumpZone" aria-label="Springen. Rechte Bildhälfte tippen, zweimal tippen für Doppelsprung.">
             <span class="jumpJumpArrow">↑</span>
-            <strong>Tippen: Sprung</strong>
+            <strong>Springen</strong>
           </button>
         </div>
       </div>
 
       <div class="jumpBelow">
         <p>Auf Handy und Tablet am besten im Querformat und im Vollbild spielen.</p>
-        <button type="button" class="secondaryBtn" id="restartBtn">Level neu starten</button>
       </div>
     </section>
   </main>

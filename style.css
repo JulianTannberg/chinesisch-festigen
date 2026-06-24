@@ -1460,6 +1460,7 @@ input, textarea, select, [contenteditable="true"]{
 .jumpOverlayCard .primaryBtn{background:#03172b;color:#fff;border-color:#03172b}
 .jumpOverlayCard .secondaryBtn{background:#fff;color:#03172b;border-color:rgba(3,23,43,.25)}
 .jumpKeys{font-size:13px;opacity:.76}
+.jumpLevelHint{font-size:12px;opacity:.7;margin-top:8px;font-style:italic}
 .jumpFinishActions,.jumpSentenceActions{
   display:flex;
   flex-wrap:wrap;
@@ -1522,24 +1523,25 @@ input, textarea, select, [contenteditable="true"]{
 
  .jumpTouchControls{
   position:absolute;
-  z-index:17;
-  left:max(12px,env(safe-area-inset-left));
-  right:max(12px,env(safe-area-inset-right));
-  bottom:max(10px,env(safe-area-inset-bottom));
-  height:112px;
+  z-index:8;
+  left:0;
+  right:0;
+  top:0;
+  bottom:0;
+  height:auto;
   display:grid;
-  grid-template-columns:minmax(0,1.7fr) minmax(150px,.85fr);
-  gap:16px;
+  grid-template-columns:1fr 1fr;
+  gap:0;
   pointer-events:none;
   touch-action:none;
 }
 .jumpMoveZone,.jumpJumpZone{
   pointer-events:auto;
-  border:2px solid rgba(255,255,255,.66);
-  background:rgba(3,23,43,.55);
+  border:none;
+  background:transparent;
   color:#fff;
-  box-shadow:0 8px 24px rgba(0,0,0,.24);
-  backdrop-filter:blur(4px);
+  box-shadow:none;
+  backdrop-filter:none;
   -webkit-tap-highlight-color:transparent;
   touch-action:none;
   user-select:none;
@@ -1547,21 +1549,26 @@ input, textarea, select, [contenteditable="true"]{
 }
 .jumpMoveZone{
   min-width:0;
-  border-radius:25px;
+  border-radius:0;
   display:flex;
-  align-items:center;
+  align-items:flex-end;
   justify-content:center;
   overflow:hidden;
+  padding-bottom:max(14px,env(safe-area-inset-bottom));
 }
 .jumpMoveGuide{
-  width:100%;
+  width:auto;
   display:grid;
   grid-template-columns:1fr auto 1fr;
   align-items:center;
   gap:14px;
-  padding:0 22px;
-  opacity:.9;
+  padding:8px 18px;
+  opacity:.5;
   pointer-events:none;
+  background:rgba(3,23,43,.4);
+  border:1px solid rgba(255,255,255,.3);
+  border-radius:22px;
+  backdrop-filter:blur(3px);
 }
 .jumpMoveGuide span{font:900 34px/1 system-ui,sans-serif}
 .jumpMoveGuide span:last-child{text-align:right}
@@ -1580,20 +1587,19 @@ input, textarea, select, [contenteditable="true"]{
 .jumpMoveZone.moving-right .jumpMoveGuide span:last-child{transform:scale(1.25)}
 .jumpJumpZone{
   min-width:0;
-  border-radius:30px;
+  border-radius:0;
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:center;
+  justify-content:flex-end;
   gap:2px;
   font:inherit;
+  padding-bottom:max(14px,env(safe-area-inset-bottom));
 }
-.jumpJumpArrow{font:900 38px/1 system-ui,sans-serif}
-.jumpJumpZone strong{font-size:12px;letter-spacing:.02em}
-.jumpJumpZone.active,.jumpJumpZone:active{
-  transform:scale(.97);
-  background:rgba(217,166,175,.90);
-  color:#03172b;
+.jumpJumpArrow{font:900 30px/1 system-ui,sans-serif;opacity:.5}
+.jumpJumpZone strong{font-size:12px;letter-spacing:.02em;opacity:.5;background:rgba(3,23,43,.4);border:1px solid rgba(255,255,255,.3);border-radius:18px;padding:6px 14px;backdrop-filter:blur(3px)}
+.jumpJumpZone.active,.jumpJumpZone:active .jumpJumpArrow,.jumpJumpZone.active strong{
+  opacity:.85;
 }
 
 .jumpConversationStage{
@@ -2280,19 +2286,5 @@ input, textarea, select, [contenteditable="true"]{
   }
 }
 
-/* ===== Spiel-Einstieg (Bonusspiel) oben in der Kapitelübersicht ===== */
-.gameEntry{
-  display:flex; align-items:center; gap:14px;
-  margin:0 0 18px; padding:16px 18px;
-  border-radius:18px; text-decoration:none;
-  background:linear-gradient(135deg,#e23b3b,#c0392b);
-  color:#fff; box-shadow:0 6px 18px rgba(194,57,57,.4);
-  border:1px solid rgba(255,255,255,.18);
-  transition:transform .15s ease, box-shadow .15s ease;
-}
-.gameEntry:hover{ transform:translateY(-2px); box-shadow:0 10px 24px rgba(194,57,57,.5); }
-.gameEntryIcon{ font-size:34px; line-height:1; flex:0 0 auto; }
-.gameEntryText{ display:flex; flex-direction:column; gap:3px; flex:1 1 auto; }
-.gameEntryTitle{ font-size:19px; font-weight:800; color:var(--gold); }
-.gameEntrySub{ font-size:13px; opacity:.92; }
-.gameEntryArrow{ font-size:24px; font-weight:800; flex:0 0 auto; opacity:.9; }
+/* ===== Spiel-Icon in der Topbar (Bonusspiel) ===== */
+.gameIcon{ font-size:20px; line-height:1; }

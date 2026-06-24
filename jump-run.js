@@ -1836,7 +1836,6 @@
   window.addEventListener("orientationchange", () => setTimeout(syncCanvasAspect, 180), {passive:true});
 
   $("startBtn").addEventListener("click",startGame);
-  $("restartBtn").addEventListener("click",() => resetGame(false));
   $("playAgainBtn").addEventListener("click",() => resetGame(false));
   $("fullscreenBtn").addEventListener("click",toggleFullscreen);
 
