@@ -1475,6 +1475,13 @@ input, textarea, select, [contenteditable="true"]{
   gap:8px;
   margin:15px 0 4px;
 }
+.jumpFinishHint{
+  margin:12px 0 0;
+  font-size:13px;
+  line-height:1.4;
+  color:#5a6b7d;
+  text-align:center;
+}
 .jumpFinishStat{
   padding:10px 7px;
   border-radius:15px;
