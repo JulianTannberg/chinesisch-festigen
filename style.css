@@ -2279,3 +2279,20 @@ input, textarea, select, [contenteditable="true"]{
     font-size:11px;
   }
 }
+
+/* ===== Spiel-Einstieg (Bonusspiel) oben in der Kapitelübersicht ===== */
+.gameEntry{
+  display:flex; align-items:center; gap:14px;
+  margin:0 0 18px; padding:16px 18px;
+  border-radius:18px; text-decoration:none;
+  background:linear-gradient(135deg,#e23b3b,#c0392b);
+  color:#fff; box-shadow:0 6px 18px rgba(194,57,57,.4);
+  border:1px solid rgba(255,255,255,.18);
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.gameEntry:hover{ transform:translateY(-2px); box-shadow:0 10px 24px rgba(194,57,57,.5); }
+.gameEntryIcon{ font-size:34px; line-height:1; flex:0 0 auto; }
+.gameEntryText{ display:flex; flex-direction:column; gap:3px; flex:1 1 auto; }
+.gameEntryTitle{ font-size:19px; font-weight:800; color:var(--gold); }
+.gameEntrySub{ font-size:13px; opacity:.92; }
+.gameEntryArrow{ font-size:24px; font-weight:800; flex:0 0 auto; opacity:.9; }

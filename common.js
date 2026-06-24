@@ -345,6 +345,13 @@ function cfChapterWorkedThrough(topic){
   return appl.every(n => cfIsDone(n, topic.id));
 }
 
+// Das Bonusspiel („Su Rans Reise“) eines Kapitels ist freigeschaltet, sobald das
+// Kapitel komplett durchgearbeitet wurde (jede prozentgebende Aktivität einmal
+// gespielt). Identische Bedingung wie die Freischaltung des nächsten Kapitels.
+function cfBonusGameUnlocked(topic){
+  return cfChapterWorkedThrough(topic);
+}
+
 // Proper-Name-Reserve für Karten-Übungen: Namen, die GANZ bleiben sollen, aber
 // nicht als Verstehen-Vokabel im Kapitel stehen. Mehrzeichige Verstehen-Vokabeln
 // (understandingVocab) werden ohnehin automatisch zusammengehalten – die müssen
