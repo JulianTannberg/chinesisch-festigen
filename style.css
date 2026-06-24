@@ -1531,6 +1531,8 @@ input, textarea, select, [contenteditable="true"]{
   height:auto;
   display:grid;
   grid-template-columns:1fr 1fr;
+  grid-template-rows:100%;
+  align-items:stretch;
   gap:0;
   pointer-events:none;
   touch-action:none;
@@ -1751,7 +1753,7 @@ input, textarea, select, [contenteditable="true"]{
   .jumpTestBtn{top:43px;right:6px;min-height:29px;padding:4px 7px;font-size:9px}
   .jumpMessage{top:48px;font-size:12px;padding:7px 10px}
   .jumpMessage strong{font-size:18px}
-  .jumpTouchControls{height:auto;top:0;bottom:0;left:0;right:0;grid-template-columns:1fr 1fr;gap:0}
+  .jumpTouchControls{height:auto;top:0;bottom:0;left:0;right:0;grid-template-columns:1fr 1fr;grid-template-rows:100%;align-items:stretch;gap:0}
   .jumpMoveZone{border-radius:0}
   .jumpMoveGuide{padding:8px 12px;gap:8px}
   .jumpMoveGuide span{font-size:27px}
@@ -1956,6 +1958,8 @@ input, textarea, select, [contenteditable="true"]{
   bottom:0;
   height:auto;
   grid-template-columns:1fr 1fr;
+  grid-template-rows:100%;
+  align-items:stretch;
   gap:0;
 }
 .jumpMoveZone,
@@ -2056,6 +2060,8 @@ input, textarea, select, [contenteditable="true"]{
   .jumpTouchControls{
     height:auto;
     grid-template-columns:1fr 1fr;
+    grid-template-rows:100%;
+    align-items:stretch;
     left:0;
     right:0;
     top:0;
