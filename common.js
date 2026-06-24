@@ -545,45 +545,55 @@ function cfEnsureCelebrateStyle(){
   st.textContent =
     "#cfCelebrate{position:fixed;inset:0;z-index:99999;pointer-events:none;overflow:hidden;}" +
     "#cfCelebrate .cfConf{position:absolute;top:-12vh;width:10px;height:14px;border-radius:2px;opacity:.95;animation:cfFall linear forwards;}" +
-    // Lampion: hängt an einer dünnen Schnur und schwingt sanft hin und her,
-    // während er herabsinkt. transform-origin oben = Aufhängepunkt.
-    "#cfCelebrate .cfLamp{position:absolute;top:-12vh;font-size:34px;transform-origin:50% -28px;animation:cfDrop ease-in forwards;}" +
-    "#cfCelebrate .cfLamp span{display:inline-block;animation:cfSwing ease-in-out infinite alternate;}" +
-    "#cfCelebrate .cfLamp span::before{content:'';position:absolute;left:50%;top:-26px;width:2px;height:26px;background:rgba(255,210,120,.6);transform:translateX(-50%);}" +
-    // Kranich: fliegt quer über den Bildschirm. Aquarell-Bild, das sanft auf
-    // und ab schwebt. Drei verschachtelte Transform-Ebenen, damit sie sich nicht
-    // gegenseitig überschreiben: .cfCrane = Flug (X), .craneBob = Schweben (Y),
-    // img = Spiegelung der Flugrichtung.
+    // Endlos-Konfetti (für die dauerhafte 100-%-Feier): fällt immer wieder neu.
+    "#cfCelebrate.cfHold .cfConf{animation-iteration-count:infinite;}" +
+    // Lampion baumelt jetzt OBEN am Bildschirmrand (fällt nicht herab). Er hängt
+    // an einer Schnur vom oberen Rand und schwingt sanft hin und her.
+    "#cfCelebrate .cfLamp{position:absolute;top:0;font-size:34px;transform-origin:50% 0;}" +
+    "#cfCelebrate .cfLamp .cfLampSwing{display:inline-block;transform-origin:50% -34px;animation:cfSwing ease-in-out infinite alternate;}" +
+    "#cfCelebrate .cfLamp .cfLampSwing::before{content:'';position:absolute;left:50%;top:-34px;width:2px;height:34px;background:rgba(255,210,120,.7);transform:translateX(-50%);}" +
+    // Kranich: fliegt quer über den Bildschirm und schwebt dabei sanft auf und ab.
+    // .cfCrane = Flug (X), .craneBob = Schweben (Y), img = Spiegelung der Richtung.
     "#cfCelebrate .cfCrane{position:absolute;will-change:transform;animation:cfFlyR linear forwards;}" +
     "#cfCelebrate .cfCrane.l{animation-name:cfFlyL;}" +
+    // Endlos-Kraniche (dauerhafte Feier): fliegen immer wieder hin und her.
+    "#cfCelebrate.cfHold .cfCrane{animation-iteration-count:infinite;}" +
     "#cfCelebrate .craneBob{animation:cfBob ease-in-out infinite alternate;}" +
     "#cfCelebrate .cfCrane img{display:block;width:74px;height:auto;filter:drop-shadow(0 6px 10px rgba(0,0,0,.28));}" +
     "#cfCelebrate .cfCrane.l img{transform:scaleX(-1);}" +
     "#cfCelebrate .cfBanner{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%) scale(.4);" +
       "text-align:center;color:#fff;font-weight:800;text-shadow:0 2px 10px rgba(0,0,0,.5);" +
       "animation:cfPop .6s cubic-bezier(.2,1.4,.4,1) forwards, cfFade .8s ease 3.4s forwards;}" +
+    // In der dauerhaften Feier bleibt der Banner stehen (kein Ausblenden).
+    "#cfCelebrate.cfHold .cfBanner{animation:cfPop .6s cubic-bezier(.2,1.4,.4,1) forwards;}" +
     "#cfCelebrate .cfBanner .cfZh{font-size:46px;color:#ffd966;}" +
     "#cfCelebrate .cfBanner .cfDe{font-size:22px;margin-top:6px;}" +
     "#cfCelebrate.soft .cfBanner .cfZh{font-size:38px;color:#bfe3c6;}" +
+    // „Weiter“-Button der dauerhaften Feier – anklickbar (pointer-events aktiv).
+    "#cfCelebrate .cfDoneBtn{position:absolute;left:50%;top:62%;transform:translateX(-50%);pointer-events:auto;" +
+      "padding:14px 30px;border:none;border-radius:999px;background:#e23b3b;color:#fff;font-size:18px;font-weight:800;" +
+      "box-shadow:0 6px 18px rgba(0,0,0,.4);cursor:pointer;opacity:0;animation:cfBtnIn .5s ease .5s forwards;}" +
     "@keyframes cfFall{to{transform:translateY(122vh) rotate(720deg);}}" +
-    "@keyframes cfDrop{to{transform:translateY(118vh);}}" +
     "@keyframes cfSwing{from{transform:rotate(-16deg);}to{transform:rotate(16deg);}}" +
     "@keyframes cfBob{from{transform:translateY(-7px);}to{transform:translateY(7px);}}" +
     "@keyframes cfFlyR{from{transform:translateX(-16vw);}to{transform:translateX(120vw);}}" +
     "@keyframes cfFlyL{from{transform:translateX(16vw);}to{transform:translateX(-120vw);}}" +
     "@keyframes cfPop{to{transform:translate(-50%,-50%) scale(1);}}" +
-    "@keyframes cfFade{to{opacity:0;}}";
+    "@keyframes cfFade{to{opacity:0;}}" +
+    "@keyframes cfBtnIn{to{opacity:1;}}";
   document.head.appendChild(st);
 }
 
 // ===== Große Feier bei 100 % im Kapitel =====
-// Feuerwerk-/Konfetti-Regen, schwingende rote Lampions und fliegende Kraniche.
+// Dauerhafte 100-%-Feier: Konfetti regnet immer weiter, rote Lampions baumeln
+// oben am Rand, Kraniche fliegen endlos hin und her – bis der Button gedrückt wird.
 function cfCelebrate(opts){
   opts = opts || {};
   if(document.getElementById("cfCelebrate")) return; // läuft schon
   cfEnsureCelebrateStyle();
   var wrap = document.createElement("div");
   wrap.id = "cfCelebrate";
+  wrap.className = "cfHold";
   wrap.setAttribute("aria-hidden", "true");
   var colors = ["#e23b3b","#f5c518","#ffffff","#ff8a3d","#ffd966","#c0392b"];
   var n = opts.pieces || 90;
@@ -597,25 +607,23 @@ function cfCelebrate(opts){
     if(Math.random() < 0.5) c.style.borderRadius = "50%";
     wrap.appendChild(c);
   }
-  // schwingende rote Lampions
+  // baumelnde rote Lampions am oberen Rand (fallen nicht)
   var lamps = 6;
   for(var k = 0; k < lamps; k++){
     var l = document.createElement("div");
     l.className = "cfLamp";
-    l.innerHTML = "<span>🏮</span>";
+    l.innerHTML = "<span class='cfLampSwing'>🏮</span>";
     l.style.left = (6 + Math.random() * 86) + "vw";
-    l.style.animationDuration = (4.2 + Math.random() * 2.4) + "s";
-    l.style.animationDelay = (Math.random() * 1) + "s";
-    l.querySelector("span").style.animationDuration = (1.4 + Math.random() * 0.9) + "s";
+    l.querySelector(".cfLampSwing").style.animationDuration = (1.4 + Math.random() * 0.9) + "s";
+    l.querySelector(".cfLampSwing").style.animationDelay = (Math.random() * 0.8) + "s";
     wrap.appendChild(l);
   }
-  // fliegende Kraniche, von beiden Seiten (Aquarell-Bilder)
+  // fliegende Kraniche, von beiden Seiten (Aquarell-Bilder), endlos
   var cranes = 5;
   for(var m = 0; m < cranes; m++){
     var cr = document.createElement("div");
     var leftDir = Math.random() < 0.5; // true = fliegt nach links
     cr.className = "cfCrane" + (leftDir ? " l" : "");
-    // crane-1 schaut/fliegt nach rechts, crane-2 schaut/fliegt nach links.
     var src = leftDir ? "icons/crane-2.png" : "icons/crane-1.png";
     cr.innerHTML = '<div class="craneBob"><img src="' + src + '" alt="" /></div>';
     cr.style.top = (6 + Math.random() * 48) + "vh";
@@ -631,9 +639,16 @@ function cfCelebrate(opts){
     '<div class="cfZh">' + (opts.zh || "好极了！") + '</div>' +
     '<div class="cfDe">' + (opts.text || "Kapitel zu 100 % gemeistert! 🎉") + '</div>';
   wrap.appendChild(banner);
+  // Button beendet die Feier
+  var btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "cfDoneBtn";
+  btn.textContent = opts.button || "Weiter";
+  var close = function(){ if(wrap.parentNode) wrap.parentNode.removeChild(wrap); };
+  btn.addEventListener("click", close);
+  wrap.appendChild(btn);
   document.body.appendChild(wrap);
   try{ if(typeof cfPlayFeedback === "function") cfPlayFeedback(true); }catch(e){}
-  setTimeout(function(){ if(wrap.parentNode) wrap.parentNode.removeChild(wrap); }, opts.duration || 5200);
 }
 
 // ===== Dezente Feier, wenn ein Kapitel komplett DURCHGEARBEITET wurde =====
@@ -661,11 +676,10 @@ function cfCelebrateDone(opts){
   for(var k = 0; k < 3; k++){
     var l = document.createElement("div");
     l.className = "cfLamp";
-    l.innerHTML = "<span>🏮</span>";
+    l.innerHTML = "<span class='cfLampSwing'>🏮</span>";
     l.style.left = (16 + Math.random() * 68) + "vw";
-    l.style.animationDuration = (4.6 + Math.random() * 2) + "s";
-    l.style.animationDelay = (Math.random() * 1) + "s";
-    l.querySelector("span").style.animationDuration = (1.6 + Math.random() * 0.8) + "s";
+    l.querySelector(".cfLampSwing").style.animationDuration = (1.6 + Math.random() * 0.8) + "s";
+    l.querySelector(".cfLampSwing").style.animationDelay = (Math.random() * 0.8) + "s";
     wrap.appendChild(l);
   }
   var banner = document.createElement("div");

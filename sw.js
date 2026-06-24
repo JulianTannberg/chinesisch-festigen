@@ -1,7 +1,7 @@
 // Chinesisch festigen – Service Worker
 // Bei jeder Änderung an der Website die Versionsnummer erhöhen,
 // damit alle Geräte die neuen Dateien laden.
-const CACHE = "cf-v105-schreibtraining-fix";
+const CACHE = "cf-v106-feier-dauerhaft";
 
 const SHELL = [
   "./",
