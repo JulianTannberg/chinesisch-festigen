@@ -159,18 +159,60 @@ function _cfStopAll(){
   if(cb) cb();
   q.forEach(function(it){ if(it.onend) it.onend(); });
 }
+// Stimmen einmalig vorwärmen (iOS/Safari liefert getVoices() anfangs leer –
+// die Liste kommt erst per voiceschanged). Wir cachen sie, sobald verfügbar.
+var _cfVoices = [];
+function _cfLoadVoices(){
+  try{
+    if(!("speechSynthesis" in window)) return;
+    var v = speechSynthesis.getVoices ? speechSynthesis.getVoices() : [];
+    if(v && v.length) _cfVoices = v;
+  }catch(e){}
+}
+if("speechSynthesis" in window){
+  _cfLoadVoices();
+  try{ speechSynthesis.addEventListener("voiceschanged", _cfLoadVoices); }catch(e){
+    try{ speechSynthesis.onvoiceschanged = _cfLoadVoices; }catch(e2){}
+  }
+  // iOS/Safari: Sprachausgabe muss einmal innerhalb einer echten Nutzer-Geste
+  // „entsperrt“ werden. Beim ersten Tipp einen leeren, stummen Spruch absetzen,
+  // danach funktioniert speak() auch in späteren (verschachtelten) Aufrufen.
+  var _cfSpeechUnlocked = false;
+  var _cfUnlockSpeech = function(){
+    if(_cfSpeechUnlocked) return;
+    _cfSpeechUnlocked = true;
+    try{
+      var u = new SpeechSynthesisUtterance(" ");
+      u.volume = 0; u.rate = 1;
+      speechSynthesis.speak(u);
+    }catch(e){}
+    _cfLoadVoices();
+  };
+  ["touchend","pointerdown","mousedown","keydown"].forEach(function(ev){
+    document.addEventListener(ev, _cfUnlockSpeech, { once:false, passive:true, capture:true });
+  });
+}
 function _cfTts(text, rate, cb){
   if(!("speechSynthesis" in window) || !text){ if(cb) cb(); return; }
   try{
+    // iOS-Eigenheit: speechSynthesis bleibt manchmal „pausiert“ hängen und
+    // spricht dann nicht mehr. Vor jedem Sprechen aufwecken.
+    try{ if(speechSynthesis.paused) speechSynthesis.resume(); }catch(e){}
     var u = new SpeechSynthesisUtterance(String(text));
     u.lang = "zh-CN";
     u.rate = rate || 0.9;
-    var voices = speechSynthesis.getVoices ? speechSynthesis.getVoices() : [];
-    var v = voices.find(function(x){ return (x.lang || "").toLowerCase().startsWith("zh"); });
+    if(!_cfVoices.length) _cfLoadVoices();
+    var v = _cfVoices.find(function(x){ return (x.lang || "").toLowerCase().indexOf("zh") === 0; })
+         || _cfVoices.find(function(x){ return (x.lang || "").toLowerCase().indexOf("zh") !== -1; });
     if(v) u.voice = v;
-    u.onend = function(){ if(cb) cb(); };
-    u.onerror = function(){ if(cb) cb(); };
+    var done = false;
+    u.onend = function(){ if(done) return; done = true; if(cb) cb(); };
+    u.onerror = function(){ if(done) return; done = true; if(cb) cb(); };
     speechSynthesis.speak(u);
+    // Sicherheitsnetz: Falls onend/onerror auf iOS ausbleibt, Callback nach
+    // einer geschätzten Dauer trotzdem auslösen, damit die Warteschlange läuft.
+    var est = 700 + String(text).length * 220;
+    setTimeout(function(){ if(done) return; done = true; if(cb) cb(); }, est);
   }catch(e){ if(cb) cb(); }
 }
 function _cfNext(){
@@ -180,7 +222,13 @@ function _cfNext(){
   _cfPlaying = true;
   _cfCurOnend = it.onend || null;
   var afterEnd = function(){ _cfPlaying = false; _cfCurAudio = null; var cb = _cfCurOnend; _cfCurOnend = null; if(cb) cb(); _cfNext(); };
+  // Keine Audiodatei hinterlegt -> direkt Browserstimme.
   if(!it.url){ _cfTts(it.text, it.rate, afterEnd); return; }
+  // iOS/Safari: Die Browserstimme funktioniert nur, wenn sie SYNCHRON aus der
+  // Antipp-Geste heraus startet. Der Umweg „Audiodatei laden -> Fehler -> Stimme“
+  // ist asynchron und bleibt auf dem iPhone still. Da die App in der Regel ohne
+  // Audiodateien läuft, sprechen wir auf iOS sofort mit der Browserstimme.
+  if(cfIsIOS()){ _cfTts(it.text, it.rate, afterEnd); return; }
   var a = null; try{ a = new Audio(it.url); }catch(e){ a = null; }
   if(!a){ _cfTts(it.text, it.rate, afterEnd); return; }
   _cfCurAudio = a;
