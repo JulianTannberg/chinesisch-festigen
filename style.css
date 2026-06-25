@@ -2308,3 +2308,33 @@ input, textarea, select, [contenteditable="true"]{
 /* KI-Sprechen: optionales Namensfeld */
 .kiNameRow{ margin-bottom:14px; }
 .kiNameInput{ flex:1 1 180px; min-width:140px; max-width:280px; }
+
+/* KI-Sprechen: Rollenwahl-Buttons */
+.kiRoleRow{ margin-bottom:14px; }
+.kiRoleBtns{ display:flex; gap:8px; flex-wrap:wrap; }
+.kiRoleBtn{
+  flex:0 1 auto;
+  padding:8px 18px;
+  border-radius:999px;
+  border:1px solid color-mix(in srgb, var(--chapter-text) 30%, transparent);
+  background:transparent;
+  color:var(--chapter-text);
+  font-size:15px;
+  cursor:pointer;
+}
+.kiRoleBtn.active{
+  background:var(--chapter-text);
+  color:var(--chapter-bg, #03172b);
+  border-color:var(--chapter-text);
+  font-weight:700;
+}
+
+/* KI-Sprechen: Sprachmodus-Hinweis je nach Rolle */
+.kiVoiceHint{
+  margin-top:10px;
+  font-size:13px;
+  line-height:1.5;
+  padding:10px 12px;
+  border-radius:12px;
+  background:color-mix(in srgb, var(--chapter-text) 10%, transparent);
+}

@@ -136,6 +136,11 @@
       <section class="card">
         <p class="small" style="margin-top:0;">Der Prompt nutzt nur den Schülerdialog dieses Kapitels. Die KI beginnt zuerst nur mit „你好！“ und startet den Dialog danach langsam.</p>
 
+        <div class="kiRoleRow">
+          <span class="small" style="display:block;margin-bottom:6px;">Deine Rolle im Dialog (die KI übernimmt die andere):</span>
+          <div class="kiRoleBtns" id="kiRoleBtns"></div>
+        </div>
+
         <div class="kiNameRow">
           <label for="kiName" class="small" style="display:block;margin-bottom:6px;">Dein Name (optional) – wird bei Namenssätzen im Gespräch verwendet:</label>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
@@ -156,6 +161,7 @@
           <span class="small" id="copyStatus"></span>
         </div>
         <p class="small">Falls ChatGPT den Text nicht automatisch übernimmt: Prompt kopieren, ChatGPT öffnen, in das Nachrichtenfeld einfügen und senden.</p>
+        <p class="kiVoiceHint" id="kiVoiceHint"></p>
       </section>
     </section>
   </main>
@@ -628,6 +634,25 @@ renderSpeechSentence();
 })();
 
 /* ===== Teil 2: KI sprechen ===== */
+// Die zwei Sprecherrollen aus dem Schülerdialog (in Reihenfolge ihres ersten
+// Auftretens). Antwort-Varianten wie „B – Antwort 1" werden auf ihre Hauptrolle
+// („B") reduziert. speakerRoles()[0] = Rolle A, [1] = Rolle B.
+function _mainRole(s){
+  // Alles ab dem ersten Trennzeichen (– — : ,) abschneiden -> Hauptrolle.
+  return String(s || "").split(/\s*[–—:,(]/)[0].trim();
+}
+function speakerRoles(){
+  const lines = topic.studentDialog || [];
+  const seen = [];
+  lines.forEach(l => {
+    const s = _mainRole(l && l.speaker);
+    if(s && seen.indexOf(s) === -1) seen.push(s);
+  });
+  return seen;
+}
+// Welche Rolle übernimmt die lernende Person? Index 0 oder 1. Standard: Rolle B (1).
+let myRoleIdx = 1;
+
 function buildPrompt(){
   const lines = topic.studentDialog || [];
   const dialogText = lines.length
@@ -636,9 +661,28 @@ function buildPrompt(){
   const dialogTitle = topic.studentDialogTitle || `Kapitel ${topic.id} – ${topic.title}`;
   const dialogNote = topic.studentDialogNote ? `\nHINWEIS ZUM DIALOG:\n${topic.studentDialogNote}\n` : "";
   const learnerName = window.CF_PROFILE?.getName?.() || "";
+
+  const roles = speakerRoles();
+  const myRole = roles[myRoleIdx] || (myRoleIdx === 0 ? "Rolle A" : "Rolle B");
+  const aiRole = roles[1 - myRoleIdx] || (myRoleIdx === 0 ? "Rolle B" : "Rolle A");
+  // Wer spricht im Dialog zuerst?
+  const firstSpeaker = _mainRole(lines[0] && lines[0].speaker) || aiRole;
+  const aiStarts = firstSpeaker === aiRole;
+  const aiFirstLine = (lines.find(l => l && _mainRole(l.speaker) === aiRole) || {}).zh || "";
+
   const nameBlock = learnerName
-    ? `\nGESPEICHERTER NAME DER LERNENDEN PERSON:\n${learnerName}\nWenn ein Namenssatz geübt wird, darf dieser Name in lateinischen Buchstaben verwendet werden, z. B. 我叫 ${learnerName}。\n`
-    : "\nGESPEICHERTER NAME DER LERNENDEN PERSON:\nEs ist noch kein Name gespeichert. Bei Namenslücken darf die lernende Person einen eigenen Namen einsetzen.\n";
+    ? `\nMEIN NAME (die lernende Person, also du-Gegenüber „${myRole}“):\n${learnerName}\nDieser Name gehört MIR. Wenn ICH mich vorstelle, sage ich „我叫 ${learnerName}“. Verwende diesen Namen NIEMALS für deine eigene Figur (du bist immer 小乐).\n`
+    : `\nMEIN NAME (die lernende Person, Rolle „${myRole}“):\nNoch kein Name gesetzt. Wenn ich mich vorstelle, darf ich einen eigenen Namen einsetzen. Du behältst immer den Namen 小乐 (Xiǎo Lè).\n`;
+
+  const startBlock = aiStarts
+    ? `WICHTIGER START (DU beginnst den Dialog):
+- Deine allererste Antwort ist genau die erste Zeile von „${aiRole}“ aus der Dialoggrundlage${aiFirstLine ? `: ${aiFirstLine}` : ""}.
+- Schreibe sonst nichts davor – keine Erklärung, keine Rollenübersicht.
+- Warte danach auf meine Antwort als „${myRole}“.`
+    : `WICHTIGER START (ICH beginne den Dialog):
+- Schreibe noch keine Dialogzeile. Antworte zuerst nur mit: 你好！
+- Warte dann, bis ICH als „${myRole}“ die erste Zeile sage.
+- Erst danach antwortest du als „${aiRole}“ mit der passenden nächsten Zeile.`;
 
   return `Du bist mein chinesischer Gesprächspartner und Sprachtrainer (Putonghua).
 
@@ -649,15 +693,15 @@ Niveau:
 HSK2 / frühes HSK3. Ich verstehe noch keine chinesischen Grammatikerklärungen.
 
 Rollen:
-- Du übernimmst NUR Rolle A.
-- Ich übernehme Rolle B.
+- Du übernimmst NUR die Rolle „${aiRole}“. Deine Figur heißt 小乐 (Xiǎo Lè). Wenn du dich vorstellst oder nach deinem Namen gefragt wirst, sagst du immer „我叫小乐“ – niemals einen anderen Namen und niemals meinen Namen.
+- Ich übernehme die Rolle „${myRole}“. Mein Name gehört nur mir (siehe unten) und ist nicht dein Name.
 - Sprich im Dialog Chinesisch. Erklärungen und Korrekturen auf Deutsch.
 
-WICHTIGER START:
-- Deine erste Antwort besteht ausschließlich aus: 你好！
-- Schreibe am Anfang keine Erklärung, keine Rollenübersicht und noch keine erste Dialogzeile.
-- Warte danach auf meine Antwort.
-- Erst nach meiner Antwort beginnst du mit der ersten passenden Zeile von Rolle A.
+ZUM SPRACHMODUS (BITTE BEACHTEN):
+- Diese Übung wird gesprochen geübt. Ich starte gleich den Sprachmodus, damit deine chinesischen Sätze laut vorgelesen werden.
+- Halte deine chinesischen Sätze kurz und gut hörbar, eine Zeile nach der anderen.
+
+${startBlock}
 
 DIALOGTITEL:
 ${dialogTitle}${dialogNote}${nameBlock}
@@ -668,10 +712,10 @@ REGELN FÜR DEN DIALOG:
 - Bleibe streng bei diesen Sätzen und Satzmustern.
 - Erfinde keine neuen Fragen, keine neuen Situationen und keine neuen schwierigen Wörter.
 - Wenn ein Satz Lücken mit …… enthält, darfst du einfache Platzhalter akzeptieren, zum Beispiel einen Namen oder ein Land.
-- Wenn eine Namenslücke vorkommt und oben ein gespeicherter Name steht, nutze diesen Namen in lateinischen Buchstaben, z. B. 我叫 Vanessa。
+- Wenn ICH mich vorstelle und oben ein Name steht, ist das MEIN Name. Du bleibst immer 小乐.
 - Prüfe bei Namenssätzen nicht den Namen streng; wichtig ist die Struktur 我叫… .
-- Wenn Rolle B mehrere Antwortvarianten hat, akzeptiere genau die passende Variante.
-- Stelle nur dann eine Zusatzfrage, wenn sie als Rolle A in der Dialoggrundlage steht.
+- Wenn meine Rolle mehrere Antwortvarianten hat, akzeptiere genau die passende Variante.
+- Stelle nur dann eine Zusatzfrage, wenn sie als deine Rolle „${aiRole}“ in der Dialoggrundlage steht.
 - Wenn ich etwas schreibe, das inhaltlich passt, akzeptiere es auch mit kleinen Abweichungen.
 - Korrigiere maximal EINEN Hauptfehler pro Antwort.
 - Erkläre den Fehler kurz auf Deutsch.
@@ -693,6 +737,44 @@ PINYIN:
 - Wenn ich vom Dialog abweiche, führe mich freundlich zurück zu genau diesem Schülerdialog.`;
 }
 $("prompt").value = buildPrompt();
+
+// Rollenwahl: zwei Buttons mit den echten Sprechernamen des Dialogs.
+(function initKiRoles(){
+  const host = $("kiRoleBtns");
+  if(!host) return;
+  const roles = speakerRoles();
+  if(roles.length < 2){ if(host.parentElement) host.parentElement.style.display = "none"; return; }
+  const saved = localStorage.getItem(`cf_kirole_${topic.id}`);
+  myRoleIdx = (saved === "0" || saved === "1") ? Number(saved) : 1;
+  function render(){
+    host.innerHTML = "";
+    roles.forEach((name, i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "kiRoleBtn" + (i === myRoleIdx ? " active" : "");
+      b.textContent = name;
+      b.addEventListener("click", () => {
+        myRoleIdx = i;
+        localStorage.setItem(`cf_kirole_${topic.id}`, String(i));
+        render();
+        $("prompt").value = buildPrompt();
+      });
+      host.appendChild(b);
+    });
+    // Hinweis, wann der Sprachmodus zu starten ist – je nach Rolle.
+    const hint = $("kiVoiceHint");
+    if(hint){
+      const lines = topic.studentDialog || [];
+      const firstSpeaker = _mainRole(lines[0] && lines[0].speaker);
+      const aiRole = roles[1 - myRoleIdx];
+      const iStart = _mainRole(roles[myRoleIdx]) === firstSpeaker;
+      hint.textContent = iStart
+        ? "Du beginnst: Prompt senden, dann in ChatGPT den Sprachmodus starten und selbst den ersten Satz sprechen. 小乐 antwortet danach."
+        : "小乐 beginnt: Prompt senden, dann in ChatGPT den Sprachmodus starten – 小乐 spricht zuerst, danach bist du dran.";
+    }
+  }
+  render();
+})();
 
 // Namensfeld im KI-Bereich: nutzt den im Browser gespeicherten Namen, speichert
 // Änderungen und baut den Prompt neu, damit Namenssätze den eigenen Namen nutzen.
