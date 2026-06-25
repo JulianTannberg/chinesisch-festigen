@@ -650,8 +650,8 @@ function speakerRoles(){
   });
   return seen;
 }
-// Welche Rolle übernimmt die lernende Person? Index 0 oder 1. Standard: Rolle B (1).
-let myRoleIdx = 1;
+// Welche Rolle übernimmt die lernende Person? Index 0 oder 1. Standard: Rolle A (0).
+let myRoleIdx = 0;
 
 function buildPrompt(){
   const lines = topic.studentDialog || [];
@@ -744,8 +744,9 @@ $("prompt").value = buildPrompt();
   if(!host) return;
   const roles = speakerRoles();
   if(roles.length < 2){ if(host.parentElement) host.parentElement.style.display = "none"; return; }
+  // Standard: die lernende Person nimmt Rolle A (erster Sprecher, beginnt selbst).
   const saved = localStorage.getItem(`cf_kirole_${topic.id}`);
-  myRoleIdx = (saved === "0" || saved === "1") ? Number(saved) : 1;
+  myRoleIdx = (saved === "0" || saved === "1") ? Number(saved) : 0;
   function render(){
     host.innerHTML = "";
     roles.forEach((name, i) => {
