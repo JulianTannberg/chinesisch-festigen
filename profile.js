@@ -90,25 +90,19 @@
     });
   }
 
-  // Zeigt das große Eingabefeld nur, wenn noch kein Name gespeichert ist.
+  // Der eigene Name wird nur noch optional im KI-Sprechen-Bereich genutzt.
+  // Die große Eingabe-Aufforderung in Übersicht/Kapitel wird daher nicht mehr
+  // angezeigt (Mount-Punkte bleiben leer).
   function mountSetup(targetId){
     const host = document.getElementById(targetId);
-    if(!host) return;
-    function refresh(){
-      if(getName()) host.innerHTML = "";
-      else renderFull(host, {collapseAfterSave:true});
-    }
-    refresh();
-    window.addEventListener("cf-profile-changed", refresh);
+    if(host) host.innerHTML = "";
   }
 
-  // Zeigt unten nur eine kleine Änderungsmöglichkeit, sobald ein Name gespeichert ist.
+  // Auch die kleine Namensanzeige unten in der Übersicht entfällt – der Name
+  // wird ausschließlich im KI-Sprechen-Bereich verwaltet.
   function mountEdit(targetId){
     const host = document.getElementById(targetId);
-    if(!host) return;
-    function refresh(){ renderCompact(host); }
-    refresh();
-    window.addEventListener("cf-profile-changed", refresh);
+    if(host) host.innerHTML = "";
   }
 
   // Rückwärtskompatibel: alte Aufrufe verhalten sich wie Setup oben.

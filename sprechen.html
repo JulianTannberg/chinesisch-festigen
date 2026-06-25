@@ -136,6 +136,14 @@
       <section class="card">
         <p class="small" style="margin-top:0;">Der Prompt nutzt nur den Schülerdialog dieses Kapitels. Die KI beginnt zuerst nur mit „你好！“ und startet den Dialog danach langsam.</p>
 
+        <div class="kiNameRow">
+          <label for="kiName" class="small" style="display:block;margin-bottom:6px;">Dein Name (optional) – wird bei Namenssätzen im Gespräch verwendet:</label>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <input type="text" id="kiName" class="kiNameInput" placeholder="z. B. Vanessa" autocomplete="off" />
+            <span class="small" id="kiNameStatus"></span>
+          </div>
+        </div>
+
         <div id="dialogPreview" class="dialog" style="margin-bottom:16px;"></div>
 
         <div class="small" style="margin-bottom:8px;">Prompt zum Kopieren:</div>
@@ -685,6 +693,26 @@ PINYIN:
 - Wenn ich vom Dialog abweiche, führe mich freundlich zurück zu genau diesem Schülerdialog.`;
 }
 $("prompt").value = buildPrompt();
+
+// Namensfeld im KI-Bereich: nutzt den im Browser gespeicherten Namen, speichert
+// Änderungen und baut den Prompt neu, damit Namenssätze den eigenen Namen nutzen.
+(function initKiName(){
+  const inp = $("kiName");
+  const status = $("kiNameStatus");
+  if(!inp) return;
+  const saved = window.CF_PROFILE?.getName?.() || "";
+  inp.value = saved;
+  if(status) status.textContent = saved ? "Gespeichert" : "";
+  const apply = () => {
+    const v = inp.value.trim();
+    try{ window.CF_PROFILE?.setName?.(v); }catch(e){}
+    $("prompt").value = buildPrompt();
+    if(status) status.textContent = v ? "Gespeichert" : "";
+  };
+  inp.addEventListener("change", apply);
+  inp.addEventListener("blur", apply);
+  inp.addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); apply(); inp.blur(); } });
+})();
 
 const preview = $("dialogPreview");
 const lines = topic.studentDialog || [];

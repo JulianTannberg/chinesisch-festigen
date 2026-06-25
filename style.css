@@ -2304,3 +2304,7 @@ input, textarea, select, [contenteditable="true"]{
 }
 
 /* ===== Spiel-Icon in der Topbar (Bonusspiel) – nutzt settingsIcon-SVG-Stil ===== */
+
+/* KI-Sprechen: optionales Namensfeld */
+.kiNameRow{ margin-bottom:14px; }
+.kiNameInput{ flex:1 1 180px; min-width:140px; max-width:280px; }

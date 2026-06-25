@@ -14,18 +14,8 @@
     <h1>Einstellungen</h1>
 
     <section class="card">
-      <div class="setTitle">Dein Name für Übungen</div>
-      <p class="small">Wird nur in diesem Browser gespeichert und bei Namenssätzen eingesetzt.</p>
-      <div class="setRow">
-        <input class="profileInput" id="nameInput" type="text" autocomplete="given-name" placeholder="z. B. Vanessa" />
-        <button id="nameSave" type="button">Speichern</button>
-      </div>
-      <div class="small" id="nameStatus"></div>
-    </section>
-
-    <section class="card">
       <div class="setTitle">Fortschritt zurücksetzen</div>
-      <p class="small">Löscht Prozente und Statistiken. Dein Name bleibt erhalten.</p>
+      <p class="small">Löscht Prozente und Statistiken.</p>
       <div class="setRow">
         <select id="resetChapter" class="profileInput"></select>
         <button id="resetBtn" type="button" class="dangerBtn">Zurücksetzen</button>
@@ -57,16 +47,6 @@
   <script src="profile.js"></script>
   <script>
   const $ = id => document.getElementById(id);
-
-  // --- Name ---
-  function refreshName(){
-    const n = CF_PROFILE.getName();
-    $("nameInput").value = n;
-    $("nameStatus").textContent = n ? `Gespeichert: ${n}` : "Noch kein Name gespeichert.";
-  }
-  $("nameSave").addEventListener("click", () => { CF_PROFILE.setName($("nameInput").value); refreshName(); });
-  $("nameInput").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); CF_PROFILE.setName($("nameInput").value); refreshName(); } });
-  refreshName();
 
   // --- Fortschritt zurücksetzen ---
   const sel = $("resetChapter");
