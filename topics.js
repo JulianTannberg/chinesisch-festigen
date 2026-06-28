@@ -3397,11 +3397,6 @@ window.CF_TOPICS = [
         "hint": "x → ch"
       },
       {
-        "zh": "一个人",
-        "pinyin": "yí ge rén",
-        "de": "allein, eine Person"
-      },
-      {
         "zh": "多大",
         "pinyin": "duō dà",
         "de": "wie alt"
@@ -3415,6 +3410,11 @@ window.CF_TOPICS = [
         "zh": "带",
         "pinyin": "dài",
         "de": "mitnehmen, mitbringen"
+      },
+      {
+        "zh": "胡同",
+        "pinyin": "hútòng",
+        "de": "Hutong (traditionelle Gasse)"
       }
     ],
     "storyDialog": [
@@ -3480,9 +3480,9 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "林月",
-        "zh": "没有。我是一个人。",
-        "pinyin": "Méiyǒu. Wǒ shì yí ge rén.",
-        "de": "Nein. Ich bin Einzelkind."
+        "zh": "没有。我没有兄弟姐妹。",
+        "pinyin": "Méiyǒu. Wǒ méiyǒu xiōngdì jiěmèi.",
+        "de": "Nein. Ich habe keine Geschwister."
       },
       {
         "speaker": "林月",
@@ -3498,15 +3498,15 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "林月",
-        "zh": "我们都是一个人。",
-        "pinyin": "Wǒmen dōu shì yí ge rén.",
-        "de": "Wir sind beide Einzelkinder."
+        "zh": "我们都没有兄弟姐妹。",
+        "pinyin": "Wǒmen dōu méiyǒu xiōngdì jiěmèi.",
+        "de": "Wir haben beide keine Geschwister."
       },
       {
         "speaker": "苏然",
-        "zh": "在中国，很多学生都是一个人。",
-        "pinyin": "Zài Zhōngguó, hěn duō xuésheng dōu shì yí ge rén.",
-        "de": "In China sind viele Studenten Einzelkinder."
+        "zh": "在中国，很多学生都没有兄弟姐妹。",
+        "pinyin": "Zài Zhōngguó, hěn duō xuésheng dōu méiyǒu xiōngdì jiěmèi.",
+        "de": "In China haben viele Studenten keine Geschwister."
       },
       {
         "speaker": "林月",
@@ -3614,9 +3614,9 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "B",
-        "zh": "有。/ 没有，我是一个人。",
-        "pinyin": "Yǒu. / Méiyǒu, wǒ shì yí ge rén.",
-        "de": "Ja. / Nein, ich bin Einzelkind."
+        "zh": "有。/ 没有，我没有兄弟姐妹。",
+        "pinyin": "Yǒu. / Méiyǒu, wǒ méiyǒu xiōngdì jiěmèi.",
+        "de": "Ja. / Nein, ich habe keine Geschwister."
       },
       {
         "speaker": "A",
@@ -3672,14 +3672,14 @@ window.CF_TOPICS = [
         ]
       },
       {
-        "de": "Wir sind beide Einzelkinder.",
-        "zh": "我们都是一个人。",
-        "pinyin": "Wǒmen dōu shì yí ge rén.",
+        "de": "Wir haben beide keine Geschwister.",
+        "zh": "我们都没有兄弟姐妹。",
+        "pinyin": "Wǒmen dōu méiyǒu xiōngdì jiěmèi.",
         "tokens": [
           "我们",
           "都",
-          "是",
-          "一个人",
+          "没有",
+          "兄弟姐妹",
           "。"
         ]
       },
@@ -3755,7 +3755,7 @@ window.CF_TOPICS = [
         "de": "Hast du Geschwister?"
       },
       {
-        "prompt": "我们 ___ 是一个人。",
+        "prompt": "我们 ___ 没有兄弟姐妹。",
         "answer": "都",
         "choices": [
           "都",
@@ -3763,9 +3763,9 @@ window.CF_TOPICS = [
           "很",
           "在"
         ],
-        "solution": "我们都是一个人。",
-        "pinyin": "Wǒmen dōu shì yí ge rén.",
-        "de": "Wir sind beide Einzelkinder."
+        "solution": "我们都没有兄弟姐妹。",
+        "pinyin": "Wǒmen dōu méiyǒu xiōngdì jiěmèi.",
+        "de": "Wir haben beide keine Geschwister."
       },
       {
         "prompt": "我爸爸是 ___ 。",

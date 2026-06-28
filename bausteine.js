@@ -235,7 +235,7 @@ window.CF_BAUSTEINE = {
     }
   },
   "08": {
-    order: ["爸","妈","哥","弟","姐","妹","老","师","医","生","学","大","今","年","岁","都","工","作","他","们","做","给","忙","程","经","济","设","计","兄","一","个","人","多","样","带"],
+    order: ["爸","妈","哥","弟","姐","妹","老","师","医","生","学","大","今","年","岁","都","工","作","他","们","做","给","忙","程","经","济","设","计","兄","一","个","多","样","带","胡","同"],
     chars: {
       "爸": { py:"bà", de:"Vater", word:"爸爸", wordPy:"bàba", wordDe:"Vater, Papa" },
       "妈": { py:"mā", de:"Mutter", word:"妈妈", wordPy:"māma", wordDe:"Mutter, Mama" },
@@ -266,12 +266,13 @@ window.CF_BAUSTEINE = {
       "设": { py:"shè", de:"einrichten, gestalten (in 设计)", word:"设计", wordPy:"shèjì", wordDe:"Design, gestalten" },
       "计": { py:"jì", de:"planen, rechnen (in 设计)", word:"设计", wordPy:"shèjì", wordDe:"Design, gestalten" },
       "兄": { py:"xiōng", de:"älterer Bruder (in 兄弟姐妹)", word:"兄弟姐妹", wordPy:"xiōngdì jiěmèi", wordDe:"Geschwister" },
-      "一": { py:"yī", de:"eins (aus 一下)", word:"一个人", wordPy:"yí ge rén", wordDe:"allein, eine Person", review:true },
-      "个": { py:"ge", de:"Stück (Standard-Zählwort) (aus 哪个)", word:"一个人", wordPy:"yí ge rén", wordDe:"allein, eine Person", review:true },
-      "人": { py:"rén", de:"Mensch, Person (aus Kapitel 01)", word:"一个人", wordPy:"yí ge rén", wordDe:"allein, eine Person", review:true },
+      "一": { py:"yī", de:"eins (aus 一下)", word:"一个", wordPy:"yí ge", wordDe:"ein, eine", review:true },
+      "个": { py:"ge", de:"Stück (Standard-Zählwort) (aus 哪个)", word:"一个", wordPy:"yí ge", wordDe:"ein, eine", review:true },
       "多": { py:"duō", de:"viel (aus 多少)", word:"多大", wordPy:"duō dà", wordDe:"wie alt", review:true },
       "样": { py:"yàng", de:"Art, Aussehen (in 一样: gleich)", word:"一样", wordPy:"yíyàng", wordDe:"gleich, genauso" },
-      "带": { py:"dài", de:"mitnehmen, mitbringen", word:"带", wordPy:"dài", wordDe:"mitnehmen, mitbringen" }
+      "带": { py:"dài", de:"mitnehmen, mitbringen", word:"带", wordPy:"dài", wordDe:"mitnehmen, mitbringen" },
+      "胡": { py:"hú", de:"(in 胡同: Gasse)", word:"胡同", wordPy:"hútòng", wordDe:"Hutong (traditionelle Gasse)" },
+      "同": { py:"tóng", de:"gleich, gemeinsam (in 胡同)", word:"胡同", wordPy:"hútòng", wordDe:"Hutong (traditionelle Gasse)" }
     }
   }};
 
