@@ -25,6 +25,7 @@ const SHELL = [
   "./linyue-game.png",
   "./ueben.html",
   "./wiederholen.html",
+  "./zeichen.html",
   "./chat.html",
   "./einstellungen.html",
   "./fehler.html",

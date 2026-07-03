@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Zeichen nachzeichnen · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#03172B" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7/dist/hanzi-writer.min.js"></script>
+</head>
+<body>
+  <main class="app">
+    <div class="topbar">
+      <a class="back" href="index.html">← Kapitelübersicht</a>
+    </div>
+    <h1>Zeichen nachzeichnen</h1>
+
+    <p style="opacity:.8;margin-top:-6px;">
+      Zeichen eingeben und Schritt für Schritt mit der richtigen Strichreihenfolge üben.
+    </p>
+
+    <div style="display:flex;gap:8px;margin:14px 0;">
+      <input id="charInput" type="text" inputmode="text" autocomplete="off"
+        placeholder="z. B. 好"
+        style="flex:1;font-size:22px;padding:12px 14px;border-radius:12px;
+               border:1px solid var(--stroke);background:var(--card-strong);color:inherit;" />
+      <button id="goBtn"
+        style="font-size:18px;padding:12px 18px;border-radius:12px;border:none;
+               background:var(--card-strong);outline:2px solid rgba(255,255,255,.26);color:inherit;">
+        Los
+      </button>
+    </div>
+
+    <p id="hint" style="opacity:.75;font-size:14px;">Mehrere Zeichen möglich – sie kommen nacheinander.</p>
+
+    <div id="stage" style="display:none;">
+      <p id="stageLine" style="margin:6px 0;opacity:.85;"></p>
+      <div id="target"
+        style="width:100%;max-width:300px;aspect-ratio:1;margin:8px auto;
+               background:var(--card-strong);border-radius:16px;position:relative;"></div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap;">
+        <button id="animBtn" style="padding:10px 16px;border-radius:12px;border:1px solid var(--stroke);background:transparent;color:inherit;">Vormachen</button>
+        <button id="quizBtn" style="padding:10px 16px;border-radius:12px;border:1px solid var(--stroke);background:transparent;color:inherit;">Selbst schreiben</button>
+        <button id="nextBtn" style="padding:10px 16px;border-radius:12px;border:none;background:var(--card-strong);outline:2px solid rgba(255,255,255,.26);color:inherit;display:none;">Nächstes Zeichen</button>
+      </div>
+      <p id="feedback" style="text-align:center;margin-top:10px;min-height:1.4em;"></p>
+    </div>
+  </main>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    let chars = [];
+    let idx = 0;
+    let writer = null;
+
+    // Nur CJK-Zeichen behalten
+    function extractHanzi(s){
+      return [...s].filter(c => /[\u3400-\u9FFF]/.test(c));
+    }
+
+    function accent(){
+      const v = getComputedStyle(document.body).getPropertyValue("--accent");
+      return v && v.trim() ? v.trim() : "#7FB2D9";
+    }
+
+    function start(){
+      chars = extractHanzi($("charInput").value);
+      if(chars.length === 0){
+        $("hint").textContent = "Bitte ein chinesisches Zeichen eingeben.";
+        return;
+      }
+      idx = 0;
+      $("stage").style.display = "block";
+      render();
+    }
+
+    function render(){
+      const ch = chars[idx];
+      $("stageLine").textContent = `Zeichen ${idx+1} von ${chars.length}: ${ch}`;
+      $("nextBtn").style.display = (chars.length > 1) ? "inline-block" : "none";
+      $("feedback").textContent = "";
+      buildWriter(ch, false);
+    }
+
+    function buildWriter(ch, showChar){
+      const target = $("target");
+      target.innerHTML = "";
+      try{
+        writer = HanziWriter.create("target", ch, {
+          width: target.clientWidth || 280,
+          height: target.clientHeight || 280,
+          padding: 14,
+          showOutline: true,
+          showCharacter: showChar,
+          strokeColor: accent(),
+          radicalColor: "#c0392b",
+          drawingColor: "#111111",
+          drawingWidth: 26,
+          showHintAfterMisses: 2
+        });
+      }catch(e){
+        $("feedback").textContent = "Für dieses Zeichen gibt es keine Strichdaten.";
+      }
+    }
+
+    function animate(){
+      if(!writer) return;
+      $("feedback").textContent = "";
+      writer.animateCharacter();
+    }
+
+    function quiz(){
+      const ch = chars[idx];
+      buildWriter(ch, false);
+      $("feedback").textContent = "Schreibe das Zeichen.";
+      setTimeout(() => {
+        if(!writer) return;
+        writer.quiz({
+          onComplete: () => { $("feedback").textContent = "Geschafft."; }
+        });
+      }, 120);
+    }
+
+    function next(){
+      idx = (idx + 1) % chars.length;
+      render();
+    }
+
+    $("goBtn").addEventListener("click", start);
+    $("charInput").addEventListener("keydown", e => { if(e.key === "Enter") start(); });
+    $("animBtn").addEventListener("click", animate);
+    $("quizBtn").addEventListener("click", quiz);
+    $("nextBtn").addEventListener("click", next);
+  </script>
+</body>
+</html>
