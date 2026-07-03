@@ -41,11 +41,9 @@
       <p id="stageLine" style="margin:6px 0;opacity:.85;"></p>
       <div id="target"
         style="width:100%;max-width:300px;aspect-ratio:1;margin:8px auto;
-               background:var(--card-strong);border-radius:16px;position:relative;"></div>
+               background:#ffffff;border-radius:16px;position:relative;"></div>
       <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap;">
-        <button id="animBtn" style="padding:10px 16px;border-radius:12px;border:1px solid var(--stroke);background:transparent;color:inherit;">Vormachen</button>
-        <button id="quizBtn" style="padding:10px 16px;border-radius:12px;border:1px solid var(--stroke);background:transparent;color:inherit;">Selbst schreiben</button>
-        <button id="nextBtn" style="padding:10px 16px;border-radius:12px;border:none;background:var(--card-strong);outline:2px solid rgba(255,255,255,.26);color:inherit;display:none;">Nächstes Zeichen</button>
+        <button id="restartBtn" style="padding:10px 16px;border-radius:12px;border:1px solid var(--stroke);background:transparent;color:inherit;">Nochmal</button>
       </div>
       <p id="feedback" style="text-align:center;margin-top:10px;min-height:1.4em;"></p>
     </div>
@@ -56,15 +54,10 @@
     let chars = [];
     let idx = 0;
     let writer = null;
+    let token = 0;
 
-    // Nur CJK-Zeichen behalten
     function extractHanzi(s){
       return [...s].filter(c => /[\u3400-\u9FFF]/.test(c));
-    }
-
-    function accent(){
-      const v = getComputedStyle(document.body).getPropertyValue("--accent");
-      return v && v.trim() ? v.trim() : "#7FB2D9";
     }
 
     function start(){
@@ -81,60 +74,91 @@
     function render(){
       const ch = chars[idx];
       $("stageLine").textContent = `Zeichen ${idx+1} von ${chars.length}: ${ch}`;
-      $("nextBtn").style.display = (chars.length > 1) ? "inline-block" : "none";
       $("feedback").textContent = "";
-      buildWriter(ch, false);
+      buildAndRun(ch);
     }
 
-    function buildWriter(ch, showChar){
+    function buildAndRun(ch){
       const target = $("target");
       target.innerHTML = "";
+      token++;
+      const myToken = token;
       try{
         writer = HanziWriter.create("target", ch, {
           width: target.clientWidth || 280,
           height: target.clientHeight || 280,
           padding: 14,
-          showOutline: true,
-          showCharacter: showChar,
-          strokeColor: accent(),
+          showOutline: false,
+          showCharacter: false,
+          strokeColor: "#111111",
           radicalColor: "#c0392b",
           drawingColor: "#111111",
-          drawingWidth: 26,
-          showHintAfterMisses: 2
+          drawingWidth: 26
         });
       }catch(e){
         $("feedback").textContent = "Für dieses Zeichen gibt es keine Strichdaten.";
+        return;
       }
+      // Strich-für-Strich: ersten Strich vormachen, dann nachzeichnen lassen
+      showStroke(0, myToken, () => beginQuiz(myToken));
     }
 
-    function animate(){
-      if(!writer) return;
-      $("feedback").textContent = "";
-      writer.animateCharacter();
+    // Zeigt einen einzelnen Strich als Animation, dann Callback
+    function showStroke(strokeIndex, myToken, done){
+      if(myToken !== token) return;
+      $("feedback").textContent = `Schau dir Strich ${strokeIndex + 1} an …`;
+      try{
+        const result = writer.animateStroke(strokeIndex, {});
+        if(result && typeof result.then === "function"){
+          result.then(done).catch(done);
+        } else {
+          setTimeout(done, 700);
+        }
+      }catch(e){ done(); }
     }
 
-    function quiz(){
-      const ch = chars[idx];
-      buildWriter(ch, false);
-      $("feedback").textContent = "Schreibe das Zeichen.";
-      setTimeout(() => {
-        if(!writer) return;
-        writer.quiz({
-          onComplete: () => { $("feedback").textContent = "Geschafft."; }
-        });
-      }, 120);
+    function strokeCount(){
+      try{ return writer?._character?.strokes?.length || 0; }catch(e){ return 0; }
+    }
+    function strokeNum(data){
+      if(data && Number.isInteger(data.strokeNum)) return data.strokeNum;
+      if(data && Number.isInteger(data.strokeIndex)) return data.strokeIndex;
+      return null;
     }
 
-    function next(){
-      idx = (idx + 1) % chars.length;
-      render();
+    function beginQuiz(myToken){
+      if(myToken !== token) return;
+      let completed = 0;
+      $("feedback").textContent = "Zeichne Strich 1 nach …";
+      writer.quiz({
+        onMistake(){ if(myToken === token) $("feedback").textContent = "Nicht ganz – diesen Strich nochmal."; },
+        onCorrectStroke(data){
+          if(myToken !== token) return;
+          const n = strokeNum(data);
+          completed = n !== null ? Math.max(completed, n + 1) : completed + 1;
+          const total = strokeCount();
+          if(total && completed < total){
+            // nächsten Strich vormachen, dann weiter nachzeichnen
+            setTimeout(() => showStroke(completed, myToken, () => {
+              if(myToken === token) $("feedback").textContent = `Zeichne Strich ${completed + 1} nach …`;
+            }), 150);
+          }
+        },
+        onComplete(){
+          if(myToken !== token) return;
+          if(chars.length > 1 && idx < chars.length - 1){
+            $("feedback").textContent = "Geschafft. Weiter …";
+            setTimeout(() => { idx++; render(); }, 900);
+          } else {
+            $("feedback").textContent = "Geschafft.";
+          }
+        }
+      });
     }
 
     $("goBtn").addEventListener("click", start);
     $("charInput").addEventListener("keydown", e => { if(e.key === "Enter") start(); });
-    $("animBtn").addEventListener("click", animate);
-    $("quizBtn").addEventListener("click", quiz);
-    $("nextBtn").addEventListener("click", next);
+    $("restartBtn").addEventListener("click", render);
   </script>
 </body>
 </html>
