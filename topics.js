@@ -2328,6 +2328,11 @@ window.CF_TOPICS = [
         "pinyin": "zhēn de",
         "de": "wirklich",
         "hint": "zh → dsch"
+      },
+      {
+        "zh": "没",
+        "pinyin": "méi",
+        "de": "nicht (etwas ist nicht passiert)"
       }
     ],
     "understandingVocab": [
@@ -2472,6 +2477,12 @@ window.CF_TOPICS = [
         "zh": "没有。",
         "pinyin": "Méiyǒu.",
         "de": "Nein."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "还没找到。",
+        "pinyin": "Hái méi zhǎodào.",
+        "de": "Immer noch nicht gefunden."
       },
       {
         "speaker": "林月",
@@ -2654,6 +2665,17 @@ window.CF_TOPICS = [
           "饭馆",
           "。"
         ]
+      },
+      {
+        "de": "Immer noch nicht gefunden.",
+        "zh": "还没找到。",
+        "pinyin": "Hái méi zhǎodào.",
+        "tokens": [
+          "还",
+          "没",
+          "找到",
+          "。"
+        ]
       }
     ],
     "gapExercises": [
@@ -2734,6 +2756,19 @@ window.CF_TOPICS = [
         "solution": "这儿有一家饭馆。",
         "pinyin": "Zhèr yǒu yì jiā fànguǎn.",
         "de": "Hier gibt es ein Restaurant."
+      },
+      {
+        "prompt": "我 ___ 找到我的包。",
+        "answer": "没",
+        "choices": [
+          "没",
+          "了",
+          "很",
+          "也"
+        ],
+        "solution": "我没找到我的包。",
+        "pinyin": "Wǒ méi zhǎodào wǒ de bāo.",
+        "de": "Ich habe meinen Rucksack nicht gefunden."
       }
     ]
   },
@@ -2825,6 +2860,11 @@ window.CF_TOPICS = [
         "pinyin": "xiàcì",
         "de": "nächstes Mal",
         "hint": "x → ch / c → ts"
+      },
+      {
+        "zh": "过",
+        "pinyin": "guo",
+        "de": "Partikel (schon einmal, Erfahrung)"
       }
     ],
     "understandingVocab": [
@@ -2906,6 +2946,18 @@ window.CF_TOPICS = [
         "zh": "喜欢。",
         "pinyin": "Xǐhuan.",
         "de": "Ja, mag ich."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你吃过北京烤鸭吗？",
+        "pinyin": "Nǐ chīguo Běijīng kǎoyā ma?",
+        "de": "Hast du schon mal Peking-Ente gegessen?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我没吃过。",
+        "pinyin": "Wǒ méi chīguo.",
+        "de": "Nein, noch nie."
       },
       {
         "speaker": "苏然",
@@ -3181,6 +3233,19 @@ window.CF_TOPICS = [
           "你",
           "。"
         ]
+      },
+      {
+        "de": "Ich habe noch nie Peking-Ente gegessen.",
+        "zh": "我没吃过北京烤鸭。",
+        "pinyin": "Wǒ méi chīguo Běijīng kǎoyā.",
+        "tokens": [
+          "我",
+          "没",
+          "吃",
+          "过",
+          "北京烤鸭",
+          "。"
+        ]
       }
     ],
     "gapExercises": [
@@ -3261,6 +3326,19 @@ window.CF_TOPICS = [
         "solution": "那下次我请你。",
         "pinyin": "Nà xiàcì wǒ qǐng nǐ.",
         "de": "Nächstes Mal lade ich dich ein."
+      },
+      {
+        "prompt": "我没吃 ___ 北京烤鸭。",
+        "answer": "过",
+        "choices": [
+          "过",
+          "了",
+          "很",
+          "的"
+        ],
+        "solution": "我没吃过北京烤鸭。",
+        "pinyin": "Wǒ méi chīguo Běijīng kǎoyā.",
+        "de": "Ich habe noch nie Peking-Ente gegessen."
       }
     ]
   },

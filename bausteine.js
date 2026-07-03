@@ -168,7 +168,7 @@ window.CF_BAUSTEINE = {
     }
   },
   "06": {
-    order: ["包","丢","了","能","帮","黑","色","里","面","问","家","饭","馆","喂","真","的"],
+    order: ["包","丢","了","能","帮","黑","色","里","面","问","家","饭","馆","喂","真","的","没"],
     chars: {
       "包": { py:"bāo", de:"Tasche; einpacken (in 面包: Brot) (aus 面包)", word:"包", wordPy:"bāo", wordDe:"Tasche, Rucksack", review:true },
       "丢": { py:"diū", de:"verlieren", word:"丢", wordPy:"diū", wordDe:"verlieren" },
@@ -185,11 +185,12 @@ window.CF_BAUSTEINE = {
       "馆": { py:"guǎn", de:"Lokal, Halle (in 饭馆: Restaurant)", word:"饭馆", wordPy:"fànguǎn", wordDe:"Restaurant" },
       "喂": { py:"wéi", de:"Hallo (am Telefon)", word:"喂", wordPy:"wéi", wordDe:"Hallo (am Telefon)" },
       "真": { py:"zhēn", de:"wirklich, echt", word:"真的", wordPy:"zhēn de", wordDe:"wirklich" },
-      "的": { py:"de", de:"Strukturpartikel (besitzt/bildet Eigenschaft) (aus 好的)", word:"真的", wordPy:"zhēn de", wordDe:"wirklich", review:true }
+      "的": { py:"de", de:"Strukturpartikel (besitzt/bildet Eigenschaft) (aus 好的)", word:"真的", wordPy:"zhēn de", wordDe:"wirklich", review:true },
+      "没": { py:"méi", de:"nicht (etwas ist nicht passiert) (aus 没关系)", word:"没找到", wordPy:"méi zhǎodào", wordDe:"nicht gefunden", review:true }
     }
   },
   "07": {
-    order: ["饿","菜","单","要","来","碗","盘","米","饭","好","吃","辣","觉","得","干","杯","茶","喜","欢","买","下","次","服","务","员","饼","份","点","推","荐","小","时","候","以","代","酒","我","请","客","够","了"],
+    order: ["饿","菜","单","要","来","碗","盘","米","饭","好","吃","辣","觉","得","干","杯","茶","喜","欢","买","下","次","服","务","员","饼","份","点","推","荐","小","时","候","以","代","酒","我","请","客","够","了","过"],
     chars: {
       "饿": { py:"è", de:"hungrig (aus Kapitel 04)", word:"饿", wordPy:"è", wordDe:"hungrig", review:true },
       "菜": { py:"cài", de:"Gemüse, Gericht, Speise", word:"菜单", wordPy:"càidān", wordDe:"Speisekarte" },
@@ -231,7 +232,8 @@ window.CF_BAUSTEINE = {
       "请": { py:"qǐng", de:"bitten; einladen (aus 请问)", word:"我请客", wordPy:"wǒ qǐngkè", wordDe:"ich lade ein", review:true },
       "客": { py:"kè", de:"Gast (aus 不客气)", word:"我请客", wordPy:"wǒ qǐngkè", wordDe:"ich lade ein", review:true },
       "够": { py:"gòu", de:"genug", word:"够了", wordPy:"gòu le", wordDe:"das reicht, genug" },
-      "了": { py:"le", de:"Partikel (Zustand erreicht) (aus 丢了)", word:"够了", wordPy:"gòu le", wordDe:"das reicht, genug", review:true }
+      "了": { py:"le", de:"Partikel (Zustand erreicht) (aus 丢了)", word:"够了", wordPy:"gòu le", wordDe:"das reicht, genug", review:true },
+      "过": { py:"guo", de:"Partikel (schon einmal, Erfahrung)", word:"吃过", wordPy:"chīguo", wordDe:"schon einmal gegessen" }
     }
   },
   "08": {
