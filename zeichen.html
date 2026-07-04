@@ -75,114 +75,112 @@
       const ch = chars[idx];
       $("stageLine").textContent = `Zeichen ${idx+1} von ${chars.length}: ${ch}`;
       $("feedback").textContent = "";
-      buildAndRun(ch);
+      loadChar(ch);
     }
 
-    function buildAndRun(ch){
-      const target = $("target");
-      target.innerHTML = "";
+    function setStatus(t){ $("feedback").textContent = t; }
+    function clearHint(){ const h = document.getElementById("zHintLayer"); if(h) h.innerHTML = ""; }
+
+    // Einen einzelnen Strich auf der Hint-Ebene vorzeigen, dann Callback
+    function animateHint(ch, strokeIndex, done){
+      const hintLayer = document.getElementById("zHintLayer");
+      if(!hintLayer || typeof HanziWriter === "undefined"){ if(done) done(); return; }
+      const myToken = token;
+      clearHint();
+      setStatus(`Schau dir Strich ${strokeIndex + 1} an …`);
+      let hintWriter = null;
+      try{
+        hintWriter = HanziWriter.create("zHintLayer", ch, {
+          width: 280, height: 280, padding: 14,
+          showOutline: false, showCharacter: false,
+          strokeColor: "#111111", radicalColor: "#c0392b",
+          drawingColor: "#111111", drawingWidth: 26
+        });
+      }catch(e){ if(done) done(); return; }
+      const finish = () => {
+        if(myToken !== token) return;
+        setStatus(`Zeichne Strich ${strokeIndex + 1} nach …`);
+        setTimeout(() => { if(myToken === token) clearHint(); if(done) done(); }, 120);
+      };
+      let returned = null;
+      try{ returned = hintWriter.animateStroke(strokeIndex); }catch(e){ returned = null; }
+      if(returned && typeof returned.then === "function") returned.then(finish).catch(finish);
+      else setTimeout(finish, 750);
+    }
+
+    function loadChar(ch){
       token++;
       const myToken = token;
 
-      // Zwei Ebenen: Quiz-Ebene (zum Nachzeichnen) + Hint-Ebene (zum Vormachen)
+      const target = $("target");
+      target.innerHTML = "";
       const quizLayer = document.createElement("div");
-      quizLayer.className = "zLayer";
-      quizLayer.style.cssText = "position:absolute;inset:0;";
+      quizLayer.id = "zQuizLayer";
+      quizLayer.style.cssText = "position:absolute;inset:0;width:280px;height:280px;";
       const hintLayer = document.createElement("div");
       hintLayer.id = "zHintLayer";
-      hintLayer.className = "zLayer";
-      hintLayer.style.cssText = "position:absolute;inset:0;";
+      hintLayer.style.cssText = "position:absolute;inset:0;width:280px;height:280px;";
       target.appendChild(quizLayer);
       target.appendChild(hintLayer);
 
       try{
-        writer = HanziWriter.create(quizLayer, ch, {
-          width: target.clientWidth || 280,
-          height: target.clientHeight || 280,
-          padding: 14,
+        writer = HanziWriter.create("zQuizLayer", ch, {
+          width: 280, height: 280, padding: 14,
           showOutline: false,
           showCharacter: false,
           strokeColor: "#111111",
           radicalColor: "#c0392b",
           drawingColor: "#111111",
-          drawingWidth: 26
+          drawingWidth: 26,
+          leniency: 1.1,
+          showHintAfterMisses: 9999
         });
       }catch(e){
-        $("feedback").textContent = "Für dieses Zeichen gibt es keine Strichdaten.";
+        setStatus("Für dieses Zeichen gibt es keine Strichdaten.");
         return;
       }
-      // ersten Strich vormachen, dann Quiz starten
-      showStroke(ch, 0, myToken, () => beginQuiz(ch, myToken));
-    }
 
-    // Zeigt einen einzelnen Strich auf der Hint-Ebene, danach leeren + Callback
-    function showStroke(ch, strokeIndex, myToken, done){
-      if(myToken !== token) return;
-      const hintLayer = $("zHintLayer");
-      if(!hintLayer){ done(); return; }
-      hintLayer.innerHTML = "";
-      $("feedback").textContent = `Schau dir Strich ${strokeIndex + 1} an …`;
-      let hintWriter;
-      try{
-        hintWriter = HanziWriter.create(hintLayer, ch, {
-          width: hintLayer.clientWidth || 280,
-          height: hintLayer.clientHeight || 280,
-          padding: 14,
-          showOutline: false,
-          showCharacter: false,
-          strokeColor: "#111111",
-          radicalColor: "#c0392b",
-          drawingColor: "#111111",
-          drawingWidth: 26
-        });
-      }catch(e){ done(); return; }
-      const finish = () => {
-        if(myToken !== token) return;
-        setTimeout(() => { hintLayer.innerHTML = ""; done(); }, 180);
-      };
-      try{
-        const result = hintWriter.animateStroke(strokeIndex);
-        if(result && typeof result.then === "function") result.then(finish).catch(finish);
-        else setTimeout(finish, 700);
-      }catch(e){ finish(); }
-    }
-
-    function strokeCount(){
-      try{ return writer?._character?.strokes?.length || 0; }catch(e){ return 0; }
-    }
-    function strokeNum(data){
-      if(data && Number.isInteger(data.strokeNum)) return data.strokeNum;
-      if(data && Number.isInteger(data.strokeIndex)) return data.strokeIndex;
-      return null;
-    }
-
-    function beginQuiz(ch, myToken){
-      if(myToken !== token) return;
       let completed = 0;
-      $("feedback").textContent = "Zeichne Strich 1 nach …";
-      writer.quiz({
-        onMistake(){ if(myToken === token) $("feedback").textContent = "Nicht ganz – diesen Strich nochmal."; },
-        onCorrectStroke(data){
-          if(myToken !== token) return;
-          const n = strokeNum(data);
-          completed = n !== null ? Math.max(completed, n + 1) : completed + 1;
-          const total = strokeCount();
-          if(total && completed < total){
-            setTimeout(() => showStroke(ch, completed, myToken, () => {
-              if(myToken === token) $("feedback").textContent = `Zeichne Strich ${completed + 1} nach …`;
-            }), 150);
+      let strokeMisses = 0;
+      const beginQuiz = () => {
+        if(myToken !== token || !writer) return;
+        setStatus("Zeichne den Strich nach …");
+        writer.quiz({
+          onMistake(){
+            if(myToken !== token) return;
+            strokeMisses++;
+            if(strokeMisses % 3 === 0){
+              setStatus("Schau her, so geht dieser Strich:");
+              animateHint(ch, completed);
+            }else{
+              setStatus("Nicht ganz – probiere den Strich noch einmal.");
+            }
+          },
+          onCorrectStroke(data){
+            if(myToken !== token) return;
+            strokeMisses = 0;
+            const n = (data && Number.isInteger(data.strokeNum)) ? data.strokeNum + 1 : completed + 1;
+            completed = Math.max(completed, n);
+            const total = writer?._character?.strokes?.length || null;
+            if(total && completed < total){
+              setTimeout(() => { if(myToken === token) animateHint(ch, completed); }, 180);
+            }else{
+              setStatus("…");
+            }
+          },
+          onComplete(){
+            if(myToken !== token) return;
+            if(chars.length > 1 && idx < chars.length - 1){
+              setStatus("Geschafft. Weiter …");
+              setTimeout(() => { idx++; render(); }, 700);
+            }else{
+              setStatus("Geschafft.");
+            }
           }
-        },
-        onComplete(){
-          if(myToken !== token) return;
-          if(chars.length > 1 && idx < chars.length - 1){
-            $("feedback").textContent = "Geschafft. Weiter …";
-            setTimeout(() => { idx++; render(); }, 900);
-          } else {
-            $("feedback").textContent = "Geschafft.";
-          }
-        }
-      });
+        });
+      };
+
+      animateHint(ch, 0, beginQuiz);
     }
 
     $("goBtn").addEventListener("click", start);
