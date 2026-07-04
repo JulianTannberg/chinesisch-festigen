@@ -83,8 +83,20 @@
       target.innerHTML = "";
       token++;
       const myToken = token;
+
+      // Zwei Ebenen: Quiz-Ebene (zum Nachzeichnen) + Hint-Ebene (zum Vormachen)
+      const quizLayer = document.createElement("div");
+      quizLayer.className = "zLayer";
+      quizLayer.style.cssText = "position:absolute;inset:0;";
+      const hintLayer = document.createElement("div");
+      hintLayer.id = "zHintLayer";
+      hintLayer.className = "zLayer";
+      hintLayer.style.cssText = "position:absolute;inset:0;";
+      target.appendChild(quizLayer);
+      target.appendChild(hintLayer);
+
       try{
-        writer = HanziWriter.create("target", ch, {
+        writer = HanziWriter.create(quizLayer, ch, {
           width: target.clientWidth || 280,
           height: target.clientHeight || 280,
           padding: 14,
@@ -99,22 +111,40 @@
         $("feedback").textContent = "Für dieses Zeichen gibt es keine Strichdaten.";
         return;
       }
-      // Strich-für-Strich: ersten Strich vormachen, dann nachzeichnen lassen
-      showStroke(0, myToken, () => beginQuiz(myToken));
+      // ersten Strich vormachen, dann Quiz starten
+      showStroke(ch, 0, myToken, () => beginQuiz(ch, myToken));
     }
 
-    // Zeigt einen einzelnen Strich als Animation, dann Callback
-    function showStroke(strokeIndex, myToken, done){
+    // Zeigt einen einzelnen Strich auf der Hint-Ebene, danach leeren + Callback
+    function showStroke(ch, strokeIndex, myToken, done){
       if(myToken !== token) return;
+      const hintLayer = $("zHintLayer");
+      if(!hintLayer){ done(); return; }
+      hintLayer.innerHTML = "";
       $("feedback").textContent = `Schau dir Strich ${strokeIndex + 1} an …`;
+      let hintWriter;
       try{
-        const result = writer.animateStroke(strokeIndex, {});
-        if(result && typeof result.then === "function"){
-          result.then(done).catch(done);
-        } else {
-          setTimeout(done, 700);
-        }
-      }catch(e){ done(); }
+        hintWriter = HanziWriter.create(hintLayer, ch, {
+          width: hintLayer.clientWidth || 280,
+          height: hintLayer.clientHeight || 280,
+          padding: 14,
+          showOutline: false,
+          showCharacter: false,
+          strokeColor: "#111111",
+          radicalColor: "#c0392b",
+          drawingColor: "#111111",
+          drawingWidth: 26
+        });
+      }catch(e){ done(); return; }
+      const finish = () => {
+        if(myToken !== token) return;
+        setTimeout(() => { hintLayer.innerHTML = ""; done(); }, 180);
+      };
+      try{
+        const result = hintWriter.animateStroke(strokeIndex);
+        if(result && typeof result.then === "function") result.then(finish).catch(finish);
+        else setTimeout(finish, 700);
+      }catch(e){ finish(); }
     }
 
     function strokeCount(){
@@ -126,7 +156,7 @@
       return null;
     }
 
-    function beginQuiz(myToken){
+    function beginQuiz(ch, myToken){
       if(myToken !== token) return;
       let completed = 0;
       $("feedback").textContent = "Zeichne Strich 1 nach …";
@@ -138,8 +168,7 @@
           completed = n !== null ? Math.max(completed, n + 1) : completed + 1;
           const total = strokeCount();
           if(total && completed < total){
-            // nächsten Strich vormachen, dann weiter nachzeichnen
-            setTimeout(() => showStroke(completed, myToken, () => {
+            setTimeout(() => showStroke(ch, completed, myToken, () => {
               if(myToken === token) $("feedback").textContent = `Zeichne Strich ${completed + 1} nach …`;
             }), 150);
           }
