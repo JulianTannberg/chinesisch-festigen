@@ -1,21 +1,21 @@
-STIRN-RATESPIEL – UPDATE FÜR „CHINESISCH FESTIGEN“
+STIRN-RATESPIEL – UPDATE v125
+================================
 
 Enthaltene Dateien:
-- stirnspiel.html  – neues Ratespiel
-- kapitel.html     – neue Spielkarte unter „Spielen“
-- sw.js            – Offline-Cache auf Version cf-v117 aktualisiert
+- stirnspiel.html   – Stirn-Ratespiel mit neu kalibrierter Kippsteuerung
+- kapitel.html      – Kapitelseite mit Zugang zum Stirn-Ratespiel
+- sw.js             – Offline-Cache auf Version cf-v125 aktualisiert
 
-Einbau:
-1. ZIP entpacken.
-2. Die drei Dateien in das Stammverzeichnis des GitHub-Repositories hochladen.
-3. kapitel.html und sw.js dabei ersetzen; stirnspiel.html neu hinzufügen.
-4. Nach dem Upload die installierte WebApp einmal vollständig schließen und neu öffnen.
-   Falls noch die alte Fassung erscheint, die Website neu laden bzw. den Browser-Cache aktualisieren.
+Installation:
+1. Alle Dateien aus diesem Ordner in das Hauptverzeichnis der Website hochladen.
+2. Vorhandene Dateien gleichen Namens ersetzen.
+3. Die installierte Web-App vollständig schließen.
+4. Website/App neu öffnen; bei Bedarf einmal im Browser neu laden.
 
-Das Spiel verwendet automatisch die aktiven Vokabeln aus der vorhandenen topics.js.
-Kapitel ohne aktive Vokabeln bleiben deaktiviert.
-
-Korrektur v117:
-- 270°-Querformat auf Android wird nun korrekt erkannt.
-- Nach einer Wertung muss das Handy erst in die Mittelstellung zurückkehren.
-- Eine kurze Sperr- und Ruhezeit verhindert Doppel- und Gegenwertungen.
+Korrektur v125:
+- Vor jeder Runde wird die tatsächliche Nach-unten-Bewegung einmal gelernt.
+- Die Steuerung verwendet einen zweidimensionalen Sensorvektor statt einer fest angenommenen Achse.
+- Unterschiedliche Querformatlagen und umgekehrte Sensorvorzeichen werden dadurch berücksichtigt.
+- Erst nach Rückkehr zur Ausgangslage kann die nächste Karte gewertet werden.
+- Seitliche Bewegungen werden weitgehend ignoriert.
+- Bei fehlendem Sensor kann die Kalibrierung übersprungen werden.

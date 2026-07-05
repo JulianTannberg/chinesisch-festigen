@@ -110,6 +110,15 @@
     @keyframes flash{0%{opacity:0;transform:scale(.75)}35%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.12)}}
     .countdown{position:fixed;inset:0;z-index:20;display:none;place-items:center;background:rgba(3,23,43,.84);font-size:min(42vh,36vw);font-weight:1000}
     .countdown.show{display:grid}
+    .versionBadge{display:inline-flex;align-items:center;margin-left:8px;padding:4px 8px;border:1px solid var(--stroke);border-radius:999px;background:rgba(255,255,255,.08);font-size:12px;font-weight:850;vertical-align:middle}
+    .calibration{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(3,23,43,.94);color:#fff;text-align:center}
+    .calibration.show{display:flex}
+    .calibrationCard{width:min(700px,94vw);padding:clamp(22px,4vw,42px);border:1px solid rgba(255,255,255,.25);border-radius:28px;background:rgba(255,255,255,.11);box-shadow:0 24px 70px rgba(0,0,0,.36)}
+    .calibrationIcon{font-size:clamp(56px,13vw,110px);line-height:1;margin-bottom:8px}
+    .calibrationTitle{font-size:clamp(26px,5vw,48px);font-weight:1000;line-height:1.05;margin:0 0 12px}
+    .calibrationText{font-size:clamp(17px,2.6vw,25px);line-height:1.35;color:rgba(255,255,255,.88);margin:0 auto 20px;max-width:620px}
+    .calibrationStatus{min-height:28px;font-size:clamp(14px,2vw,18px);font-weight:850;color:#dbeafe;margin-bottom:16px}
+    .calibrationSkip{padding:10px 16px;border:1px solid rgba(255,255,255,.28);border-radius:14px;background:rgba(255,255,255,.08);color:#fff;font-weight:800;cursor:pointer}
 
     /* Ergebnis */
     .resultHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
@@ -156,7 +165,7 @@
         <a class="back" id="backLink" href="kapitel.html">← Zurück</a>
         <button class="iconBtn" id="fullscreenSetup" type="button" title="Vollbild" aria-label="Vollbild">⛶</button>
       </div>
-      <h1>Stirn-Ratespiel</h1>
+      <h1>Stirn-Ratespiel <span class="versionBadge">v125</span></h1>
       <p class="intro">Wählt die Kapitel aus, haltet das Handy an die Stirn und erklärt die eingeblendete Vokabel. Nach unten kippen bedeutet „richtig“, nach oben kippen „überspringen“.</p>
 
       <div class="setupGrid">
@@ -195,7 +204,7 @@
           </div>
           <div class="optionBlock">
             <div class="switchRow">
-              <span><strong>Kippsteuerung</strong><br><small style="color:var(--muted)">Buttons bleiben zusätzlich nutzbar</small></span>
+              <span><strong>Kippsteuerung</strong><br><small style="color:var(--muted)">v125 kalibriert „nach unten“ vor jeder Runde</small></span>
               <label class="switch"><input type="checkbox" id="tiltEnabled" checked><span></span></label>
             </div>
           </div>
@@ -242,6 +251,16 @@
 
   <div class="countdown" id="countdown"></div>
 
+  <div class="calibration" id="calibration" role="dialog" aria-modal="true" aria-live="assertive">
+    <div class="calibrationCard">
+      <div class="calibrationIcon" id="calibrationIcon">▰</div>
+      <h2 class="calibrationTitle" id="calibrationTitle">Kippsteuerung kalibrieren</h2>
+      <p class="calibrationText" id="calibrationText">Halte das Handy so an die Stirn, wie du gleich spielen möchtest.</p>
+      <div class="calibrationStatus" id="calibrationStatus">Handy kurz ruhig halten …</div>
+      <button class="calibrationSkip" id="calibrationSkip" type="button">Ohne Kippsteuerung starten</button>
+    </div>
+  </div>
+
   <section class="screen" id="resultScreen">
     <div class="resultWrap">
       <div class="resultHeader">
@@ -285,8 +304,11 @@
       soundEnabled: localStorage.getItem("cf_heads_sound") !== "0",
       selected: new Set(), deck: [], current: null, correct: [], skipped: [],
       remaining: 60, timerId: null, running: false,
-      sensorSeen: false, baseline: null, filteredTilt: null, tiltArmed: false,
+      sensorSeen: false, baselinePose: null, filteredPose: null, downVector: null, tiltArmed: false,
       neutralSince: 0, armAfter: 0, lastTiltAction: 0,
+      calibrating: false, calibrationPhase: "idle", calibrationCenter: null, calibrationSamples: [],
+      calibrationCandidate: null, calibrationCandidateSince: 0, calibrationReturnSince: 0,
+      calibrationResolve: null, calibrationTimeout: null,
       orientationHandler: null, audio: null
     };
 
@@ -388,15 +410,19 @@
       state.deck=shuffle(cardsForSelection());
       if(!state.deck.length){updateCount();return;}
       state.correct=[]; state.skipped=[]; state.remaining=state.time; state.running=false;
-      state.baseline=null; state.filteredTilt=null; state.tiltArmed=false; state.neutralSince=0; state.armAfter=0; state.sensorSeen=false;
+      state.baselinePose=null; state.filteredPose=null; state.downVector=null; state.tiltArmed=false;
+      state.neutralSince=0; state.armAfter=0; state.sensorSeen=false;
       if(state.soundEnabled) ensureAudio();
       const motionGranted=await requestMotionPermission();
       await requestFullscreen();
       showScreen($("gameScreen"));
       $("timer").textContent=state.time ? state.remaining : "∞";
       $("score").textContent="0 richtig";
-      $("tiltHint").textContent=state.tiltEnabled && motionGranted ? "Handy ruhig halten – Kippsteuerung wird kalibriert" : "Kippsteuerung nicht verfügbar – Buttons benutzen";
+      $("tiltHint").textContent=state.tiltEnabled && motionGranted ? "Kippsteuerung wird kalibriert" : "Kippsteuerung nicht verfügbar – Buttons benutzen";
       attachMotion(motionGranted);
+      let tiltReady=false;
+      if(state.tiltEnabled && motionGranted) tiltReady=await calibrateTilt();
+      if(!tiltReady) $("tiltHint").textContent="Buttons benutzen";
       await runCountdown();
       state.running=true;
       nextCard();
@@ -424,9 +450,9 @@
       $("term").textContent=isZh?c.zh:c.de;
       $("pinyin").textContent=isZh && state.showPinyin?c.pinyin:"";
       $("pinyin").style.display=isZh && state.showPinyin && c.pinyin?"":"none";
-      if(state.tiltEnabled && state.sensorSeen){
+      if(state.tiltEnabled && state.downVector){
         $("tiltHint").textContent=Date.now()<state.armAfter
-          ? "Zur Mitte zurückkippen und kurz ruhig halten"
+          ? "Zur Ausgangslage zurück und kurz ruhig halten"
           : (state.tiltArmed ? "Bereit · ↓ richtig · ↑ überspringen" : "Handy kurz ruhig halten");
       }
       requestAnimationFrame(fitTerm);
@@ -447,49 +473,123 @@
       el.style.fontSize=Math.floor(lo)+"px";
     }
 
-    function normalizedScreenAngle(){
-      let angle=Number(screen.orientation?.angle ?? window.orientation ?? 0);
-      if(!Number.isFinite(angle)) angle=0;
-      // Android meldet die zweite Querformatlage häufig als 270° statt -90°.
-      // Durch die Normalisierung wird in beiden Querformatlagen dieselbe Achse korrekt ausgewertet.
-      return ((angle+180)%360+360)%360-180;
+    function poseFromEvent(e){
+      const beta=Number(e.beta), gamma=Number(e.gamma);
+      if(!Number.isFinite(beta) || !Number.isFinite(gamma)) return null;
+      return {beta,gamma};
     }
-    function orientationValue(e){
-      const angle=normalizedScreenAngle();
-      if(Math.abs(angle)===90){
-        const g=Number(e.gamma); if(!Number.isFinite(g)) return null;
-        return angle===90 ? -g : g;
+    function poseDistance(a,b){
+      if(!a || !b) return Infinity;
+      return Math.hypot(a.beta-b.beta,a.gamma-b.gamma);
+    }
+    function averagePose(samples){
+      if(!samples.length) return null;
+      const sum=samples.reduce((acc,p)=>({beta:acc.beta+p.beta,gamma:acc.gamma+p.gamma}),{beta:0,gamma:0});
+      return {beta:sum.beta/samples.length,gamma:sum.gamma/samples.length};
+    }
+    function setCalibrationStep(icon,title,text,status){
+      $("calibrationIcon").textContent=icon;
+      $("calibrationTitle").textContent=title;
+      $("calibrationText").textContent=text;
+      $("calibrationStatus").textContent=status;
+    }
+    function finishCalibration(success){
+      if(!state.calibrating) return;
+      state.calibrating=false;
+      clearTimeout(state.calibrationTimeout); state.calibrationTimeout=null;
+      $("calibration").classList.remove("show");
+      if(success && state.filteredPose){
+        state.baselinePose={...state.filteredPose};
+        state.tiltArmed=false; state.neutralSince=Date.now(); state.armAfter=Date.now()+350;
+        $("tiltHint").textContent="Kalibriert · Handy kurz ruhig halten";
+      }else{
+        state.downVector=null; state.baselinePose=null; state.tiltArmed=false;
       }
-      const b=Number(e.beta); return Number.isFinite(b)?b:null;
+      const resolve=state.calibrationResolve; state.calibrationResolve=null;
+      if(resolve) resolve(Boolean(success));
+    }
+    function calibrateTilt(){
+      return new Promise(resolve=>{
+        state.calibrating=true; state.calibrationPhase="center"; state.calibrationSamples=[];
+        state.calibrationCenter=null; state.calibrationCandidate=null; state.calibrationCandidateSince=0; state.calibrationReturnSince=0;
+        state.calibrationResolve=resolve;
+        setCalibrationStep("▰","Kippsteuerung kalibrieren","Halte das Handy so an die Stirn, wie du gleich spielen möchtest.","Handy kurz ruhig halten …");
+        $("calibration").classList.add("show");
+        state.calibrationTimeout=setTimeout(()=>finishCalibration(false),12000);
+      });
+    }
+    function handleCalibration(pose,now){
+      if(state.calibrationPhase==="center"){
+        state.calibrationSamples.push({...pose,time:now});
+        state.calibrationSamples=state.calibrationSamples.filter(p=>now-p.time<=850);
+        if(state.calibrationSamples.length>=18){
+          const center=averagePose(state.calibrationSamples);
+          const spread=Math.max(...state.calibrationSamples.map(p=>poseDistance(p,center)));
+          if(spread<4.5){
+            state.calibrationCenter=center; state.calibrationPhase="down"; state.calibrationCandidate=null;
+            setCalibrationStep("↓","Jetzt nach unten kippen","Kippe das Handy einmal deutlich nach unten – genauso, wie du später „richtig“ markieren möchtest.","Diese Bewegung wird nicht als Karte gewertet.");
+          }else{
+            $("calibrationStatus").textContent="Noch einen Moment ruhig halten …";
+          }
+        }
+        return;
+      }
+      if(state.calibrationPhase==="down"){
+        const db=pose.beta-state.calibrationCenter.beta, dg=pose.gamma-state.calibrationCenter.gamma;
+        const distance=Math.hypot(db,dg);
+        if(distance>17){
+          const candidate={beta:db/distance,gamma:dg/distance};
+          if(!state.calibrationCandidate || candidate.beta*state.calibrationCandidate.beta+candidate.gamma*state.calibrationCandidate.gamma<0.92){
+            state.calibrationCandidate=candidate; state.calibrationCandidateSince=now;
+          }else if(now-state.calibrationCandidateSince>=160){
+            state.downVector=candidate; state.calibrationPhase="return"; state.calibrationReturnSince=0;
+            setCalibrationStep("↶","Zurück zur Ausgangslage","Kippe das Handy wieder in die normale Haltung an deiner Stirn.","Kurz ruhig halten, dann startet das Spiel.");
+          }
+        }else{
+          state.calibrationCandidate=null; state.calibrationCandidateSince=0;
+        }
+        return;
+      }
+      if(state.calibrationPhase==="return"){
+        const distance=poseDistance(pose,state.calibrationCenter);
+        if(distance<8){
+          if(!state.calibrationReturnSince) state.calibrationReturnSince=now;
+          if(now-state.calibrationReturnSince>=380){
+            state.baselinePose={...pose};
+            finishCalibration(true);
+          }
+        }else{
+          state.calibrationReturnSince=0;
+        }
+      }
     }
     function attachMotion(granted){
       detachMotion(); if(!granted || !state.tiltEnabled) return;
       state.orientationHandler=e=>{
-        if(!state.running || !state.current) return;
-        const raw=orientationValue(e); if(raw===null) return;
-        const now=Date.now();
-        state.sensorSeen=true;
-        state.filteredTilt=state.filteredTilt===null ? raw : state.filteredTilt*.72+raw*.28;
-        const v=state.filteredTilt;
+        const raw=poseFromEvent(e); if(!raw) return;
+        const now=Date.now(); state.sensorSeen=true;
+        state.filteredPose=state.filteredPose
+          ? {beta:state.filteredPose.beta*.72+raw.beta*.28,gamma:state.filteredPose.gamma*.72+raw.gamma*.28}
+          : raw;
+        const pose=state.filteredPose;
+        if(state.calibrating){handleCalibration(pose,now);return;}
+        if(!state.running || !state.current || !state.downVector) return;
+        if(!state.baselinePose){state.baselinePose={...pose};state.neutralSince=now;return;}
 
-        if(state.baseline===null){
-          state.baseline=v; state.neutralSince=now; state.armAfter=now+350;
-          $("tiltHint").textContent="Handy kurz ruhig halten – wird kalibriert";
-          return;
-        }
-
-        const d=v-state.baseline;
-        const neutral=Math.abs(d)<8;
+        const db=pose.beta-state.baselinePose.beta, dg=pose.gamma-state.baselinePose.gamma;
+        const distance=Math.hypot(db,dg);
+        const neutral=distance<8;
 
         if(neutral){
-          state.baseline=state.baseline*.96+v*.04;
+          state.baselinePose.beta=state.baselinePose.beta*.96+pose.beta*.04;
+          state.baselinePose.gamma=state.baselinePose.gamma*.96+pose.gamma*.04;
           if(now<state.armAfter){
             state.tiltArmed=false; state.neutralSince=0;
-            $("tiltHint").textContent="Zur Mitte zurückkippen und kurz ruhig halten";
+            $("tiltHint").textContent="Zur Ausgangslage zurück und kurz ruhig halten";
             return;
           }
           if(!state.neutralSince) state.neutralSince=now;
-          if(!state.tiltArmed && now-state.neutralSince>=260){
+          if(!state.tiltArmed && now-state.neutralSince>=280){
             state.tiltArmed=true;
             $("tiltHint").textContent="Bereit · ↓ richtig · ↑ überspringen";
           }
@@ -498,14 +598,16 @@
 
         state.neutralSince=0;
         if(!state.tiltArmed || now<state.armAfter) return;
+        const projection=db*state.downVector.beta+dg*state.downVector.gamma;
+        const side=Math.abs(db*state.downVector.gamma-dg*state.downVector.beta);
+        if(Math.abs(projection)<22 || Math.abs(projection)<side*.8) return;
 
-        if(d>23){
-          state.lastTiltAction=now; state.armAfter=now+1050; state.tiltArmed=false;
-          $("tiltHint").textContent="Richtig – jetzt zur Mitte zurück";
+        state.lastTiltAction=now; state.armAfter=now+950; state.tiltArmed=false;
+        if(projection>0){
+          $("tiltHint").textContent="Richtig – zurück zur Ausgangslage";
           mark("correct");
-        }else if(d<-23){
-          state.lastTiltAction=now; state.armAfter=now+1050; state.tiltArmed=false;
-          $("tiltHint").textContent="Übersprungen – jetzt zur Mitte zurück";
+        }else{
+          $("tiltHint").textContent="Übersprungen – zurück zur Ausgangslage";
           mark("skip");
         }
       };
@@ -546,7 +648,9 @@
 
     function endGame(){
       if(!state.running && !state.current) return;
-      state.running=false; clearInterval(state.timerId); state.timerId=null; detachMotion();
+      state.running=false; clearInterval(state.timerId); state.timerId=null;
+      if(state.calibrating) finishCalibration(false);
+      detachMotion();
       if(state.current){state.deck.unshift(state.current);state.current=null;}
       renderResults(); showScreen($("resultScreen"));
     }
@@ -575,6 +679,7 @@
     document.querySelectorAll("#timeButtons .segBtn").forEach(b=>b.addEventListener("click",()=>setTime(b.dataset.time)));
     [$("showPinyin"),$("tiltEnabled"),$("soundEnabled")].forEach(el=>el.addEventListener("change",saveSwitches));
     $("startBtn").addEventListener("click",startGame);
+    $("calibrationSkip").addEventListener("click",()=>finishCalibration(false));
     $("skipBtn").addEventListener("click",()=>mark("skip"));
     $("correctBtn").addEventListener("click",()=>mark("correct"));
     $("finishBtn").addEventListener("click",endGame);
