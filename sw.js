@@ -1,7 +1,7 @@
 // Chinesisch festigen – Service Worker
 // Bei jeder Änderung an der Website die Versionsnummer erhöhen,
 // damit alle Geräte die neuen Dateien laden.
-const CACHE = "cf-v122-zeichen";
+const CACHE = "cf-v116-stirn-ratespiel";
 
 const SHELL = [
   "./",
@@ -15,6 +15,7 @@ const SHELL = [
   "./flashkarten.html",
   "./memory.html",
   "./luecken.html",
+  "./stirnspiel.html",
   "./jump-run.html",
   "./jump-run.js",
   "./station-bg-1.png",
@@ -25,7 +26,6 @@ const SHELL = [
   "./linyue-game.png",
   "./ueben.html",
   "./wiederholen.html",
-  "./zeichen.html",
   "./chat.html",
   "./einstellungen.html",
   "./fehler.html",
