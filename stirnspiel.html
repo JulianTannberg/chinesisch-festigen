@@ -285,7 +285,8 @@
       soundEnabled: localStorage.getItem("cf_heads_sound") !== "0",
       selected: new Set(), deck: [], current: null, correct: [], skipped: [],
       remaining: 60, timerId: null, running: false,
-      sensorSeen: false, baseline: null, tiltArmed: false, lastTiltAction: 0,
+      sensorSeen: false, baseline: null, filteredTilt: null, tiltArmed: false,
+      neutralSince: 0, armAfter: 0, lastTiltAction: 0,
       orientationHandler: null, audio: null
     };
 
@@ -386,7 +387,8 @@
       saveSwitches();
       state.deck=shuffle(cardsForSelection());
       if(!state.deck.length){updateCount();return;}
-      state.correct=[]; state.skipped=[]; state.remaining=state.time; state.running=false; state.baseline=null; state.tiltArmed=false; state.sensorSeen=false;
+      state.correct=[]; state.skipped=[]; state.remaining=state.time; state.running=false;
+      state.baseline=null; state.filteredTilt=null; state.tiltArmed=false; state.neutralSince=0; state.armAfter=0; state.sensorSeen=false;
       if(state.soundEnabled) ensureAudio();
       const motionGranted=await requestMotionPermission();
       await requestFullscreen();
@@ -422,8 +424,11 @@
       $("term").textContent=isZh?c.zh:c.de;
       $("pinyin").textContent=isZh && state.showPinyin?c.pinyin:"";
       $("pinyin").style.display=isZh && state.showPinyin && c.pinyin?"":"none";
-      state.baseline=null; state.tiltArmed=false;
-      $("tiltHint").textContent=state.tiltEnabled && state.sensorSeen ? "Ruhig halten · ↓ richtig · ↑ überspringen" : $("tiltHint").textContent;
+      if(state.tiltEnabled && state.sensorSeen){
+        $("tiltHint").textContent=Date.now()<state.armAfter
+          ? "Zur Mitte zurückkippen und kurz ruhig halten"
+          : (state.tiltArmed ? "Bereit · ↓ richtig · ↑ überspringen" : "Handy kurz ruhig halten");
+      }
       requestAnimationFrame(fitTerm);
     }
 
@@ -442,8 +447,15 @@
       el.style.fontSize=Math.floor(lo)+"px";
     }
 
+    function normalizedScreenAngle(){
+      let angle=Number(screen.orientation?.angle ?? window.orientation ?? 0);
+      if(!Number.isFinite(angle)) angle=0;
+      // Android meldet die zweite Querformatlage häufig als 270° statt -90°.
+      // Durch die Normalisierung wird in beiden Querformatlagen dieselbe Achse korrekt ausgewertet.
+      return ((angle+180)%360+360)%360-180;
+    }
     function orientationValue(e){
-      const angle=Number(screen.orientation?.angle ?? window.orientation ?? 0);
+      const angle=normalizedScreenAngle();
       if(Math.abs(angle)===90){
         const g=Number(e.gamma); if(!Number.isFinite(g)) return null;
         return angle===90 ? -g : g;
@@ -454,14 +466,48 @@
       detachMotion(); if(!granted || !state.tiltEnabled) return;
       state.orientationHandler=e=>{
         if(!state.running || !state.current) return;
-        const v=orientationValue(e); if(v===null) return;
+        const raw=orientationValue(e); if(raw===null) return;
+        const now=Date.now();
         state.sensorSeen=true;
-        if(state.baseline===null){ state.baseline=v; $("tiltHint").textContent="Ruhig halten · ↓ richtig · ↑ überspringen"; return; }
+        state.filteredTilt=state.filteredTilt===null ? raw : state.filteredTilt*.72+raw*.28;
+        const v=state.filteredTilt;
+
+        if(state.baseline===null){
+          state.baseline=v; state.neutralSince=now; state.armAfter=now+350;
+          $("tiltHint").textContent="Handy kurz ruhig halten – wird kalibriert";
+          return;
+        }
+
         const d=v-state.baseline;
-        if(Math.abs(d)<9){ state.tiltArmed=true; state.baseline=state.baseline*.94+v*.06; return; }
-        if(!state.tiltArmed || Date.now()-state.lastTiltAction<650) return;
-        if(d>24){state.lastTiltAction=Date.now();state.tiltArmed=false;mark("correct");}
-        else if(d<-24){state.lastTiltAction=Date.now();state.tiltArmed=false;mark("skip");}
+        const neutral=Math.abs(d)<8;
+
+        if(neutral){
+          state.baseline=state.baseline*.96+v*.04;
+          if(now<state.armAfter){
+            state.tiltArmed=false; state.neutralSince=0;
+            $("tiltHint").textContent="Zur Mitte zurückkippen und kurz ruhig halten";
+            return;
+          }
+          if(!state.neutralSince) state.neutralSince=now;
+          if(!state.tiltArmed && now-state.neutralSince>=260){
+            state.tiltArmed=true;
+            $("tiltHint").textContent="Bereit · ↓ richtig · ↑ überspringen";
+          }
+          return;
+        }
+
+        state.neutralSince=0;
+        if(!state.tiltArmed || now<state.armAfter) return;
+
+        if(d>23){
+          state.lastTiltAction=now; state.armAfter=now+1050; state.tiltArmed=false;
+          $("tiltHint").textContent="Richtig – jetzt zur Mitte zurück";
+          mark("correct");
+        }else if(d<-23){
+          state.lastTiltAction=now; state.armAfter=now+1050; state.tiltArmed=false;
+          $("tiltHint").textContent="Übersprungen – jetzt zur Mitte zurück";
+          mark("skip");
+        }
       };
       window.addEventListener("deviceorientation",state.orientationHandler,true);
     }
@@ -469,6 +515,9 @@
 
     function mark(kind){
       if(!state.running || !state.current) return;
+      const now=Date.now();
+      state.armAfter=Math.max(state.armAfter,now+1050);
+      state.tiltArmed=false; state.neutralSince=0;
       const card=state.current; state.current=null;
       if(kind==="correct"){state.correct.push(card);playFeedback(true);flash("✓");}
       else{state.skipped.push(card);playFeedback(false);flash("↷");}

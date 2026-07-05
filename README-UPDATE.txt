@@ -3,7 +3,7 @@ STIRN-RATESPIEL – UPDATE FÜR „CHINESISCH FESTIGEN“
 Enthaltene Dateien:
 - stirnspiel.html  – neues Ratespiel
 - kapitel.html     – neue Spielkarte unter „Spielen“
-- sw.js            – Offline-Cache auf Version cf-v116 aktualisiert
+- sw.js            – Offline-Cache auf Version cf-v117 aktualisiert
 
 Einbau:
 1. ZIP entpacken.
@@ -14,3 +14,8 @@ Einbau:
 
 Das Spiel verwendet automatisch die aktiven Vokabeln aus der vorhandenen topics.js.
 Kapitel ohne aktive Vokabeln bleiben deaktiviert.
+
+Korrektur v117:
+- 270°-Querformat auf Android wird nun korrekt erkannt.
+- Nach einer Wertung muss das Handy erst in die Mittelstellung zurückkehren.
+- Eine kurze Sperr- und Ruhezeit verhindert Doppel- und Gegenwertungen.
