@@ -96,8 +96,7 @@
     .actionBtn:active{transform:scale(.985)}
     .actionBtn .symbol{font-size:clamp(30px,7vw,76px);line-height:1}
     .actionBtn .label{max-width:100%;padding:0 3px;font-size:clamp(12px,1.8vw,20px);font-weight:900;text-align:center;overflow-wrap:anywhere}
-    .skipBtn{border-color:rgba(245,158,11,.72)}
-    .correctBtn{border-color:rgba(34,197,94,.75)}
+    .skipBtn,.correctBtn{border-color:rgba(255,255,255,.58)}
     .termCard{position:relative;min-width:0;min-height:0;border-radius:28px;border:2px solid rgba(255,255,255,.30);background:rgba(255,255,255,.10);box-shadow:0 16px 45px rgba(0,0,0,.25);overflow:hidden;display:flex;align-items:center;justify-content:center;padding:clamp(12px,3vw,34px)}
     .termWrap{width:100%;height:100%;min-width:0;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;text-align:center}
     .term{max-width:100%;max-height:82%;font-weight:950;line-height:1.06;letter-spacing:.01em;text-wrap:balance;text-shadow:0 2px 5px rgba(0,0,0,.18)}
@@ -124,7 +123,7 @@
     .resultHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
     .resultScore{font-size:clamp(46px,10vw,96px);font-weight:1000;line-height:.9;margin:12px 0 3px}
     .resultMeta{color:var(--muted);font-weight:800}
-    .resultCols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+    .resultCols{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
     .resultList{margin:0;padding:0;list-style:none;max-height:38vh;overflow:auto}
     .resultList li{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.12)}
     .resultList small{opacity:.68;white-space:nowrap}
@@ -165,8 +164,8 @@
         <a class="back" id="backLink" href="kapitel.html">← Zurück</a>
         <button class="iconBtn" id="fullscreenSetup" type="button" title="Vollbild" aria-label="Vollbild">⛶</button>
       </div>
-      <h1>Stirn-Ratespiel <span class="versionBadge">v125</span></h1>
-      <p class="intro">Wählt die Kapitel aus, haltet das Handy an die Stirn und erklärt die eingeblendete Vokabel. Nach unten kippen bedeutet „richtig“, nach oben kippen „überspringen“.</p>
+      <h1>Stirn-Ratespiel <span class="versionBadge">v126</span></h1>
+      <p class="intro">Wählt die Kapitel aus, haltet das Handy an die Stirn und erklärt die eingeblendete Vokabel. Kippen nach oben oder unten zeigt einfach das nächste Wort – ohne richtig oder falsch.</p>
 
       <div class="setupGrid">
         <section class="panel">
@@ -204,13 +203,13 @@
           </div>
           <div class="optionBlock">
             <div class="switchRow">
-              <span><strong>Kippsteuerung</strong><br><small style="color:var(--muted)">v125 kalibriert „nach unten“ vor jeder Runde</small></span>
+              <span><strong>Kippsteuerung</strong><br><small style="color:var(--muted)">nach oben oder unten kippen = nächstes Wort</small></span>
               <label class="switch"><input type="checkbox" id="tiltEnabled" checked><span></span></label>
             </div>
           </div>
           <div class="optionBlock">
             <div class="switchRow">
-              <span><strong>Töne und Vibration</strong><br><small style="color:var(--muted)">Bestätigung bei richtig/übersprungen</small></span>
+              <span><strong>Töne und Vibration</strong><br><small style="color:var(--muted)">freundlicher Ton beim nächsten Wort</small></span>
               <label class="switch"><input type="checkbox" id="soundEnabled" checked><span></span></label>
             </div>
           </div>
@@ -229,21 +228,21 @@
     <div class="gameTop">
       <div class="gameStat"><span>⏱</span><span id="timer">60</span></div>
       <div class="chapterBadge" id="chapterBadge">Kapitel 1</div>
-      <div class="gameStat right"><span id="score">0 richtig</span><button class="finishBtn" id="finishBtn" type="button">Beenden</button></div>
+      <div class="gameStat right"><span id="score">0 Wörter</span><button class="finishBtn" id="finishBtn" type="button">Beenden</button></div>
     </div>
     <div class="gameBody">
-      <button class="actionBtn skipBtn" id="skipBtn" type="button" aria-label="Überspringen">
-        <span class="symbol">↑</span><span class="label"><span class="wideLabel">Überspringen</span><span class="shortLabel">Weiter</span></span>
+      <button class="actionBtn skipBtn" id="skipBtn" type="button" aria-label="Nächstes Wort">
+        <span class="symbol">↑</span><span class="label">Weiter</span>
       </button>
       <div class="termCard" id="termCard">
         <div class="termWrap" id="termWrap">
           <div class="term zh" id="term"></div>
           <div class="pinyin" id="pinyin"></div>
         </div>
-        <div class="tiltHint" id="tiltHint">Handy ruhig halten – Kippsteuerung wird kalibriert</div>
+        <div class="tiltHint" id="tiltHint">Handy kurz ruhig halten</div>
       </div>
-      <button class="actionBtn correctBtn" id="correctBtn" type="button" aria-label="Richtig">
-        <span class="symbol">↓</span><span class="label">Richtig</span>
+      <button class="actionBtn correctBtn" id="correctBtn" type="button" aria-label="Nächstes Wort">
+        <span class="symbol">↓</span><span class="label">Weiter</span>
       </button>
       <div class="flash" id="flash"></div>
     </div>
@@ -251,15 +250,6 @@
 
   <div class="countdown" id="countdown"></div>
 
-  <div class="calibration" id="calibration" role="dialog" aria-modal="true" aria-live="assertive">
-    <div class="calibrationCard">
-      <div class="calibrationIcon" id="calibrationIcon">▰</div>
-      <h2 class="calibrationTitle" id="calibrationTitle">Kippsteuerung kalibrieren</h2>
-      <p class="calibrationText" id="calibrationText">Halte das Handy so an die Stirn, wie du gleich spielen möchtest.</p>
-      <div class="calibrationStatus" id="calibrationStatus">Handy kurz ruhig halten …</div>
-      <button class="calibrationSkip" id="calibrationSkip" type="button">Ohne Kippsteuerung starten</button>
-    </div>
-  </div>
 
   <section class="screen" id="resultScreen">
     <div class="resultWrap">
@@ -267,13 +257,12 @@
         <div>
           <h1>Runde beendet</h1>
           <div class="resultScore" id="resultScore">0</div>
-          <div class="resultMeta" id="resultMeta">richtig erraten</div>
+          <div class="resultMeta" id="resultMeta">Wörter geschafft</div>
         </div>
         <button class="iconBtn" id="fullscreenResult" type="button" title="Vollbild" aria-label="Vollbild">⛶</button>
       </div>
       <div class="resultCols">
-        <section class="panel"><h2>✓ Richtig</h2><ul class="resultList" id="correctList"></ul></section>
-        <section class="panel"><h2>↷ Übersprungen</h2><ul class="resultList" id="skippedList"></ul></section>
+        <section class="panel"><h2>Geschaffte Wörter</h2><ul class="resultList" id="completedList"></ul></section>
       </div>
       <div class="resultActions">
         <button class="primary" id="againBtn" type="button">Noch eine Runde</button>
@@ -292,7 +281,9 @@
     const availableTopics = topics.filter(t => Array.isArray(t.vocab) && t.vocab.length);
     const highestAvailable = availableTopics.reduce((m,t) => Math.max(m, Number(t.id)||0), 0);
     const currentMax = requestedId ? Math.min(Number(requestedId)||1, highestAvailable || 1) : highestAvailable;
-    const currentTopicId = requestedId && topics.some(t => t.id === requestedId) ? requestedId : String(currentMax || 1).padStart(2,"0");
+    const currentTopicId = requestedId && topics.some(t => t.id === requestedId)
+      ? requestedId
+      : String(currentMax || 1).padStart(2,"0");
 
     const $ = id => document.getElementById(id);
     const screens = [$("setupScreen"), $("gameScreen"), $("resultScreen")];
@@ -302,13 +293,10 @@
       showPinyin: localStorage.getItem("cf_heads_pinyin") !== "0",
       tiltEnabled: localStorage.getItem("cf_heads_tilt") !== "0",
       soundEnabled: localStorage.getItem("cf_heads_sound") !== "0",
-      selected: new Set(), deck: [], current: null, correct: [], skipped: [],
+      selected: new Set(), pool: [], deck: [], current: null, completed: [],
       remaining: 60, timerId: null, running: false,
-      sensorSeen: false, baselinePose: null, filteredPose: null, downVector: null, tiltArmed: false,
-      neutralSince: 0, armAfter: 0, lastTiltAction: 0,
-      calibrating: false, calibrationPhase: "idle", calibrationCenter: null, calibrationSamples: [],
-      calibrationCandidate: null, calibrationCandidateSince: 0, calibrationReturnSince: 0,
-      calibrationResolve: null, calibrationTimeout: null,
+      sensorSeen: false, baselinePose: null, filteredPose: null,
+      tiltArmed: false, neutralSince: 0, armAfter: 0,
       orientationHandler: null, audio: null
     };
 
@@ -320,6 +308,7 @@
       return (r*299+g*587+b*114)/1000;
     }
     function allSelectableIds(){ return availableTopics.filter(t => Number(t.id) <= currentMax).map(t => t.id); }
+    function escapeHtml(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 
     function renderChapters(){
       const host=$("chapters"); host.innerHTML="";
@@ -330,9 +319,12 @@
         label.className="chapterCheck" + (unlocked ? "" : " disabled");
         label.style.setProperty("--chapter", topic.accent || "#fff");
         label.style.setProperty("--check-text", perceivedLight(topic.accent)>170 ? "#071827" : "#fff");
-        const input=document.createElement("input"); input.type="checkbox"; input.value=topic.id; input.disabled=!unlocked;
-        input.checked=state.selected.has(topic.id);
-        input.addEventListener("change",()=>{ input.checked ? state.selected.add(topic.id) : state.selected.delete(topic.id); saveSelection(); updateCount(); });
+        const input=document.createElement("input");
+        input.type="checkbox"; input.value=topic.id; input.disabled=!unlocked; input.checked=state.selected.has(topic.id);
+        input.addEventListener("change",()=>{
+          input.checked ? state.selected.add(topic.id) : state.selected.delete(topic.id);
+          saveSelection(); updateCount();
+        });
         const fake=document.createElement("span"); fake.className="fakeCheck";
         const name=document.createElement("span"); name.className="chapterName";
         name.innerHTML=`${Number(topic.id)}. ${escapeHtml(topic.title)}<small>${unlocked ? topic.vocab.length+" Vokabeln" : hasWords ? "noch nicht freigeschaltet" : "noch ohne Vokabeln"}</small>`;
@@ -356,7 +348,7 @@
           const key=`${v.zh}\u0000${v.de}`;
           if(seen.has(key)) return;
           seen.add(key);
-          cards.push({topicId:topic.id,topicTitle:topic.title,accent:topic.accent||"#03172B",textColor:topicTextColor(topic),zh:String(v.zh),pinyin:String(v.pinyin||""),de:String(v.de),index});
+          cards.push({key,topicId:topic.id,topicTitle:topic.title,accent:topic.accent||"#03172B",textColor:topicTextColor(topic),zh:String(v.zh),pinyin:String(v.pinyin||""),de:String(v.de),index});
         });
       });
       return cards;
@@ -378,7 +370,9 @@
       document.querySelectorAll("#timeButtons .segBtn").forEach(b=>b.classList.toggle("active",Number(b.dataset.time)===state.time));
     }
     function saveSwitches(){
-      state.showPinyin=$("showPinyin").checked; state.tiltEnabled=$("tiltEnabled").checked; state.soundEnabled=$("soundEnabled").checked;
+      state.showPinyin=$("showPinyin").checked;
+      state.tiltEnabled=$("tiltEnabled").checked;
+      state.soundEnabled=$("soundEnabled").checked;
       localStorage.setItem("cf_heads_pinyin",state.showPinyin?"1":"0");
       localStorage.setItem("cf_heads_tilt",state.tiltEnabled?"1":"0");
       localStorage.setItem("cf_heads_sound",state.soundEnabled?"1":"0");
@@ -397,49 +391,70 @@
         return typeof DeviceOrientationEvent !== "undefined";
       }catch{ return false; }
     }
-
     function shuffle(a){
       const arr=[...a];
       for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
       return arr;
     }
-    function escapeHtml(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+    function refillDeck(){
+      state.deck=shuffle(state.pool);
+      const last=state.completed[state.completed.length-1];
+      if(last && state.deck.length>1 && state.deck[0].key===last.key){
+        const swapIndex=state.deck.findIndex((c,i)=>i>0 && c.key!==last.key);
+        if(swapIndex>0) [state.deck[0],state.deck[swapIndex]]=[state.deck[swapIndex],state.deck[0]];
+      }
+    }
 
     async function startGame(){
       saveSwitches();
-      state.deck=shuffle(cardsForSelection());
-      if(!state.deck.length){updateCount();return;}
-      state.correct=[]; state.skipped=[]; state.remaining=state.time; state.running=false;
-      state.baselinePose=null; state.filteredPose=null; state.downVector=null; state.tiltArmed=false;
+      state.pool=cardsForSelection();
+      if(!state.pool.length){updateCount();return;}
+      state.completed=[]; state.current=null; state.remaining=state.time; state.running=false;
+      state.baselinePose=null; state.filteredPose=null; state.tiltArmed=false;
       state.neutralSince=0; state.armAfter=0; state.sensorSeen=false;
+      refillDeck();
       if(state.soundEnabled) ensureAudio();
       const motionGranted=await requestMotionPermission();
       await requestFullscreen();
       showScreen($("gameScreen"));
       $("timer").textContent=state.time ? state.remaining : "∞";
-      $("score").textContent="0 richtig";
-      $("tiltHint").textContent=state.tiltEnabled && motionGranted ? "Kippsteuerung wird kalibriert" : "Kippsteuerung nicht verfügbar – Buttons benutzen";
+      $("score").textContent="0 Wörter";
+      $("tiltHint").textContent=state.tiltEnabled && motionGranted
+        ? "Handy kurz ruhig halten"
+        : "Kippsteuerung nicht verfügbar – Weiter-Taste benutzen";
       attachMotion(motionGranted);
-      let tiltReady=false;
-      if(state.tiltEnabled && motionGranted) tiltReady=await calibrateTilt();
-      if(!tiltReady) $("tiltHint").textContent="Buttons benutzen";
       await runCountdown();
       state.running=true;
       nextCard();
-      if(state.time>0) state.timerId=setInterval(()=>{state.remaining--;$("timer").textContent=state.remaining;if(state.remaining<=0)endGame();},1000);
-      setTimeout(()=>{ if(state.running && state.tiltEnabled && !state.sensorSeen) $("tiltHint").textContent="Kein Bewegungssensor erkannt – Buttons benutzen"; },2500);
+      if(state.time>0){
+        state.timerId=setInterval(()=>{
+          state.remaining--;
+          $("timer").textContent=state.remaining;
+          if(state.remaining<=0) endGame();
+        },1000);
+      }
+      setTimeout(()=>{
+        if(state.running && state.tiltEnabled && !state.sensorSeen){
+          $("tiltHint").textContent="Kein Bewegungssensor erkannt – Weiter-Taste benutzen";
+        }
+      },2500);
     }
 
     function runCountdown(){
       return new Promise(resolve=>{
         const el=$("countdown"); let n=3; el.textContent=n; el.classList.add("show");
-        const id=setInterval(()=>{ n--; if(n>0){el.textContent=n;} else if(n===0){el.textContent="Los!";} else{clearInterval(id);el.classList.remove("show");resolve();}},650);
+        const id=setInterval(()=>{
+          n--;
+          if(n>0) el.textContent=n;
+          else if(n===0) el.textContent="Los!";
+          else{clearInterval(id);el.classList.remove("show");resolve();}
+        },650);
       });
     }
 
     function nextCard(){
       if(!state.running) return;
-      if(!state.deck.length){endGame();return;}
+      if(!state.deck.length) refillDeck();
       state.current=state.deck.shift();
       const c=state.current;
       document.documentElement.style.setProperty("--card-bg",c.accent);
@@ -450,10 +465,10 @@
       $("term").textContent=isZh?c.zh:c.de;
       $("pinyin").textContent=isZh && state.showPinyin?c.pinyin:"";
       $("pinyin").style.display=isZh && state.showPinyin && c.pinyin?"":"none";
-      if(state.tiltEnabled && state.downVector){
-        $("tiltHint").textContent=Date.now()<state.armAfter
-          ? "Zur Ausgangslage zurück und kurz ruhig halten"
-          : (state.tiltArmed ? "Bereit · ↓ richtig · ↑ überspringen" : "Handy kurz ruhig halten");
+      if(state.tiltEnabled && state.sensorSeen){
+        $("tiltHint").textContent=state.tiltArmed
+          ? "Bereit · nach oben oder unten kippen"
+          : "Zur Ausgangslage zurück und kurz ruhig halten";
       }
       requestAnimationFrame(fitTerm);
     }
@@ -478,93 +493,14 @@
       if(!Number.isFinite(beta) || !Number.isFinite(gamma)) return null;
       return {beta,gamma};
     }
+    function angleDelta(value,base){ return ((value-base+540)%360)-180; }
     function poseDistance(a,b){
       if(!a || !b) return Infinity;
-      return Math.hypot(a.beta-b.beta,a.gamma-b.gamma);
-    }
-    function averagePose(samples){
-      if(!samples.length) return null;
-      const sum=samples.reduce((acc,p)=>({beta:acc.beta+p.beta,gamma:acc.gamma+p.gamma}),{beta:0,gamma:0});
-      return {beta:sum.beta/samples.length,gamma:sum.gamma/samples.length};
-    }
-    function setCalibrationStep(icon,title,text,status){
-      $("calibrationIcon").textContent=icon;
-      $("calibrationTitle").textContent=title;
-      $("calibrationText").textContent=text;
-      $("calibrationStatus").textContent=status;
-    }
-    function finishCalibration(success){
-      if(!state.calibrating) return;
-      state.calibrating=false;
-      clearTimeout(state.calibrationTimeout); state.calibrationTimeout=null;
-      $("calibration").classList.remove("show");
-      if(success && state.filteredPose){
-        state.baselinePose={...state.filteredPose};
-        state.tiltArmed=false; state.neutralSince=Date.now(); state.armAfter=Date.now()+350;
-        $("tiltHint").textContent="Kalibriert · Handy kurz ruhig halten";
-      }else{
-        state.downVector=null; state.baselinePose=null; state.tiltArmed=false;
-      }
-      const resolve=state.calibrationResolve; state.calibrationResolve=null;
-      if(resolve) resolve(Boolean(success));
-    }
-    function calibrateTilt(){
-      return new Promise(resolve=>{
-        state.calibrating=true; state.calibrationPhase="center"; state.calibrationSamples=[];
-        state.calibrationCenter=null; state.calibrationCandidate=null; state.calibrationCandidateSince=0; state.calibrationReturnSince=0;
-        state.calibrationResolve=resolve;
-        setCalibrationStep("▰","Kippsteuerung kalibrieren","Halte das Handy so an die Stirn, wie du gleich spielen möchtest.","Handy kurz ruhig halten …");
-        $("calibration").classList.add("show");
-        state.calibrationTimeout=setTimeout(()=>finishCalibration(false),12000);
-      });
-    }
-    function handleCalibration(pose,now){
-      if(state.calibrationPhase==="center"){
-        state.calibrationSamples.push({...pose,time:now});
-        state.calibrationSamples=state.calibrationSamples.filter(p=>now-p.time<=850);
-        if(state.calibrationSamples.length>=18){
-          const center=averagePose(state.calibrationSamples);
-          const spread=Math.max(...state.calibrationSamples.map(p=>poseDistance(p,center)));
-          if(spread<4.5){
-            state.calibrationCenter=center; state.calibrationPhase="down"; state.calibrationCandidate=null;
-            setCalibrationStep("↓","Jetzt nach unten kippen","Kippe das Handy einmal deutlich nach unten – genauso, wie du später „richtig“ markieren möchtest.","Diese Bewegung wird nicht als Karte gewertet.");
-          }else{
-            $("calibrationStatus").textContent="Noch einen Moment ruhig halten …";
-          }
-        }
-        return;
-      }
-      if(state.calibrationPhase==="down"){
-        const db=pose.beta-state.calibrationCenter.beta, dg=pose.gamma-state.calibrationCenter.gamma;
-        const distance=Math.hypot(db,dg);
-        if(distance>17){
-          const candidate={beta:db/distance,gamma:dg/distance};
-          if(!state.calibrationCandidate || candidate.beta*state.calibrationCandidate.beta+candidate.gamma*state.calibrationCandidate.gamma<0.92){
-            state.calibrationCandidate=candidate; state.calibrationCandidateSince=now;
-          }else if(now-state.calibrationCandidateSince>=160){
-            state.downVector=candidate; state.calibrationPhase="return"; state.calibrationReturnSince=0;
-            setCalibrationStep("↶","Zurück zur Ausgangslage","Kippe das Handy wieder in die normale Haltung an deiner Stirn.","Kurz ruhig halten, dann startet das Spiel.");
-          }
-        }else{
-          state.calibrationCandidate=null; state.calibrationCandidateSince=0;
-        }
-        return;
-      }
-      if(state.calibrationPhase==="return"){
-        const distance=poseDistance(pose,state.calibrationCenter);
-        if(distance<8){
-          if(!state.calibrationReturnSince) state.calibrationReturnSince=now;
-          if(now-state.calibrationReturnSince>=380){
-            state.baselinePose={...pose};
-            finishCalibration(true);
-          }
-        }else{
-          state.calibrationReturnSince=0;
-        }
-      }
+      return Math.hypot(angleDelta(a.beta,b.beta),angleDelta(a.gamma,b.gamma));
     }
     function attachMotion(granted){
-      detachMotion(); if(!granted || !state.tiltEnabled) return;
+      detachMotion();
+      if(!granted || !state.tiltEnabled) return;
       state.orientationHandler=e=>{
         const raw=poseFromEvent(e); if(!raw) return;
         const now=Date.now(); state.sensorSeen=true;
@@ -572,105 +508,120 @@
           ? {beta:state.filteredPose.beta*.72+raw.beta*.28,gamma:state.filteredPose.gamma*.72+raw.gamma*.28}
           : raw;
         const pose=state.filteredPose;
-        if(state.calibrating){handleCalibration(pose,now);return;}
-        if(!state.running || !state.current || !state.downVector) return;
-        if(!state.baselinePose){state.baselinePose={...pose};state.neutralSince=now;return;}
+        if(!state.running || !state.current) return;
+        if(!state.baselinePose){
+          state.baselinePose={...pose}; state.neutralSince=now; state.tiltArmed=false;
+          $("tiltHint").textContent="Handy kurz ruhig halten";
+          return;
+        }
 
-        const db=pose.beta-state.baselinePose.beta, dg=pose.gamma-state.baselinePose.gamma;
-        const distance=Math.hypot(db,dg);
-        const neutral=distance<8;
-
+        const distance=poseDistance(pose,state.baselinePose);
+        const neutral=distance<9;
         if(neutral){
-          state.baselinePose.beta=state.baselinePose.beta*.96+pose.beta*.04;
-          state.baselinePose.gamma=state.baselinePose.gamma*.96+pose.gamma*.04;
+          state.baselinePose.beta=state.baselinePose.beta*.97+pose.beta*.03;
+          state.baselinePose.gamma=state.baselinePose.gamma*.97+pose.gamma*.03;
           if(now<state.armAfter){
             state.tiltArmed=false; state.neutralSince=0;
-            $("tiltHint").textContent="Zur Ausgangslage zurück und kurz ruhig halten";
+            $("tiltHint").textContent="Zur Ausgangslage zurück";
             return;
           }
           if(!state.neutralSince) state.neutralSince=now;
-          if(!state.tiltArmed && now-state.neutralSince>=280){
+          if(!state.tiltArmed && now-state.neutralSince>=260){
             state.tiltArmed=true;
-            $("tiltHint").textContent="Bereit · ↓ richtig · ↑ überspringen";
+            $("tiltHint").textContent="Bereit · nach oben oder unten kippen";
           }
           return;
         }
 
         state.neutralSince=0;
         if(!state.tiltArmed || now<state.armAfter) return;
-        const projection=db*state.downVector.beta+dg*state.downVector.gamma;
-        const side=Math.abs(db*state.downVector.gamma-dg*state.downVector.beta);
-        if(Math.abs(projection)<22 || Math.abs(projection)<side*.8) return;
-
-        state.lastTiltAction=now; state.armAfter=now+950; state.tiltArmed=false;
-        if(projection>0){
-          $("tiltHint").textContent="Richtig – zurück zur Ausgangslage";
-          mark("correct");
-        }else{
-          $("tiltHint").textContent="Übersprungen – zurück zur Ausgangslage";
-          mark("skip");
+        if(distance>=23){
+          state.tiltArmed=false;
+          state.armAfter=now+850;
+          $("tiltHint").textContent="Erkannt · zurück zur Ausgangslage";
+          completeCurrent();
         }
       };
       window.addEventListener("deviceorientation",state.orientationHandler,true);
     }
-    function detachMotion(){if(state.orientationHandler){window.removeEventListener("deviceorientation",state.orientationHandler,true);state.orientationHandler=null;}}
+    function detachMotion(){
+      if(state.orientationHandler){
+        window.removeEventListener("deviceorientation",state.orientationHandler,true);
+        state.orientationHandler=null;
+      }
+    }
 
-    function mark(kind){
+    function completeCurrent(){
       if(!state.running || !state.current) return;
       const now=Date.now();
-      state.armAfter=Math.max(state.armAfter,now+1050);
+      state.armAfter=Math.max(state.armAfter,now+850);
       state.tiltArmed=false; state.neutralSince=0;
-      const card=state.current; state.current=null;
-      if(kind==="correct"){state.correct.push(card);playFeedback(true);flash("✓");}
-      else{state.skipped.push(card);playFeedback(false);flash("↷");}
-      $("score").textContent=`${state.correct.length} richtig`;
-      setTimeout(nextCard,430);
+      state.completed.push(state.current);
+      state.current=null;
+      playFeedback();
+      flash("→");
+      const n=state.completed.length;
+      $("score").textContent=`${n} ${n===1?"Wort":"Wörter"}`;
+      setTimeout(nextCard,330);
     }
-    function flash(symbol){const el=$("flash");el.textContent=symbol;el.classList.remove("show");void el.offsetWidth;el.classList.add("show");}
+    function flash(symbol){
+      const el=$("flash"); el.textContent=symbol; el.classList.remove("show");
+      void el.offsetWidth; el.classList.add("show");
+    }
 
     function ensureAudio(){
       if(!state.audio){const AC=window.AudioContext||window.webkitAudioContext;if(AC)state.audio=new AC();}
       if(state.audio?.state==="suspended") state.audio.resume().catch(()=>{});
       return state.audio;
     }
-    function tone(freq,start,duration,volume=.12){
+    function tone(freq,start,duration,volume=.11){
       const ctx=ensureAudio(); if(!ctx) return;
       const osc=ctx.createOscillator(),gain=ctx.createGain();
-      osc.type="sine";osc.frequency.setValueAtTime(freq,ctx.currentTime+start);
-      gain.gain.setValueAtTime(.0001,ctx.currentTime+start);gain.gain.exponentialRampToValueAtTime(volume,ctx.currentTime+start+.015);gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+start+duration);
-      osc.connect(gain).connect(ctx.destination);osc.start(ctx.currentTime+start);osc.stop(ctx.currentTime+start+duration+.02);
+      osc.type="sine"; osc.frequency.setValueAtTime(freq,ctx.currentTime+start);
+      gain.gain.setValueAtTime(.0001,ctx.currentTime+start);
+      gain.gain.exponentialRampToValueAtTime(volume,ctx.currentTime+start+.015);
+      gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+start+duration);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(ctx.currentTime+start); osc.stop(ctx.currentTime+start+duration+.02);
     }
-    function playFeedback(ok){
+    function playFeedback(){
       if(!state.soundEnabled) return;
-      if(ok){tone(660,0,.12);tone(880,.11,.16,.10);navigator.vibrate?.(45);}
-      else{tone(260,0,.18,.11);tone(190,.13,.18,.09);navigator.vibrate?.([35,45,35]);}
+      tone(620,0,.11,.10); tone(830,.09,.16,.09);
+      navigator.vibrate?.(35);
     }
 
     function endGame(){
       if(!state.running && !state.current) return;
-      state.running=false; clearInterval(state.timerId); state.timerId=null;
-      if(state.calibrating) finishCalibration(false);
+      state.running=false;
+      clearInterval(state.timerId); state.timerId=null;
       detachMotion();
-      if(state.current){state.deck.unshift(state.current);state.current=null;}
-      renderResults(); showScreen($("resultScreen"));
+      state.current=null;
+      renderResults();
+      showScreen($("resultScreen"));
     }
     function renderResults(){
-      $("resultScore").textContent=state.correct.length;
-      const total=state.correct.length+state.skipped.length;
-      $("resultMeta").textContent=`richtig erraten · ${state.skipped.length} übersprungen · ${total} gespielt`;
-      fillList($("correctList"),state.correct,"Noch keine Vokabel richtig erraten.");
-      fillList($("skippedList"),state.skipped,"Keine Vokabel übersprungen.");
+      const n=state.completed.length;
+      $("resultScore").textContent=n;
+      $("resultMeta").textContent=`${n===1?"Wort":"Wörter"} in dieser Runde geschafft`;
+      fillList($("completedList"),state.completed,"In dieser Runde wurde noch kein Wort weitergeschaltet.");
     }
     function fillList(host,cards,empty){
       host.innerHTML="";
       if(!cards.length){const li=document.createElement("li");li.textContent=empty;host.appendChild(li);return;}
-      cards.forEach(c=>{const li=document.createElement("li");const main=document.createElement("span");main.textContent=state.language==="zh"?c.zh:c.de;const small=document.createElement("small");small.textContent=`Kap. ${Number(c.topicId)}`;li.append(main,small);host.appendChild(li);});
+      cards.forEach((c,index)=>{
+        const li=document.createElement("li");
+        const main=document.createElement("span");
+        main.textContent=`${index+1}. ${state.language==="zh"?c.zh:c.de}`;
+        const small=document.createElement("small"); small.textContent=`Kap. ${Number(c.topicId)}`;
+        li.append(main,small); host.appendChild(li);
+      });
     }
 
-    // Startzustand
     $("backLink").href=`kapitel.html?id=${currentTopicId}`;
     loadSelection(); renderChapters(); setLanguage(state.language); setTime([0,60,90,120].includes(state.time)?state.time:60);
-    $("showPinyin").checked=state.showPinyin; $("tiltEnabled").checked=state.tiltEnabled; $("soundEnabled").checked=state.soundEnabled;
+    $("showPinyin").checked=state.showPinyin;
+    $("tiltEnabled").checked=state.tiltEnabled;
+    $("soundEnabled").checked=state.soundEnabled;
     updateCount();
 
     $("selectAll").addEventListener("click",()=>{state.selected=new Set(allSelectableIds());saveSelection();renderChapters();updateCount();});
@@ -679,9 +630,8 @@
     document.querySelectorAll("#timeButtons .segBtn").forEach(b=>b.addEventListener("click",()=>setTime(b.dataset.time)));
     [$("showPinyin"),$("tiltEnabled"),$("soundEnabled")].forEach(el=>el.addEventListener("change",saveSwitches));
     $("startBtn").addEventListener("click",startGame);
-    $("calibrationSkip").addEventListener("click",()=>finishCalibration(false));
-    $("skipBtn").addEventListener("click",()=>mark("skip"));
-    $("correctBtn").addEventListener("click",()=>mark("correct"));
+    $("skipBtn").addEventListener("click",completeCurrent);
+    $("correctBtn").addEventListener("click",completeCurrent);
     $("finishBtn").addEventListener("click",endGame);
     $("againBtn").addEventListener("click",startGame);
     $("settingsBtn").addEventListener("click",()=>{detachMotion();showScreen($("setupScreen"));});
