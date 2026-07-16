@@ -1,13 +1,16 @@
 // Chinesisch festigen – Service Worker
 // Bei jeder Änderung an der Website die Versionsnummer erhöhen,
 // damit alle Geräte die neuen Dateien laden.
-const CACHE = "cf-v127-noindex";
+const CACHE = "cf-v128-story-reader";
 
 const SHELL = [
   "./",
   "./index.html",
   "./start.html",
   "./kapitel.html",
+  "./geschichte.html",
+  "./geschichte.js",
+  "./geschichte-data.js",
   "./hoeren.html",
   "./schreiben.html",
   "./sprechen.html",

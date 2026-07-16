@@ -400,6 +400,19 @@ function cfBonusGameUnlocked(topic){
   return cfChapterWorkedThrough(topic);
 }
 
+// Abschlussgeschichte: Sie wird erst freigeschaltet, wenn wirklich alle
+// 15 Kapitel Inhalt haben und jedes davon mindestens einmal vollständig
+// durchgearbeitet wurde. Die Prozentwerte sind dafür ausdrücklich egal.
+function cfStoryProgress(topics){
+  const list = (topics || window.CF_TOPICS || []).slice(0, 15);
+  const done = list.filter(t => topicHasContent(t) && cfChapterWorkedThrough(t)).length;
+  return { done, total: 15 };
+}
+function cfStoryUnlocked(topics){
+  const list = (topics || window.CF_TOPICS || []).slice(0, 15);
+  return list.length === 15 && list.every(t => topicHasContent(t) && cfChapterWorkedThrough(t));
+}
+
 // Proper-Name-Reserve für Karten-Übungen: Namen, die GANZ bleiben sollen, aber
 // nicht als Verstehen-Vokabel im Kapitel stehen. Mehrzeichige Verstehen-Vokabeln
 // (understandingVocab) werden ohnehin automatisch zusammengehalten – die müssen

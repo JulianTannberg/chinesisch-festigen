@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Die Geschichte auf Chinesisch</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#03172B" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Chinesisch" />
+</head>
+<body class="storyReaderBody">
+  <main class="storyApp">
+    <header class="storyTopbar">
+      <a class="back" href="index.html" aria-label="Zur Kapitelübersicht">‹ Übersicht</a>
+      <div class="storyTopTitle">
+        <strong>Die Geschichte auf Chinesisch</strong>
+        <span id="storyPositionLabel">Lesehilfe</span>
+      </div>
+      <button class="miniBtn" id="storyContentsBtn" type="button" aria-label="Kapitel auswählen">Kapitel</button>
+    </header>
+
+    <section id="storyLocked" class="storyLocked card" hidden>
+      <div class="storyLockIcon" aria-hidden="true">🔒</div>
+      <h1>Noch nicht freigeschaltet</h1>
+      <p>Die Abschlussgeschichte erscheint, sobald du alle 15 Kapitel jeweils einmal vollständig durchgearbeitet hast. Dafür sind keine 100&nbsp;% nötig.</p>
+      <p id="storyLockedProgress" class="storyLockedProgress"></p>
+      <a class="back" href="index.html">Zur Kapitelübersicht</a>
+    </section>
+
+    <section id="storyReader" class="storyReaderShell" hidden>
+      <div class="storyControls" aria-label="Lesehilfen">
+        <button class="toggleBtn" id="togglePinyin" type="button" aria-pressed="false">Pinyin</button>
+        <button class="toggleBtn" id="toggleGerman" type="button" aria-pressed="false">Deutsch</button>
+        <label class="storyChapterSelectLabel" for="storyChapterSelect">Gehe zu</label>
+        <select id="storyChapterSelect" class="storyChapterSelect" aria-label="Kapitel auswählen"></select>
+      </div>
+
+      <div class="storyViewport" id="storyViewport">
+        <div class="storyTrack" id="storyTrack"></div>
+      </div>
+
+      <nav class="storyBottomNav" aria-label="Seitennavigation">
+        <button id="storyPrev" type="button">‹ Vorheriges Kapitel</button>
+        <span id="storyPageCounter">Lesehilfe</span>
+        <button id="storyNext" type="button">Nächstes Kapitel ›</button>
+      </nav>
+    </section>
+  </main>
+
+  <script src="topics.js"></script>
+  <script src="bausteine.js"></script>
+  <script src="common.js"></script>
+  <script src="geschichte-data.js"></script>
+  <script src="geschichte.js"></script>
+</body>
+</html>

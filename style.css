@@ -2341,3 +2341,137 @@ input, textarea, select, [contenteditable="true"]{
   border-radius:12px;
   background:color-mix(in srgb, var(--chapter-text) 10%, transparent);
 }
+
+/* ---------------------------------------------------------------
+   Abschlussgeschichte – buchähnlicher Reader
+   --------------------------------------------------------------- */
+.storyUnlockSection{margin:26px 0 6px}
+.storyUnlockCard{
+  display:block;
+  padding:22px;
+  border:1px solid var(--stroke);
+  border-radius:24px;
+  background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(246,208,131,.14));
+  box-shadow:0 14px 38px var(--shadow);
+  color:var(--chapter-text);
+  text-decoration:none;
+}
+.storyUnlockCard.available{transition:transform .16s ease,background .16s ease}
+.storyUnlockCard.available:hover{transform:translateY(-2px);background:linear-gradient(135deg,rgba(255,255,255,.29),rgba(246,208,131,.2))}
+.storyUnlockCard.locked{opacity:.72}
+.storyUnlockEyebrow{font-size:12px;font-weight:850;letter-spacing:.12em;text-transform:uppercase;opacity:.72}
+.storyUnlockBody{display:flex;align-items:flex-end;justify-content:space-between;gap:22px;margin-top:8px}
+.storyUnlockZh{font-family:"Microsoft YaHei","DengXian",sans-serif;font-size:22px;font-weight:850;opacity:.85}
+.storyUnlockCard h2{font-size:clamp(25px,4vw,38px);line-height:1.08;margin:4px 0 7px}
+.storyUnlockCard p{margin:0;line-height:1.5;opacity:.84}
+.storyUnlockAction{flex:none;font-weight:850;white-space:nowrap}
+.storyUnlockProgress{display:grid;grid-template-columns:max-content 1fr;align-items:center;gap:12px;margin-top:18px;font-size:13px;font-weight:750}
+.storyUnlockBar{height:8px;border-radius:999px;background:rgba(255,255,255,.16);overflow:hidden}
+.storyUnlockBar i{display:block;height:100%;border-radius:inherit;background:var(--good)}
+.storyUnlockHint{margin-top:12px!important;font-size:13px}
+
+.storyReaderBody{overflow:hidden;background:#071a2d}
+.storyReaderBody::before{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(0,0,0,.16))}
+.storyApp{
+  width:min(1120px,100%);
+  height:100dvh;
+  margin:0 auto;
+  padding:calc(10px + env(safe-area-inset-top,0px)) 12px calc(8px + env(safe-area-inset-bottom,0px));
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
+.storyTopbar{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;flex:none;margin-bottom:8px}
+.storyTopTitle{min-width:0;text-align:center;display:flex;flex-direction:column;line-height:1.2}
+.storyTopTitle strong{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.storyTopTitle span{font-size:12px;opacity:.72;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.storyReaderShell{display:flex;flex-direction:column;min-height:0;flex:1}
+.storyControls{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:none;
+  margin-bottom:8px;padding:8px;border:1px solid var(--stroke);border-radius:16px;
+  background:rgba(7,26,45,.86);backdrop-filter:blur(12px)
+}
+.storyControls .toggleBtn{min-height:40px;padding:8px 12px}
+.storyControls .toggleBtn.active{background:rgba(246,208,131,.9);color:#071a2d;border-color:rgba(246,208,131,.95)}
+.storyChapterSelectLabel{font-size:12px;font-weight:800;opacity:.72;margin-left:auto}
+.storyChapterSelect{
+  min-height:40px;max-width:min(330px,45vw);padding:8px 34px 8px 11px;border-radius:12px;
+  border:1px solid var(--stroke);background:#132b40;color:#fff;font:inherit;font-size:14px
+}
+.storyViewport{
+  flex:1;min-height:0;overflow:hidden;border-radius:20px;border:1px solid rgba(255,255,255,.16);
+  background:#f8f4ea;color:#14202b;box-shadow:0 15px 36px rgba(0,0,0,.25);touch-action:pan-y
+}
+.storyTrack{display:flex;width:100%;height:100%;transition:transform .28s ease;will-change:transform}
+.storyPage{flex:0 0 100%;width:100%;height:100%;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.storyPageInner{width:min(760px,100%);margin:0 auto;padding:clamp(24px,5vw,56px) clamp(18px,5vw,54px) 70px}
+.storyIntroPage .storyPageInner{width:min(880px,100%)}
+.storyCoverMark{font-family:"Microsoft YaHei","DengXian",sans-serif;font-size:clamp(25px,5vw,48px);font-weight:900;letter-spacing:.08em;color:#8a6728}
+.storyPage h1{font-family:"Microsoft YaHei","DengXian",system-ui,sans-serif;color:#071a2d;font-size:clamp(29px,5vw,48px);line-height:1.15;margin:9px 0}
+.storyLead{font-size:clamp(17px,2.5vw,23px);color:#5a6570;margin:0 0 26px}
+.storyIntroNotice,.storyReadingTip{border-left:5px solid #c89537;background:#fff8e9;border-radius:0 16px 16px 0;padding:15px 18px;margin:22px 0}
+.storyIntroNotice p,.storyReadingTip p{margin:5px 0;line-height:1.55}
+.storyPage h2{font-size:22px;color:#071a2d;margin:32px 0 12px}
+.storyTableWrap{overflow-x:auto;border:1px solid #d8d1c3;border-radius:14px;background:#fff}
+.storyVocabTable{border-collapse:collapse;width:100%;min-width:650px;font-size:14px}
+.storyVocabTable th,.storyVocabTable td{text-align:left;padding:10px 12px;border-bottom:1px solid #e6e0d5;vertical-align:top}
+.storyVocabTable th{background:#eef1f2;color:#263442;position:sticky;top:0}
+.storyVocabTable tr:last-child td{border-bottom:0}
+.storyTableZh{font-family:"Microsoft YaHei","DengXian",sans-serif;font-size:20px;font-weight:800}
+.storyPatternGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.storyPatternCard{display:flex;flex-direction:column;gap:5px;padding:14px;border:1px solid #ded7ca;border-radius:14px;background:#fff}
+.storyPatternCard strong{font-family:"Microsoft YaHei","DengXian",sans-serif;font-size:20px;color:#071a2d}
+.storyPatternCard span{line-height:1.4}
+.storyPatternCard small{color:#68737c;line-height:1.4}
+.storyStartBtn{display:block;margin:28px auto 0;background:#071a2d;color:#fff;border:0;padding:13px 20px}
+.storyChapterHeading{text-align:center;padding-bottom:23px;margin-bottom:20px;border-bottom:1px solid #dcd5c8}
+.storyChapterNo{text-transform:uppercase;letter-spacing:.12em;font-size:12px;font-weight:850;color:#8a6728}
+.storyChapterHeading h1{font-size:clamp(28px,5vw,44px);margin:8px 0 3px}
+.storyChapterHeading p{margin:0;color:#5b6670;font-size:17px}
+.storyPlayChapter{margin-top:15px;background:#071a2d;color:#fff;border-color:#071a2d}
+.storyPlayChapter.playing,.storyPlay.playing{animation:storyPulse 1s infinite;background:#c89537!important;color:#071a2d!important}
+@keyframes storyPulse{50%{transform:scale(1.04)}}
+.storyUnits{display:flex;flex-direction:column;gap:12px}
+.storyUnit{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:start;
+  padding:14px 14px 14px 16px;border:1px solid #ded8cc;border-radius:15px;background:rgba(255,255,255,.74)
+}
+.storyUnit.dialogue{grid-template-columns:minmax(58px,auto) minmax(0,1fr) auto;border-left:4px solid #c89537}
+.storyUnit.scene{background:#eef1f2;text-align:center;border-style:dashed}
+.storySpeaker{font-family:"Microsoft YaHei","DengXian",sans-serif;font-weight:900;color:#8a6728;padding-top:2px;white-space:nowrap}
+.storyUnitText{min-width:0}
+.storyZh{font-family:"Microsoft YaHei","DengXian","Noto Sans CJK SC",sans-serif;font-size:clamp(20px,3.2vw,25px);font-weight:650;line-height:1.72;letter-spacing:.015em;color:#101b25}
+.storyPinyin{display:none;font-size:15px;line-height:1.55;color:#6c5527;margin-top:5px}
+.storyGerman{display:none;font-size:15px;line-height:1.55;color:#54606a;margin-top:4px}
+.storyReaderShell.showPinyin .storyPinyin{display:block}
+.storyReaderShell.showGerman .storyGerman{display:block}
+.storyPlay{width:42px;height:42px;padding:0;border-radius:50%;background:#e8edf0;color:#071a2d;border-color:#ccd3d7;flex:none}
+.storyEndMark{text-align:center;margin-top:34px;padding-top:20px;border-top:1px solid #ddd5c8;color:#8a6728;font-weight:800}
+.storyBottomNav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;flex:none;padding-top:8px}
+.storyBottomNav button{min-height:44px}
+.storyBottomNav button:last-child{justify-self:stretch}
+.storyBottomNav span{font-size:13px;font-weight:850;opacity:.78;min-width:72px;text-align:center}
+.storyLocked{width:min(650px,100%);margin:auto;text-align:center;padding:30px}
+.storyLocked h1{font-size:32px}
+.storyLockIcon{font-size:42px}
+.storyLockedProgress{font-weight:850;color:var(--gold)}
+
+@media(max-width:640px){
+  .storyUnlockBody{display:block}
+  .storyUnlockAction{margin-top:14px}
+  .storyUnlockProgress{grid-template-columns:1fr}
+  .storyTopbar{grid-template-columns:auto minmax(0,1fr) auto}
+  .storyTopbar .back,.storyTopbar .miniBtn{padding:8px 10px;font-size:13px}
+  .storyTopTitle strong{font-size:13px}
+  .storyControls{gap:6px}
+  .storyChapterSelectLabel{display:none}
+  .storyChapterSelect{order:3;flex:1 1 100%;max-width:none;width:100%}
+  .storyPageInner{padding:26px 15px 64px}
+  .storyUnit.dialogue{grid-template-columns:1fr auto}
+  .storyUnit.dialogue .storySpeaker{grid-column:1 / -1;font-size:14px;margin-bottom:-7px}
+  .storyZh{font-size:20px;line-height:1.65}
+  .storyBottomNav{grid-template-columns:1fr 62px 1fr}
+  .storyBottomNav button{padding:9px 7px;font-size:12px}
+}
+
+@media(prefers-reduced-motion:reduce){.storyTrack{transition:none}.storyPlayChapter.playing,.storyPlay.playing{animation:none}}

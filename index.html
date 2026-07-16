@@ -26,6 +26,7 @@
     <h1>Kapitelübersicht</h1>
     <div id="profileSetupMount"></div>
     <section class="grid" id="chapterGrid"></section>
+    <section id="storyMount" class="storyUnlockSection" aria-label="Abschlussgeschichte"></section>
     <div id="profileEditMount" class="bottomProfile"></div>
   </main>
 
@@ -100,6 +101,33 @@
       `;
       grid.appendChild(el);
     });
+
+    // Abschlussgeschichte unter Kapitel 15. Zum Testen kann sie mit ?test=1
+    // geöffnet werden, ohne den echten Lernfortschritt zu verändern.
+    const storyMount = document.getElementById("storyMount");
+    const testMode = new URLSearchParams(location.search).get("test") === "1";
+    const storyProgress = cfStoryProgress(topics);
+    const storyUnlocked = cfStoryUnlocked(topics) || testMode;
+    const storyCard = document.createElement(storyUnlocked ? "a" : "div");
+    storyCard.className = "storyUnlockCard" + (storyUnlocked ? " available" : " locked");
+    if(storyUnlocked) storyCard.href = "geschichte.html" + (testMode ? "?test=1" : "");
+    storyCard.innerHTML = `
+      <div class="storyUnlockEyebrow">Nach Kapitel 15</div>
+      <div class="storyUnlockBody">
+        <div>
+          <div class="storyUnlockZh">完整的故事</div>
+          <h2>Die Geschichte auf Chinesisch</h2>
+          <p>Sū Ráns Reise durch Beijing – in 15 kurzen Lesekapiteln.</p>
+        </div>
+        <div class="storyUnlockAction">${storyUnlocked ? "Jetzt lesen ›" : "🔒 Noch gesperrt"}</div>
+      </div>
+      <div class="storyUnlockProgress">
+        <span>${storyProgress.done} von 15 Kapiteln einmal durchgearbeitet</span>
+        <div class="storyUnlockBar"><i style="width:${Math.round(storyProgress.done / 15 * 100)}%"></i></div>
+      </div>
+      ${storyUnlocked ? "" : '<p class="storyUnlockHint">Die Geschichte wird freigeschaltet, sobald du jedes Kapitel einmal vollständig durchgearbeitet hast. 100&nbsp;% sind dafür nicht nötig.</p>'}
+    `;
+    storyMount.appendChild(storyCard);
   </script>
 </body>
 </html>

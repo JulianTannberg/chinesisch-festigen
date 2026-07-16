@@ -1,0 +1,26 @@
+ABSCHLUSSGESCHICHTE TESTEN
+
+Echter Freischaltmodus
+----------------------
+Die Geschichte bleibt gesperrt, bis alle 15 Kapitel Inhalt haben und jedes Kapitel einmal vollständig durchgearbeitet wurde. Die Prozentwerte müssen dafür nicht 100 % sein.
+
+Testmodus
+---------
+Da Kapitel 9 bis 15 in dieser ZIP noch keine App-Inhalte besitzen, kann die Geschichte vorläufig über den Testmodus geprüft werden:
+
+1. Kapitelübersicht öffnen mit: index.html?test=1
+2. Ganz nach unten scrollen.
+3. „Die Geschichte auf Chinesisch“ öffnen.
+
+Alternativ direkt: geschichte.html?test=1
+
+Der Testmodus verändert oder fälscht keinen Lernfortschritt.
+
+Zu prüfen
+---------
+- Pinyin und Deutsch ein-/ausschalten
+- einzelne Absätze und Dialoge über ▶ anhören
+- ganzes Kapitel anhören
+- horizontal zum nächsten/vorherigen Kapitel wischen
+- Kapitel über die Auswahlliste wechseln
+- App schließen und am zuletzt gelesenen Kapitel/Absatz weiterlesen
