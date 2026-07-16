@@ -7,8 +7,8 @@ window.CF_TOPICS = [
     "id": "01",
     "title": "Ankunft",
     "short": "Bahnhof Beijing Süd, Anrempeln, Vorstellen, WeChat-Tausch",
-    "accent": "#03172B",
-    "textColor": "#FFFFFF",
+    "accent": "#3FA7A3",
+    "textColor": "#050B12",
     "vocab": [
       {
         "zh": "我",
@@ -576,8 +576,8 @@ window.CF_TOPICS = [
     "id": "02",
     "title": "Zum Hotel",
     "short": "U-Bahn-Fahrt nach Wǔdàokǒu, Umsteigen, Ausgang finden",
-    "accent": "#1E2A34",
-    "textColor": "#FFFFFF",
+    "accent": "#8FAF9F",
+    "textColor": "#050B12",
     "vocab": [
       {
         "zh": "请问",
@@ -984,8 +984,8 @@ window.CF_TOPICS = [
     "id": "03",
     "title": "Im Hotel",
     "short": "Check-in, WLAN-Problem, Frühstück und Ankunftsnachricht",
-    "accent": "#24384A",
-    "textColor": "#FFFFFF",
+    "accent": "#5F7FA2",
+    "textColor": "#050B12",
     "vocab": [
       {
         "zh": "房间",
@@ -1453,8 +1453,8 @@ window.CF_TOPICS = [
     "id": "04",
     "title": "Im Café",
     "short": "Im Café bestellen, Zustände ausdrücken und nach der Toilette fragen",
-    "accent": "#31485E",
-    "textColor": "#FFFFFF",
+    "accent": "#8A7F99",
+    "textColor": "#050B12",
     "vocab": [
       {
         "zh": "咖啡",
@@ -1906,8 +1906,8 @@ window.CF_TOPICS = [
     "id": "05",
     "title": "Souvenirs",
     "short": "Souvenirs, Preise, Farben und Bezahlen",
-    "accent": "#465D73",
-    "textColor": "#FFFFFF",
+    "accent": "#9BB6C8",
+    "textColor": "#050B12",
     "vocab": [
       {
         "zh": "买",
@@ -2329,8 +2329,8 @@ window.CF_TOPICS = [
     "id": "06",
     "title": "Verschwunden",
     "short": "Verlorener Rucksack, um Hilfe bitten und etwas wiederfinden",
-    "accent": "#5B7086",
-    "textColor": "#FFFFFF",
+    "accent": "#C07A5A",
+    "textColor": "#050B12",
     "vocab": [
       {
         "zh": "包",
@@ -2839,8 +2839,8 @@ window.CF_TOPICS = [
     "id": "07",
     "title": "Peking-Ente",
     "short": "Peking-Ente bestellen, Geschmack, Erfahrungen und Bezahlen",
-    "accent": "#F6E3E5",
-    "textColor": "#0B1B2E",
+    "accent": "#C49AA5",
+    "textColor": "#050B12",
     "vocab": [
       {
         "zh": "饿",
@@ -3366,8 +3366,8 @@ window.CF_TOPICS = [
     "id": "08",
     "title": "Familie",
     "short": "Familie, Studium, Alter und Berufe",
-    "accent": "#D9A6AF",
-    "textColor": "#0B1B2E",
+    "accent": "#6F9FA3",
+    "textColor": "#050B12",
     "vocab": [
       {
         "zh": "爸爸",
@@ -3859,8 +3859,8 @@ window.CF_TOPICS = [
     "id": "09",
     "title": "Im Hutong",
     "short": "Hutongs, Wohnen, Möbel und Positionswörter",
-    "accent": "#F1D8CC",
-    "textColor": "#0B1B2E",
+    "accent": "#B0A89C",
+    "textColor": "#050B12",
     "vocab": [
       {
         "zh": "房子",
@@ -4350,8 +4350,8 @@ window.CF_TOPICS = [
     "id": "10",
     "title": "Wetter und Pläne",
     "short": "Wetter, Jahreszeiten und einen Ausflug planen",
-    "accent": "#E7CEBA",
-    "textColor": "#0B1B2E",
+    "accent": "#6B7C8F",
+    "textColor": "#050B12",
     "vocab": [
       {
         "zh": "天气",
@@ -4914,8 +4914,8 @@ window.CF_TOPICS = [
     "id": "11",
     "title": "Die Mauer",
     "short": "Bus nach Mùtiányù, Tickets, Preise und Vergleiche",
-    "accent": "#D6BCA2",
-    "textColor": "#0B1B2E",
+    "accent": "#8A9B6E",
+    "textColor": "#050B12",
     "vocab": [
       {
         "zh": "比",
@@ -5399,8 +5399,8 @@ window.CF_TOPICS = [
     "id": "12",
     "title": "Im Park",
     "short": "Hobbys im Park und 能、会、可以 unterscheiden",
-    "accent": "#9B8266",
-    "textColor": "#FFFFFF",
+    "accent": "#707D8C",
+    "textColor": "#050B12",
     "vocab": [
       {
         "zh": "拍照",
@@ -5859,8 +5859,8 @@ window.CF_TOPICS = [
     "id": "13",
     "title": "Erkältet",
     "short": "Erkältung, Beschwerden und Ratschläge in der Apotheke",
-    "accent": "#CD984B",
-    "textColor": "#0B1B2E",
+    "accent": "#7FB6B2",
+    "textColor": "#050B12",
     "vocab": [
       {
         "zh": "感冒",
@@ -6258,8 +6258,8 @@ window.CF_TOPICS = [
     "id": "14",
     "title": "In der Stadt",
     "short": "Nach dem Weg fragen, Ordnungszahlen und Sicherheitskontrolle",
-    "accent": "#EBBC6A",
-    "textColor": "#0B1B2E",
+    "accent": "#C3A46B",
+    "textColor": "#050B12",
     "vocab": [
       {
         "zh": "第",
@@ -6674,8 +6674,8 @@ window.CF_TOPICS = [
     "id": "15",
     "title": "Bis bald",
     "short": "Reiserückblick, Vergleiche und Abschied",
-    "accent": "#F6D083",
-    "textColor": "#0B1B2E",
+    "accent": "#A05A5A",
+    "textColor": "#FFFFFF",
     "vocab": [
       {
         "zh": "跟",
