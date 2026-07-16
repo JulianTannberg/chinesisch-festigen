@@ -2861,9 +2861,9 @@ window.CF_STORY = {
           "id": "11-19",
           "type": "dialogue",
           "speaker": "售票员",
-          "zh": "一百二。",
-          "pinyin": "yìbǎi èr.",
-          "de": "Einhundertzwanzig Yuan."
+          "zh": "单程一百，往返一百四。",
+          "pinyin": "dānchéng yìbǎi, wǎngfǎn yìbǎi sì.",
+          "de": "Einfach hundert Yuan, hin und zurück hundertvierzig."
         },
         {
           "id": "11-20",

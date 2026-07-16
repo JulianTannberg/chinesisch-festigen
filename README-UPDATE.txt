@@ -27,3 +27,12 @@ ABSCHLUSSGESCHICHTE
 - Pinyin und Deutsch lassen sich unabhängig ein-/ausschalten.
 - Jeder Absatz und Dialog sowie ganze Kapitel können angehört werden.
 - Testmodus: index.html?test=1 oder geschichte.html?test=1.
+
+
+UPDATE v129 – KAPITEL 1–15
+- Kapitel 1–8 mit den korrigierten Story-Fassungen abgeglichen.
+- Kapitel 9–15 vollständig ergänzt.
+- Für jedes Kapitel aktive und passive Vokabeln, Storydialog, Schülerdialog, sechs Sprech-/Satzübungen und sechs Lückenübungen.
+- Übungen wurden für die App neu aufgebaut und nicht aus den Markdown-Übungen übernommen.
+- Abschlussgeschichte und Freischaltung nach einmaligem Durcharbeiten aller Kapitel bleiben erhalten.
+- Preis der Seilbahn in Kapitel 11 und in der Abschlussgeschichte auf 100 Yuan einfach / 140 Yuan hin und zurück aktualisiert.
