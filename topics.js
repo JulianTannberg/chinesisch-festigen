@@ -7,8 +7,8 @@ window.CF_TOPICS = [
     "id": "01",
     "title": "Ankunft",
     "short": "Bahnhof Beijing Süd, Anrempeln, Vorstellen, WeChat-Tausch",
-    "accent": "#3FA7A3",
-    "textColor": "#050B12",
+    "accent": "#03172B",
+    "textColor": "#FFFFFF",
     "vocab": [
       {
         "zh": "我",
@@ -576,8 +576,8 @@ window.CF_TOPICS = [
     "id": "02",
     "title": "Zum Hotel",
     "short": "U-Bahn-Fahrt nach Wǔdàokǒu, Umsteigen, Ausgang finden",
-    "accent": "#8FAF9F",
-    "textColor": "#050B12",
+    "accent": "#24384A",
+    "textColor": "#FFFFFF",
     "vocab": [
       {
         "zh": "请问",
@@ -984,8 +984,8 @@ window.CF_TOPICS = [
     "id": "03",
     "title": "Im Hotel",
     "short": "Check-in, WLAN-Problem, Frühstück und Ankunftsnachricht",
-    "accent": "#5F7FA2",
-    "textColor": "#050B12",
+    "accent": "#465D73",
+    "textColor": "#FFFFFF",
     "vocab": [
       {
         "zh": "房间",
@@ -1453,8 +1453,8 @@ window.CF_TOPICS = [
     "id": "04",
     "title": "Im Café",
     "short": "Im Café bestellen, Zustände ausdrücken und nach der Toilette fragen",
-    "accent": "#8A7F99",
-    "textColor": "#050B12",
+    "accent": "#5B7086",
+    "textColor": "#FFFFFF",
     "vocab": [
       {
         "zh": "咖啡",
@@ -1906,7 +1906,7 @@ window.CF_TOPICS = [
     "id": "05",
     "title": "Souvenirs",
     "short": "Souvenirs, Preise, Farben und Bezahlen",
-    "accent": "#9BB6C8",
+    "accent": "#EDD2D7",
     "textColor": "#050B12",
     "vocab": [
       {
@@ -2329,7 +2329,7 @@ window.CF_TOPICS = [
     "id": "06",
     "title": "Verschwunden",
     "short": "Verlorener Rucksack, um Hilfe bitten und etwas wiederfinden",
-    "accent": "#C07A5A",
+    "accent": "#E4C4CB",
     "textColor": "#050B12",
     "vocab": [
       {
@@ -2839,7 +2839,7 @@ window.CF_TOPICS = [
     "id": "07",
     "title": "Peking-Ente",
     "short": "Peking-Ente bestellen, Geschmack, Erfahrungen und Bezahlen",
-    "accent": "#C49AA5",
+    "accent": "#D9A6AF",
     "textColor": "#050B12",
     "vocab": [
       {
@@ -3366,7 +3366,7 @@ window.CF_TOPICS = [
     "id": "08",
     "title": "Familie",
     "short": "Familie, Studium, Alter und Berufe",
-    "accent": "#6F9FA3",
+    "accent": "#C98E9B",
     "textColor": "#050B12",
     "vocab": [
       {
@@ -3859,7 +3859,7 @@ window.CF_TOPICS = [
     "id": "09",
     "title": "Im Hutong",
     "short": "Hutongs, Wohnen, Möbel und Positionswörter",
-    "accent": "#B0A89C",
+    "accent": "#E9CDC0",
     "textColor": "#050B12",
     "vocab": [
       {
@@ -4350,7 +4350,7 @@ window.CF_TOPICS = [
     "id": "10",
     "title": "Wetter und Pläne",
     "short": "Wetter, Jahreszeiten und einen Ausflug planen",
-    "accent": "#6B7C8F",
+    "accent": "#E7C6B7",
     "textColor": "#050B12",
     "vocab": [
       {
@@ -4914,7 +4914,7 @@ window.CF_TOPICS = [
     "id": "11",
     "title": "Die Mauer",
     "short": "Bus nach Mùtiányù, Tickets, Preise und Vergleiche",
-    "accent": "#8A9B6E",
+    "accent": "#D8B6A0",
     "textColor": "#050B12",
     "vocab": [
       {
@@ -5399,7 +5399,7 @@ window.CF_TOPICS = [
     "id": "12",
     "title": "Im Park",
     "short": "Hobbys im Park und 能、会、可以 unterscheiden",
-    "accent": "#707D8C",
+    "accent": "#C7A080",
     "textColor": "#050B12",
     "vocab": [
       {
@@ -5859,7 +5859,7 @@ window.CF_TOPICS = [
     "id": "13",
     "title": "Erkältet",
     "short": "Erkältung, Beschwerden und Ratschläge in der Apotheke",
-    "accent": "#7FB6B2",
+    "accent": "#CD984B",
     "textColor": "#050B12",
     "vocab": [
       {
@@ -6258,7 +6258,7 @@ window.CF_TOPICS = [
     "id": "14",
     "title": "In der Stadt",
     "short": "Nach dem Weg fragen, Ordnungszahlen und Sicherheitskontrolle",
-    "accent": "#C3A46B",
+    "accent": "#EBBC6A",
     "textColor": "#050B12",
     "vocab": [
       {
@@ -6674,8 +6674,8 @@ window.CF_TOPICS = [
     "id": "15",
     "title": "Bis bald",
     "short": "Reiserückblick, Vergleiche und Abschied",
-    "accent": "#A05A5A",
-    "textColor": "#FFFFFF",
+    "accent": "#EDC877",
+    "textColor": "#050B12",
     "vocab": [
       {
         "zh": "跟",
