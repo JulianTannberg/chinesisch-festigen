@@ -1,6 +1,5 @@
 // Chinesisch festigen – zentrale Kapiteldaten
-// vocab = aktive Vokabeln; understandingVocab = nur zum Verstehen
-// Die App-Übungen werden separat aus ausgewählten Story-Sätzen aufgebaut.
+// Vokabeln und Kapitelgeschichten: Stand der Typst-Dateien, Abgleich 19.07.2026.
 
 window.CF_TOPICS = [
   {
@@ -114,7 +113,7 @@ window.CF_TOPICS = [
       },
       {
         "zh": "德国人",
-        "pinyin": "Déguó rén",
+        "pinyin": "Déguórén",
         "de": "Deutsche/r",
         "hint": "Land + 人"
       },
@@ -126,7 +125,7 @@ window.CF_TOPICS = [
       },
       {
         "zh": "北京人",
-        "pinyin": "Běijīng rén",
+        "pinyin": "Běijīngrén",
         "de": "Beijinger/-in",
         "hint": "r → r-sch"
       },
@@ -213,8 +212,7 @@ window.CF_TOPICS = [
       {
         "zh": "了",
         "pinyin": "le",
-        "de": "Partikel (Handlung abgeschlossen)",
-        "hint": "nur verstehen"
+        "de": "Partikel (Handlung abgeschlossen)"
       },
       {
         "zh": "欢迎",
@@ -308,19 +306,19 @@ window.CF_TOPICS = [
       {
         "speaker": "苏然",
         "zh": "你是北京人吗？",
-        "pinyin": "Nǐ shì Běijīng rén ma?",
+        "pinyin": "Nǐ shì Běijīngrén ma?",
         "de": "Bist du aus Beijing?"
       },
       {
         "speaker": "林月",
         "zh": "是的，我是北京人。你呢？",
-        "pinyin": "Shì de, wǒ shì Běijīng rén. Nǐ ne?",
+        "pinyin": "Shì de, wǒ shì Běijīngrén. Nǐ ne?",
         "de": "Ja, ich bin aus Beijing. Und du?"
       },
       {
         "speaker": "苏然",
         "zh": "我不是北京人。我从上海来。",
-        "pinyin": "Wǒ bú shì Běijīng rén. Wǒ cóng Shànghǎi lái.",
+        "pinyin": "Wǒ bú shì Běijīngrén. Wǒ cóng Shànghǎi lái.",
         "de": "Ich bin nicht aus Beijing. Ich komme aus Shanghai."
       },
       {
@@ -382,19 +380,19 @@ window.CF_TOPICS = [
       {
         "speaker": "A",
         "zh": "你是德国人吗？",
-        "pinyin": "Nǐ shì Déguó rén ma?",
+        "pinyin": "Nǐ shì Déguórén ma?",
         "de": "Bist du Deutsche/r? / Kommst du aus Deutschland?"
       },
       {
         "speaker": "B",
         "zh": "我也是德国人。",
-        "pinyin": "Wǒ yě shì Déguó rén.",
+        "pinyin": "Wǒ yě shì Déguórén.",
         "de": "Ich bin auch Deutsche/r."
       },
       {
         "speaker": "B",
         "zh": "不是，我不是德国人。",
-        "pinyin": "Bú shì, wǒ bú shì Déguó rén.",
+        "pinyin": "Bú shì, wǒ bú shì Déguórén.",
         "de": "Nein, ich bin nicht Deutsche/r."
       },
       {
@@ -457,7 +455,7 @@ window.CF_TOPICS = [
       {
         "de": "Bist du aus Beijing?",
         "zh": "你是北京人吗？",
-        "pinyin": "Nǐ shì Běijīng rén ma?",
+        "pinyin": "Nǐ shì Běijīngrén ma?",
         "tokens": [
           "你",
           "是",
@@ -469,7 +467,7 @@ window.CF_TOPICS = [
       {
         "de": "Ich bin nicht aus Beijing.",
         "zh": "我不是北京人。",
-        "pinyin": "Wǒ bú shì Běijīng rén.",
+        "pinyin": "Wǒ bú shì Běijīngrén.",
         "tokens": [
           "我",
           "不",
@@ -541,7 +539,7 @@ window.CF_TOPICS = [
           "好"
         ],
         "solution": "你是北京人吗？",
-        "pinyin": "Nǐ shì Běijīng rén ma?",
+        "pinyin": "Nǐ shì Běijīngrén ma?",
         "de": "Bist du aus Beijing?"
       },
       {
@@ -554,7 +552,7 @@ window.CF_TOPICS = [
           "哪"
         ],
         "solution": "我不是北京人。",
-        "pinyin": "Wǒ bú shì Běijīng rén.",
+        "pinyin": "Wǒ bú shì Běijīngrén.",
         "de": "Ich bin nicht aus Beijing."
       },
       {
@@ -622,7 +620,7 @@ window.CF_TOPICS = [
       },
       {
         "zh": "哪个",
-        "pinyin": "nǎge",
+        "pinyin": "nǎ ge",
         "de": "welche/r/s (vor Substantiv)"
       },
       {
@@ -736,7 +734,7 @@ window.CF_TOPICS = [
       {
         "speaker": "苏然",
         "zh": "你好，请问，去清华大学是哪个出口？",
-        "pinyin": "Nǐ hǎo, qǐngwèn, qù Qīnghuá Dàxué shì nǎge chūkǒu?",
+        "pinyin": "Nǐ hǎo, qǐngwèn, qù Qīnghuá Dàxué shì nǎ ge chūkǒu?",
         "de": "Hallo, entschuldigen Sie, welcher Ausgang ist zur Tsinghua-Universität?"
       },
       {
@@ -810,7 +808,7 @@ window.CF_TOPICS = [
       {
         "speaker": "A",
         "zh": "请问，去 ______ 是哪个出口？",
-        "pinyin": "Qǐngwèn, qù …… shì nǎge chūkǒu?",
+        "pinyin": "Qǐngwèn, qù …… shì nǎ ge chūkǒu?",
         "de": "Entschuldige, welcher Ausgang ist zu …?"
       },
       {
@@ -873,7 +871,7 @@ window.CF_TOPICS = [
       {
         "de": "Hallo, entschuldigen Sie, welcher Ausgang ist zur Tsinghua-Universität?",
         "zh": "你好，请问，去清华大学是哪个出口？",
-        "pinyin": "Nǐ hǎo, qǐngwèn, qù Qīnghuá Dàxué shì nǎge chūkǒu?",
+        "pinyin": "Nǐ hǎo, qǐngwèn, qù Qīnghuá Dàxué shì nǎ ge chūkǒu?",
         "tokens": [
           "你好",
           "，",
@@ -962,7 +960,7 @@ window.CF_TOPICS = [
           "对"
         ],
         "solution": "你好，请问，去清华大学是哪个出口？",
-        "pinyin": "Nǐ hǎo, qǐngwèn, qù Qīnghuá Dàxué shì nǎge chūkǒu?",
+        "pinyin": "Nǐ hǎo, qǐngwèn, qù Qīnghuá Dàxué shì nǎ ge chūkǒu?",
         "de": "Hallo, entschuldigen Sie, welcher Ausgang ist zur Tsinghua-Universität?"
       },
       {
@@ -1128,7 +1126,7 @@ window.CF_TOPICS = [
         "de": "Hallo, willkommen."
       },
       {
-        "speaker": "苏然",
+        "speaker": "Sū Rán",
         "zh": "你好。我有预订。",
         "pinyin": "Nǐ hǎo. Wǒ yǒu yùdìng.",
         "de": "Hallo. Ich habe eine Reservierung."
@@ -1140,7 +1138,7 @@ window.CF_TOPICS = [
         "de": "Wie heißt du?"
       },
       {
-        "speaker": "苏然",
+        "speaker": "Sū Rán",
         "zh": "我叫苏然。",
         "pinyin": "Wǒ jiào Sū Rán.",
         "de": "Ich heiße Sū Rán."
@@ -1164,7 +1162,7 @@ window.CF_TOPICS = [
         "de": "Das WLAN-Passwort ist hier."
       },
       {
-        "speaker": "苏然",
+        "speaker": "Sū Rán",
         "zh": "不好意思，WiFi 密码好像不对。",
         "pinyin": "Bù hǎoyìsi, WiFi mìmǎ hǎoxiàng bù duì.",
         "de": "Entschuldigung, das WLAN-Passwort scheint nicht richtig zu sein."
@@ -1182,13 +1180,13 @@ window.CF_TOPICS = [
         "de": "Das ist das neue Passwort. Probier es mal."
       },
       {
-        "speaker": "苏然",
+        "speaker": "Sū Rán",
         "zh": "好了，谢谢。",
         "pinyin": "Hǎo le, xièxie.",
         "de": "Es geht, danke."
       },
       {
-        "speaker": "苏然",
+        "speaker": "Sū Rán",
         "zh": "请问，早饭几点？",
         "pinyin": "Qǐngwèn, zǎofàn jǐ diǎn?",
         "de": "Entschuldigung, um wie viel Uhr ist Frühstück?"
@@ -1200,7 +1198,7 @@ window.CF_TOPICS = [
         "de": "Morgens von sieben bis neun Uhr."
       },
       {
-        "speaker": "苏然",
+        "speaker": "Sū Rán",
         "zh": "谢谢。",
         "pinyin": "Xièxie.",
         "de": "Danke."
@@ -1566,13 +1564,13 @@ window.CF_TOPICS = [
       },
       {
         "zh": "男厕所",
-        "pinyin": "nán cèsuǒ",
+        "pinyin": "náncèsuǒ",
         "de": "Herrentoilette",
         "hint": "男 + 厕所"
       },
       {
         "zh": "女厕所",
-        "pinyin": "nǚ cèsuǒ",
+        "pinyin": "nǚcèsuǒ",
         "de": "Damentoilette",
         "hint": "女 + 厕所"
       }
@@ -1603,13 +1601,13 @@ window.CF_TOPICS = [
     ],
     "storyDialog": [
       {
-        "speaker": "店员",
+        "speaker": "Café-Personal (店员)",
         "zh": "你好！",
         "pinyin": "Nǐ hǎo!",
         "de": "Hallo!"
       },
       {
-        "speaker": "苏然",
+        "speaker": "Sū Rán",
         "zh": "你好，我要一杯咖啡。",
         "pinyin": "Nǐ hǎo, wǒ yào yì bēi kāfēi.",
         "de": "Hallo, ich möchte einen Kaffee."
@@ -1621,7 +1619,7 @@ window.CF_TOPICS = [
         "de": "Gut. Was möchtest du noch?"
       },
       {
-        "speaker": "苏然",
+        "speaker": "Sū Rán",
         "zh": "我还要一个面包。我很饿。",
         "pinyin": "Wǒ hái yào yí ge miànbāo. Wǒ hěn è.",
         "de": "Ich möchte noch ein Brötchen. Ich habe Hunger."
@@ -1633,7 +1631,7 @@ window.CF_TOPICS = [
         "de": "Gut."
       },
       {
-        "speaker": "苏然",
+        "speaker": "Sū Rán",
         "zh": "请问，厕所在哪里？",
         "pinyin": "Qǐngwèn, cèsuǒ zài nǎlǐ?",
         "de": "Entschuldigung, wo ist die Toilette?"
@@ -1645,37 +1643,37 @@ window.CF_TOPICS = [
         "de": "Da drüben."
       },
       {
-        "speaker": "苏然",
+        "speaker": "Sū Rán",
         "zh": "男厕所在哪里？",
-        "pinyin": "Nán cèsuǒ zài nǎlǐ?",
+        "pinyin": "Náncèsuǒ zài nǎlǐ?",
         "de": "Wo ist die Herrentoilette?"
       },
       {
         "speaker": "店员",
         "zh": "男厕所在那儿，女厕所也在那儿。",
-        "pinyin": "Nán cèsuǒ zài nàr, nǚ cèsuǒ yě zài nàr.",
+        "pinyin": "Náncèsuǒ zài nàr, nǚcèsuǒ yě zài nàr.",
         "de": "Die Herrentoilette ist da drüben, die Damentoilette auch."
       },
       {
-        "speaker": "苏然",
+        "speaker": "Sū Rán",
         "zh": "谢谢。",
         "pinyin": "Xièxie.",
         "de": "Danke."
       },
       {
-        "speaker": "苏然",
+        "speaker": "Sū Rán",
         "zh": "我很累，也很渴。",
         "pinyin": "Wǒ hěn lèi, yě hěn kě.",
         "de": "Ich bin müde und durstig."
       },
       {
-        "speaker": "苏然",
+        "speaker": "Sū Rán",
         "zh": "咖啡很好喝，面包也很好吃。现在不累了。我很开心。",
         "pinyin": "Kāfēi hěn hǎohē, miànbāo yě hěn hǎochī. Xiànzài bú lèi le. Wǒ hěn kāixīn.",
         "de": "Der Kaffee schmeckt gut, und das Brötchen ist auch lecker. Jetzt bin ich nicht mehr müde. Ich bin glücklich."
       },
       {
-        "speaker": "苏然",
+        "speaker": "Sū Rán",
         "zh": "我早上起床。上午去看看北京，中午吃饭，下午买礼物。",
         "pinyin": "Wǒ zǎoshang qǐchuáng. Shàngwǔ qù kànkan Běijīng, zhōngwǔ chīfàn, xiàwǔ mǎi lǐwù.",
         "de": "Ich stehe morgens auf. Am Vormittag schaue ich mir Beijing an, mittags esse ich, am Nachmittag kaufe ich Geschenke."
@@ -1978,6 +1976,16 @@ window.CF_TOPICS = [
         "pinyin": "lǜsè",
         "de": "grün",
         "hint": "ü wie in „über\""
+      },
+      {
+        "zh": "黑色",
+        "pinyin": "hēisè",
+        "de": "schwarz"
+      },
+      {
+        "zh": "白色",
+        "pinyin": "báisè",
+        "de": "weiß"
       },
       {
         "zh": "的",
@@ -2415,7 +2423,7 @@ window.CF_TOPICS = [
       },
       {
         "zh": "送来",
-        "pinyin": "sòng lái",
+        "pinyin": "sònglái",
         "de": "herbringen, abgeben",
         "hint": "s → ssch"
       },
@@ -2534,7 +2542,7 @@ window.CF_TOPICS = [
       {
         "speaker": "林月",
         "zh": "你好，请问，有人送来一个黑色的包吗？",
-        "pinyin": "Nǐ hǎo, qǐngwèn, yǒu rén sòng lái yí ge hēisè de bāo ma?",
+        "pinyin": "Nǐ hǎo, qǐngwèn, yǒu rén sònglái yí ge hēisè de bāo ma?",
         "de": "Hallo, hat jemand einen schwarzen Rucksack abgegeben?"
       },
       {
@@ -2564,7 +2572,7 @@ window.CF_TOPICS = [
       {
         "speaker": "店员",
         "zh": "黑色的包？有。一个学生送来的。",
-        "pinyin": "Hēisè de bāo? Yǒu. Yí ge xuésheng sòng lái de.",
+        "pinyin": "Hēisè de bāo? Yǒu. Yí ge xuésheng sònglái de.",
         "de": "Ein schwarzer Rucksack? Ja. Ein Student hat ihn gebracht."
       },
       {
@@ -2644,7 +2652,7 @@ window.CF_TOPICS = [
       {
         "speaker": "B",
         "zh": "你好，请问，有人送来一个 ___ 的 ___ 吗？",
-        "pinyin": "Nǐ hǎo, qǐngwèn, yǒu rén sòng lái yí ge ___ de ___ ma?",
+        "pinyin": "Nǐ hǎo, qǐngwèn, yǒu rén sònglái yí ge ___ de ___ ma?",
         "de": "Hallo, hat jemand ein/e ___ (Farbe) ___ abgegeben?"
       },
       {
@@ -2969,7 +2977,7 @@ window.CF_TOPICS = [
       },
       {
         "zh": "以茶代酒",
-        "pinyin": "yǐ chá dài jiǔ",
+        "pinyin": "yǐchá-dàijiǔ",
         "de": "mit Tee statt Wein anstoßen",
         "hint": "j → dsch"
       },
@@ -3115,7 +3123,7 @@ window.CF_TOPICS = [
       {
         "speaker": "苏然",
         "zh": "来，干杯。以茶代酒。",
-        "pinyin": "Lái, gānbēi. Yǐ chá dài jiǔ.",
+        "pinyin": "Lái, gānbēi. Yǐchá-dàijiǔ.",
         "de": "Komm, prost. Mit Tee statt Wein."
       },
       {
@@ -4974,7 +4982,7 @@ window.CF_TOPICS = [
     "understandingVocab": [
       {
         "zh": "第一次",
-        "pinyin": "dì yī cì",
+        "pinyin": "dì-yī cì",
         "de": "zum ersten Mal",
         "hint": "第 kommt in Kapitel 14"
       },
@@ -5033,9 +5041,9 @@ window.CF_TOPICS = [
     "storyDialog": [
       {
         "speaker": "苏然",
-        "zh": "你好，请问，916路在哪里？",
-        "pinyin": "Nǐ hǎo, qǐngwèn, jiǔ yāo liù lù zài nǎlǐ?",
-        "de": "Hallo, entschuldigen Sie, wo fährt die Buslinie 916?"
+        "zh": "你好，请问，916路在哪里坐？",
+        "pinyin": "Nǐ hǎo, qǐngwèn, jiǔ yāo liù lù zài nǎlǐ zuò?",
+        "de": "Hallo, entschuldigen Sie, wo kann ich die Buslinie 916 nehmen?"
       },
       {
         "speaker": "工作人员",
@@ -5093,8 +5101,8 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "售票员",
-        "zh": "单程一百，往返一百四。",
-        "pinyin": "Dānchéng yìbǎi, wǎngfǎn yìbǎi sì.",
+        "zh": "单程一百，往返一百四十。",
+        "pinyin": "Dānchéng yìbǎi, wǎngfǎn yìbǎi sìshí.",
         "de": "Einfach hundert Yuan, hin und zurück hundertvierzig."
       },
       {
@@ -5106,13 +5114,13 @@ window.CF_TOPICS = [
       {
         "speaker": "游客",
         "zh": "第一次来吗？",
-        "pinyin": "Dì yī cì lái ma?",
+        "pinyin": "Dì-yī cì lái ma?",
         "de": "Zum ersten Mal hier?"
       },
       {
         "speaker": "苏然",
         "zh": "对，第一次。太美了。",
-        "pinyin": "Duì, dì yī cì. Tài měi le.",
+        "pinyin": "Duì, dì-yī cì. Tài měi le.",
         "de": "Ja, zum ersten Mal. So schön."
       },
       {
@@ -5125,12 +5133,12 @@ window.CF_TOPICS = [
         "speaker": "苏然",
         "zh": "我是上海人。你呢？",
         "pinyin": "Wǒ shì Shànghǎi rén. Nǐ ne?",
-        "de": "Ich komme aus Shanghai. Und Sie?"
+        "de": "Ich komme aus Shanghai. Und du?"
       },
       {
         "speaker": "游客",
         "zh": "我是北京人。我常常来这里。",
-        "pinyin": "Wǒ shì Běijīng rén. Wǒ chángcháng lái zhèlǐ.",
+        "pinyin": "Wǒ shì Běijīngrén. Wǒ chángcháng lái zhèlǐ.",
         "de": "Ich bin aus Beijing. Ich komme oft hierher."
       },
       {
@@ -5159,9 +5167,9 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "商贩",
-        "zh": "要水吗？要冰的吗？",
-        "pinyin": "Yào shuǐ ma? Yào bīng de ma?",
-        "de": "Wasser? Kaltes?"
+        "zh": "要水吗？要冰水吗？",
+        "pinyin": "Yào shuǐ ma? Yào bīngshuǐ ma?",
+        "de": "Möchtest du Wasser? Möchtest du kaltes Wasser?"
       },
       {
         "speaker": "苏然",
@@ -5527,7 +5535,7 @@ window.CF_TOPICS = [
         "zh": "说",
         "pinyin": "shuō",
         "de": "sagen, sprechen",
-        "hint": "我是说 = „ich meine\""
+        "hint": "我是说 = „ich meine“"
       }
     ],
     "storyDialog": [
@@ -5577,7 +5585,7 @@ window.CF_TOPICS = [
         "speaker": "林月",
         "zh": "谢谢。我从小就喜欢拍照。我爸爸也喜欢。",
         "pinyin": "Xièxie. Wǒ cóngxiǎo jiù xǐhuan pāizhào. Wǒ bàba yě xǐhuan.",
-        "de": "Danke. Ich fotografiere schon gern, seit ich klein bin. Mein Vater mag es auch."
+        "de": "Danke. Ich fotografiere schon seit meiner Kindheit gern. Mein Vater mag es auch."
       },
       {
         "speaker": "苏然",
@@ -5601,7 +5609,7 @@ window.CF_TOPICS = [
         "speaker": "苏然",
         "zh": "能，没问题。只是有点儿凉。",
         "pinyin": "Néng, méi wèntí. Zhǐshì yǒudiǎnr liáng.",
-        "de": "Ja, kein Problem. Nur ein bisschen kalt."
+        "de": "Ja, kein Problem. Nur ein bisschen kühl."
       },
       {
         "speaker": "林月",
@@ -5914,7 +5922,7 @@ window.CF_TOPICS = [
       },
       {
         "zh": "热水",
-        "pinyin": "rè shuǐ",
+        "pinyin": "rèshuǐ",
         "de": "heißes Wasser",
         "hint": "r → r-sch / sh → sch"
       },
@@ -6008,7 +6016,7 @@ window.CF_TOPICS = [
         "speaker": "药剂师",
         "zh": "早上、中午、晚上都喝。多喝水，好好休息。",
         "pinyin": "Zǎoshang, zhōngwǔ, wǎnshang dōu hē. Duō hē shuǐ, hǎohāo xiūxi.",
-        "de": "Morgens, mittags und abends trinken. Trinken Sie viel Wasser und ruhen Sie sich gut aus."
+        "de": "Trinken Sie es morgens, mittags und abends. Trinken Sie viel Wasser und ruhen Sie sich gut aus."
       },
       {
         "speaker": "苏然",
@@ -6031,13 +6039,13 @@ window.CF_TOPICS = [
       {
         "speaker": "林月",
         "zh": "多喝热水。早点儿睡觉。",
-        "pinyin": "Duō hē rè shuǐ. Zǎo diǎnr shuìjiào.",
+        "pinyin": "Duō hē rèshuǐ. Zǎo diǎnr shuìjiào.",
         "de": "Trink viel heißes Wasser. Geh früh schlafen."
       },
       {
         "speaker": "苏然",
         "zh": "你也会说这个。热水，热水。",
-        "pinyin": "Nǐ yě huì shuō zhège. Rè shuǐ, rè shuǐ.",
+        "pinyin": "Nǐ yě huì shuō zhège. Rèshuǐ, rèshuǐ.",
         "de": "Das sagst du auch. Heißes Wasser, heißes Wasser."
       },
       {
@@ -6380,7 +6388,7 @@ window.CF_TOPICS = [
         "speaker": "大爷",
         "zh": "天安门广场啊，不远。你一直走，到前面的路口右转。",
         "pinyin": "Tiān'ānmén Guǎngchǎng a, bù yuǎn. Nǐ yìzhí zǒu, dào qiánmiàn de lùkǒu yòu zhuǎn.",
-        "de": "Der Tian'anmen-Platz, ah, nicht weit. Geh geradeaus, und an der Kreuzung vorne rechts."
+        "de": "Der Tian'anmen-Platz, ah, nicht weit. Geh geradeaus und biege an der Kreuzung vorne rechts ab."
       },
       {
         "speaker": "苏然",
@@ -6830,9 +6838,9 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "林月",
-        "zh": "因为是我带你去的，所以好吃，对吗？",
-        "pinyin": "Yīnwèi shì wǒ dài nǐ qù de, suǒyǐ hǎochī, duì ma?",
-        "de": "Weil ich dich hingebracht habe, hat es geschmeckt, richtig?"
+        "zh": "因为是我带你去的，所以你觉得很好吃，对吗？",
+        "pinyin": "Yīnwèi shì wǒ dài nǐ qù de, suǒyǐ nǐ juéde hěn hǎochī, duì ma?",
+        "de": "Weil ich dich hingebracht habe, findest du es besonders lecker, richtig?"
       },
       {
         "speaker": "苏然",
@@ -6848,14 +6856,14 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "林月",
-        "zh": "还感冒过。",
-        "pinyin": "Hái gǎnmàoguo.",
+        "zh": "还感冒了。",
+        "pinyin": "Hái gǎnmào le.",
         "de": "Und erkältet warst du auch."
       },
       {
         "speaker": "苏然",
-        "zh": "⋯⋯对，还感冒过。",
-        "pinyin": "… Duì, hái gǎnmàoguo.",
+        "zh": "⋯⋯对，还感冒了。",
+        "pinyin": "… Duì, hái gǎnmào le.",
         "de": "… Ja, erkältet auch."
       },
       {
@@ -6926,14 +6934,14 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "苏然",
-        "zh": "我在火车上了。这几天谢谢你。",
-        "pinyin": "Wǒ zài huǒchē shàng le. Zhè jǐ tiān xièxie nǐ.",
+        "zh": "我在火车上了。这几天谢谢你了。",
+        "pinyin": "Wǒ zài huǒchē shàng le. Zhè jǐ tiān xièxie nǐ le.",
         "de": "Ich bin jetzt im Zug. Danke für alles in den letzten Tagen."
       },
       {
         "speaker": "林月",
         "zh": "路上多喝热水。",
-        "pinyin": "Lùshang duō hē rè shuǐ.",
+        "pinyin": "Lùshang duō hē rèshuǐ.",
         "de": "Trink unterwegs viel heißes Wasser."
       }
     ],

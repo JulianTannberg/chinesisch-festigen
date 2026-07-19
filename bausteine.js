@@ -63,7 +63,7 @@ window.CF_BAUSTEINE = {
       "这": { py:"zhè", de:"diese/r/s, hier", word:"这里", wordPy:"zhèlǐ", wordDe:"hier" },
       "出": { py:"chū", de:"hinaus, heraus", word:"出口", wordPy:"chūkǒu", wordDe:"Ausgang" },
       "口": { py:"kǒu", de:"Mund, Öffnung", word:"出口", wordPy:"chūkǒu", wordDe:"Ausgang" },
-      "个": { py:"ge", de:"Stück (Standard-Zählwort)", word:"哪个", wordPy:"nǎge", wordDe:"welche/r/s (vor Substantiv)" },
+      "个": { py:"ge", de:"Stück (Standard-Zählwort)", word:"哪个", wordPy:"nǎ ge", wordDe:"welche/r/s (vor Substantiv)" },
       "去": { py:"qù", de:"gehen, fahren (zu/nach)", word:"去", wordPy:"qù", wordDe:"gehen, fahren (zu/nach)" },
       "换": { py:"huàn", de:"wechseln, tauschen", word:"换车", wordPy:"huàn chē", wordDe:"umsteigen" },
       "车": { py:"chē", de:"Wagen, Fahrzeug", word:"换车", wordPy:"huàn chē", wordDe:"umsteigen" },
@@ -137,12 +137,12 @@ window.CF_BAUSTEINE = {
       "气": { py:"qì", de:"Luft, Stimmung (in 客气: höflich)", word:"不客气", wordPy:"bú kèqi", wordDe:"gern geschehen", review:true },
       "厕": { py:"cè", de:"Toilette (in 厕所)", word:"厕所", wordPy:"cèsuǒ", wordDe:"Toilette" },
       "所": { py:"suǒ", de:"Ort (in 厕所: Toilette)", word:"厕所", wordPy:"cèsuǒ", wordDe:"Toilette" },
-      "男": { py:"nán", de:"Mann, männlich", word:"男厕所", wordPy:"nán cèsuǒ", wordDe:"Herrentoilette" },
-      "女": { py:"nǚ", de:"Frau, weiblich", word:"女厕所", wordPy:"nǚ cèsuǒ", wordDe:"Damentoilette" }
+      "男": { py:"nán", de:"Mann, männlich", word:"男厕所", wordPy:"náncèsuǒ", wordDe:"Herrentoilette" },
+      "女": { py:"nǚ", de:"Frau, weiblich", word:"女厕所", wordPy:"nǚcèsuǒ", wordDe:"Damentoilette" }
     }
   },
   "05": {
-    order: ["买","礼","物","多","少","钱","块","百","条","围","巾","茶","盒","红","色","蓝","绿","的","和","一","共"],
+    order: ["买","礼","物","多","少","钱","块","百","条","围","巾","茶","盒","红","色","蓝","绿","黑","白","的","和","一","共"],
     chars: {
       "买": { py:"mǎi", de:"kaufen", word:"买", wordPy:"mǎi", wordDe:"kaufen" },
       "礼": { py:"lǐ", de:"Geschenk; Höflichkeit", word:"礼物", wordPy:"lǐwù", wordDe:"Geschenk" },
@@ -161,6 +161,8 @@ window.CF_BAUSTEINE = {
       "色": { py:"sè", de:"Farbe", word:"红色", wordPy:"hóngsè", wordDe:"rot" },
       "蓝": { py:"lán", de:"blau", word:"蓝色", wordPy:"lánsè", wordDe:"blau" },
       "绿": { py:"lǜ", de:"grün", word:"绿色", wordPy:"lǜsè", wordDe:"grün" },
+      "黑": { py:"hēi", de:"schwarz", word:"黑色", wordPy:"hēisè", wordDe:"schwarz" },
+      "白": { py:"bái", de:"weiß", word:"白色", wordPy:"báisè", wordDe:"weiß" },
       "的": { py:"de", de:"Strukturpartikel (besitzt/bildet Eigenschaft) (aus 好的)", word:"的", wordPy:"de", wordDe:"bildet „die rote“: 红色的", review:true },
       "和": { py:"hé", de:"und (verbindet Nomen)", word:"和", wordPy:"hé", wordDe:"und (verbindet Nomen)" },
       "一": { py:"yī", de:"eins (aus 一下)", word:"一共", wordPy:"yígòng", wordDe:"insgesamt, zusammen", review:true },
