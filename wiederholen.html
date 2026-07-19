@@ -116,7 +116,7 @@
       const head = document.createElement("div");
       head.className = "chapterCharHead";
       head.textContent = "Kapitel " + t.id + " · " + t.title + (unlocked ? "" : "  🔒");
-      head.style.background = `linear-gradient(135deg, ${t.accent}, rgba(255,255,255,.14))`;
+      head.style.background = t.accent;
       head.style.color = t.textColor || "#fff";
       row.appendChild(head);
 

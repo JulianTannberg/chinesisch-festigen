@@ -71,7 +71,7 @@
       const el = document.createElement(available ? "a" : "div");
       el.className = "chapterCard" + (available ? "" : " locked");
       if(available) el.href = `kapitel.html?id=${t.id}`;
-      el.style.background = `linear-gradient(135deg, ${t.accent}, rgba(255,255,255,.14))`;
+      el.style.background = t.accent;
       el.style.color = t.textColor;
 
       // Fortschritt nur anzeigen, wenn das Kapitel Inhalt hat
