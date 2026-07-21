@@ -2475,3 +2475,68 @@ input, textarea, select, [contenteditable="true"]{
 }
 
 @media(prefers-reduced-motion:reduce){.storyTrack{transition:none}.storyPlayChapter.playing,.storyPlay.playing{animation:none}}
+
+
+/* ===== Lokale App-Hilfe (regelbasiert, ohne KI) ===== */
+.helpIcon{
+  width:42px;
+  min-width:42px;
+  padding:9px;
+  font-size:21px;
+  font-weight:900;
+  line-height:1;
+}
+.helpApp{ min-height:100vh; display:flex; flex-direction:column; }
+.helpApp > h1{ flex:0 0 auto; }
+.helpApp > .subtitle{ flex:0 0 auto; }
+.helpChatCard{
+  --me-bubble:#2f6f4f;
+  --me-text:#ffffff;
+  flex:1 1 auto;
+  min-height:420px;
+  display:flex;
+  flex-direction:column;
+}
+.helpAvatar{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--card-strong);
+  border:1px solid var(--stroke);
+  font-size:23px;
+  font-weight:900;
+}
+.helpReset{ margin-left:auto; min-height:34px; padding:6px 10px; font-size:13px; }
+.helpBubble p{ margin:0; line-height:1.48; }
+.helpBubble p + p{ margin-top:9px; }
+.helpAnswerTitle{ display:block; margin-bottom:7px; font-size:16px; }
+.helpActions{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+.helpActions .miniBtn{ min-height:36px; padding:7px 11px; font-size:13px; }
+.helpSuggestionLabel{ color:var(--muted); font-size:12px; font-weight:750; margin:0 0 7px; }
+.helpChips{ max-height:132px; overflow-y:auto; padding-right:2px; }
+.helpChips .chip{ font-size:14px; padding:7px 10px; }
+.helpChatCard .chatInput input{
+  min-height:46px;
+  border:1px solid var(--stroke);
+  border-radius:999px;
+  background:var(--input-bg);
+  color:var(--chapter-text);
+  padding:10px 15px;
+  font:inherit;
+  outline:none;
+}
+.helpChatCard .chatInput input::placeholder{ color:var(--muted); }
+.helpMsgAvatar{ font-weight:900; }
+@media(max-width:560px){
+  .helpApp{ padding-top:12px; }
+  .helpApp > h1{ font-size:30px; }
+  .helpApp > .subtitle{ margin-bottom:12px; font-size:14px; }
+  .helpChatCard{ margin-top:0; min-height:0; }
+  .helpChatCard .bubble{ max-width:84%; font-size:15px; }
+  .helpChips{ max-height:112px; }
+  .helpReset{ font-size:12px; }
+}

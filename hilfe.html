@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Hilfe · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#03172B" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+</head>
+<body>
+  <main class="app helpApp">
+    <div class="topbar">
+      <a class="back" id="helpBack" href="index.html">← Zurück</a>
+      <a class="miniBtn settingsIcon" href="einstellungen.html" aria-label="Einstellungen" title="Einstellungen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09A1.65 1.65 0 0 0 19.4 15z"/></svg>
+      </a>
+    </div>
+
+    <h1>Hilfe</h1>
+    <p class="subtitle">Frage nach der Bedienung der App oder wähle ein Thema. Die Antworten sind fest hinterlegt – ohne KI.</p>
+
+    <section class="card chatCard helpChatCard">
+      <div class="chatHead">
+        <span class="helpAvatar" aria-hidden="true">?</span>
+        <div class="chatWho"><strong>App-Hilfe</strong><span class="small">offline · feste Antworten</span></div>
+        <button class="miniBtn helpReset" id="helpReset" type="button">Neu starten</button>
+      </div>
+
+      <div class="chatMsgs" id="helpMsgs" aria-live="polite"></div>
+
+      <div class="chatInputWrap">
+        <div class="helpSuggestionLabel" id="helpSuggestionLabel">Thema auswählen</div>
+        <div class="chatChips helpChips" id="helpChips"></div>
+        <form class="chatInput" id="helpForm">
+          <input id="helpInput" type="search" autocomplete="off" placeholder="Frage zur App schreiben …" aria-label="Frage zur App" />
+          <button class="iconBtn" id="helpSend" type="submit" aria-label="Frage senden">➤</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script src="common.js"></script>
+  <script src="hilfedata.js"></script>
+  <script>
+  (function(){
+    "use strict";
+    document.documentElement.classList.add("noScroll");
+
+    const DATA = window.CF_HELP || {categories:[], entries:[]};
+    const entries = DATA.entries || [];
+    const entryById = new Map(entries.map(e => [e.id, e]));
+    const $ = id => document.getElementById(id);
+    const msgs = $("helpMsgs");
+    const chips = $("helpChips");
+    const label = $("helpSuggestionLabel");
+    const input = $("helpInput");
+
+    const params = new URLSearchParams(location.search);
+    const from = params.get("from");
+    if(from && /^(?:[a-z0-9_-]+\.html)(?:\?[^#]*)?(?:#.*)?$/i.test(from)) $("helpBack").href = from;
+
+    function normalize(s){
+      return String(s || "")
+        .toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/ß/g, "ss")
+        .replace(/[，。！？、,.!?；;：:（）()「」『』“”„'\"~·…—–\-_/]/g, " ")
+        .replace(/\s+/g, " ").trim();
+    }
+    const STOP = new Set("der die das den dem des ein eine einen einer einem und oder ich du er sie es wir ihr was wie warum wann wo ist sind wird werden kann koennte funktioniert geht mein meine mit ohne zur zum im in am an auf fuer fur von bei bitte eigentlich noch denn denn mal".split(" "));
+    function tokens(s){ return normalize(s).split(" ").filter(t => t.length > 1 && !STOP.has(t)); }
+    function textOf(e){ return [e.title, ...(e.aliases||[]), ...(e.keywords||[]), ...(e.answer||[])].join(" "); }
+
+    function scoreEntry(query, e){
+      const q = normalize(query);
+      if(!q) return 0;
+      const title = normalize(e.title);
+      const aliases = (e.aliases || []).map(normalize);
+      const keys = (e.keywords || []).map(normalize);
+      const all = normalize(textOf(e));
+      const qTokens = tokens(q);
+      let score = 0;
+      if(title === q) score += 120;
+      if(aliases.includes(q)) score += 110;
+      if(title.includes(q) || q.includes(title)) score += 55;
+      if(aliases.some(a => a.includes(q) || q.includes(a))) score += 48;
+      qTokens.forEach(t => {
+        if(title.split(" ").includes(t)) score += 18;
+        else if(title.includes(t)) score += 12;
+        if(keys.includes(t)) score += 15;
+        else if(keys.some(k => k.includes(t) || t.includes(k))) score += 9;
+        if(aliases.some(a => a.split(" ").includes(t))) score += 10;
+        if(all.includes(t)) score += 2;
+      });
+      return score;
+    }
+
+    function findMatches(query){
+      return entries.map(e => ({e, score:scoreEntry(query, e)}))
+        .filter(x => x.score > 0)
+        .sort((a,b) => b.score - a.score || a.e.title.localeCompare(b.e.title, "de"));
+    }
+
+    function scrollDown(){ requestAnimationFrame(() => { msgs.scrollTop = msgs.scrollHeight; }); }
+    function makeBubble(side, content){
+      const row = document.createElement("div");
+      row.className = "msg " + side;
+      const bubble = document.createElement("div");
+      bubble.className = "bubble helpBubble";
+      if(side === "partner"){
+        const av = document.createElement("span");
+        av.className = "msgAvatar letter helpMsgAvatar";
+        av.textContent = "?";
+        row.appendChild(av);
+      }
+      bubble.appendChild(content);
+      row.appendChild(bubble);
+      msgs.appendChild(row);
+      scrollDown();
+      return bubble;
+    }
+    function addUser(text){
+      const p = document.createElement("p");
+      p.textContent = text;
+      makeBubble("me", p);
+    }
+    function addBotText(paragraphs, titleText, actions){
+      const wrap = document.createElement("div");
+      if(titleText){
+        const h = document.createElement("strong");
+        h.className = "helpAnswerTitle";
+        h.textContent = titleText;
+        wrap.appendChild(h);
+      }
+      (paragraphs || []).forEach(t => {
+        const p = document.createElement("p");
+        p.textContent = t;
+        wrap.appendChild(p);
+      });
+      if(actions && actions.length){
+        const aw = document.createElement("div");
+        aw.className = "helpActions";
+        actions.forEach(a => {
+          const link = document.createElement("a");
+          link.className = "miniBtn";
+          link.textContent = a.label;
+          link.href = a.href;
+          aw.appendChild(link);
+        });
+        wrap.appendChild(aw);
+      }
+      makeBubble("partner", wrap);
+    }
+
+    function setChips(items, heading){
+      label.textContent = heading || "Passende Themen";
+      chips.innerHTML = "";
+      items.forEach(item => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "chip";
+        b.textContent = item.label;
+        b.addEventListener("click", item.onClick);
+        chips.appendChild(b);
+      });
+      scrollDown();
+    }
+
+    function showCategories(){
+      setChips((DATA.categories || []).map(c => ({
+        label:c.label,
+        onClick:() => showCategory(c)
+      })), "Thema auswählen");
+    }
+    function showCategory(cat){
+      addUser(cat.label);
+      const topicEntries = (cat.topics || []).map(id => entryById.get(id)).filter(Boolean);
+      addBotText(["Dazu findest du diese Hilfethemen:"], cat.label);
+      setChips(topicEntries.map(e => ({label:e.title, onClick:() => showEntry(e, true)})), "Frage auswählen");
+    }
+    function showRelated(entry){
+      const related = (entry.related || []).map(id => entryById.get(id)).filter(Boolean);
+      const items = related.map(e => ({label:e.title, onClick:() => showEntry(e, true)}));
+      items.push({label:"Alle Themen", onClick:showCategories});
+      setChips(items, "Das könnte auch helfen");
+    }
+    function showEntry(entry, addQuestion){
+      if(addQuestion) addUser(entry.title);
+      addBotText(entry.answer, entry.title, entry.actions || []);
+      showRelated(entry);
+    }
+
+    function answerQuery(query){
+      const q = String(query || "").trim();
+      if(!q) return;
+      addUser(q);
+      input.value = "";
+      const matches = findMatches(q);
+      if(!matches.length || matches[0].score < 15){
+        addBotText([
+          "Dazu habe ich keine sichere, fest hinterlegte Antwort.",
+          "Wähle bitte eines der Hilfethemen. Falls etwas in der App nicht stimmt, kannst du es über „Fehler melden“ weitergeben."
+        ], "Das habe ich nicht eindeutig gefunden", [{label:"Fehler melden", href:"fehler.html"}]);
+        showCategories();
+        return;
+      }
+      const best = matches[0];
+      const close = matches.filter(x => x.score >= Math.max(15, best.score * 0.72)).slice(0,4);
+      if(close.length > 1 && best.score < 45){
+        addBotText(["Deine Frage passt zu mehreren Themen. Welches meinst du?"], "Bitte kurz auswählen");
+        setChips(close.map(x => ({label:x.e.title, onClick:() => showEntry(x.e, false)})), "Passende Themen");
+        return;
+      }
+      showEntry(best.e, false);
+    }
+
+    function resetHelp(){
+      msgs.innerHTML = "";
+      addBotText([
+        "Hallo! Ich helfe dir bei der Bedienung von „Chinesisch festigen“.",
+        "Du kannst eine Frage schreiben oder unten ein Thema auswählen. Ich verwende nur fest hinterlegte Antworten und keine KI."
+      ], "Wobei brauchst du Hilfe?");
+      showCategories();
+    }
+
+    $("helpForm").addEventListener("submit", e => { e.preventDefault(); answerQuery(input.value); });
+    $("helpReset").addEventListener("click", resetHelp);
+    resetHelp();
+  })();
+  </script>
+</body>
+</html>

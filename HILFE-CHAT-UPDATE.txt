@@ -1,0 +1,13 @@
+HILFE-CHAT-UPDATE – Version cf-v135-offline-help
+
+Neu:
+- hilfe.html: chatähnliche App-Hilfe
+- hilfedata.js: feste Wissenseinträge und Suchbegriffe
+- Hilfe-Symbol auf Kapitelübersicht und Kapitelseite
+- Hilfe-Link in den Einstellungen
+- Offline-Cache um Hilfe-Dateien erweitert
+
+Wichtig:
+- Die Hilfe verwendet keine KI und keine externe API.
+- Unbekannte Fragen werden nicht frei beantwortet; stattdessen erscheinen Hilfethemen oder der Link zur Fehlermeldung.
+- Die Freischaltung unter „Zeichen wiederholen“ wurde an die normale Kapitelregel angepasst: einmal vollständig durchgearbeitet statt 100 %.

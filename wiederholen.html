@@ -89,7 +89,7 @@
       });
       return out;
     }
-    function chapterComplete(t){ const p = cfChapterPercent(t); return p !== null && p >= 100; }
+    function chapterComplete(t){ return typeof cfChapterWorkedThrough === "function" ? cfChapterWorkedThrough(t) : false; }
     function doneKey(zh){ return "cf_review_done_" + zh; }
     function isDone(zh){ try{ return localStorage.getItem(doneKey(zh)) === "1"; }catch(e){ return false; } }
     function markDone(zh){
