@@ -17,7 +17,7 @@
 <body>
   <main class="app">
     <div class="topbar">
-      <a class="back" id="back">← Kapitel</a>
+      <a class="back" id="back">← Zurück</a>
     </div>
     <h1 id="title">Sprechen</h1>
     <p class="subtitle">Übe zuerst einzelne Sätze mit Spracherkennung. Daneben kannst du den Schülerdialog als KI-Gespräch starten.</p>
@@ -168,7 +168,9 @@
   </main>
 
 <script src="topics.js"></script>
-<script src="common.js"></script>
+<script src="config.js"></script>
+  <script src="sync.js"></script>
+  <script src="common.js"></script>
 <script src="profile.js"></script>
 <script>
 const topic = getTopic();
@@ -177,26 +179,36 @@ document.documentElement.classList.add("noScroll");
 const $ = id => document.getElementById(id);
 $("back").href = `kapitel.html?id=${topic.id}`;
 $("finishBack").href = `kapitel.html?id=${topic.id}`;
-$("title").textContent = `${topic.id}. ${topic.title} · Sprechen`;
+const _tp = new URLSearchParams(location.search).get("tab");
+const initialTab = (_tp === "ki" || _tp === "aussprache") ? _tp : "satz";
+const speakTitles = {
+  satz: "Sätze sprechen",
+  aussprache: "Geschichte nachsprechen",
+  ki: "Mit KI sprechen"
+};
+$("title").textContent = `${topic.id}. ${topic.title} · ${speakTitles[initialTab]}`;
+const speakSubtitle = document.querySelector(".subtitle");
+if(speakSubtitle) speakSubtitle.textContent = initialTab === "satz"
+  ? "Sprich die Sätze selbst und vergleiche sie mit dem erwarteten Satz."
+  : initialTab === "aussprache"
+    ? "Höre jeden Satz der Geschichte und sprich ihn direkt nach."
+    : "Nutze den Schülerdialog dieses Kapitels für ein freies KI-Gespräch.";
 
-/* ===== Reiter ===== */
+/* Direkter Einstieg aus der Kapitelansicht – keine zusätzliche Reiterleiste. */
 const tabButtons = [...document.querySelectorAll(".tab")];
+const speakTabbar = document.querySelector(".speakTabbar");
+if(speakTabbar) speakTabbar.style.display = "none";
+const spInfoTip = document.getElementById("spInfoTip");
+const spInfoLine = document.getElementById("spInfoLine");
+if(spInfoTip) spInfoTip.style.display = "none";
+if(spInfoLine) spInfoLine.style.display = "none";
 function activateTab(name){
   tabButtons.forEach(btn => btn.classList.toggle("active", btn.dataset.tab === name));
   document.querySelectorAll(".panel").forEach(panel => panel.classList.remove("active"));
   const panel = document.getElementById(`panel-${name}`);
   if(panel) panel.classList.add("active");
-  const params = new URLSearchParams(location.search);
-  params.set("id", topic.id);
-  if(name === "satz") params.delete("tab");
-  else params.set("tab", name);
-  history.replaceState(null, "", `${location.pathname}?${params.toString()}`);
 }
-tabButtons.forEach(btn => btn.addEventListener("click", () => activateTab(btn.dataset.tab)));
-const _tp = new URLSearchParams(location.search).get("tab");
-const initialTab = (_tp === "ki" || _tp === "aussprache") ? _tp : "satz";
 activateTab(initialTab);
-cfPaintTabScores([['.tab[data-tab="satz"]', "sprechen"]], topic.id);
 
 /* ===== Teil 1: Sätze sprechen ===== */
 // Auf iPhone/iPad meldet Safari die Spracherkennung zwar als vorhanden,
@@ -573,6 +585,18 @@ renderSpeechSentence();
 (function(){
   const aCanRecord = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
   let aIdx = 0, aStream = null, aRec = null, aChunks = [], aURL = null, aRecording = false, aAutoStop = null;
+  const aussKey = `cf_aussprache_seen_v2_${topic.id}`;
+  let aussSeen = {};
+  try{ aussSeen = JSON.parse(localStorage.getItem(aussKey) || "{}") || {}; }catch(e){ aussSeen = {}; }
+  function markAussDone(index){
+    if(index < 0 || index >= tasks.length || aussSeen[index]) return;
+    aussSeen[index] = 1;
+    try{ localStorage.setItem(aussKey, JSON.stringify(aussSeen)); }catch(e){}
+    const done = Object.keys(aussSeen).filter(k => aussSeen[k]).length;
+    const pct = tasks.length ? Math.round(Math.min(done, tasks.length) / tasks.length * 100) : 0;
+    cfSetScore("aussprache", pct, topic.id);
+    if(tasks.length && done >= tasks.length) cfMarkDone("aussprache", topic.id);
+  }
 
   function aReset(){
     if(aURL){ try{ URL.revokeObjectURL(aURL); }catch(e){} aURL = null; }
@@ -612,7 +636,10 @@ renderSpeechSentence();
         aRec = null; aRecording = false;
         $("aussRecord").textContent = "🎤 Halten & sprechen";
         $("aussPlayMine").disabled = !aURL;
-        if(aURL){ try{ new Audio(aURL).play(); }catch(e){} }
+        if(aURL){
+          markAussDone(aIdx);
+          try{ new Audio(aURL).play(); }catch(e){}
+        }
       };
       aRec.start(); aRecording = true; $("aussRecord").textContent = "● Aufnahme … loslassen";
       aAutoStop = setTimeout(aStop, 10000); // Sicherheitslimit 10 s
@@ -620,7 +647,10 @@ renderSpeechSentence();
     aStartPending = false;
   }
   function aHoldEnd(){ aHoldWanted = false; cfNoSelect(false); aStop(); }
-  $("aussPlayModel").addEventListener("click", () => { const t = tasks[aIdx]; if(t) cfSpeakZh(t.audioZh || t.zh, {rate:0.9}); });
+  $("aussPlayModel").addEventListener("click", () => {
+    const t = tasks[aIdx];
+    if(t){ cfSpeakZh(t.audioZh || t.zh, {rate:0.9}); markAussDone(aIdx); }
+  });
   const _arb = $("aussRecord");
   _arb.style.touchAction = "none";
   _arb.addEventListener("pointerdown", aHoldStart);
@@ -631,6 +661,10 @@ renderSpeechSentence();
   $("aussPlayMine").addEventListener("click", () => { if(aURL){ try{ new Audio(aURL).play(); }catch(e){} } });
   $("aussPrev").addEventListener("click", () => { if(!tasks.length) return; aStop(); aIdx = (aIdx - 1 + tasks.length) % tasks.length; aRender(); });
   $("aussNext").addEventListener("click", () => { if(!tasks.length) return; aStop(); aIdx = (aIdx + 1) % tasks.length; aRender(); });
+  if(tasks.length){
+    const done = Object.keys(aussSeen).filter(k => aussSeen[k]).length;
+    cfSetScore("aussprache", Math.round(Math.min(done, tasks.length) / tasks.length * 100), topic.id);
+  }
   aRender();
 })();
 
@@ -844,10 +878,12 @@ async function copyPrompt(){
   $("copyStatus").textContent = "Kopiert.";
   setTimeout(() => $("copyStatus").textContent = "", 1500);
 }
-$("copyBtn").onclick = copyPrompt;
-$("openBtn").onclick = () => window.open("https://chatgpt.com/", "_blank", "noopener");
+function markKiOpened(){ cfSetScore("ki", 100, topic.id); cfMarkDone("ki", topic.id); }
+$("copyBtn").onclick = async () => { await copyPrompt(); markKiOpened(); };
+$("openBtn").onclick = () => { markKiOpened(); window.open("https://chatgpt.com/", "_blank", "noopener"); };
 $("copyOpenBtn").onclick = async () => {
   await copyPrompt();
+  markKiOpened();
   window.open("https://chatgpt.com/", "_blank", "noopener");
 };
 </script>

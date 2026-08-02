@@ -11,8 +11,16 @@
 </head>
 <body>
   <main class="app">
-    <div class="topbar"><a class="back" href="index.html">← Übersicht</a></div>
+    <div class="topbar"><a class="back" id="settingsBack" href="profil.html">← Profil</a></div>
     <h1>Einstellungen</h1>
+
+    <section class="card">
+      <div class="setTitle">Konto und Synchronisierung</div>
+      <p class="small" id="accountSummary">Der Fortschritt wird derzeit nur auf diesem Gerät gespeichert.</p>
+      <div class="setLinks">
+        <a href="konto.html">Konto verwalten</a>
+      </div>
+    </section>
 
     <section class="card">
       <div class="setTitle">Fortschritt zurücksetzen</div>
@@ -51,7 +59,14 @@
     <p id="cfVersion" style="opacity:.5;font-size:13px;margin-top:20px;text-align:center;">Version: …</p>
   </main>
 
+  <script src="config.js"></script>
+  <script src="sync.js"></script>
   <script src="common.js"></script>
+<script>
+  const settingsFrom = new URLSearchParams(location.search).get("from");
+  const settingsBack = document.getElementById("settingsBack");
+  if(settingsBack) settingsBack.href = settingsFrom === "profil.html" ? "profil.html" : "index.html";
+</script>
   <script src="topics.js"></script>
   <script src="profile.js"></script>
   <script>
@@ -69,6 +84,21 @@
     const n = (v === "__all") ? cfResetProgress() : cfResetProgress(v);
     $("resetStatus").textContent = `Zurückgesetzt (${n} Einträge gelöscht).`;
   });
+
+  // --- Konto-Status ---
+  const accountSummary = $("accountSummary");
+  function renderAccountSummary(state){
+    if(!accountSummary) return;
+    if(!state.configured){
+      accountSummary.textContent = "Die Kontofunktion ist vorbereitet, aber Supabase noch nicht verbunden.";
+    }else if(state.signedIn){
+      accountSummary.textContent = `Angemeldet als ${state.user.email || "Konto"}. Der Fortschritt wird synchronisiert.`;
+    }else{
+      accountSummary.textContent = "Nicht angemeldet. Der Fortschritt wird nur auf diesem Gerät gespeichert.";
+    }
+  }
+  window.addEventListener("cf-sync-status", event => renderAccountSummary(event.detail));
+  if(window.CF_SYNC) CF_SYNC.ready.then(() => renderAccountSummary(CF_SYNC.getState()));
 
   // Sichtbare Version: liest den AKTIVEN Service-Worker-Cache-Namen (z. B. cf-v63).
   // So lässt sich auf dem Gerät prüfen, welcher Stand wirklich live ist.

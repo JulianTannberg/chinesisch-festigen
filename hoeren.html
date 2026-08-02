@@ -10,16 +10,12 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" href="icons/icon-192.png" />
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="Chinesisch" />
-
 </head>
 <body>
   <main class="app listenApp" id="listenApp">
-    <div class="topbar">
-      <a class="back" id="back">← Kapitel</a>
-    </div>
+    <div class="topbar"><a class="back" id="back">← Zurück</a></div>
     <h1 id="title">Hören</h1>
+    <p class="subtitle" id="pageSubtitle"></p>
 
     <section class="card">
       <div class="toolbar">
@@ -36,29 +32,33 @@
         <button id="playAllBtn" type="button">Geschichte abspielen</button>
       </div>
 
-      <div class="tabbar">
-        <button class="tab active" data-tab="vocab">Vokabeln</button>
-        <button class="tab" data-tab="dialog">Geschichte</button>
-      </div>
-
-      <div class="panel active" id="panel-vocab">
-        <div id="vocabGrid" class="vocabList"></div>
-      </div>
-
-      <div class="panel" id="panel-dialog">
-        <div id="dialog" class="dialog"></div>
-      </div>
+      <div id="panelVocab"><div id="vocabGrid" class="vocabList"></div></div>
+      <div id="panelDialog"><div id="dialog" class="dialog"></div></div>
     </section>
   </main>
 
 <script src="topics.js"></script>
+<script src="config.js"></script>
+<script src="sync.js"></script>
 <script src="common.js"></script>
 <script>
 const topic = getTopic();
-document.documentElement.classList.add("noScroll");
+const params = new URLSearchParams(location.search);
+const mode = ["vocab","sentences","story"].includes(params.get("mode")) ? params.get("mode") : "vocab";
 applyTheme(topic, "Chinesisch festigen");
 document.getElementById("back").href = `kapitel.html?id=${topic.id}`;
-document.getElementById("title").textContent = `${topic.id}. ${topic.title} · Hören`;
+
+const modeText = {
+  vocab: ["Vokabeln hören", "Tippe jedes Wort an, höre genau zu und sprich es direkt nach."],
+  sentences: ["Sätze hören", "Höre die Sätze einzeln. So kannst du dich auf Aussprache und Satzmelodie konzentrieren."],
+  story: ["Geschichte hören", "Höre die Geschichte vollständig und ohne Unterbrechung an."]
+};
+document.getElementById("title").textContent = `${topic.id}. ${topic.title} · ${modeText[mode][0]}`;
+document.getElementById("pageSubtitle").textContent = modeText[mode][1];
+document.getElementById("panelVocab").style.display = mode === "vocab" ? "" : "none";
+document.getElementById("panelDialog").style.display = mode === "vocab" ? "none" : "";
+document.getElementById("playAllBtn").style.display = mode === "story" ? "" : "none";
+document.getElementById("stopBtn").style.display = mode === "vocab" ? "none" : "";
 
 const listenApp = document.getElementById("listenApp");
 function toggleMeta(kind){
@@ -77,176 +77,127 @@ const tempoEl = document.getElementById("tempo");
 const tempoValue = document.getElementById("tempoValue");
 tempoEl.addEventListener("input", () => tempoValue.textContent = tempoEl.value);
 
-let zhVoice = null;
-function pickVoice(){
-  const voices = speechSynthesis.getVoices();
-  zhVoice = voices.find(v => (v.lang || "").toLowerCase().startsWith("zh-cn"))
-         || voices.find(v => (v.lang || "").toLowerCase().startsWith("zh"))
-         || null;
-}
-pickVoice();
-speechSynthesis.onvoiceschanged = pickVoice;
-
 let playToken = 0;
 function stopAudio(){
   playToken++;
-  if(typeof _cfStopAll === "function") _cfStopAll(); else speechSynthesis.cancel();
+  if(typeof _cfStopAll === "function") _cfStopAll();
+  else if("speechSynthesis" in window) speechSynthesis.cancel();
 }
 function speak(text, reset=true, speaker){
   if(!text) return;
   if(reset) playToken++;
-  cfSpeakZh(text, { rate: parseFloat(tempoEl.value), queue: !reset, speaker: speaker });
+  cfSpeakZh(text, { rate: parseFloat(tempoEl.value), queue: !reset, speaker });
 }
 function speakAndWait(text, token, speaker){
   return new Promise(resolve => {
     if(token !== playToken || !text) return resolve();
-    cfSpeakZh(text, { rate: parseFloat(tempoEl.value), queue: true, onend: resolve, speaker: speaker });
+    cfSpeakZh(text, { rate: parseFloat(tempoEl.value), queue: true, onend: resolve, speaker });
   });
 }
 document.getElementById("stopBtn").onclick = stopAudio;
-
-const tabs = [...document.querySelectorAll(".tab")];
-function updateStoryButtons(activeTab){
-  const show = activeTab === "dialog";
-  document.getElementById("stopBtn").style.display = show ? "" : "none";
-  document.getElementById("playAllBtn").style.display = show ? "" : "none";
-}
-tabs.forEach(tab => tab.addEventListener("click", () => {
-  tabs.forEach(t => t.classList.toggle("active", t === tab));
-  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-  document.getElementById(`panel-${tab.dataset.tab}`).classList.add("active");
-  updateStoryButtons(tab.dataset.tab);
-}));
-updateStoryButtons("vocab");
 
 function hexToRgb(hex){
   const h = hex.replace("#","");
   return {r:parseInt(h.substring(0,2),16),g:parseInt(h.substring(2,4),16),b:parseInt(h.substring(4,6),16)};
 }
-function rgbToHex(r,g,b){
-  return "#" + [r,g,b].map(x => Math.max(0, Math.min(255, Math.round(x))).toString(16).padStart(2,"0")).join("");
-}
-function mixWithWhite(hex, amount){
-  const c = hexToRgb(hex);
-  return rgbToHex(c.r + (255-c.r)*amount, c.g + (255-c.g)*amount, c.b + (255-c.b)*amount);
-}
+function rgbToHex(r,g,b){ return "#" + [r,g,b].map(x => Math.max(0,Math.min(255,Math.round(x))).toString(16).padStart(2,"0")).join(""); }
+function mixWithWhite(hex, amount){ const c=hexToRgb(hex); return rgbToHex(c.r+(255-c.r)*amount,c.g+(255-c.g)*amount,c.b+(255-c.b)*amount); }
 function luminance(hex){
-  const c = hexToRgb(hex);
-  const a = [c.r,c.g,c.b].map(v => {v/=255; return v <= .03928 ? v/12.92 : Math.pow((v+.055)/1.055,2.4);});
-  return .2126*a[0] + .7152*a[1] + .0722*a[2];
+  const c=hexToRgb(hex); const a=[c.r,c.g,c.b].map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});
+  return .2126*a[0]+.7152*a[1]+.0722*a[2];
 }
-function readableText(bg){ return luminance(bg) > .58 ? "#0B1B2E" : "#FFFFFF"; }
-function isLinYue(name){ return /lin\s*yue|lín\s*yuè|林月|林悦|林越/i.test(name || ""); }
+function readableText(bg){ return luminance(bg)>.58 ? "#0B1B2E" : "#FFFFFF"; }
 function isSuRan(name){ return /su\s*ran|sū\s*rán|苏然|蘇然/i.test(name || ""); }
-function bubbleColor(speaker){
-  // Hauptfigur 苏然 in Kapitelfarbe (links), alle anderen weiß (rechts) – wie ein Chat.
-  return isSuRan(speaker) ? mixWithWhite(topic.accent, .42) : "#FFFFFF";
-}
+function bubbleColor(speaker){ return isSuRan(speaker) ? mixWithWhite(topic.accent,.42) : "#FFFFFF"; }
 function bubbleSide(speaker){ return isSuRan(speaker) ? "left" : "right"; }
 
-// Hören zählt als „gehört": ein Wort (Vokabel) oder Satz (Geschichte) gilt
-// als gehört, sobald er angetippt oder im Durchlauf abgespielt wurde.
-const hoerenKey = `cf_hoeren_heard_${topic.id}`;
-let hoerenHeard = { w:{}, s:{} };
+const heardKey = `cf_hoeren_heard_${topic.id}`;
+let heard = {w:{},s:{}};
 try{
-  const st = JSON.parse(localStorage.getItem(hoerenKey) || "{}");
-  if(st && typeof st === "object"){ hoerenHeard.w = st.w || {}; hoerenHeard.s = st.s || {}; }
+  const st=JSON.parse(localStorage.getItem(heardKey)||"{}");
+  if(st&&typeof st==="object"){heard.w=st.w||{};heard.s=st.s||{};}
 }catch(e){}
-function hoerenGrad(p){ return `linear-gradient(90deg, rgba(34,197,94,.32) ${p}%, rgba(34,197,94,0) ${p}%)`; }
-function recomputeHoeren(){
-  // Nach EINDEUTIGEN Hanzi zählen: doppelte Sätze (z. B. 谢谢 / 不客气 mehrfach)
-  // landen sonst auf demselben „gehört"-Schlüssel und 100 % wäre nie erreichbar.
-  const vocabZh = new Set([...(topic.vocab || []), ...(topic.understandingVocab || [])].map(v => v && v.zh).filter(Boolean));
-  const storyZh = new Set((topic.storyDialog || []).map(l => l && l.zh).filter(Boolean));
-  const totalW = vocabZh.size;
-  const totalS = storyZh.size;
-  const heardW = [...vocabZh].filter(z => hoerenHeard.w[z]).length;
-  const heardS = [...storyZh].filter(z => hoerenHeard.s[z]).length;
-  const total = totalW + totalS;
-  cfSetScore("hoeren", total ? Math.round((heardW + heardS) / total * 100) : 0, topic.id);
-  // Durchgearbeitet = jedes Vokabel- und Dialog-Element wurde einmal angehört.
-  if(total && (heardW + heardS) >= total) cfMarkDone("hoeren", topic.id);
-  const vt = document.querySelector('.tab[data-tab="vocab"]');
-  const dt = document.querySelector('.tab[data-tab="dialog"]');
-  if(vt && totalW) vt.style.backgroundImage = hoerenGrad(Math.round(heardW / totalW * 100));
-  if(dt && totalS) dt.style.backgroundImage = hoerenGrad(Math.round(heardS / totalS * 100));
+const storyRunKey = `cf_hoeren_story_run_v2_${topic.id}`;
+const storyRunRaw = localStorage.getItem(storyRunKey);
+
+const vocabItems = [...(topic.vocab || []), ...(topic.understandingVocab || [])].filter(v => v && v.zh);
+const dialogData = (topic.storyDialog || []).filter(x => x && x.zh);
+let storyRunCount = storyRunRaw === null
+  ? Math.round(((cfGetScore("hoeren_geschichte", topic.id) || 0) / 100) * dialogData.length)
+  : Math.max(0, Number(storyRunRaw) || 0);
+
+function recomputeScores(){
+  const vocabZh = [...new Set(vocabItems.map(v=>v.zh))];
+  const storyZh = [...new Set(dialogData.map(v=>v.zh))];
+  const heardW = vocabZh.filter(z=>heard.w[z]).length;
+  const heardS = storyZh.filter(z=>heard.s[z]).length;
+  const pv = vocabZh.length ? Math.round(heardW/vocabZh.length*100) : 0;
+  const ps = storyZh.length ? Math.round(heardS/storyZh.length*100) : 0;
+  const pg = dialogData.length ? Math.round(Math.min(storyRunCount,dialogData.length)/dialogData.length*100) : 0;
+  cfSetScore("hoeren_vocab",pv,topic.id);
+  cfSetScore("hoeren_saetze",ps,topic.id);
+  cfSetScore("hoeren_geschichte",pg,topic.id);
+  if(vocabZh.length && heardW>=vocabZh.length) cfMarkDone("hoeren_vocab",topic.id);
+  if(storyZh.length && heardS>=storyZh.length) cfMarkDone("hoeren_saetze",topic.id);
+  if(dialogData.length && storyRunCount>=dialogData.length) cfMarkDone("hoeren_geschichte",topic.id);
 }
-function markHeard(kind, keyText){
+function markHeard(kind,keyText){
   if(!keyText) return;
-  const bucket = kind === "s" ? hoerenHeard.s : hoerenHeard.w;
-  if(bucket[keyText]) return;
-  bucket[keyText] = 1;
-  try{ localStorage.setItem(hoerenKey, JSON.stringify(hoerenHeard)); }catch(e){}
-  recomputeHoeren();
-}
-
-const vocabGrid = document.getElementById("vocabGrid");
-function renderVocabSection(title, items){
-  if(!items || items.length === 0) return;
-  const section = document.createElement("section");
-  section.className = "vocabSection";
-  const h = document.createElement("h2");
-  h.className = "sectionTitle";
-  h.textContent = title;
-  const grid = document.createElement("div");
-  grid.className = "vocabGrid";
-  items.forEach(v => {
-    const card = document.createElement("button");
-    card.className = "vocabCard";
-    card.type = "button";
-    card.innerHTML = `
-      <div class="zh">${escapeHtml(v.zh)}</div>
-      <div class="pinyin">${escapeHtml(v.pinyin || "")}</div>
-      <div class="de">${escapeHtml(v.de || "")}</div>
-    `;
-    card.addEventListener("click", () => { speak(v.zh); markHeard("w", v.zh); });
-    grid.appendChild(card);
-  });
-  section.appendChild(h);
-  section.appendChild(grid);
-  vocabGrid.appendChild(section);
-}
-if((!topic.vocab || topic.vocab.length === 0) && (!topic.understandingVocab || topic.understandingVocab.length === 0)){
-  vocabGrid.innerHTML = `<div class="empty">Für dieses Kapitel sind noch keine Vokabeln eingetragen.</div>`;
-}else{
-  renderVocabSection("Aktive Vokabeln", topic.vocab || []);
-  renderVocabSection("Zum Verstehen", topic.understandingVocab || []);
-}
-
-const dialogEl = document.getElementById("dialog");
-const dialogData = topic.storyDialog || [];
-if(dialogData.length === 0){
-  dialogEl.innerHTML = `<div class="empty">Für dieses Kapitel ist noch keine Geschichte eingetragen.</div>`;
-}else{
-  dialogData.forEach(line => {
-    const color = bubbleColor(line.speaker);
-    const row = document.createElement("div");
-    row.className = `bubbleRow ${bubbleSide(line.speaker)}`;
-    row.innerHTML = `
-      <div class="speechBubble" style="background:${color};color:${readableText(color)}">
-        <div class="speaker">${escapeHtml(line.speaker || "")}</div>
-        <div class="speechText">${escapeHtml(line.zh || "")}</div>
-        ${line.pinyin ? `<div class="speechPinyin">${escapeHtml(line.pinyin)}</div>` : ""}
-        ${line.de ? `<div class="speechDe">${escapeHtml(line.de)}</div>` : ""}
-      </div>
-    `;
-    row.querySelector(".speechBubble").addEventListener("click", () => { speak(line.zh, true, line.speaker); markHeard("s", line.zh); });
-    dialogEl.appendChild(row);
-  });
-}
-
-async function playAll(){
-  document.querySelector('[data-tab="dialog"]').click();
-  stopAudio();
-  const token = playToken;
-  for(const line of dialogData){
-    if(token !== playToken) return;
-    await speakAndWait(line.zh, token, line.speaker);
-    markHeard("s", line.zh);
+  const bucket=kind==="s"?heard.s:heard.w;
+  if(!bucket[keyText]){
+    bucket[keyText]=1;
+    try{localStorage.setItem(heardKey,JSON.stringify(heard));}catch(e){}
+    recomputeScores();
   }
 }
-document.getElementById("playAllBtn").onclick = playAll;
-recomputeHoeren();
+
+const vocabGrid=document.getElementById("vocabGrid");
+function renderVocabSection(title,items){
+  if(!items||!items.length)return;
+  const section=document.createElement("section");section.className="vocabSection";
+  const h=document.createElement("h2");h.className="sectionTitle";h.textContent=title;
+  const grid=document.createElement("div");grid.className="vocabGrid";
+  items.forEach(v=>{
+    const card=document.createElement("button");card.className="vocabCard";card.type="button";
+    card.innerHTML=`<div class="zh">${escapeHtml(v.zh)}</div><div class="pinyin">${escapeHtml(v.pinyin||"")}</div><div class="de">${escapeHtml(v.de||"")}</div>`;
+    card.addEventListener("click",()=>{speak(v.zh);markHeard("w",v.zh);});
+    grid.appendChild(card);
+  });
+  section.append(h,grid);vocabGrid.appendChild(section);
+}
+if(!vocabItems.length) vocabGrid.innerHTML='<div class="empty">Für dieses Kapitel sind noch keine Vokabeln eingetragen.</div>';
+else{
+  renderVocabSection("Aktive Vokabeln",topic.vocab||[]);
+  renderVocabSection("Zum Verstehen",topic.understandingVocab||[]);
+}
+
+const dialogEl=document.getElementById("dialog");
+if(!dialogData.length) dialogEl.innerHTML='<div class="empty">Für dieses Kapitel ist noch keine Geschichte eingetragen.</div>';
+else dialogData.forEach(line=>{
+  const color=bubbleColor(line.speaker);
+  const row=document.createElement("div");row.className=`bubbleRow ${bubbleSide(line.speaker)}`;
+  row.innerHTML=`<div class="speechBubble" style="background:${color};color:${readableText(color)}"><div class="speaker">${escapeHtml(line.speaker||"")}</div><div class="speechText">${escapeHtml(line.zh||"")}</div>${line.pinyin?`<div class="speechPinyin">${escapeHtml(line.pinyin)}</div>`:""}${line.de?`<div class="speechDe">${escapeHtml(line.de)}</div>`:""}</div>`;
+  row.querySelector(".speechBubble").addEventListener("click",()=>{speak(line.zh,true,line.speaker);markHeard("s",line.zh);});
+  dialogEl.appendChild(row);
+});
+
+async function playAll(){
+  stopAudio();
+  const token=playToken;
+  let currentRunCount=0;
+  for(const line of dialogData){
+    if(token!==playToken)return;
+    await speakAndWait(line.zh,token,line.speaker);
+    if(token!==playToken)return;
+    markHeard("s",line.zh);
+    currentRunCount++;
+    storyRunCount=Math.max(storyRunCount,currentRunCount);
+    localStorage.setItem(storyRunKey,String(storyRunCount));
+    recomputeScores();
+  }
+}
+document.getElementById("playAllBtn").onclick=playAll;
+recomputeScores();
 </script>
 </body>
 </html>

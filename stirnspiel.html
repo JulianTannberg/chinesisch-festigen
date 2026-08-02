@@ -162,7 +162,7 @@
   <section class="screen active" id="setupScreen">
     <div class="setupWrap">
       <div class="topline">
-        <a class="back" id="backLink" href="kapitel.html">← Zurück</a>
+        <a class="back" id="backLink" href="spiele.html">← Zurück</a>
         <button class="iconBtn" id="fullscreenSetup" type="button" title="Vollbild" aria-label="Vollbild">⛶</button>
       </div>
       <h1>Stirn-Ratespiel <span class="versionBadge">v126</span></h1>
@@ -272,6 +272,8 @@
     </div>
   </section>
 
+  <script src="config.js"></script>
+  <script src="sync.js"></script>
   <script src="topics.js"></script>
   <script>
   (() => {
@@ -618,7 +620,7 @@
       });
     }
 
-    $("backLink").href=`kapitel.html?id=${currentTopicId}`;
+    $("backLink").href="spiele.html";
     loadSelection(); renderChapters(); setLanguage(state.language); setTime([0,60,90,120].includes(state.time)?state.time:60);
     $("showPinyin").checked=state.showPinyin;
     $("tiltEnabled").checked=state.tiltEnabled;

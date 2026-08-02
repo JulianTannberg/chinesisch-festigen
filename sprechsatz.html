@@ -21,7 +21,9 @@
       <p><a class="miniBtn" id="go">Zur Sprechübung</a></p>
     </section>
   </main>
-<script>
+<script src="config.js"></script>
+  <script src="sync.js"></script>
+  <script>
   const params = new URLSearchParams(location.search);
   const id = (params.get("id") || "01").padStart(2,"0");
   const target = `sprechen.html?id=${id}`;

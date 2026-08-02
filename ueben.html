@@ -34,7 +34,7 @@
 <body>
   <main class="app puzzleApp">
     <div class="topbar">
-      <a class="back" id="back">← Kapitel</a>
+      <a class="back" id="back">← Zurück</a>
     </div>
     <h1 id="title">Üben</h1>
     <p class="subtitle" id="subtitle"></p>
@@ -90,7 +90,9 @@
   </main>
 
 <script src="topics.js"></script>
-<script src="common.js"></script>
+<script src="config.js"></script>
+  <script src="sync.js"></script>
+  <script src="common.js"></script>
 <script>
 const topic = getTopic();
 const $ = id => document.getElementById(id);

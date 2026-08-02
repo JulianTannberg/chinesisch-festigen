@@ -1,3 +1,9 @@
+# Aktuelle Fassung: v137 – vereinfachte Navigation
+
+Die aktuelle Struktur, alle Änderungen und Hinweise zur Installation stehen in [`GITHUB-UPDATE-v137.md`](GITHUB-UPDATE-v137.md). Die Supabase-Einrichtung ist in [`SUPABASE-EINRICHTUNG.md`](SUPABASE-EINRICHTUNG.md) beschrieben.
+
+---
+
 # Chinesisch festigen – neue Website-Struktur
 
 Diese Version nutzt die neue 15-Kapitel-Struktur ohne Grundlagen/Erweiterungen.
@@ -85,7 +91,7 @@ Neu: `sprechsatz.html` prüft gesprochene chinesische Sätze über die Browser-S
 
 ## Benutzername für Übungen
 
-Die Datei `profile.js` speichert einen frei gewählten Namen lokal im Browser (`localStorage`). Dieser Name wird in Namensübungen automatisch eingesetzt, zum Beispiel in Sprechsätzen und Satz-Puzzles. Es wird kein Konto angelegt und nichts an einen Server gesendet.
+Die Datei `profile.js` speichert einen frei gewählten Namen zunächst lokal im Browser (`localStorage`). Dieser Name wird in Namensübungen automatisch eingesetzt, zum Beispiel in Sprechsätzen und Satz-Puzzles. Mit der optionalen Supabase-Anmeldung werden Name und Lernfortschritt geräteübergreifend synchronisiert; ohne Anmeldung bleibt die App lokal nutzbar. Einrichtung: siehe `SUPABASE-EINRICHTUNG.md`.
 
 ## Benutzername
 

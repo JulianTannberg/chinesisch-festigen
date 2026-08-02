@@ -1,13 +1,15 @@
 // Chinesisch festigen – Service Worker
 // Bei jeder Änderung an der Website die Versionsnummer erhöhen,
 // damit alle Geräte die neuen Dateien laden.
-const CACHE = "cf-v135-offline-help";
+const CACHE = "cf-v137-navigation";
 
 const SHELL = [
   "./",
   "./index.html",
   "./start.html",
   "./kapitel.html",
+  "./spiele.html",
+  "./profil.html",
   "./geschichte.html",
   "./geschichte.js",
   "./geschichte-data.js",
@@ -31,6 +33,7 @@ const SHELL = [
   "./wiederholen.html",
   "./chat.html",
   "./einstellungen.html",
+  "./konto.html",
   "./hilfe.html",
   "./hilfedata.js",
   "./fehler.html",
@@ -41,6 +44,7 @@ const SHELL = [
   "./topics.js",
   "./bausteine.js",
   "./common.js",
+  "./sync.js",
   "./profile.js",
   "./chatdata.js",
   "./avatars/suran.jpg",

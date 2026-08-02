@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Profil · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#03172B" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="icons/icon-192.png" />
+</head>
+<body>
+  <main class="app">
+    <div class="topbar"><a class="back" href="index.html">← Home</a></div>
+    <h1>Profil</h1>
+    <p class="subtitle">Name, Anmeldung, Synchronisierung und App-Hilfe an einem Ort.</p>
+
+    <section class="profileHero card">
+      <div class="profileAvatarLarge" id="profileAvatar">○</div>
+      <div>
+        <div class="profileHeroTitle" id="profileAccountTitle">Nicht angemeldet</div>
+        <p class="small" id="profileAccountText">Dein Fortschritt wird derzeit nur auf diesem Gerät gespeichert.</p>
+      </div>
+    </section>
+
+    <div id="profileSetupMount"></div>
+    <div id="profileEditMount"></div>
+
+    <section class="profileMenu">
+      <a class="profileMenuItem" href="konto.html?from=profil.html">
+        <span>👤</span><div><strong>Konto und Synchronisierung</strong><small>Anmelden, Geräte abgleichen oder abmelden</small></div><b>›</b>
+      </a>
+      <a class="profileMenuItem" href="hilfe.html?from=profil.html">
+        <span>?</span><div><strong>Hilfe</strong><small>App-Aufbau und Bedienung</small></div><b>›</b>
+      </a>
+      <a class="profileMenuItem" href="einstellungen.html?from=profil.html">
+        <span>⚙</span><div><strong>Einstellungen</strong><small>Fortschritt, Fehler melden und Rechtliches</small></div><b>›</b>
+      </a>
+      <a class="profileMenuItem" href="start.html">
+        <span>⇩</span><div><strong>App installieren</strong><small>Anleitung für Smartphone, Tablet und Computer</small></div><b>›</b>
+      </a>
+    </section>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="sync.js"></script>
+  <script src="common.js"></script>
+  <script src="profile.js"></script>
+  <script>
+    window.CF_PROFILE?.mountSetup("profileSetupMount");
+    window.CF_PROFILE?.mountEdit("profileEditMount");
+
+    function renderAccount(state){
+      const avatar = document.getElementById("profileAvatar");
+      const title = document.getElementById("profileAccountTitle");
+      const text = document.getElementById("profileAccountText");
+      if(state && state.signedIn && state.user){
+        const email = state.user.email || "Angemeldetes Konto";
+        avatar.textContent = email.charAt(0).toUpperCase() || "✓";
+        avatar.classList.add("signedIn");
+        title.textContent = email;
+        text.textContent = state.status || "Dein Lernfortschritt wird mit deinem Konto synchronisiert.";
+      }else{
+        avatar.textContent = "○";
+        avatar.classList.remove("signedIn");
+        title.textContent = "Nicht angemeldet";
+        text.textContent = "Dein Fortschritt wird derzeit nur auf diesem Gerät gespeichert.";
+      }
+    }
+    window.addEventListener("cf-sync-status", e => renderAccount(e.detail));
+    if(window.CF_SYNC && CF_SYNC.ready) CF_SYNC.ready.then(() => renderAccount(CF_SYNC.getState()));
+  </script>
+</body>
+</html>

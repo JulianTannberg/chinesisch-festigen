@@ -146,7 +146,7 @@
 <body>
   <main class="app">
     <div class="topbar">
-      <a class="back" id="back">← Kapitel</a>
+      <a class="back" id="back">← Zurück</a>
     </div>
     <h1 id="title">Schreiben</h1>
     <p class="subtitle">Lerne jedes Zeichen Schritt für Schritt – hören, Pinyin, Bedeutung, zeichnen – oder übe das Tippen.</p>
@@ -328,7 +328,9 @@
   </main>
 
 <script src="topics.js"></script>
-<script src="common.js"></script>
+<script src="config.js"></script>
+  <script src="sync.js"></script>
+  <script src="common.js"></script>
 <script src="bausteine.js"></script>
 <script>
 const topic = getTopic();
@@ -336,21 +338,35 @@ applyTheme(topic, "Chinesisch festigen");
 document.documentElement.classList.add("noScroll");
 document.getElementById("back").href = `kapitel.html?id=${topic.id}`;
 document.getElementById("finishBack").href = `kapitel.html?id=${topic.id}`;
-document.getElementById("title").textContent = `${topic.id}. ${topic.title} · Schreiben`;
+const writeMode = ["learn","trace","type"].includes(new URLSearchParams(location.search).get("mode"))
+  ? new URLSearchParams(location.search).get("mode") : "learn";
+const writeTitles = {
+  learn: "Zeichen lernen",
+  trace: "Schreibtraining",
+  type: "Tippen"
+};
+document.getElementById("title").textContent = `${topic.id}. ${topic.title} · ${writeTitles[writeMode]}`;
+const writeSubtitle = document.querySelector(".subtitle");
+if(writeSubtitle) writeSubtitle.textContent = writeMode === "learn"
+  ? "Lerne jedes neue Zeichen Schritt für Schritt."
+  : writeMode === "trace"
+    ? "Wiederhole die Zeichen mit der passenden Hilfestufe."
+    : "Rufe die Vokabeln ab und gib die chinesischen Zeichen ein.";
 
-/* ===== Reiter-Umschaltung ===== */
+/* Jede Übung wird direkt von der Kapitelansicht geöffnet. Die frühere
+   Reiterleiste bleibt ausgeblendet, damit keine zusätzliche Navigationsebene
+   entsteht. */
 const tabs = [...document.querySelectorAll(".tab")];
-cfPaintTabScores([
-  ['.tab[data-tab="learn"]', "lernen"],
-  ['.tab[data-tab="trace"]', "schreibtraining"],
-  ['.tab[data-tab="type"]', "tippen"]
-], topic.id);
-tabs.forEach(tab => tab.addEventListener("click", () => {
-  tabs.forEach(t => t.classList.toggle("active", t === tab));
+const tabbar = document.querySelector(".writeTabs");
+if(tabbar) tabbar.style.display = "none";
+function activateWriteMode(name){
+  tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
   document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-  document.getElementById(`panel-${tab.dataset.tab}`).classList.add("active");
-  if(tab.dataset.tab === "trace") ensureTraceInit();
-}));
+  const panel = document.getElementById(`panel-${name}`);
+  if(panel) panel.classList.add("active");
+  if(name === "trace") ensureTraceInit();
+}
+activateWriteMode(writeMode);
 
 /* ============================================================
    TEIL 1: TIPPEN  (unverändert aus deiner schreiben.html)

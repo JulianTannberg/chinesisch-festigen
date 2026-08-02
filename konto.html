@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Konto · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#03172B" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <style>
+    .accountStatus{margin-top:10px;min-height:22px;line-height:1.45;color:var(--muted)}
+    .accountStatus.error{color:#ffb3b3}
+    .accountEmail{font-size:18px;font-weight:800;overflow-wrap:anywhere}
+    .accountActions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+    .accountActions button{flex:1 1 170px}
+    .otpRow{display:none;margin-top:12px}
+    .otpRow.show{display:block}
+    .syncDot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#aaa;margin-right:7px}
+    .syncDot.on{background:#5bd27d}.syncDot.off{background:#f0b44d}.syncDot.bad{background:#e96a6a}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="topbar"><a class="back" id="accountBack" href="profil.html">← Profil</a></div>
+    <h1>Konto und Synchronisierung</h1>
+
+    <section class="card" id="notConfigured" hidden style="border-color:rgba(255,200,80,.5);">
+      <div class="setTitle">Noch nicht eingerichtet</div>
+      <p class="small">Die App ist vorbereitet, aber die Supabase-Projektadresse und der öffentliche Schlüssel fehlen noch. Bis dahin bleibt der Fortschritt ausschließlich auf diesem Gerät.</p>
+    </section>
+
+    <section class="card" id="signedOutCard" hidden>
+      <div class="setTitle">Auf mehreren Geräten lernen</div>
+      <p class="small">Die App funktioniert auch ohne Konto. Mit einer Anmeldung wird dein Fortschritt deinem Konto zugeordnet und auf deinen Geräten abgeglichen.</p>
+      <div class="setRow">
+        <input class="profileInput" id="emailInput" type="email" autocomplete="email" inputmode="email" placeholder="deine@email.de" />
+        <button id="sendCodeBtn" type="button">Code senden</button>
+      </div>
+      <div class="otpRow" id="otpRow">
+        <p class="small">Gib den Code aus der E-Mail ein.</p>
+        <div class="setRow">
+          <input class="profileInput" id="otpInput" type="text" autocomplete="one-time-code" inputmode="numeric" maxlength="12" placeholder="Anmeldecode" />
+          <button id="verifyBtn" type="button">Anmelden</button>
+        </div>
+      </div>
+      <div class="accountStatus" id="loginStatus" aria-live="polite"></div>
+    </section>
+
+    <section class="card" id="signedInCard" hidden>
+      <div class="setTitle">Angemeldet</div>
+      <p class="accountEmail" id="accountEmail"></p>
+      <p class="small"><span class="syncDot on"></span>Dein Lernfortschritt wird mit diesem Konto synchronisiert.</p>
+      <p class="accountStatus" id="syncStatus" aria-live="polite"></p>
+      <p class="small" id="lastSync"></p>
+      <div class="accountActions">
+        <button id="syncBtn" type="button">Jetzt synchronisieren</button>
+        <button id="signOutBtn" type="button">Abmelden</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="setTitle">So funktioniert es</div>
+      <p class="small">Beim ersten Anmelden wird dein bisheriger lokaler Fortschritt übernommen. Auf einem weiteren Gerät meldest du dich mit derselben E-Mail-Adresse an. Die App lädt anschließend den gespeicherten Stand. Ohne Internet kannst du weiterlernen; die Änderungen werden beim nächsten Online-Zugriff abgeglichen.</p>
+    </section>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="sync.js"></script>
+  <script src="common.js"></script>
+  <script>
+    const $ = id => document.getElementById(id);
+    const accountFrom = new URLSearchParams(location.search).get("from");
+    if($("accountBack")) $("accountBack").href = accountFrom === "profil.html" ? "profil.html" : "profil.html";
+    let loginEmail = "";
+
+    function showError(el, error){
+      el.textContent = error ? String(error.message || error) : "";
+      el.classList.toggle("error", Boolean(error));
+    }
+
+    function render(state){
+      $("notConfigured").hidden = state.configured;
+      $("signedOutCard").hidden = !state.configured || state.signedIn;
+      $("signedInCard").hidden = !state.signedIn;
+      if(state.signedIn){
+        $("accountEmail").textContent = state.user.email || "Angemeldetes Konto";
+        $("syncStatus").textContent = state.status || "";
+        $("syncStatus").classList.toggle("error", Boolean(state.lastError));
+        $("lastSync").textContent = "Letzter Abgleich: " + CF_SYNC.formatLastSync();
+      }else if(state.configured){
+        $("loginStatus").textContent = state.status || "";
+        $("loginStatus").classList.toggle("error", Boolean(state.lastError));
+      }
+    }
+
+    window.addEventListener("cf-sync-status", event => render(event.detail));
+    CF_SYNC.ready.then(() => render(CF_SYNC.getState()));
+
+    $("sendCodeBtn").addEventListener("click", async () => {
+      const btn = $("sendCodeBtn");
+      btn.disabled = true;
+      showError($("loginStatus"), null);
+      try{
+        loginEmail = await CF_SYNC.sendOtp($("emailInput").value);
+        $("otpRow").classList.add("show");
+        $("otpInput").focus();
+      }catch(error){ showError($("loginStatus"), error); }
+      btn.disabled = false;
+    });
+
+    $("verifyBtn").addEventListener("click", async () => {
+      const btn = $("verifyBtn");
+      btn.disabled = true;
+      showError($("loginStatus"), null);
+      try{
+        const email = loginEmail || $("emailInput").value;
+        await CF_SYNC.verifyOtp(email, $("otpInput").value);
+      }catch(error){ showError($("loginStatus"), error); }
+      btn.disabled = false;
+    });
+
+    $("otpInput").addEventListener("keydown", event => {
+      if(event.key === "Enter") $("verifyBtn").click();
+    });
+
+    $("syncBtn").addEventListener("click", async () => {
+      const btn = $("syncBtn");
+      btn.disabled = true;
+      try{ await CF_SYNC.syncNow(); }
+      catch(error){ $("syncStatus").textContent = String(error.message || error); }
+      btn.disabled = false;
+    });
+
+    $("signOutBtn").addEventListener("click", async () => {
+      const ok = typeof cfConfirm === "function"
+        ? await cfConfirm("Der Fortschritt bleibt auf diesem Gerät erhalten. Ohne Anmeldung werden neue Änderungen erst wieder nach der nächsten Anmeldung synchronisiert.", {title:"Wirklich abmelden?"})
+        : window.confirm("Wirklich abmelden?");
+      if(!ok) return;
+      try{ await CF_SYNC.signOut(); }
+      catch(error){ $("syncStatus").textContent = String(error.message || error); }
+    });
+  </script>
+</body>
+</html>

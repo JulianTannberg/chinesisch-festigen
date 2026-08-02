@@ -1,4 +1,12 @@
-// Öffentliche Konfiguration (KEIN API-Key hier!).
-// Nach dem Deploy des Cloudflare Workers dessen URL eintragen, z. B.:
-// window.CF_CONFIG = { workerUrl: "https://cf-transcribe.dein-name.workers.dev" };
-window.CF_CONFIG = { workerUrl: "" };
+// Öffentliche Konfiguration. Hier dürfen nur öffentliche Browser-Schlüssel stehen.
+// Niemals den Supabase service_role-Schlüssel in diese Datei eintragen.
+window.CF_CONFIG = {
+  workerUrl: "",
+
+  // Supabase: Project Settings → API
+  // Beispiel URL: https://xxxxxxxxxxxxxxxxxxxx.supabase.co
+  supabaseUrl: "",
+
+  // Neuer "Publishable key" oder älterer öffentlicher "anon"-Schlüssel.
+  supabasePublishableKey: ""
+};

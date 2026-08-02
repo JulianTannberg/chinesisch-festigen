@@ -7,7 +7,7 @@
       { id:"start", label:"Erste Schritte", topics:["erste-schritte","kapitel-freischalten","fortschritt"] },
       { id:"lernen", label:"Lernen & Üben", topics:["hoeren","schreiben","sprechen","satzuebungen"] },
       { id:"spiele", label:"Spiele", topics:["spiele","stirnspiel","bonusspiel"] },
-      { id:"zeichen", label:"Schriftzeichen", topics:["zeichen-wiederholen","freies-nachzeichnen","chinesisch-tipps"] },
+      { id:"zeichen", label:"Schriftzeichen", topics:["zeichen-wiederholen","chinesisch-tipps"] },
       { id:"technik", label:"Technik & Installation", topics:["installieren","offline","apple-sprechen","ton-audio"] },
       { id:"konto", label:"Daten & Einstellungen", topics:["konto-datenschutz","name","fortschritt-zuruecksetzen","fehler-melden"] },
       { id:"geschichte", label:"Geschichte & KI-Dialog", topics:["abschlussgeschichte","ki-sprechen","hilfe-ohne-ki"] }
@@ -20,7 +20,7 @@
         keywords:["anfangen","start","buch","reihenfolge","lernen","kapitel"],
         answer:[
           "Lies zuerst das passende Kapitel im Buch. Öffne danach dasselbe Kapitel in der App.",
-          "Eine sinnvolle Reihenfolge ist: Hören, Schreiben, Sprechen, Üben und anschließend Spielen. Du darfst aber jederzeit zwischen den Bereichen wechseln.",
+          "Eine sinnvolle Reihenfolge ist: Hören, Schreiben, Sprechen, Sätze festigen und Vokabeln festigen. Jede Übung lässt sich direkt aus der fünfteiligen Kapitelansicht öffnen.",
           "Das nächste Kapitel öffnet sich, sobald du alle fortschrittsrelevanten Übungen des aktuellen Kapitels mindestens einmal vollständig durchgearbeitet hast."
         ],
         actions:[{label:"Zur Kapitelübersicht", href:"index.html"}],
@@ -55,7 +55,7 @@
         aliases:["vokabeln anhören","geschichte hören","dialog hören","sprechtempo"],
         keywords:["hören","audio","vokabel","dialog","geschichte","tempo","langsam"],
         answer:[
-          "Tippe eine Vokabel an, um sie anzuhören. Zusätzlich kannst du den Dialog oder die Geschichte des Kapitels zusammenhängend abspielen.",
+          "Hören ist in drei eigene Seiten aufgeteilt: Vokabeln, einzelne Sätze und die ganze Geschichte. Tippe Wörter oder Sätze an, um sie gezielt anzuhören; auf der Geschichtsseite wird alles zusammenhängend abgespielt.",
           "Das Sprechtempo lässt sich verändern. Hören zählt zum Kapitel-Fortschritt, sobald du den vorgesehenen Durchgang beendet hast."
         ],
         related:["ton-audio","erste-schritte","sprechen"]
@@ -66,11 +66,11 @@
         aliases:["zeichen lernen","schreibtraining","tippen","hanzi schreiben","schriftzeichen lernen"],
         keywords:["schreiben","zeichen","hanzi","lernen","schreibtraining","tippen","anfänger","fortgeschritten","profi"],
         answer:[
-          "Im Reiter „Zeichen lernen“ lernst du Wörter Schritt für Schritt: anhören, Pinyin erkennen, Bedeutung wählen und die Zeichen nachzeichnen.",
+          "Unter „Zeichen lernen“ lernst du Wörter Schritt für Schritt: anhören, Pinyin erkennen, Bedeutung wählen und die Zeichen nachzeichnen.",
           "Im „Schreibtraining“ gibt es Anfänger, Fortgeschritten und Profi. Für den Kapitel-Fortschritt genügt eine vollständig geschaffte Stufe. Fehlerhafte Wörter werden innerhalb der Stufe erneut geübt.",
           "Unter „Tippen“ gibst du chinesische Wörter über die Tastatur ein. Eine Anleitung zum Einrichten der chinesischen Tastatur wird direkt in der App angezeigt."
         ],
-        related:["freies-nachzeichnen","zeichen-wiederholen","chinesisch-tipps"]
+        related:["zeichen-wiederholen","chinesisch-tipps"]
       },
       {
         id:"sprechen",
@@ -78,8 +78,8 @@
         aliases:["sätze sprechen","spracherkennung","aussprache","mikrofon","sprechen üben"],
         keywords:["sprechen","mikrofon","spracherkennung","aussprache","satz","diktat"],
         answer:[
-          "Unter „Sätze sprechen“ sprichst du die vorgegebenen chinesischen Sätze. Dieser Bereich zählt zum Fortschritt.",
-          "„Aussprache“ und „KI sprechen“ sind freiwillige Zusatzübungen und verändern die Kapitel-Prozente nicht.",
+          "Unter „Sätze sprechen“ sprichst du vorgegebene chinesische Sätze. Unter „Geschichte nachsprechen“ hörst du jeden Satz einzeln und vergleichst ihn mit deiner Aufnahme. Beide Bereiche zeigen ihren eigenen Fortschritt.",
+          "„Mit KI sprechen“ ist eine freiwillige Zusatzübung. Sie wird in der Übersicht angezeigt, ist aber nicht für die Freischaltung des nächsten Kapitels erforderlich.",
           "Auf Geräten ohne direkte Browser-Spracherkennung kannst du das Mikrofon der chinesischen Bildschirmtastatur verwenden und den erkannten Text prüfen lassen."
         ],
         related:["apple-sprechen","ki-sprechen","chinesisch-tipps"]
@@ -98,7 +98,7 @@
       },
       {
         id:"satzuebungen",
-        title:"Was passiert im Bereich Üben?",
+        title:"Wie funktioniert „Sätze festigen“?",
         aliases:["sätze bauen","chinesisch deutsch","deutsch chinesisch","wortkarten","satz zusammensetzen"],
         keywords:["üben","satz","karten","hören","deutsch","chinesisch","zusammensetzen"],
         answer:[
@@ -109,12 +109,12 @@
       },
       {
         id:"spiele",
-        title:"Welche Lernspiele gibt es?",
+        title:"Welche Spiele gibt es?",
         aliases:["flashkarten","memory","lückenspiel","spielen","lernspiele"],
         keywords:["spiel","flashkarten","memory","lücke","lückenspiel","wiederholen"],
         answer:[
-          "In jedem Kapitel gibt es Flashkarten, Memory und ein Lückenspiel. Sie wiederholen die aktiven Vokabeln und Sätze des Kapitels.",
-          "Beim Flashkarten-Spiel kannst du schwierige Wörter erneut üben. Beim Memory suchst du Hanzi und deutsche Bedeutung. Im Lückenspiel wählst du das passende Wort für einen Satz."
+          "Auf der Startseite führt „Spiele“ zu Jump & Run, Stirnraten und Memory. Stirnraten und Memory verwenden Vokabeln aus den Kapiteln, die du vorher auswählst.",
+          "Flashkarten und „Lücken ergänzen“ findest du nicht unter Spiele, sondern direkt im Bereich „Vokabeln festigen“ des jeweiligen Kapitels."
         ],
         related:["stirnspiel","bonusspiel","fortschritt"]
       },
@@ -127,7 +127,7 @@
           "Wähle ein oder mehrere bereits freigeschaltete Kapitel und eine Spielzeit. Danach hält eine Person das Handy an die Stirn, während die anderen das angezeigte Wort erklären.",
           "Die Anzeige kann zwischen Chinesisch und Deutsch wechseln. Das Spiel dient der gemeinsamen Wiederholung und zählt nicht zum Kapitel-Fortschritt."
         ],
-        actions:[{label:"Stirn-Ratespiel öffnen", href:"stirnspiel.html"}],
+        actions:[{label:"Spiele öffnen", href:"spiele.html"}],
         related:["spiele","kapitel-freischalten"]
       },
       {
@@ -139,7 +139,7 @@
           "„Su Rans Reise“ ist ein zusätzliches Lauf- und Sammelspiel. Du sammelst passende Wörter und setzt daraus Sätze zusammen.",
           "Derzeit ist dieses Bonusspiel für Kapitel 1 vorgesehen. Es ist eine freiwillige Ergänzung und zählt nicht zur Kapitel-Freischaltung."
         ],
-        actions:[{label:"Bonusspiel öffnen", href:"jump-run.html?id=01"}],
+        actions:[{label:"Spiele öffnen", href:"spiele.html"}],
         related:["spiele","fortschritt"]
       },
       {
@@ -152,19 +152,7 @@
           "Ein Wort wird nur dann grün markiert, wenn du es ohne Fehler aus dem Kopf geschrieben hast. Du kannst es beliebig oft wiederholen."
         ],
         actions:[{label:"Zeichen wiederholen", href:"wiederholen.html"}],
-        related:["freies-nachzeichnen","schreiben","kapitel-freischalten"]
-      },
-      {
-        id:"freies-nachzeichnen",
-        title:"Wie kann ich ein beliebiges Zeichen nachzeichnen?",
-        aliases:["写","zeichen eingeben","eigenes zeichen","freies schreiben","wort nachzeichnen"],
-        keywords:["zeichen","nachzeichnen","eingeben","wort","写","strichfolge","hanzi"],
-        answer:[
-          "Öffne auf der Kapitelübersicht das Symbol 写. Dort kannst du ein chinesisches Zeichen oder ein ganzes Wort eingeben.",
-          "Die App zeigt die Vorlage und führt dich Strich für Strich durch das Nachzeichnen. Diese freie Übung zählt nicht zum Kapitel-Fortschritt."
-        ],
-        actions:[{label:"Freies Nachzeichnen öffnen", href:"zeichen.html"}],
-        related:["schreiben","zeichen-wiederholen"]
+        related:["schreiben","kapitel-freischalten"]
       },
       {
         id:"chinesisch-tipps",
@@ -232,10 +220,10 @@
         aliases:["name ändern","mein name","profil","vanessa","name speichern"],
         keywords:["name","profil","speichern","ändern","löschen","gerät","browser"],
         answer:[
-          "Dein Name wird nur lokal in diesem Browser auf diesem Gerät gespeichert. Er kann in passenden Übungen und Dialogen eingesetzt werden.",
-          "Du kannst ihn auf der Kapitelübersicht im Profilbereich ändern oder löschen. Er wird nicht an ein Benutzerkonto übertragen."
+          "Dein Name wird zunächst lokal in diesem Browser gespeichert und kann in passenden Übungen und Dialogen eingesetzt werden.",
+          "Wenn du dich freiwillig mit einem Konto anmeldest, wird der Name zusammen mit deinem Lernfortschritt auf deine angemeldeten Geräte übertragen."
         ],
-        actions:[{label:"Zur Kapitelübersicht", href:"index.html"}],
+        actions:[{label:"Konto verwalten", href:"konto.html"}],
         related:["konto-datenschutz","fortschritt-zuruecksetzen"]
       },
       {
@@ -256,11 +244,11 @@
         aliases:["konto","anmelden","login","datenschutz","meine daten","cloud"],
         keywords:["konto","login","anmelden","daten","datenschutz","lokal","browser","cloud"],
         answer:[
-          "Für die Lern-App ist kein Konto erforderlich. Name, Fortschritt und Einstellungen werden lokal im Browser des verwendeten Geräts gespeichert.",
-          "Wenn du Browserdaten löschst oder ein anderes Gerät verwendest, steht dieser lokale Fortschritt dort nicht automatisch zur Verfügung.",
+          "Ein Konto ist nicht erforderlich. Ohne Anmeldung bleiben Name, Fortschritt und Einstellungen lokal im Browser des verwendeten Geräts.",
+          "Mit der freiwilligen Anmeldung per E-Mail-Code kannst du deinen Fortschritt über Supabase sichern und auf mehreren Geräten verwenden. Ohne Internet lernst du lokal weiter; der Abgleich erfolgt beim nächsten Online-Zugriff.",
           "Der freiwillige KI-Dialog öffnet ChatGPT außerhalb der Lern-App und unterliegt den dortigen Bedingungen."
         ],
-        actions:[{label:"Datenschutz öffnen", href:"datenschutz.html"}],
+        actions:[{label:"Konto verwalten", href:"konto.html"},{label:"Datenschutz öffnen", href:"datenschutz.html"}],
         related:["name","offline","ki-sprechen"]
       },
       {

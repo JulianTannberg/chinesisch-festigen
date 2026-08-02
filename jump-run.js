@@ -2,11 +2,14 @@
   "use strict";
 
   const topic = getTopic();
-  const testMode = new URLSearchParams(location.search).get("test") === "1";
+  const jumpParams = new URLSearchParams(location.search);
+  const testMode = jumpParams.get("test") === "1";
+  const openedFromGames = jumpParams.get("from") === "spiele";
+  const freshStart = jumpParams.get("fresh") === "1";
   applyTheme(topic, "Su Rans Reise");
 
   const $ = id => document.getElementById(id);
-  const backUrl = `kapitel.html?id=${topic.id}${testMode ? "&test=1" : ""}`;
+  const backUrl = openedFromGames ? "spiele.html" : `kapitel.html?id=${topic.id}${testMode ? "&test=1" : ""}`;
   $("backLink").href = backUrl;
   $("lockedBack").href = backUrl;
   $("finishBack").href = backUrl;
@@ -1839,7 +1842,8 @@
   $("playAgainBtn").addEventListener("click",() => resetGame(false));
   $("fullscreenBtn").addEventListener("click",toggleFullscreen);
 
-  const savedCheckpoint = readCheckpoint();
+  if(freshStart) clearCheckpoint();
+  const savedCheckpoint = freshStart ? null : readCheckpoint();
   if(savedCheckpoint) restoreCheckpoint(savedCheckpoint);
   else resetGame(true);
   updateFullscreenButton();

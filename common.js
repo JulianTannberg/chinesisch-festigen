@@ -330,8 +330,13 @@ function cfRaiseScore(name, percent, chapterId){
 }
 
 // Alle wertbaren Aktivitäten eines Kapitels (eine Quelle der Wahrheit).
-var CF_SCORE_NAMES = ["hoeren","lernen","tippen","schreibtraining","sprechen",
-  "ueben_hoeren","ueben_zhde","ueben_dezh","flash","memory","luecken"];
+var CF_SCORE_NAMES = [
+  "hoeren_vocab","hoeren_saetze","hoeren_geschichte",
+  "lernen","schreibtraining","tippen",
+  "sprechen","aussprache",
+  "ueben_hoeren","ueben_zhde","ueben_dezh",
+  "flash_dezh","flash_zhde","luecken"
+];
 
 // „Durchgearbeitet"-Markierung: eine Aktivität gilt als erledigt, sobald sie
 // EINMAL komplett durchgespielt wurde – unabhängig davon, wie viel davon richtig
@@ -356,13 +361,45 @@ function cfActivityApplicable(topic, name){
                       window.CF_BAUSTEINE[topic.id].chars &&
                       Object.keys(window.CF_BAUSTEINE[topic.id].chars).length);
   switch(name){
-    case "memory": case "flash": case "tippen": return hasVocab;
+    case "flash_dezh": case "flash_zhde": case "tippen": return hasVocab;
     case "luecken": return hasGaps;
-    case "ueben_hoeren": case "ueben_zhde": case "ueben_dezh": case "sprechen": return hasStory;
-    case "hoeren": return hasVocab || hasStory;
+    case "ueben_hoeren": case "ueben_zhde": case "ueben_dezh":
+    case "sprechen": case "aussprache": case "hoeren_saetze": case "hoeren_geschichte": return hasStory;
+    case "hoeren_vocab": return hasVocab;
+    case "ki": return (topic.studentDialog || []).length > 0;
     case "lernen": case "schreibtraining": return hasChars;
     default: return true;
   }
+}
+
+// Einmalige, möglichst schonende Übernahme aus der früheren Navigation.
+// Die alten Sammelwerte werden auf die jetzt getrennten Unterseiten kopiert,
+// damit vorhandener Fortschritt und bereits freigeschaltete Kapitel nicht
+// scheinbar verloren gehen.
+function cfMigrateProgressV2(topic){
+  if(!topic || !topic.id) return;
+  const id = topic.id;
+  const key = `cf_progress_v2_migrated_${id}`;
+  try{ if(localStorage.getItem(key) === "1") return; }catch(e){}
+
+  const copyScore = (oldName, newNames) => {
+    const old = cfGetScore(oldName, id);
+    if(old === null) return;
+    newNames.forEach(n => { if(cfGetScore(n, id) === null) cfSetScore(n, old, id); });
+  };
+  const copyDone = (oldName, newNames) => {
+    if(!cfIsDone(oldName, id)) return;
+    newNames.forEach(n => { if(!cfIsDone(n, id)) cfMarkDone(n, id); });
+  };
+
+  copyScore("hoeren", ["hoeren_vocab","hoeren_saetze","hoeren_geschichte"]);
+  copyDone("hoeren", ["hoeren_vocab","hoeren_saetze","hoeren_geschichte"]);
+  copyScore("flash", ["flash_dezh","flash_zhde"]);
+  copyDone("flash", ["flash_dezh","flash_zhde"]);
+  copyScore("sprechen", ["aussprache"]);
+  copyDone("sprechen", ["aussprache"]);
+
+  try{ localStorage.setItem(key, "1"); }catch(e){}
 }
 
 // Mittel über die ANWENDBAREN Aktivitäten. Nicht gespielte zählen als 0,

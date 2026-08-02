@@ -14,57 +14,69 @@
   <meta name="apple-mobile-web-app-title" content="Chinesisch" />
 </head>
 <body>
-  <main class="app">
-    <div class="topbar topbarEnd topbarSticky">
-      <div class="topbarIcons">
-        <a class="miniBtn settingsIcon gameIcon" href="jump-run.html?id=01" aria-label="Bonusspiel: Su Rans Reise" title="Bonusspiel: Su Rans Reise"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="11" x2="10" y2="11"/><line x1="8" y1="9" x2="8" y2="13"/><line x1="15" y1="12" x2="15.01" y2="12"/><line x1="18" y1="10" x2="18.01" y2="10"/><rect x="2" y="6" width="20" height="12" rx="2"/></svg></a>
-        <a class="miniBtn settingsIcon hanziBtn" href="wiederholen.html" aria-label="Zeichen wiederholen" title="Zeichen wiederholen">汉字</a>
-        <a class="miniBtn settingsIcon hanziBtn" href="zeichen.html" aria-label="Zeichen nachzeichnen" title="Zeichen eingeben und nachzeichnen">写</a>
-        <a class="miniBtn settingsIcon helpIcon" href="hilfe.html?from=index.html" aria-label="Hilfe" title="Hilfe">?</a>
-        <a class="miniBtn settingsIcon" href="einstellungen.html" aria-label="Einstellungen" title="Einstellungen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></a>
+  <main class="app homeWithNav">
+    <header class="homeHeader">
+      <div>
+        <div class="kicker">CHINESISCH FESTIGEN</div>
+        <h1>Kapitelübersicht</h1>
+        <p class="subtitle">Wähle ein Kapitel oder nutze unten Zeichen, Spiele und Profil.</p>
       </div>
-    </div>
-    <h1>Kapitelübersicht</h1>
-    <div id="profileSetupMount"></div>
+    </header>
+
     <section class="grid" id="chapterGrid"></section>
     <section id="storyMount" class="storyUnlockSection" aria-label="Abschlussgeschichte"></section>
-    <div id="profileEditMount" class="bottomProfile"></div>
   </main>
+
+  <nav class="homeNav" aria-label="Hauptbereiche">
+    <a class="homeNavItem active" href="index.html" aria-current="page">
+      <span class="homeNavIcon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5V21h-6v-6H9v6H3z"/></svg>
+      </span>
+      <span>Kapitel</span>
+    </a>
+    <a class="homeNavItem" href="wiederholen.html">
+      <span class="homeNavIcon homeNavHanzi" aria-hidden="true">汉</span>
+      <span>Zeichen</span>
+    </a>
+    <a class="homeNavItem" href="spiele.html">
+      <span class="homeNavIcon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M7 8h10a5 5 0 0 1 4.7 6.7l-1 2.8a2.8 2.8 0 0 1-4.8.8L14.6 17H9.4l-1.3 1.3a2.8 2.8 0 0 1-4.8-.8l-1-2.8A5 5 0 0 1 7 8Z"/><path d="M7 12v4M5 14h4M16.5 13.5h.01M19 15.5h.01"/></svg>
+      </span>
+      <span>Spiele</span>
+    </a>
+    <a class="homeNavItem" href="profil.html">
+      <span class="homeNavIcon homeProfileIcon" id="homeProfileIcon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+      </span>
+      <span>Profil</span>
+    </a>
+  </nav>
 
   <script src="topics.js"></script>
   <script src="bausteine.js"></script>
+  <script src="config.js"></script>
+  <script src="sync.js"></script>
   <script src="common.js"></script>
-  <script src="profile.js"></script>
   <script>
-    window.CF_PROFILE?.mountSetup("profileSetupMount");
-    window.CF_PROFILE?.mountEdit("profileEditMount");
+    // Wenn beim ersten Cloud-Abgleich ein anderer Gerätestand geladen wurde,
+    // die Übersicht einmal neu aufbauen. Aktive Übungen werden nicht unterbrochen.
+    if(window.CF_SYNC && CF_SYNC.initialSync){
+      CF_SYNC.initialSync.then(() => {
+        if(CF_SYNC.getState().needsRefresh) location.reload();
+      });
+    }
+
     const grid = document.getElementById("chapterGrid");
     const topics = window.CF_TOPICS || [];
-    const scoreNames = ["hoeren","lernen","tippen","schreibtraining","sprechen","ueben_hoeren","ueben_zhde","ueben_dezh","flash","memory","luecken"];
+    const scoreNames = window.CF_SCORE_NAMES || [];
 
-    // Gesamt-Prozent eines Kapitels: nicht gespielte Aktivitäten zählen als 0
-    // (zentrale Rechnung aus common.js). null nur bei Kapiteln ganz ohne Inhalt.
-    function chapterTotal(t){
-      return cfChapterPercent(t);
-    }
-    function chapterStarted(t){
-      return scoreNames.some(n => cfGetScore(n, t.id) !== null);
-    }
-    function chapterComplete(t){
-      const tot = chapterTotal(t);
-      return tot !== null && tot >= 100;
-    }
-    // Freischaltung des nächsten Kapitels: nicht mehr 100 %, sondern „komplett
-    // durchgearbeitet" – jede prozentgebende Aktivität wurde einmal gespielt
-    // (egal ob richtig oder falsch).
-    function chapterWorked(t){
-      return cfChapterWorkedThrough(t);
-    }
+    function chapterTotal(t){ return cfChapterPercent(t); }
+    function chapterStarted(t){ return scoreNames.some(n => cfGetScore(n, t.id) !== null); }
+    function chapterWorked(t){ return cfChapterWorkedThrough(t); }
 
     topics.forEach((t, i) => {
+      if(typeof cfMigrateProgressV2 === "function") cfMigrateProgressV2(t);
       const hasContent = topicHasContent(t);
-      // Freischaltung: Kapitel 1 immer offen; jedes weitere erst, wenn das
-      // vorherige Kapitel komplett durchgearbeitet wurde.
       const prev = i > 0 ? topics[i-1] : null;
       const prevDone = !prev || chapterWorked(prev);
       const available = hasContent && prevDone;
@@ -75,7 +87,6 @@
       el.style.background = t.accent;
       el.style.color = t.textColor;
 
-      // Fortschritt nur anzeigen, wenn das Kapitel Inhalt hat
       let scoreHtml = "";
       if(hasContent){
         const total = chapterTotal(t);
@@ -88,10 +99,9 @@
         }
       }
 
-      // Badge: ohne Inhalt = bald; mit Inhalt aber gesperrt = vorheriges Kapitel abschließen
       let badge = "";
       if(!hasContent) badge = `<span class="soonBadge">Bald verfügbar</span>`;
-      else if(!available) badge = `<span class="soonBadge">🔒 Erst Kapitel ${prev.id} abschließen</span>`;
+      else if(!available) badge = `<span class="soonBadge">🔒 Erst Kapitel ${prev.id} durcharbeiten</span>`;
 
       el.innerHTML = `
         <div class="chapterNo">Kapitel ${t.id}</div>
@@ -103,8 +113,6 @@
       grid.appendChild(el);
     });
 
-    // Abschlussgeschichte unter Kapitel 15. Zum Testen kann sie mit ?test=1
-    // geöffnet werden, ohne den echten Lernfortschritt zu verändern.
     const storyMount = document.getElementById("storyMount");
     const testMode = new URLSearchParams(location.search).get("test") === "1";
     const storyProgress = cfStoryProgress(topics);
@@ -126,9 +134,22 @@
         <span>${storyProgress.done} von 15 Kapiteln einmal durchgearbeitet</span>
         <div class="storyUnlockBar"><i style="width:${Math.round(storyProgress.done / 15 * 100)}%"></i></div>
       </div>
-      ${storyUnlocked ? "" : '<p class="storyUnlockHint">Die Geschichte wird freigeschaltet, sobald du jedes Kapitel einmal vollständig durchgearbeitet hast. 100&nbsp;% sind dafür nicht nötig.</p>'}
+      ${storyUnlocked ? "" : '<p class="storyUnlockHint">Die Geschichte wird freigeschaltet, sobald du jedes Kapitel einmal vollständig durchgearbeitet hast.</p>'}
     `;
     storyMount.appendChild(storyCard);
+
+    // Profil-Symbol: leer ohne Anmeldung, Initiale bei angemeldetem Konto.
+    function paintProfile(state){
+      const icon = document.getElementById("homeProfileIcon");
+      if(!icon) return;
+      const email = state && state.signedIn && state.user ? (state.user.email || "") : "";
+      if(email){
+        icon.textContent = email.trim().charAt(0).toUpperCase() || "✓";
+        icon.classList.add("signedIn");
+      }
+    }
+    window.addEventListener("cf-sync-status", e => paintProfile(e.detail));
+    if(window.CF_SYNC && CF_SYNC.ready) CF_SYNC.ready.then(() => paintProfile(CF_SYNC.getState()));
   </script>
 </body>
 </html>

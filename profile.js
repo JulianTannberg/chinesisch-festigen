@@ -28,7 +28,7 @@
       <section class="profileCard">
         <div>
           <div class="profileTitle">Dein Name für Übungen</div>
-          <p class="profileText">Wird nur in diesem Browser gespeichert und bei Namenssätzen automatisch eingesetzt.</p>
+          <p class="profileText">Wird auf diesem Gerät gespeichert, bei Namenssätzen eingesetzt und nach einer Anmeldung mit deinem Konto synchronisiert.</p>
         </div>
         <div class="profileForm">
           <input class="profileInput" data-profile-input type="text" autocomplete="given-name" placeholder="z. B. Vanessa" value="${escapeHtml(current)}" />

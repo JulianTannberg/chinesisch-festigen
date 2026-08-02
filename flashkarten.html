@@ -17,7 +17,7 @@
 <body>
   <main class="app flashApp">
     <div class="topbar">
-      <a class="back" id="back">← Kapitel</a>
+      <a class="back" id="back">← Zurück</a>
     </div>
     <h1 id="title">Flashkarten</h1>
     <p class="subtitle">Vokabeln als Karten üben. Erst überlegen, dann aufdecken. Die Richtung kannst du jederzeit wechseln.</p>
@@ -76,7 +76,9 @@
   </main>
 
 <script src="topics.js"></script>
-<script src="common.js"></script>
+<script src="config.js"></script>
+  <script src="sync.js"></script>
+  <script src="common.js"></script>
 <script>
 const topic = getTopic();
 applyTheme(topic, "Flashkarten");
@@ -84,10 +86,16 @@ document.documentElement.classList.add("noScroll");
 const $ = id => document.getElementById(id);
 $("back").href = `kapitel.html?id=${topic.id}`;
 $("finishBack").href = `kapitel.html?id=${topic.id}`;
-$("title").textContent = `${topic.id}. ${topic.title} · Flashkarten`;
+const flashMode = new URLSearchParams(location.search).get("mode");
+let direction = flashMode === "tode" ? "toDe" : flashMode === "tozh" ? "toZh" : (localStorage.getItem(`cf_flash_direction_${topic.id}`) || "toZh");
+const directionTitle = direction === "toZh" ? "Deutsch → Chinesisch" : "Chinesisch → Deutsch";
+$("title").textContent = `${topic.id}. ${topic.title} · ${directionTitle}`;
+const flashSubtitle = document.querySelector(".subtitle");
+if(flashSubtitle) flashSubtitle.textContent = "Überlege zuerst selbst und decke die Antwort anschließend auf.";
+const modeSwitch = document.querySelector(".modeSwitch");
+if(modeSwitch) modeSwitch.style.display = "none";
 
 const vocab = (topic.vocab || []).filter(v => v.zh && v.de);
-let direction = localStorage.getItem(`cf_flash_direction_${topic.id}`) || "toZh";
 let order = [];
 let idx = 0;
 let known = 0;
@@ -183,7 +191,7 @@ function render(){
   if(idx >= order.length){
     $("flashGame").style.display = "none";
     $("finish").classList.add("show");
-    cfMarkDone("flash");
+    cfMarkDone(direction === "toZh" ? "flash_dezh" : "flash_zhde", topic.id);
     $("finishText").innerHTML = `Gewusst: <strong>${known}</strong> · Noch einmal angesehen: <strong>${again}</strong>`;
     saveState();
     return;
@@ -217,7 +225,7 @@ function nextCard(kind){
     order.push(order[idx]);
   }
   const seen = known + again;
-  if(seen) cfSetScore("flash", Math.round(known / Math.max(vocab.length, seen) * 100));
+  if(seen) cfSetScore(direction === "toZh" ? "flash_dezh" : "flash_zhde", Math.round(known / Math.max(vocab.length, seen) * 100), topic.id);
   idx++;
   render();
 }
@@ -231,6 +239,7 @@ function restart(shuffleIt=false){
   render();
 }
 function switchDirection(nextDirection){
+  if(flashMode === "tozh" || flashMode === "tode") return;
   if(direction === nextDirection) return;
   saveState();
   direction = nextDirection;
