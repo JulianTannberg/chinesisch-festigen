@@ -5,8 +5,8 @@ window.CF_CONFIG = {
 
   // Supabase: Project Settings → API
   // Beispiel URL: https://xxxxxxxxxxxxxxxxxxxx.supabase.co
-  supabaseUrl: "",
+  supabaseUrl: "https://bjjqeftutovmxjsnlstt.supabase.co",
 
   // Neuer "Publishable key" oder älterer öffentlicher "anon"-Schlüssel.
-  supabasePublishableKey: ""
+  supabasePublishableKey: "sb_publishable_WTQmmnw0GiUmmZSBGnBqNg_Titl3Qab"
 };
