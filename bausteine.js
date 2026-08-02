@@ -138,7 +138,8 @@ window.CF_BAUSTEINE = {
       "厕": { py:"cè", de:"Toilette (in 厕所)", word:"厕所", wordPy:"cèsuǒ", wordDe:"Toilette" },
       "所": { py:"suǒ", de:"Ort (in 厕所: Toilette)", word:"厕所", wordPy:"cèsuǒ", wordDe:"Toilette" },
       "男": { py:"nán", de:"Mann, männlich", word:"男厕所", wordPy:"náncèsuǒ", wordDe:"Herrentoilette" },
-      "女": { py:"nǚ", de:"Frau, weiblich", word:"女厕所", wordPy:"nǚcèsuǒ", wordDe:"Damentoilette" }
+      "女": { py:"nǚ", de:"Frau, weiblich", word:"女厕所", wordPy:"nǚcèsuǒ", wordDe:"Damentoilette" },
+      "晚": { py:"wǎn", de:"Abend, spät", word:"晚上", wordPy:"wǎnshang", wordDe:"Abend" }
     }
   },
   "05": {
@@ -166,7 +167,14 @@ window.CF_BAUSTEINE = {
       "的": { py:"de", de:"Strukturpartikel (besitzt/bildet Eigenschaft) (aus 好的)", word:"的", wordPy:"de", wordDe:"bildet „die rote“: 红色的", review:true },
       "和": { py:"hé", de:"und (verbindet Nomen)", word:"和", wordPy:"hé", wordDe:"und (verbindet Nomen)" },
       "一": { py:"yī", de:"eins (aus 一下)", word:"一共", wordPy:"yígòng", wordDe:"insgesamt, zusammen", review:true },
-      "共": { py:"gòng", de:"gemeinsam, zusammen (in 一共: insgesamt)", word:"一共", wordPy:"yígòng", wordDe:"insgesamt, zusammen" }
+      "共": { py:"gòng", de:"gemeinsam, zusammen (in 一共: insgesamt)", word:"一共", wordPy:"yígòng", wordDe:"insgesamt, zusammen" },
+      "可": { py:"kě", de:"können, dürfen", word:"可以", wordPy:"kěyǐ", wordDe:"können, dürfen" },
+      "以": { py:"yǐ", de:"Teil von 可以", word:"可以", wordPy:"kěyǐ", wordDe:"können, dürfen", review:true },
+      "用": { py:"yòng", de:"benutzen", word:"用", wordPy:"yòng", wordDe:"benutzen" },
+      "现": { py:"xiàn", de:"gegenwärtig; bar", word:"现金", wordPy:"xiànjīn", wordDe:"Bargeld", review:true },
+      "金": { py:"jīn", de:"Geld, Gold", word:"现金", wordPy:"xiànjīn", wordDe:"Bargeld" },
+      "扫": { py:"sǎo", de:"scannen", word:"扫码", wordPy:"sǎomǎ", wordDe:"den QR-Code scannen" },
+      "码": { py:"mǎ", de:"Code", word:"扫码", wordPy:"sǎomǎ", wordDe:"den QR-Code scannen" }
     }
   },
   "06": {

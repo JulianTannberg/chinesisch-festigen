@@ -6,6 +6,9 @@
   const META_PREFIX = "cf_sync_meta_v1_";
   const PENDING_PREFIX = "cf_sync_pending_v1_";
   const LAST_SYNC_PREFIX = "cf_sync_last_v1_";
+  // Sicherheitskopien beginnen nicht mit cf_ und werden deshalb nie synchronisiert.
+  const BACKUP_PREFIX = "cfbackup_before_account_v1_";
+  const BACKUP_LATEST_KEY = "cfbackup_before_account_latest_v1";
   const SDK_URL = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
   const POLL_MS = 30000;
 
@@ -183,6 +186,35 @@
     });
   }
 
+  function createLocalBackup(reason){
+    const snapshot = {
+      created_at: Date.now(),
+      reason: String(reason || "login"),
+      bound_user: getBoundUser(),
+      values: listSyncableLocal()
+    };
+    const key = BACKUP_PREFIX + snapshot.created_at;
+    try{
+      rawSet(key, JSON.stringify(snapshot));
+      rawSet(BACKUP_LATEST_KEY, key);
+    }catch(_err){}
+    return key;
+  }
+
+  function stageCurrentLocalForUser(userId){
+    const local = listSyncableLocal();
+    const meta = readMeta(userId);
+    const pending = readPending(userId);
+    let now = Date.now();
+    Object.keys(local).forEach(key => {
+      const ts = ++now;
+      meta[key] = ts;
+      pending[key] = {value:String(local[key]), deleted:false, updated_at:ts};
+    });
+    writeMeta(userId, meta);
+    writePending(userId, pending);
+  }
+
   function migrateGuestStateToUser(userId){
     const guestMeta = readMeta("guest");
     const guestPending = readPending("guest");
@@ -212,11 +244,16 @@
     if(!user) return;
     const previous = getBoundUser();
     if(previous && previous !== user.id){
+      createLocalBackup("account-change");
       clearSyncableLocal();
       rawRemove(metaKey(user.id));
       rawRemove(pendingKey(user.id));
     }else if(!previous){
+      // Erster Login: vorhandenen Gastfortschritt sichern und als aktuellen
+      // Kontostand vormerken, bevor Cloud-Daten geladen werden.
+      createLocalBackup("first-login");
       migrateGuestStateToUser(user.id);
+      stageCurrentLocalForUser(user.id);
     }
     rawSet(BOUND_USER_KEY, user.id);
     currentUser = user;

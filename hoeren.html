@@ -13,31 +13,40 @@
 </head>
 <body>
   <main class="app listenApp" id="listenApp">
-    <div class="topbar"><a class="back" id="back">← Zurück</a></div>
-    <h1 id="title">Hören</h1>
+    <div class="topbar topbarSticky"><a class="back" id="back">← Zurück</a><h1 id="title" class="pageTitleResponsive topbarPageTitle">Hören</h1></div>
     <p class="subtitle" id="pageSubtitle"></p>
 
-    <section class="card">
-      <div class="toolbar">
+    <section class="card listenCard">
+      <div class="toolbar listenToolbar">
         <label class="tempoLabel">
           Sprechtempo:
           <input type="range" id="tempo" min="0.4" max="1.0" step="0.1" value="1.0">
           <strong id="tempoValue">1.0</strong>
         </label>
-        <div class="toggleRow">
+        <div class="toggleRow" id="metaToggles">
           <button id="togglePinyin" class="toggleBtn" type="button" aria-pressed="false">Pinyin ein</button>
           <button id="toggleDeutsch" class="toggleBtn" type="button" aria-pressed="false">Deutsch ein</button>
         </div>
-        <button id="stopBtn" type="button">Stopp</button>
-        <button id="playAllBtn" type="button">Geschichte abspielen</button>
       </div>
 
       <div id="panelVocab"><div id="vocabGrid" class="vocabList"></div></div>
-      <div id="panelDialog"><div id="dialog" class="dialog"></div></div>
+      <div id="panelSentences"><div id="dialog" class="dialog"></div></div>
+      <div id="panelStory" class="storyListenPanel">
+        <div class="storyListenIcon" aria-hidden="true">▶</div>
+        <h2>Ganze Geschichte</h2>
+        <p>Erzähltext und Dialoge werden in der richtigen Reihenfolge vollständig abgespielt.</p>
+        <div class="storyListenActions">
+          <button id="playStoryBtn" class="primaryAction" type="button">Geschichte abspielen</button>
+          <button id="stopStoryBtn" type="button" style="display:none;">Stopp</button>
+        </div>
+        <div class="storyListenStatus" id="storyStatus">Bereit</div>
+        <div class="progressBar" aria-label="Abspielfortschritt"><div class="progressFill storyProgressFill" id="storyProgress"></div></div>
+      </div>
     </section>
   </main>
 
 <script src="topics.js"></script>
+<script src="geschichte-data.js"></script>
 <script src="config.js"></script>
 <script src="sync.js"></script>
 <script src="common.js"></script>
@@ -50,15 +59,15 @@ document.getElementById("back").href = `kapitel.html?id=${topic.id}`;
 
 const modeText = {
   vocab: ["Vokabeln hören", "Tippe jedes Wort an, höre genau zu und sprich es direkt nach."],
-  sentences: ["Sätze hören", "Höre die Sätze einzeln. So kannst du dich auf Aussprache und Satzmelodie konzentrieren."],
-  story: ["Geschichte hören", "Höre die Geschichte vollständig und ohne Unterbrechung an."]
+  sentences: ["Sätze hören", "Höre jeden Dialogsatz einzeln und sprich ihn direkt nach."],
+  story: ["Geschichte hören", "Höre die vollständige Geschichte mit Erzähltext und Dialogen am Stück."]
 };
-document.getElementById("title").textContent = `${topic.id}. ${topic.title} · ${modeText[mode][0]}`;
-document.getElementById("pageSubtitle").textContent = modeText[mode][1];
-document.getElementById("panelVocab").style.display = mode === "vocab" ? "" : "none";
-document.getElementById("panelDialog").style.display = mode === "vocab" ? "none" : "";
-document.getElementById("playAllBtn").style.display = mode === "story" ? "" : "none";
-document.getElementById("stopBtn").style.display = mode === "vocab" ? "none" : "";
+document.getElementById("title").textContent = `${Number(topic.id)}. ${topic.title}`;
+document.getElementById("pageSubtitle").textContent = `${modeText[mode][0]} · ${modeText[mode][1]}`;
+document.getElementById("panelVocab").hidden = mode !== "vocab";
+document.getElementById("panelSentences").hidden = mode !== "sentences";
+document.getElementById("panelStory").hidden = mode !== "story";
+document.getElementById("metaToggles").hidden = mode === "story";
 
 const listenApp = document.getElementById("listenApp");
 function toggleMeta(kind){
@@ -83,10 +92,10 @@ function stopAudio(){
   if(typeof _cfStopAll === "function") _cfStopAll();
   else if("speechSynthesis" in window) speechSynthesis.cancel();
 }
-function speak(text, reset=true, speaker){
+function speak(text, speaker){
   if(!text) return;
-  if(reset) playToken++;
-  cfSpeakZh(text, { rate: parseFloat(tempoEl.value), queue: !reset, speaker });
+  playToken++;
+  cfSpeakZh(text, { rate: parseFloat(tempoEl.value), queue: false, speaker });
 }
 function speakAndWait(text, token, speaker){
   return new Promise(resolve => {
@@ -94,7 +103,6 @@ function speakAndWait(text, token, speaker){
     cfSpeakZh(text, { rate: parseFloat(tempoEl.value), queue: true, onend: resolve, speaker });
   });
 }
-document.getElementById("stopBtn").onclick = stopAudio;
 
 function hexToRgb(hex){
   const h = hex.replace("#","");
@@ -117,29 +125,46 @@ try{
   const st=JSON.parse(localStorage.getItem(heardKey)||"{}");
   if(st&&typeof st==="object"){heard.w=st.w||{};heard.s=st.s||{};}
 }catch(e){}
-const storyRunKey = `cf_hoeren_story_run_v2_${topic.id}`;
-const storyRunRaw = localStorage.getItem(storyRunKey);
+const storyDoneKey = `cf_hoeren_story_complete_v3_${topic.id}`;
+let storyComplete = localStorage.getItem(storyDoneKey) === "1" || (cfGetScore("hoeren_geschichte", topic.id) || 0) >= 100;
 
 const vocabItems = [...(topic.vocab || []), ...(topic.understandingVocab || [])].filter(v => v && v.zh);
-const dialogData = (topic.storyDialog || []).filter(x => x && x.zh);
-let storyRunCount = storyRunRaw === null
-  ? Math.round(((cfGetScore("hoeren_geschichte", topic.id) || 0) / 100) * dialogData.length)
-  : Math.max(0, Number(storyRunRaw) || 0);
+function splitChineseSentences(text){
+  return String(text || "").match(/[^。！？!?]+[。！？!?]+|[^。！？!?]+$/g)?.map(x => x.trim()).filter(Boolean) || [];
+}
+function splitPinyinSentences(text){
+  return String(text || "").match(/.*?(?:[.!?]+(?=\s|$)|$)/g)?.map(x => x.trim()).filter(Boolean) || [];
+}
+const sentenceData = (topic.storyDialog || []).filter(x => x && x.zh).flatMap(line => {
+  const zhParts = splitChineseSentences(line.zh);
+  const pyParts = splitPinyinSentences(line.pinyin || "");
+  return zhParts.map((zh, index) => ({
+    ...line,
+    zh,
+    pinyin: pyParts.length === zhParts.length ? pyParts[index] : (line.pinyin || ""),
+    de: line.de || ""
+  }));
+});
+const fullChapter = (window.CF_STORY && Array.isArray(CF_STORY.chapters))
+  ? CF_STORY.chapters.find(ch => String(ch.id).padStart(2,"0") === String(topic.id).padStart(2,"0"))
+  : null;
+const fullStoryUnits = fullChapter && Array.isArray(fullChapter.units) && fullChapter.units.length
+  ? fullChapter.units.filter(x => x && x.zh)
+  : sentenceData;
 
 function recomputeScores(){
   const vocabZh = [...new Set(vocabItems.map(v=>v.zh))];
-  const storyZh = [...new Set(dialogData.map(v=>v.zh))];
+  const sentenceZh = [...new Set(sentenceData.map(v=>v.zh))];
   const heardW = vocabZh.filter(z=>heard.w[z]).length;
-  const heardS = storyZh.filter(z=>heard.s[z]).length;
+  const heardS = sentenceZh.filter(z=>heard.s[z]).length;
   const pv = vocabZh.length ? Math.round(heardW/vocabZh.length*100) : 0;
-  const ps = storyZh.length ? Math.round(heardS/storyZh.length*100) : 0;
-  const pg = dialogData.length ? Math.round(Math.min(storyRunCount,dialogData.length)/dialogData.length*100) : 0;
+  const ps = sentenceZh.length ? Math.round(heardS/sentenceZh.length*100) : 0;
   cfSetScore("hoeren_vocab",pv,topic.id);
   cfSetScore("hoeren_saetze",ps,topic.id);
-  cfSetScore("hoeren_geschichte",pg,topic.id);
+  cfSetScore("hoeren_geschichte",storyComplete ? 100 : 0,topic.id);
   if(vocabZh.length && heardW>=vocabZh.length) cfMarkDone("hoeren_vocab",topic.id);
-  if(storyZh.length && heardS>=storyZh.length) cfMarkDone("hoeren_saetze",topic.id);
-  if(dialogData.length && storyRunCount>=dialogData.length) cfMarkDone("hoeren_geschichte",topic.id);
+  if(sentenceZh.length && heardS>=sentenceZh.length) cfMarkDone("hoeren_saetze",topic.id);
+  if(storyComplete) cfMarkDone("hoeren_geschichte",topic.id);
 }
 function markHeard(kind,keyText){
   if(!keyText) return;
@@ -165,38 +190,65 @@ function renderVocabSection(title,items){
   });
   section.append(h,grid);vocabGrid.appendChild(section);
 }
-if(!vocabItems.length) vocabGrid.innerHTML='<div class="empty">Für dieses Kapitel sind noch keine Vokabeln eingetragen.</div>';
-else{
-  renderVocabSection("Aktive Vokabeln",topic.vocab||[]);
-  renderVocabSection("Zum Verstehen",topic.understandingVocab||[]);
+if(mode === "vocab"){
+  if(!vocabItems.length) vocabGrid.innerHTML='<div class="empty">Für dieses Kapitel sind noch keine Vokabeln eingetragen.</div>';
+  else{
+    renderVocabSection("Aktive Vokabeln",topic.vocab||[]);
+    renderVocabSection("Zum Verstehen",topic.understandingVocab||[]);
+  }
 }
 
 const dialogEl=document.getElementById("dialog");
-if(!dialogData.length) dialogEl.innerHTML='<div class="empty">Für dieses Kapitel ist noch keine Geschichte eingetragen.</div>';
-else dialogData.forEach(line=>{
-  const color=bubbleColor(line.speaker);
-  const row=document.createElement("div");row.className=`bubbleRow ${bubbleSide(line.speaker)}`;
-  row.innerHTML=`<div class="speechBubble" style="background:${color};color:${readableText(color)}"><div class="speaker">${escapeHtml(line.speaker||"")}</div><div class="speechText">${escapeHtml(line.zh||"")}</div>${line.pinyin?`<div class="speechPinyin">${escapeHtml(line.pinyin)}</div>`:""}${line.de?`<div class="speechDe">${escapeHtml(line.de)}</div>`:""}</div>`;
-  row.querySelector(".speechBubble").addEventListener("click",()=>{speak(line.zh,true,line.speaker);markHeard("s",line.zh);});
-  dialogEl.appendChild(row);
-});
+if(mode === "sentences"){
+  if(!sentenceData.length) dialogEl.innerHTML='<div class="empty">Für dieses Kapitel sind noch keine Dialogsätze eingetragen.</div>';
+  else sentenceData.forEach(line=>{
+    const color=bubbleColor(line.speaker);
+    const row=document.createElement("div");row.className=`bubbleRow ${bubbleSide(line.speaker)}`;
+    row.innerHTML=`<button type="button" class="speechBubble" style="background:${color};color:${readableText(color)}"><span class="speaker">${escapeHtml(line.speaker||"")}</span><span class="speechText">${escapeHtml(line.zh||"")}</span>${line.pinyin?`<span class="speechPinyin">${escapeHtml(line.pinyin)}</span>`:""}${line.de?`<span class="speechDe">${escapeHtml(line.de)}</span>`:""}</button>`;
+    row.querySelector(".speechBubble").addEventListener("click",()=>{speak(line.zh,line.speaker);markHeard("s",line.zh);});
+    dialogEl.appendChild(row);
+  });
+}
 
-async function playAll(){
+const playStoryBtn=document.getElementById("playStoryBtn");
+const stopStoryBtn=document.getElementById("stopStoryBtn");
+const storyStatus=document.getElementById("storyStatus");
+const storyProgress=document.getElementById("storyProgress");
+function setStoryProgress(done,total){
+  const p=total ? Math.round(done/total*100) : 0;
+  storyProgress.style.width=`${p}%`;
+  storyStatus.textContent = done >= total && total ? "Geschichte vollständig angehört" : (done ? `${done} von ${total} Abschnitten` : "Bereit");
+}
+setStoryProgress(storyComplete ? fullStoryUnits.length : 0,fullStoryUnits.length);
+async function playStory(){
+  if(!fullStoryUnits.length){storyStatus.textContent="Für dieses Kapitel ist noch keine Geschichte eingetragen.";return;}
   stopAudio();
   const token=playToken;
-  let currentRunCount=0;
-  for(const line of dialogData){
-    if(token!==playToken)return;
-    await speakAndWait(line.zh,token,line.speaker);
-    if(token!==playToken)return;
-    markHeard("s",line.zh);
-    currentRunCount++;
-    storyRunCount=Math.max(storyRunCount,currentRunCount);
-    localStorage.setItem(storyRunKey,String(storyRunCount));
+  playStoryBtn.disabled=true;
+  stopStoryBtn.style.display="";
+  setStoryProgress(0,fullStoryUnits.length);
+  for(let i=0;i<fullStoryUnits.length;i++){
+    if(token!==playToken) break;
+    const unit=fullStoryUnits[i];
+    await speakAndWait(unit.zh,token,unit.speaker||"");
+    if(token!==playToken) break;
+    setStoryProgress(i+1,fullStoryUnits.length);
+  }
+  const finished=token===playToken;
+  playStoryBtn.disabled=false;
+  stopStoryBtn.style.display="none";
+  if(finished){
+    storyComplete=true;
+    localStorage.setItem(storyDoneKey,"1");
     recomputeScores();
+    setStoryProgress(fullStoryUnits.length,fullStoryUnits.length);
+  }else{
+    storyStatus.textContent="Wiedergabe beendet";
   }
 }
-document.getElementById("playAllBtn").onclick=playAll;
+playStoryBtn.onclick=playStory;
+stopStoryBtn.onclick=()=>{stopAudio();playStoryBtn.disabled=false;stopStoryBtn.style.display="none";storyStatus.textContent="Wiedergabe beendet";};
+window.addEventListener("beforeunload",stopAudio);
 recomputeScores();
 </script>
 </body>

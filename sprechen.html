@@ -16,10 +16,9 @@
 </head>
 <body>
   <main class="app">
-    <div class="topbar">
+    <div class="topbar topbarSticky">
       <a class="back" id="back">← Zurück</a>
-    </div>
-    <h1 id="title">Sprechen</h1>
+    <h1 class="pageTitleResponsive topbarPageTitle" id="title">Sprechen</h1></div>
     <p class="subtitle">Übe zuerst einzelne Sätze mit Spracherkennung. Daneben kannst du den Schülerdialog als KI-Gespräch starten.</p>
 
     <div class="infoTip" id="spInfoTip">
@@ -186,13 +185,13 @@ const speakTitles = {
   aussprache: "Geschichte nachsprechen",
   ki: "Mit KI sprechen"
 };
-$("title").textContent = `${topic.id}. ${topic.title} · ${speakTitles[initialTab]}`;
+$("title").textContent = `${Number(topic.id)}. ${topic.title}`;
 const speakSubtitle = document.querySelector(".subtitle");
 if(speakSubtitle) speakSubtitle.textContent = initialTab === "satz"
-  ? "Sprich die Sätze selbst und vergleiche sie mit dem erwarteten Satz."
+  ? "Sätze sprechen · Sprich die Sätze selbst und vergleiche sie mit dem erwarteten Satz."
   : initialTab === "aussprache"
-    ? "Höre jeden Satz der Geschichte und sprich ihn direkt nach."
-    : "Nutze den Schülerdialog dieses Kapitels für ein freies KI-Gespräch.";
+    ? "Geschichte nachsprechen · Höre jeden Satz der Geschichte und sprich ihn direkt nach."
+    : "Mit KI sprechen · Nutze den Schülerdialog dieses Kapitels für ein freies KI-Gespräch.";
 
 /* Direkter Einstieg aus der Kapitelansicht – keine zusätzliche Reiterleiste. */
 const tabButtons = [...document.querySelectorAll(".tab")];

@@ -16,10 +16,9 @@
 </head>
 <body>
   <main class="app flashApp">
-    <div class="topbar">
+    <div class="topbar topbarSticky">
       <a class="back" id="back">← Zurück</a>
-    </div>
-    <h1 id="title">Flashkarten</h1>
+    <h1 class="pageTitleResponsive topbarPageTitle" id="title">Flashkarten</h1></div>
     <p class="subtitle">Vokabeln als Karten üben. Erst überlegen, dann aufdecken. Die Richtung kannst du jederzeit wechseln.</p>
 
     <section class="card" id="flashCardWrap">
@@ -89,9 +88,9 @@ $("finishBack").href = `kapitel.html?id=${topic.id}`;
 const flashMode = new URLSearchParams(location.search).get("mode");
 let direction = flashMode === "tode" ? "toDe" : flashMode === "tozh" ? "toZh" : (localStorage.getItem(`cf_flash_direction_${topic.id}`) || "toZh");
 const directionTitle = direction === "toZh" ? "Deutsch → Chinesisch" : "Chinesisch → Deutsch";
-$("title").textContent = `${topic.id}. ${topic.title} · ${directionTitle}`;
+$("title").textContent = `${Number(topic.id)}. ${topic.title}`;
 const flashSubtitle = document.querySelector(".subtitle");
-if(flashSubtitle) flashSubtitle.textContent = "Überlege zuerst selbst und decke die Antwort anschließend auf.";
+if(flashSubtitle) flashSubtitle.textContent = `${directionTitle} · Überlege zuerst selbst und decke die Antwort anschließend auf.`;
 const modeSwitch = document.querySelector(".modeSwitch");
 if(modeSwitch) modeSwitch.style.display = "none";
 

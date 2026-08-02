@@ -12,8 +12,8 @@
 </head>
 <body>
   <main class="app">
-    <div class="topbar"><a class="back" href="index.html">← Home</a></div>
-    <h1>Profil</h1>
+    <div class="topbar topbarSticky"><a class="back" href="index.html">← Home</a></div>
+    <h1 class="pageTitleResponsive">Profil</h1>
     <p class="subtitle">Name, Anmeldung, Synchronisierung und App-Hilfe an einem Ort.</p>
 
     <section class="profileHero card">
@@ -37,7 +37,7 @@
       <a class="profileMenuItem" href="einstellungen.html?from=profil.html">
         <span>⚙</span><div><strong>Einstellungen</strong><small>Fortschritt, Fehler melden und Rechtliches</small></div><b>›</b>
       </a>
-      <a class="profileMenuItem" href="start.html">
+      <a class="profileMenuItem" id="installMenuItem" href="start.html">
         <span>⇩</span><div><strong>App installieren</strong><small>Anleitung für Smartphone, Tablet und Computer</small></div><b>›</b>
       </a>
     </section>
@@ -70,6 +70,17 @@
     }
     window.addEventListener("cf-sync-status", e => renderAccount(e.detail));
     if(window.CF_SYNC && CF_SYNC.ready) CF_SYNC.ready.then(() => renderAccount(CF_SYNC.getState()));
+
+    // Eine bereits installierte PWA benötigt keinen erneuten Installationshinweis.
+    const installItem = document.getElementById("installMenuItem");
+    function updateInstallVisibility(){
+      const installed = window.matchMedia("(display-mode: standalone)").matches ||
+                        window.matchMedia("(display-mode: fullscreen)").matches ||
+                        window.navigator.standalone === true;
+      if(installItem) installItem.hidden = installed;
+    }
+    updateInstallVisibility();
+    window.matchMedia("(display-mode: standalone)").addEventListener?.("change", updateInstallVisibility);
   </script>
 </body>
 </html>

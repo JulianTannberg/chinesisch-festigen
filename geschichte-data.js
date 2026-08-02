@@ -1,4 +1,3 @@
-// Automatisch aus der final geprüften Lesefassung erzeugt.
 window.CF_STORY = {
   "title": "Die Geschichte auf Chinesisch",
   "subtitle": "Sū Ráns Reise durch Beijing",
@@ -296,8 +295,8 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "没关系。你没事吧？",
-          "pinyin": "méi guānxi. nǐ méi shì ba?",
-          "de": "Kein Problem. Ist alles in Ordnung?"
+          "pinyin": "Méi guānxi. Nǐ méi shì ba?",
+          "de": "Macht nichts. Alles in Ordnung mit dir?"
         },
         {
           "id": "01-08",
@@ -311,9 +310,9 @@ window.CF_STORY = {
           "id": "01-09",
           "type": "dialogue",
           "speaker": "苏然",
-          "zh": "没事，谢谢。我没看路。",
-          "pinyin": "méi shì, xièxie. wǒ méi kàn lù.",
-          "de": "Alles gut, danke. Ich habe nicht auf den Weg geschaut."
+          "zh": "对不起，我在看手机，没看路。",
+          "pinyin": "Duìbuqǐ, wǒ zài kàn shǒujī, méi kàn lù.",
+          "de": "Entschuldigung, ich habe auf mein Handy geschaut und nicht auf den Weg geachtet."
         },
         {
           "id": "01-10",
@@ -328,8 +327,8 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "我也没看路。",
-          "pinyin": "wǒ yě méi kàn lù.",
-          "de": "Ich habe auch nicht auf den Weg geschaut."
+          "pinyin": "Wǒ yě méi kàn lù.",
+          "de": "Ich habe auch nicht auf den Weg geachtet."
         },
         {
           "id": "01-12",
@@ -344,7 +343,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "你好，我叫苏然。你叫什么名字？",
-          "pinyin": "nǐ hǎo, wǒ jiào Sū Rán. nǐ jiào shénme míngzi?",
+          "pinyin": "Nǐ hǎo, wǒ jiào Sū Rán. Nǐ jiào shénme míngzi?",
           "de": "Hallo, ich heiße Sū Rán. Wie heißt du?"
         },
         {
@@ -360,7 +359,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "你是北京人吗？",
-          "pinyin": "Nǐ shì Běijīng rén ma?",
+          "pinyin": "Nǐ shì Běijīngrén ma?",
           "de": "Bist du aus Beijing?"
         },
         {
@@ -368,7 +367,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "是的，我是北京人。你呢？",
-          "pinyin": "shì de, wǒ shì Běijīng rén. nǐ ne?",
+          "pinyin": "Shì de, wǒ shì Běijīngrén. Nǐ ne?",
           "de": "Ja, ich bin aus Beijing. Und du?"
         },
         {
@@ -376,7 +375,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "我不是北京人。我从上海来。",
-          "pinyin": "wǒ bú shì Běijīng rén. wǒ cóng Shànghǎi lái.",
+          "pinyin": "Wǒ bú shì Běijīngrén. Wǒ cóng Shànghǎi lái.",
           "de": "Ich bin nicht aus Beijing. Ich komme aus Shanghai."
         },
         {
@@ -417,7 +416,7 @@ window.CF_STORY = {
           "speaker": "林月",
           "zh": "地铁在那儿。",
           "pinyin": "Dìtiě zài nàr.",
-          "de": "Die U-Bahn ist dort."
+          "de": "Die U-Bahn ist da drüben."
         },
         {
           "id": "01-23",
@@ -433,7 +432,7 @@ window.CF_STORY = {
           "speaker": "林月",
           "zh": "我们加微信吧？",
           "pinyin": "Wǒmen jiā Wēixìn ba?",
-          "de": "Wollen wir uns bei WeChat hinzufügen?"
+          "de": "Wollen wir uns auf WeChat hinzufügen?"
         },
         {
           "id": "01-25",
@@ -441,7 +440,7 @@ window.CF_STORY = {
           "speaker": "苏然",
           "zh": "好，谢谢你。",
           "pinyin": "Hǎo, xièxie nǐ.",
-          "de": "Gut, danke dir."
+          "de": "Okay, danke dir."
         },
         {
           "id": "01-26",
@@ -511,7 +510,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "请问，地铁去五道口吗？",
-          "pinyin": "qǐngwèn, dìtiě qù Wǔdàokǒu ma?",
+          "pinyin": "Qǐngwèn, dìtiě qù Wǔdàokǒu ma?",
           "de": "Entschuldigung, fährt die U-Bahn nach Wǔdàokǒu?"
         },
         {
@@ -519,16 +518,16 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "男人",
           "zh": "去。",
-          "pinyin": "qù.",
-          "de": "Ja."
+          "pinyin": "Qù.",
+          "de": "Ja. (wörtlich: „fährt\")"
         },
         {
           "id": "02-06",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "在哪里换车？",
-          "pinyin": "zài nǎlǐ huàn chē?",
-          "de": "Wo muss ich umsteigen?"
+          "pinyin": "Zài nǎlǐ huàn chē?",
+          "de": "Wo steige ich um?"
         },
         {
           "id": "02-07",
@@ -552,7 +551,7 @@ window.CF_STORY = {
           "speaker": "男人",
           "zh": "你在这一站换车。",
           "pinyin": "Nǐ zài zhè yí zhàn huàn chē.",
-          "de": "An dieser Station steigst du um."
+          "de": "Du steigst an dieser Station um."
         },
         {
           "id": "02-10",
@@ -639,8 +638,8 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "你好，请问，去清华大学是哪个出口？",
-          "pinyin": "Nǐ hǎo, qǐngwèn, qù Qīnghuá Dàxué shì nǎge chūkǒu?",
-          "de": "Hallo, entschuldigen Sie, welcher Ausgang führt zur Tsinghua-Universität?"
+          "pinyin": "Nǐ hǎo, qǐngwèn, qù Qīnghuá Dàxué shì nǎ ge chūkǒu?",
+          "de": "Hallo, entschuldigen Sie, welcher Ausgang ist zur Tsinghua-Universität?"
         },
         {
           "id": "02-21",
@@ -648,7 +647,7 @@ window.CF_STORY = {
           "speaker": "男人",
           "zh": "是 B 出口。",
           "pinyin": "Shì B chūkǒu.",
-          "de": "Ausgang B."
+          "de": "Es ist Ausgang B."
         },
         {
           "id": "02-22",
@@ -716,7 +715,7 @@ window.CF_STORY = {
         {
           "id": "03-03",
           "type": "dialogue",
-          "speaker": "前台",
+          "speaker": "Rezeptionistin",
           "zh": "你好，欢迎。",
           "pinyin": "Nǐ hǎo, huānyíng.",
           "de": "Hallo, willkommen."
@@ -724,7 +723,7 @@ window.CF_STORY = {
         {
           "id": "03-04",
           "type": "dialogue",
-          "speaker": "苏然",
+          "speaker": "Sū Rán",
           "zh": "你好。我有预订。",
           "pinyin": "Nǐ hǎo. Wǒ yǒu yùdìng.",
           "de": "Hallo. Ich habe eine Reservierung."
@@ -740,15 +739,15 @@ window.CF_STORY = {
         {
           "id": "03-06",
           "type": "dialogue",
-          "speaker": "前台",
+          "speaker": "Rezeptionistin",
           "zh": "你叫什么名字？",
           "pinyin": "Nǐ jiào shénme míngzi?",
-          "de": "Wie heißen Sie?"
+          "de": "Wie heißt du?"
         },
         {
           "id": "03-07",
           "type": "dialogue",
-          "speaker": "苏然",
+          "speaker": "Sū Rán",
           "zh": "我叫苏然。",
           "pinyin": "Wǒ jiào Sū Rán.",
           "de": "Ich heiße Sū Rán."
@@ -764,10 +763,10 @@ window.CF_STORY = {
         {
           "id": "03-09",
           "type": "dialogue",
-          "speaker": "前台",
+          "speaker": "Rezeptionistin",
           "zh": "我看一下你的身份证。",
           "pinyin": "Wǒ kàn yíxià nǐ de shēnfènzhèng.",
-          "de": "Ich schaue mir kurz Ihren Personalausweis an."
+          "de": "Ich schaue mir kurz deinen Personalausweis an."
         },
         {
           "id": "03-10",
@@ -780,10 +779,10 @@ window.CF_STORY = {
         {
           "id": "03-11",
           "type": "dialogue",
-          "speaker": "前台",
+          "speaker": "Rezeptionistin",
           "zh": "谢谢。你的房间是 302 号。这是你的房卡。",
           "pinyin": "Xièxie. Nǐ de fángjiān shì sān líng èr hào. Zhè shì nǐ de fángkǎ.",
-          "de": "Danke. Ihr Zimmer ist Nummer 302. Das ist Ihre Zimmerkarte."
+          "de": "Danke. Dein Zimmer ist Nummer 302. Das ist deine Schlüsselkarte."
         },
         {
           "id": "03-12",
@@ -796,10 +795,10 @@ window.CF_STORY = {
         {
           "id": "03-13",
           "type": "dialogue",
-          "speaker": "前台",
+          "speaker": "Rezeptionistin",
           "zh": "WiFi 的密码在这里。",
           "pinyin": "WiFi de mìmǎ zài zhèlǐ.",
-          "de": "Das WLAN-Passwort steht hier."
+          "de": "Das WLAN-Passwort ist hier."
         },
         {
           "id": "03-14",
@@ -812,7 +811,7 @@ window.CF_STORY = {
         {
           "id": "03-15",
           "type": "dialogue",
-          "speaker": "苏然",
+          "speaker": "Sū Rán",
           "zh": "不好意思，WiFi 密码好像不对。",
           "pinyin": "Bù hǎoyìsi, WiFi mìmǎ hǎoxiàng bù duì.",
           "de": "Entschuldigung, das WLAN-Passwort scheint nicht richtig zu sein."
@@ -828,10 +827,10 @@ window.CF_STORY = {
         {
           "id": "03-17",
           "type": "dialogue",
-          "speaker": "前台",
+          "speaker": "Rezeptionistin",
           "zh": "哦，我看一下。",
           "pinyin": "Ó, wǒ kàn yíxià.",
-          "de": "Oh, ich schaue kurz nach."
+          "de": "Oh, ich schaue kurz."
         },
         {
           "id": "03-18",
@@ -844,10 +843,10 @@ window.CF_STORY = {
         {
           "id": "03-19",
           "type": "dialogue",
-          "speaker": "前台",
+          "speaker": "Rezeptionistin",
           "zh": "这是新的密码。你试一下。",
           "pinyin": "Zhè shì xīn de mìmǎ. Nǐ shì yíxià.",
-          "de": "Das ist das neue Passwort. Probieren Sie es einmal."
+          "de": "Das ist das neue Passwort. Probier es mal."
         },
         {
           "id": "03-20",
@@ -860,10 +859,10 @@ window.CF_STORY = {
         {
           "id": "03-21",
           "type": "dialogue",
-          "speaker": "苏然",
+          "speaker": "Sū Rán",
           "zh": "好了，谢谢。",
           "pinyin": "Hǎo le, xièxie.",
-          "de": "Jetzt geht es, danke."
+          "de": "Es geht, danke."
         },
         {
           "id": "03-22",
@@ -876,15 +875,15 @@ window.CF_STORY = {
         {
           "id": "03-23",
           "type": "dialogue",
-          "speaker": "苏然",
-          "zh": "请问，早饭是几点到几点？",
-          "pinyin": "qǐngwèn, zǎofàn shì jǐ diǎn dào jǐ diǎn?",
-          "de": "Entschuldigung, von wann bis wann gibt es Frühstück?"
+          "speaker": "Sū Rán",
+          "zh": "请问，早饭几点？",
+          "pinyin": "Qǐngwèn, zǎofàn jǐ diǎn?",
+          "de": "Entschuldigung, um wie viel Uhr ist Frühstück?"
         },
         {
           "id": "03-24",
           "type": "dialogue",
-          "speaker": "前台",
+          "speaker": "Rezeptionistin",
           "zh": "早上七点到九点。",
           "pinyin": "Zǎoshang qī diǎn dào jiǔ diǎn.",
           "de": "Morgens von sieben bis neun Uhr."
@@ -892,7 +891,7 @@ window.CF_STORY = {
         {
           "id": "03-25",
           "type": "dialogue",
-          "speaker": "苏然",
+          "speaker": "Sū Rán",
           "zh": "谢谢。",
           "pinyin": "Xièxie.",
           "de": "Danke."
@@ -900,7 +899,7 @@ window.CF_STORY = {
         {
           "id": "03-26",
           "type": "dialogue",
-          "speaker": "前台",
+          "speaker": "Rezeptionistin",
           "zh": "不客气。",
           "pinyin": "Bú kèqi.",
           "de": "Gern geschehen."
@@ -924,7 +923,7 @@ window.CF_STORY = {
         {
           "id": "03-29",
           "type": "dialogue",
-          "speaker": "苏然（微信）",
+          "speaker": "Sū Rán (WeChat)",
           "zh": "爸爸妈妈，我到北京了。我很好。",
           "pinyin": "Bàba māma, wǒ dào Běijīng le. Wǒ hěn hǎo.",
           "de": "Papa, Mama, ich bin in Beijing angekommen. Mir geht es gut."
@@ -943,7 +942,7 @@ window.CF_STORY = {
           "speaker": "爸爸",
           "zh": "好，晚安。",
           "pinyin": "Hǎo, wǎn'ān.",
-          "de": "Gut. Gute Nacht."
+          "de": "Alles klar. Gute Nacht."
         },
         {
           "id": "03-32",
@@ -995,7 +994,7 @@ window.CF_STORY = {
         {
           "id": "04-05",
           "type": "dialogue",
-          "speaker": "店员",
+          "speaker": "Café-Personal (店员)",
           "zh": "你好！",
           "pinyin": "Nǐ hǎo!",
           "de": "Hallo!"
@@ -1003,10 +1002,10 @@ window.CF_STORY = {
         {
           "id": "04-06",
           "type": "dialogue",
-          "speaker": "苏然",
+          "speaker": "Sū Rán",
           "zh": "你好，我要一杯咖啡。",
           "pinyin": "Nǐ hǎo, wǒ yào yì bēi kāfēi.",
-          "de": "Hallo, ich möchte eine Tasse Kaffee."
+          "de": "Hallo, ich möchte einen Kaffee."
         },
         {
           "id": "04-07",
@@ -1014,7 +1013,7 @@ window.CF_STORY = {
           "speaker": "店员",
           "zh": "好的。还要什么？",
           "pinyin": "Hǎo de. Hái yào shénme?",
-          "de": "Gut. Was möchten Sie noch?"
+          "de": "Gut. Was möchtest du noch?"
         },
         {
           "id": "04-08",
@@ -1027,10 +1026,10 @@ window.CF_STORY = {
         {
           "id": "04-09",
           "type": "dialogue",
-          "speaker": "苏然",
+          "speaker": "Sū Rán",
           "zh": "我还要一个面包。我很饿。",
           "pinyin": "Wǒ hái yào yí ge miànbāo. Wǒ hěn è.",
-          "de": "Ich möchte noch ein Brötchen. Ich habe großen Hunger."
+          "de": "Ich möchte noch ein Brötchen. Ich habe Hunger."
         },
         {
           "id": "04-10",
@@ -1051,7 +1050,7 @@ window.CF_STORY = {
         {
           "id": "04-12",
           "type": "dialogue",
-          "speaker": "苏然",
+          "speaker": "Sū Rán",
           "zh": "请问，厕所在哪里？",
           "pinyin": "Qǐngwèn, cèsuǒ zài nǎlǐ?",
           "de": "Entschuldigung, wo ist die Toilette?"
@@ -1062,14 +1061,14 @@ window.CF_STORY = {
           "speaker": "店员",
           "zh": "在那儿。",
           "pinyin": "Zài nàr.",
-          "de": "Dort."
+          "de": "Da drüben."
         },
         {
           "id": "04-14",
           "type": "dialogue",
-          "speaker": "苏然",
+          "speaker": "Sū Rán",
           "zh": "男厕所在哪里？",
-          "pinyin": "Nán cèsuǒ zài nǎlǐ?",
+          "pinyin": "Náncèsuǒ zài nǎlǐ?",
           "de": "Wo ist die Herrentoilette?"
         },
         {
@@ -1077,21 +1076,20 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "店员",
           "zh": "男厕所在那儿，女厕所也在那儿。",
-          "pinyin": "Nán cèsuǒ zài nàr, nǚ cèsuǒ yě zài nàr.",
-          "de": "Die Herrentoilette ist dort, die Damentoilette auch."
+          "pinyin": "Náncèsuǒ zài nàr, nǚcèsuǒ yě zài nàr.",
+          "de": "Die Herrentoilette ist da drüben, die Damentoilette auch."
         },
         {
           "id": "04-16",
           "type": "dialogue",
-          "speaker": "苏然",
+          "speaker": "Sū Rán",
           "zh": "谢谢。",
           "pinyin": "Xièxie.",
           "de": "Danke."
         },
         {
           "id": "04-17",
-          "type": "dialogue",
-          "speaker": "他看到两个门",
+          "type": "narration",
           "zh": "男厕所和女厕所。苏然去男厕所。",
           "pinyin": "nán cèsuǒ hé nǚ cèsuǒ. Sū Rán qù nán cèsuǒ.",
           "de": "Er sieht zwei Türen: Herrentoilette und Damentoilette. Sū Rán geht zur Herrentoilette."
@@ -1107,10 +1105,10 @@ window.CF_STORY = {
         {
           "id": "04-19",
           "type": "dialogue",
-          "speaker": "苏然",
+          "speaker": "Sū Rán",
           "zh": "我很累，也很渴。",
-          "pinyin": "wǒ hěn lèi, yě hěn kě.",
-          "de": "Ich bin sehr müde und auch durstig."
+          "pinyin": "Wǒ hěn lèi, yě hěn kě.",
+          "de": "Ich bin müde und durstig."
         },
         {
           "id": "04-20",
@@ -1123,10 +1121,10 @@ window.CF_STORY = {
         {
           "id": "04-21",
           "type": "dialogue",
-          "speaker": "苏然",
+          "speaker": "Sū Rán",
           "zh": "咖啡很好喝，面包也很好吃。现在不累了。我很开心。",
-          "pinyin": "kāfēi hěn hǎo hē, miànbāo yě hěn hǎochī. xiànzài bú lèi le. wǒ hěn kāixīn.",
-          "de": "Der Kaffee schmeckt gut und das Brot ist auch lecker. Jetzt bin ich nicht mehr müde. Ich bin glücklich."
+          "pinyin": "Kāfēi hěn hǎohē, miànbāo yě hěn hǎochī. Xiànzài bú lèi le. Wǒ hěn kāixīn.",
+          "de": "Der Kaffee schmeckt gut, und das Brötchen ist auch lecker. Jetzt bin ich nicht mehr müde. Ich bin glücklich."
         },
         {
           "id": "04-22",
@@ -1155,10 +1153,10 @@ window.CF_STORY = {
         {
           "id": "04-25",
           "type": "dialogue",
-          "speaker": "苏然",
-          "zh": "上午出去走走，中午吃饭，下午买礼物。",
-          "pinyin": "shàngwǔ chū qù zǒu zǒu, zhōngwǔ chī fàn, xiàwǔ mǎi lǐwù.",
-          "de": "Vormittags gehe ich ein wenig spazieren, mittags esse ich und nachmittags kaufe ich Geschenke."
+          "speaker": "Sū Rán",
+          "zh": "我早上起床。上午去看看北京，中午吃饭，下午买礼物。",
+          "pinyin": "Wǒ zǎoshang qǐchuáng. Shàngwǔ qù kànkan Běijīng, zhōngwǔ chīfàn, xiàwǔ mǎi lǐwù.",
+          "de": "Ich stehe morgens auf. Am Vormittag schaue ich mir Beijing an, mittags esse ich, am Nachmittag kaufe ich Geschenke."
         },
         {
           "id": "04-26",
@@ -1252,16 +1250,16 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "这是给我妈妈的礼物。",
-          "pinyin": "zhè shì gěi wǒ māma de lǐwù.",
-          "de": "Das ist ein Geschenk für meine Mutter."
+          "pinyin": "Zhè shì gěi wǒ māma de lǐwù.",
+          "de": "Das ist ein Geschenk für meine Mama."
         },
         {
           "id": "05-11",
           "type": "dialogue",
           "speaker": "店员",
           "zh": "红色很好看。",
-          "pinyin": "hóngsè hěn hǎo kàn.",
-          "de": "Rot sieht sehr schön aus."
+          "pinyin": "Hóngsè hěn hǎokàn.",
+          "de": "Rot sieht schön aus."
         },
         {
           "id": "05-12",
@@ -1277,7 +1275,7 @@ window.CF_STORY = {
           "speaker": "苏然",
           "zh": "这盒茶呢？多少钱？",
           "pinyin": "Zhè hé chá ne? Duōshao qián?",
-          "de": "Und diese Schachtel Tee? Wie viel kostet sie?"
+          "de": "Und dieser Tee? Wie viel kostet er?"
         },
         {
           "id": "05-14",
@@ -1301,7 +1299,7 @@ window.CF_STORY = {
           "speaker": "苏然",
           "zh": "好。我要这条红色的围巾和这盒茶。",
           "pinyin": "Hǎo. Wǒ yào zhè tiáo hóngsè de wéijīn hé zhè hé chá.",
-          "de": "Gut. Ich nehme diesen roten Schal und diese Schachtel Tee."
+          "de": "Gut. Ich nehme diesen roten Schal und diesen Tee."
         },
         {
           "id": "05-17",
@@ -1443,8 +1441,8 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "你好，请问，这里有一个黑色的包吗？",
-          "pinyin": "nǐ hǎo, qǐngwèn, zhèlǐ yǒu yí ge hēisè de bāo ma?",
-          "de": "Hallo, entschuldigen Sie, ist hier ein schwarzer Rucksack?"
+          "pinyin": "Nǐ hǎo, qǐngwèn, zhèlǐ yǒu yí ge hēisè de bāo ma?",
+          "de": "Hallo, Entschuldigung, gibt es hier eine schwarze Tasche?"
         },
         {
           "id": "06-08",
@@ -1456,8 +1454,7 @@ window.CF_STORY = {
         },
         {
           "id": "06-09",
-          "type": "dialogue",
-          "speaker": "苏然说",
+          "type": "narration",
           "zh": "“谢谢。”然后走了。他站在路上。在北京，只有林月可以帮他。",
           "pinyin": "“xièxie.” ránhòu zǒu le. tā zhàn zài lùshang. zài Běijīng, zhǐ yǒu Lín Yuè kěyǐ bāng tā.",
           "de": "Sū Rán sagt „Danke“ und geht wieder hinaus. Er steht auf der Straße. In Beijing kann ihm nur Lín Yuè helfen."
@@ -1476,7 +1473,7 @@ window.CF_STORY = {
           "speaker": "苏然",
           "zh": "喂，林月？我是苏然。",
           "pinyin": "Wéi, Lín Yuè? Wǒ shì Sū Rán.",
-          "de": "Hallo, Lín Yuè? Hier ist Sū Rán."
+          "de": "Hallo, Lín Yuè? Ich bin Sū Rán."
         },
         {
           "id": "06-12",
@@ -1500,7 +1497,7 @@ window.CF_STORY = {
           "speaker": "林月",
           "zh": "别着急。你在哪儿？",
           "pinyin": "Bié zháojí. Nǐ zài nǎr?",
-          "de": "Keine Sorge. Wo bist du?"
+          "de": "Keine Panik. Wo bist du?"
         },
         {
           "id": "06-15",
@@ -1511,12 +1508,11 @@ window.CF_STORY = {
           "de": "Sū Rán schaut auf den Straßennamen und sagt ihn Lín Yuè."
         },
         {
-          "id": "06-16",
-          "type": "dialogue",
-          "speaker": "林月",
-          "zh": "好，你等一下。我很快就来。",
-          "pinyin": "hǎo, nǐ děng yíxià. wǒ hěn kuài jiù lái.",
-          "de": "Gut, warte kurz. Ich komme gleich."
+          "id": "06-narr-arrival",
+          "type": "narration",
+          "zh": "林月说她不远，让他等一下。她很快就来。",
+          "pinyin": "Lín Yuè shuō tā bù yuǎn, ràng tā děng yíxià. Tā hěn kuài jiù lái.",
+          "de": "Lín Yuè sagt, dass sie nicht weit entfernt ist. Er soll kurz warten; sie kommt gleich."
         },
         {
           "id": "06-17",
@@ -1540,7 +1536,7 @@ window.CF_STORY = {
           "speaker": "苏然",
           "zh": "黑色的。里面有身份证和房卡。",
           "pinyin": "Hēisè de. Lǐmiàn yǒu shēnfènzhèng hé fángkǎ.",
-          "de": "Er ist schwarz. Darin sind mein Personalausweis und die Zimmerkarte."
+          "de": "Schwarz. Drin sind mein Personalausweis und die Schlüsselkarte."
         },
         {
           "id": "06-20",
@@ -1556,7 +1552,7 @@ window.CF_STORY = {
           "speaker": "林月",
           "zh": "我们问一下。",
           "pinyin": "Wǒmen wèn yíxià.",
-          "de": "Lass uns dort fragen."
+          "de": "Lass uns mal fragen."
         },
         {
           "id": "06-22",
@@ -1571,8 +1567,8 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "你好，请问，有人送来一个黑色的包吗？",
-          "pinyin": "Nǐ hǎo, qǐngwèn, yǒu rén sòng lái yí ge hēisè de bāo ma?",
-          "de": "Hallo, entschuldigen Sie, hat jemand einen schwarzen Rucksack abgegeben?"
+          "pinyin": "Nǐ hǎo, qǐngwèn, yǒu rén sònglái yí ge hēisè de bāo ma?",
+          "de": "Hallo, hat jemand einen schwarzen Rucksack abgegeben?"
         },
         {
           "id": "06-24",
@@ -1588,7 +1584,7 @@ window.CF_STORY = {
           "speaker": "苏然",
           "zh": "还没找到。",
           "pinyin": "Hái méi zhǎodào.",
-          "de": "Wir haben ihn noch nicht gefunden."
+          "de": "Immer noch nicht gefunden."
         },
         {
           "id": "06-26",
@@ -1604,7 +1600,7 @@ window.CF_STORY = {
           "speaker": "林月",
           "zh": "这儿有一家超市。我们问一下。",
           "pinyin": "Zhèr yǒu yì jiā chāoshì. Wǒmen wèn yíxià.",
-          "de": "Hier ist ein Supermarkt. Lass uns dort fragen."
+          "de": "Hier ist ein Supermarkt. Lass uns fragen."
         },
         {
           "id": "06-28",
@@ -1619,8 +1615,8 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "别着急。那家便利店呢？",
-          "pinyin": "bié zháojí. nà jiā biànlìdiàn ne?",
-          "de": "Keine Sorge. Was ist mit dem kleinen Laden dort?"
+          "pinyin": "Bié zháojí. Nà jiā biànlìdiàn ne?",
+          "de": "Keine Sorge. Und der Kiosk da?"
         },
         {
           "id": "06-30",
@@ -1635,7 +1631,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "店员",
           "zh": "黑色的包？有。一个学生送来的。",
-          "pinyin": "Hēisè de bāo? Yǒu. Yí ge xuésheng sòng lái de.",
+          "pinyin": "Hēisè de bāo? Yǒu. Yí ge xuésheng sònglái de.",
           "de": "Ein schwarzer Rucksack? Ja. Ein Student hat ihn gebracht."
         },
         {
@@ -1708,7 +1704,7 @@ window.CF_STORY = {
           "speaker": "林月",
           "zh": "不用了，你不用这么客气。",
           "pinyin": "Bú yòng le, nǐ bú yòng zhème kèqi.",
-          "de": "Das ist nicht nötig. Du musst nicht so höflich sein."
+          "de": "Ach nein, das musst du nicht. Du musst nicht so förmlich sein."
         },
         {
           "id": "06-41",
@@ -1747,15 +1743,15 @@ window.CF_STORY = {
           "speaker": "苏然",
           "zh": "我有点饿了。",
           "pinyin": "Wǒ yǒudiǎn è le.",
-          "de": "Ich habe ein bisschen Hunger."
+          "de": "Ich habe etwas Hunger."
         },
         {
           "id": "07-03",
           "type": "dialogue",
           "speaker": "林月",
           "zh": "这家的北京烤鸭很有名。你喜欢吃鸭子吗？",
-          "pinyin": "zhè jiā de Běijīng kǎoyā hěn yǒu míng. nǐ xǐhuan chī yā zi ma?",
-          "de": "Die Peking-Ente hier ist sehr berühmt. Isst du gern Ente?"
+          "pinyin": "Zhè jiā de Běijīng kǎoyā hěn yǒumíng. Nǐ xǐhuan chī yāzi ma?",
+          "de": "Die Peking-Ente hier ist berühmt. Magst du Ente?"
         },
         {
           "id": "07-04",
@@ -1763,22 +1759,22 @@ window.CF_STORY = {
           "speaker": "苏然",
           "zh": "喜欢。",
           "pinyin": "Xǐhuan.",
-          "de": "Ja, gern."
+          "de": "Ja, mag ich."
         },
         {
           "id": "07-05",
           "type": "dialogue",
           "speaker": "林月",
           "zh": "你吃过北京烤鸭吗？",
-          "pinyin": "Nǐ chīguo Běijīng kǎoyā ma?",
-          "de": "Hast du schon einmal Peking-Ente gegessen?"
+          "pinyin": "Nǐ chī guo Běijīng kǎoyā ma?",
+          "de": "Hast du schon mal Peking-Ente gegessen?"
         },
         {
           "id": "07-06",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "我没吃过。",
-          "pinyin": "Wǒ méi chīguo.",
+          "pinyin": "Wǒ méi chī guo.",
           "de": "Nein, noch nie."
         },
         {
@@ -1794,16 +1790,16 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "菜单上有很多菜。你推荐什么？",
-          "pinyin": "càidān shàng yǒu hěn duō cài. nǐ tuījiàn shénme?",
+          "pinyin": "Càidān shàng yǒu hěn duō cài. Nǐ tuījiàn shénme?",
           "de": "Auf der Speisekarte stehen viele Gerichte. Was empfiehlst du?"
         },
         {
           "id": "07-09",
           "type": "dialogue",
           "speaker": "林月",
-          "zh": "来一份北京烤鸭吧。",
-          "pinyin": "Lái yí fèn Běijīng kǎoyā ba.",
-          "de": "Nehmen wir eine Portion Peking-Ente."
+          "zh": "来一份北京烤鸭吧。烤鸭有饼。",
+          "pinyin": "Lái yí fèn Běijīng kǎoyā ba. Kǎoyā yǒu bǐng.",
+          "de": "Lass uns eine Portion Peking-Ente nehmen. Zur Ente gibt es Pfannkuchen."
         },
         {
           "id": "07-10",
@@ -1819,7 +1815,7 @@ window.CF_STORY = {
           "speaker": "苏然",
           "zh": "服务员，我们要一份北京烤鸭。",
           "pinyin": "Fúwùyuán, wǒmen yào yí fèn Běijīng kǎoyā.",
-          "de": "Entschuldigung, wir möchten eine Portion Peking-Ente."
+          "de": "Bedienung, wir möchten eine Portion Peking-Ente."
         },
         {
           "id": "07-12",
@@ -1827,7 +1823,7 @@ window.CF_STORY = {
           "speaker": "苏然",
           "zh": "来两碗米饭。",
           "pinyin": "Lái liǎng wǎn mǐfàn.",
-          "de": "Dazu zwei Schalen Reis."
+          "de": "Und zwei Schalen Reis."
         },
         {
           "id": "07-13",
@@ -1835,15 +1831,15 @@ window.CF_STORY = {
           "speaker": "林月",
           "zh": "再来一盘青菜。",
           "pinyin": "Zài lái yì pán qīngcài.",
-          "de": "Und noch einen Teller grünes Gemüse."
+          "de": "Und noch einen Teller Gemüse."
         },
         {
           "id": "07-14",
           "type": "dialogue",
           "speaker": "林月",
-          "zh": "这些够了吗？",
-          "pinyin": "zhè xiē gòu le ma?",
-          "de": "Reicht das?"
+          "zh": "我们点的够了吗？",
+          "pinyin": "Wǒmen diǎn de gòu le ma?",
+          "de": "Haben wir genug bestellt?"
         },
         {
           "id": "07-15",
@@ -1859,7 +1855,7 @@ window.CF_STORY = {
           "speaker": "服务员",
           "zh": "好的。",
           "pinyin": "Hǎo de.",
-          "de": "Gut."
+          "de": "In Ordnung."
         },
         {
           "id": "07-17",
@@ -1874,7 +1870,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "这个菜辣吗？",
-          "pinyin": "zhège cài là ma?",
+          "pinyin": "Zhège cài là ma?",
           "de": "Ist dieses Gericht scharf?"
         },
         {
@@ -1891,7 +1887,7 @@ window.CF_STORY = {
           "speaker": "苏然",
           "zh": "那不要了。",
           "pinyin": "Nà bú yào le.",
-          "de": "Dann nehmen wir es nicht."
+          "de": "Dann lieber nicht."
         },
         {
           "id": "07-21",
@@ -1915,7 +1911,7 @@ window.CF_STORY = {
           "speaker": "林月",
           "zh": "我也觉得很好吃。",
           "pinyin": "Wǒ yě juéde hěn hǎochī.",
-          "de": "Ich finde sie auch sehr lecker."
+          "de": "Ich finde es auch sehr lecker."
         },
         {
           "id": "07-24",
@@ -1931,7 +1927,7 @@ window.CF_STORY = {
           "speaker": "林月",
           "zh": "我小时候不喜欢鸭子，只喜欢饼。",
           "pinyin": "Wǒ xiǎoshíhou bù xǐhuan yāzi, zhǐ xǐhuan bǐng.",
-          "de": "Als Kind mochte ich keine Ente. Ich mochte nur die Pfannkuchen."
+          "de": "Als Kind mochte ich keine Ente, nur die Pfannkuchen."
         },
         {
           "id": "07-26",
@@ -1962,8 +1958,8 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "来，干杯。以茶代酒。",
-          "pinyin": "lái, gānbēi. yǐ chá dài jiǔ.",
-          "de": "Komm, Prost. Wir stoßen mit Tee statt mit Alkohol an."
+          "pinyin": "Lái, gānbēi. Yǐchá-dàijiǔ.",
+          "de": "Komm, prost. Mit Tee statt Wein."
         },
         {
           "id": "07-30",
@@ -1987,7 +1983,7 @@ window.CF_STORY = {
           "speaker": "苏然",
           "zh": "服务员，买单。",
           "pinyin": "Fúwùyuán, mǎidān.",
-          "de": "Entschuldigung, die Rechnung bitte."
+          "de": "Bedienung, die Rechnung bitte."
         },
         {
           "id": "07-33",
@@ -2002,7 +1998,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "不用。我请客。你帮了我。",
-          "pinyin": "bú yòng. wǒ qǐngkè. nǐ bāng le wǒ.",
+          "pinyin": "Bú yòng. Wǒ qǐngkè. Nǐ bāng le wǒ.",
           "de": "Nicht nötig. Ich lade ein. Du hast mir geholfen."
         },
         {
@@ -2027,7 +2023,7 @@ window.CF_STORY = {
           "speaker": "苏然",
           "zh": "好。",
           "pinyin": "Hǎo.",
-          "de": "Gut."
+          "de": "Abgemacht."
         }
       ]
     },
@@ -2065,7 +2061,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "我学经济。你呢？",
-          "pinyin": "wǒ xué jīngjì. nǐ ne?",
+          "pinyin": "Wǒ xué jīngjì. Nǐ ne?",
           "de": "Ich studiere Wirtschaft. Und du?"
         },
         {
@@ -2082,7 +2078,7 @@ window.CF_STORY = {
           "speaker": "苏然",
           "zh": "清华大学很有名。",
           "pinyin": "Qīnghuá Dàxué hěn yǒumíng.",
-          "de": "Die Tsinghua-Universität ist sehr berühmt."
+          "de": "Die Tsinghua ist sehr berühmt."
         },
         {
           "id": "08-07",
@@ -2098,14 +2094,14 @@ window.CF_STORY = {
           "speaker": "林月",
           "zh": "你今年多大？",
           "pinyin": "Nǐ jīnnián duō dà?",
-          "de": "Wie alt bist du?"
+          "de": "Wie alt bist du dieses Jahr?"
         },
         {
           "id": "08-09",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "我今年二十一岁。你呢？",
-          "pinyin": "wǒ jīnnián èrshíyī suì. nǐ ne?",
+          "pinyin": "Wǒ jīnnián èrshíyī suì. Nǐ ne?",
           "de": "Ich bin einundzwanzig. Und du?"
         },
         {
@@ -2113,7 +2109,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "我也二十一岁。我们一样大。",
-          "pinyin": "wǒ yě èrshíyī suì. wǒmen yíyàng dà.",
+          "pinyin": "Wǒ yě èrshíyī suì. Wǒmen yíyàng dà.",
           "de": "Ich bin auch einundzwanzig. Wir sind gleich alt."
         },
         {
@@ -2137,7 +2133,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "没有。你呢？你有哥哥吗？",
-          "pinyin": "méi yǒu. nǐ ne? nǐ yǒu gēge ma?",
+          "pinyin": "Méiyǒu. Nǐ ne? Nǐ yǒu gēge ma?",
           "de": "Nein. Und du? Hast du einen älteren Bruder?"
         },
         {
@@ -2145,23 +2141,23 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "没有。我没有哥哥，也没有弟弟。",
-          "pinyin": "méi yǒu. wǒ méi yǒu gēge, yě méi yǒu dìdi.",
-          "de": "Nein. Ich habe weder einen älteren noch einen jüngeren Bruder."
+          "pinyin": "Méiyǒu. Wǒ méiyǒu gēge, yě méiyǒu dìdi.",
+          "de": "Nein. Ich habe keinen älteren und keinen jüngeren Bruder."
         },
         {
           "id": "08-15",
           "type": "dialogue",
           "speaker": "林月",
           "zh": "姐姐妹妹呢？",
-          "pinyin": "jiějie mèimei ne?",
-          "de": "Und ältere oder jüngere Schwestern?"
+          "pinyin": "Jiějie mèimei ne?",
+          "de": "Und Schwestern?"
         },
         {
           "id": "08-16",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "也没有。",
-          "pinyin": "yě méi yǒu.",
+          "pinyin": "Yě méiyǒu.",
           "de": "Auch nicht."
         },
         {
@@ -2176,9 +2172,9 @@ window.CF_STORY = {
           "id": "08-18",
           "type": "dialogue",
           "speaker": "苏然",
-          "zh": "我和我的很多同学都没有兄弟姐妹。",
-          "pinyin": "wǒ hé wǒ de hěn duō tóng xué dōu méi yǒu xiōngdì jiěmèi.",
-          "de": "Viele meiner Mitschüler und ich haben keine Geschwister."
+          "zh": "在中国，很多学生都没有兄弟姐妹。",
+          "pinyin": "Zài Zhōngguó, hěn duō xuésheng dōu méiyǒu xiōngdì jiěmèi.",
+          "de": "In China haben viele Studenten keine Geschwister."
         },
         {
           "id": "08-19",
@@ -2202,23 +2198,23 @@ window.CF_STORY = {
           "speaker": "苏然",
           "zh": "我爸爸是工程师，我妈妈是老师。",
           "pinyin": "Wǒ bàba shì gōngchéngshī, wǒ māma shì lǎoshī.",
-          "de": "Mein Vater ist Ingenieur und meine Mutter ist Lehrerin."
+          "de": "Mein Vater ist Ingenieur, meine Mutter ist Lehrerin."
         },
         {
           "id": "08-22",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "他们都在上海工作。你呢？",
-          "pinyin": "tāmen dōu zài Shànghǎi gōngzuò. nǐ ne?",
-          "de": "Beide arbeiten in Shanghai. Und deine Eltern?"
+          "pinyin": "Tāmen dōu zài Shànghǎi gōngzuò. Nǐ ne?",
+          "de": "Sie arbeiten beide in Shanghai. Und deine?"
         },
         {
           "id": "08-23",
           "type": "dialogue",
           "speaker": "林月",
           "zh": "我妈妈是医生。我爸爸是摄影师，很忙。",
-          "pinyin": "wǒ māma shì yīshēng. wǒ bàba shì shèyǐngshī, hěn máng.",
-          "de": "Meine Mutter ist Ärztin. Mein Vater ist Fotograf und sehr beschäftigt."
+          "pinyin": "Wǒ māma shì yīshēng. Wǒ bàba shì shèyǐngshī, hěn máng.",
+          "de": "Meine Mutter ist Ärztin. Mein Vater ist Fotograf, er ist sehr beschäftigt."
         },
         {
           "id": "08-24",
@@ -2233,13 +2229,12 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "我给你看。",
-          "pinyin": "wǒ gěi nǐ kàn.",
-          "de": "Ich zeige dir etwas."
+          "pinyin": "Wǒ gěi nǐ kàn.",
+          "de": "Ich zeig es dir."
         },
         {
           "id": "08-26",
-          "type": "dialogue",
-          "speaker": "她给苏然看她爸爸拍的照片",
+          "type": "narration",
           "zh": "晚上的北京、老房子、路上的人。苏然看了很长时间。",
           "pinyin": "wǎnshang de Běijīng, lǎo fángzi, lùshang de rén. Sū Rán kàn le hěn cháng shí jiān.",
           "de": "Sie zeigt Sū Rán Fotos, die ihr Vater gemacht hat: Beijing bei Nacht, alte Häuser und Menschen auf der Straße. Sū Rán schaut sie lange an."
@@ -2257,16 +2252,16 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "不早了。明天我带你去一个胡同，好吗？",
-          "pinyin": "bù zǎo le. míngtiān wǒ dài nǐ qù yí ge hútòng, hǎo ma?",
-          "de": "Es ist schon spät. Morgen zeige ich dir einen Hutong, einverstanden?"
+          "pinyin": "Bù zǎo le. Míngtiān wǒ dài nǐ qù yí ge hútòng, hǎo ma?",
+          "de": "Es ist schon spät. Morgen nehme ich dich zu einem Hutong mit, okay?"
         },
         {
           "id": "08-29",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "好。谢谢你。",
-          "pinyin": "hǎo. xièxie nǐ.",
-          "de": "Gut. Danke dir."
+          "pinyin": "Hǎo. Xièxie nǐ.",
+          "de": "Gern. Danke dir."
         },
         {
           "id": "08-30",
@@ -2304,7 +2299,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "这是胡同。你看，这里的房子很老。",
-          "pinyin": "zhè shì hútòng. nǐ kàn, zhèlǐ de fángzi hěn lǎo.",
+          "pinyin": "Zhè shì hútòng. Nǐ kàn, zhèlǐ de fángzi hěn lǎo.",
           "de": "Das ist ein Hutong. Schau, die Häuser hier sind sehr alt."
         },
         {
@@ -2312,7 +2307,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "真漂亮。这些房子叫什么？",
-          "pinyin": "zhēn piàoliang. zhè xiē fángzi jiào shénme?",
+          "pinyin": "Zhēn piàoliang. Zhèxiē fángzi jiào shénme?",
           "de": "Wirklich schön. Wie heißen diese Häuser?"
         },
         {
@@ -2320,16 +2315,16 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "四合院。中间是院子。",
-          "pinyin": "sìhéyuàn. zhōngjiān shì yuàn zi.",
-          "de": "Sìhéyuàn. In der Mitte liegt ein Innenhof."
+          "pinyin": "Sìhéyuàn. Zhōngjiān shì yuànzi.",
+          "de": "Sìhéyuàn. In der Mitte ist der Hof."
         },
         {
           "id": "09-06",
           "type": "dialogue",
           "speaker": "林月",
           "zh": "你看，左边是四合院，右边有一个咖啡馆。",
-          "pinyin": "nǐ kàn, zuǒbian shì sìhéyuàn, yòubian yǒu yí ge kāfēiguǎn.",
-          "de": "Schau, links ist ein Sìhéyuàn und rechts ein Café."
+          "pinyin": "Nǐ kàn, zuǒbiān shì sìhéyuàn, yòubiān yǒu yí ge kāfēiguǎn.",
+          "de": "Schau, links sind Hofhäuser, rechts ist ein Café."
         },
         {
           "id": "09-07",
@@ -2344,15 +2339,15 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "院子里面有一棵树。",
-          "pinyin": "yuàn zi lǐmiàn yǒu yì kē shù.",
-          "de": "Im Innenhof steht ein Baum."
+          "pinyin": "Yuànzi lǐmiàn yǒu yì kē shù.",
+          "de": "Im Hof steht ein Baum."
         },
         {
           "id": "09-09",
           "type": "dialogue",
           "speaker": "林月",
           "zh": "你看，椅子在树下面。",
-          "pinyin": "nǐ kàn, yǐzi zài shù xiàmiàn.",
+          "pinyin": "Nǐ kàn, yǐzi zài shù xiàmiàn.",
           "de": "Schau, der Stuhl steht unter dem Baum."
         },
         {
@@ -2368,15 +2363,15 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "你看那个房间。桌子在窗户旁边，桌子上面有一杯茶。",
-          "pinyin": "nǐ kàn nàge fángjiān. zhuōzi zài chuānghu pángbiān, zhuōzi shàngmiàn yǒu yì bēi chá.",
-          "de": "Schau in dieses Zimmer. Der Tisch steht neben dem Fenster und auf dem Tisch steht eine Tasse Tee."
+          "pinyin": "Nǐ kàn nàge fángjiān. Zhuōzi zài chuānghu pángbiān, zhuōzi shàngmiàn yǒu yì bēi chá.",
+          "de": "Schau, das Zimmer da. Der Tisch steht neben dem Fenster, auf dem Tisch steht eine Tasse Tee."
         },
         {
           "id": "09-12",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "房间很小，但是很舒服。",
-          "pinyin": "fángjiān hěn xiǎo, dànshì hěn shūfu.",
+          "pinyin": "Fángjiān hěn xiǎo, dànshì hěn shūfu.",
           "de": "Das Zimmer ist klein, aber sehr gemütlich."
         },
         {
@@ -2392,7 +2387,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "你住在哪里？",
-          "pinyin": "nǐ zhù zài nǎlǐ?",
+          "pinyin": "Nǐ zhù zài nǎlǐ?",
           "de": "Wo wohnst du?"
         },
         {
@@ -2400,23 +2395,23 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "我住在学校的宿舍。房间里有四张床和四张桌子。",
-          "pinyin": "wǒ zhù zài xuéxiào de sùshè. fángjiān lǐ yǒu sì zhāng chuáng hé sì zhāng zhuōzi.",
-          "de": "Ich wohne im Wohnheim der Universität. In unserem Zimmer stehen vier Betten und vier Tische."
+          "pinyin": "Wǒ zhù zài xuéxiào de sùshè. Fángjiān lǐ yǒu sì zhāng chuáng hé sì zhāng zhuōzi.",
+          "de": "Ich wohne im Wohnheim der Uni. Im Zimmer stehen vier Betten und vier Tische."
         },
         {
           "id": "09-16",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "你们几个人住一个房间？",
-          "pinyin": "nǐ men jǐ ge rén zhù yí ge fángjiān?",
-          "de": "Wie viele Personen wohnen in einem Zimmer?"
+          "pinyin": "Nǐmen jǐ ge rén zhù yí ge fángjiān?",
+          "de": "Mit wie vielen Personen wohnt ihr in einem Zimmer?"
         },
         {
           "id": "09-17",
           "type": "dialogue",
           "speaker": "林月",
           "zh": "四个人。房间有点小。",
-          "pinyin": "sì ge rén. fángjiān yǒu diǎn xiǎo.",
+          "pinyin": "Sì ge rén. Fángjiān yǒudiǎn xiǎo.",
           "de": "Vier Personen. Das Zimmer ist etwas klein."
         },
         {
@@ -2424,7 +2419,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "你想住四合院吗？",
-          "pinyin": "nǐ xiǎng zhù sìhéyuàn ma?",
+          "pinyin": "Nǐ xiǎng zhù sìhéyuàn ma?",
           "de": "Möchtest du in einem Sìhéyuàn wohnen?"
         },
         {
@@ -2432,8 +2427,8 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "想。但是现在很贵。以前很多人住在胡同里，现在不一样了。",
-          "pinyin": "xiǎng. dànshì xiànzài hěn guì. yǐqián hěn duō rén zhù zài hútòng lǐ, xiànzài bù yíyàng le.",
-          "de": "Ja. Aber heute ist das sehr teuer. Früher lebten viele Menschen in den Hutongs, heute ist es anders."
+          "pinyin": "Xiǎng. Dànshì xiànzài hěn guì. Yǐqián hěn duō rén zhù zài hútòng lǐ, xiànzài bù yíyàng le.",
+          "de": "Ja. Aber jetzt ist es sehr teuer. Früher haben viele Leute im Hutong gewohnt, jetzt ist es anders."
         },
         {
           "id": "09-20",
@@ -2448,7 +2443,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "你明天想做什么？",
-          "pinyin": "nǐ míngtiān xiǎng zuò shénme?",
+          "pinyin": "Nǐ míngtiān xiǎng zuò shénme?",
           "de": "Was möchtest du morgen machen?"
         },
         {
@@ -2456,8 +2451,8 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "我想去长城。",
-          "pinyin": "wǒ xiǎng qù Chángchéng.",
-          "de": "Ich möchte zur Großen Mauer."
+          "pinyin": "Wǒ xiǎng qù Chángchéng.",
+          "de": "Ich möchte zur Mauer."
         }
       ]
     },
@@ -2487,7 +2482,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "明天天气怎么样？",
-          "pinyin": "míngtiān tiānqì zěnmeyàng?",
+          "pinyin": "Míngtiān tiānqì zěnmeyàng?",
           "de": "Wie wird morgen das Wetter?"
         },
         {
@@ -2495,8 +2490,8 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "我看看。",
-          "pinyin": "wǒ kàn kàn.",
-          "de": "Ich schaue nach."
+          "pinyin": "Wǒ kànkan.",
+          "de": "Ich schau mal."
         },
         {
           "id": "10-05",
@@ -2511,15 +2506,15 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "明天是晴天。不冷，也不热。",
-          "pinyin": "míngtiān shì qíng tiān. bù lěng, yě bú rè.",
-          "de": "Morgen wird es sonnig. Es ist weder kalt noch heiß."
+          "pinyin": "Míngtiān shì qíngtiān. Bù lěng, yě bú rè.",
+          "de": "Morgen ist es sonnig. Nicht kalt und nicht heiß."
         },
         {
           "id": "10-07",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "太好了。",
-          "pinyin": "tài hǎo le.",
+          "pinyin": "Tài hǎo le.",
           "de": "Sehr gut."
         },
         {
@@ -2527,16 +2522,16 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "你想去长城，对吗？",
-          "pinyin": "nǐ xiǎng qù Chángchéng, duì ma?",
+          "pinyin": "Nǐ xiǎng qù Chángchéng, duì ma?",
           "de": "Du möchtest zur Großen Mauer, richtig?"
         },
         {
           "id": "10-09",
           "type": "dialogue",
           "speaker": "苏然",
-          "zh": "对。但是我不知道去哪里比较好。",
-          "pinyin": "duì. dànshì wǒ bù zhīdào qù nǎlǐ bǐjiào hǎo.",
-          "de": "Ja. Aber ich weiß nicht, wohin ich am besten fahren soll."
+          "zh": "对。但是我不知道去哪里。",
+          "pinyin": "Duì. Dànshì wǒ bù zhīdào qù nǎlǐ.",
+          "de": "Ja. Aber ich weiß nicht, wohin."
         },
         {
           "id": "10-10",
@@ -2551,16 +2546,16 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "八达岭很有名，但是人很多。",
-          "pinyin": "Bādálǐng hěn yǒu míng, dànshì rén hěn duō.",
-          "de": "Bādálǐng ist sehr berühmt, aber dort sind sehr viele Menschen."
+          "pinyin": "Bādálǐng hěn yǒumíng, dànshì rén hěn duō.",
+          "de": "Bādálǐng ist sehr berühmt, aber es sind sehr viele Leute da."
         },
         {
           "id": "10-12",
           "type": "dialogue",
           "speaker": "林月",
           "zh": "你最好去慕田峪。那里人少，也很漂亮。",
-          "pinyin": "nǐ zuìhǎo qù Mùtiányù. nàlǐ rén shǎo, yě hěn piàoliang.",
-          "de": "Du gehst am besten nach Mùtiányù. Dort sind weniger Menschen und es ist sehr schön."
+          "pinyin": "Nǐ zuìhǎo qù Mùtiányù. Nàlǐ rén shǎo, yě hěn piàoliang.",
+          "de": "Du gehst am besten nach Mùtiányù. Dort sind wenige Leute, und es ist sehr schön."
         },
         {
           "id": "10-13",
@@ -2568,22 +2563,22 @@ window.CF_STORY = {
           "speaker": "苏然",
           "zh": "慕田峪远吗？",
           "pinyin": "Mùtiányù yuǎn ma?",
-          "de": "Ist Mùtiányù weit entfernt?"
+          "de": "Ist Mùtiányù weit?"
         },
         {
           "id": "10-14",
           "type": "dialogue",
           "speaker": "林月",
           "zh": "有一点儿远。你先坐地铁去东直门，然后坐公共汽车。",
-          "pinyin": "yǒu yìdiǎnr yuǎn. nǐ xiān zuò dìtiě qù Dōngzhímén, ránhòu zuò gōnggòng qìchē.",
-          "de": "Ein bisschen. Du fährst zuerst mit der U-Bahn nach Dōngzhímén und danach mit dem Bus."
+          "pinyin": "Yǒu yìdiǎnr yuǎn. Nǐ xiān zuò dìtiě qù Dōngzhímén, ránhòu zuò gōnggòng qìchē.",
+          "de": "Ein bisschen weit. Du fährst zuerst mit der U-Bahn nach Dōngzhímén, dann mit dem Bus."
         },
         {
           "id": "10-15",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "坐公共汽车要多长时间？",
-          "pinyin": "zuò gōnggòng qìchē yào duō cháng shíjiān?",
+          "pinyin": "Zuò gōnggòng qìchē yào duō cháng shíjiān?",
           "de": "Wie lange dauert die Busfahrt?"
         },
         {
@@ -2591,7 +2586,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "差不多两个小时。你要早点儿走。",
-          "pinyin": "chàbuduō liǎng ge xiǎo shí. nǐ yào zǎo diǎnr zǒu.",
+          "pinyin": "Chàbuduō liǎng ge xiǎoshí. Nǐ yào zǎo diǎnr zǒu.",
           "de": "Ungefähr zwei Stunden. Du solltest früh losfahren."
         },
         {
@@ -2607,15 +2602,15 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "我打算早上六点起床。",
-          "pinyin": "wǒ dǎ suàn zǎoshang liù diǎn qǐchuáng.",
-          "de": "Ich habe vor, morgens um sechs Uhr aufzustehen."
+          "pinyin": "Wǒ dǎsuàn zǎoshang liù diǎn qǐchuáng.",
+          "de": "Ich habe vor, morgens um sechs aufzustehen."
         },
         {
           "id": "10-19",
           "type": "dialogue",
           "speaker": "林月",
           "zh": "六点？你昨天几点起床？",
-          "pinyin": "liù diǎn? nǐ zuótiān jǐ diǎn qǐchuáng?",
+          "pinyin": "Liù diǎn? Nǐ zuótiān jǐ diǎn qǐchuáng?",
           "de": "Um sechs? Wann bist du gestern aufgestanden?"
         },
         {
@@ -2623,7 +2618,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "⋯⋯十点。",
-          "pinyin": "⋯⋯ shí diǎn.",
+          "pinyin": "… Shí diǎn.",
           "de": "… Um zehn."
         },
         {
@@ -2638,25 +2633,25 @@ window.CF_STORY = {
           "id": "10-22",
           "type": "dialogue",
           "speaker": "林月",
-          "zh": "秋天是北京最好的季节，不太热，也不太冷。",
-          "pinyin": "qiū tiān shì Běijīng zuìhǎo de jì jié, bú tài rè, yě bú tài lěng.",
-          "de": "Der Herbst ist die beste Jahreszeit in Beijing. Es ist weder zu heiß noch zu kalt."
+          "zh": "秋天是北京最好的季节。不像夏天，也不像冬天。",
+          "pinyin": "Qiūtiān shì Běijīng zuì hǎo de jìjié. Bú xiàng xiàtiān, yě bú xiàng dōngtiān.",
+          "de": "Der Herbst ist Beijings beste Jahreszeit. Nicht wie der Sommer und nicht wie der Winter."
         },
         {
           "id": "10-23",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "冬天很冷吗？",
-          "pinyin": "dōng tiān hěn lěng ma?",
-          "de": "Ist es im Winter sehr kalt?"
+          "pinyin": "Dōngtiān hěn lěng ma?",
+          "de": "Ist der Winter sehr kalt?"
         },
         {
           "id": "10-24",
           "type": "dialogue",
           "speaker": "林月",
           "zh": "很冷。夏天太热了，还常常下雨。",
-          "pinyin": "hěn lěng. xià tiān tài rè le, hái chángcháng xià yǔ.",
-          "de": "Sehr kalt. Im Sommer ist es zu heiß und es regnet oft."
+          "pinyin": "Hěn lěng. Xiàtiān tài rè le, hái chángcháng xià yǔ.",
+          "de": "Sehr kalt. Der Sommer ist zu heiß, und es regnet oft."
         },
         {
           "id": "10-25",
@@ -2671,15 +2666,15 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "后天我有时间。我们一起去公园，好吗？",
-          "pinyin": "hòutiān wǒ yǒu shí jiān. wǒmen yìqǐ qù gōng yuán, hǎo ma?",
-          "de": "Übermorgen habe ich Zeit. Sollen wir gemeinsam in den Park gehen?"
+          "pinyin": "Hòutiān wǒ yǒu shíjiān. Wǒmen yìqǐ qù gōngyuán, hǎo ma?",
+          "de": "Übermorgen habe ich Zeit. Sollen wir zusammen in den Park gehen?"
         },
         {
           "id": "10-27",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "好。后天见。",
-          "pinyin": "hǎo. hòutiān jiàn.",
+          "pinyin": "Hǎo. Hòutiān jiàn.",
           "de": "Gut. Bis übermorgen."
         },
         {
@@ -2687,7 +2682,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "今天晚上早点儿睡觉。",
-          "pinyin": "jīntiān wǎnshang zǎo diǎnr shuìjiào.",
+          "pinyin": "Jīntiān wǎnshang zǎo diǎnr shuìjiào.",
           "de": "Geh heute Abend früh schlafen."
         },
         {
@@ -2695,7 +2690,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "我知道。",
-          "pinyin": "wǒ zhīdào.",
+          "pinyin": "Wǒ zhīdào.",
           "de": "Ich weiß."
         },
         {
@@ -2733,9 +2728,9 @@ window.CF_STORY = {
           "id": "11-03",
           "type": "dialogue",
           "speaker": "苏然",
-          "zh": "你好，请问，916路在哪里？",
-          "pinyin": "nǐ hǎo, qǐngwèn,916 lù zài nǎlǐ?",
-          "de": "Hallo, entschuldigen Sie, wo fährt die Linie 916 ab?"
+          "zh": "你好，请问，916路在哪里坐？",
+          "pinyin": "Nǐ hǎo, qǐngwèn, jiǔ yāo liù lù zài nǎlǐ zuò?",
+          "de": "Hallo, entschuldigen Sie, wo kann ich die Buslinie 916 nehmen?"
         },
         {
           "id": "11-04",
@@ -2750,15 +2745,15 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "工作人员",
           "zh": "在那边。你去慕田峪吗？",
-          "pinyin": "zài nà biān. nǐ qù Mùtiányù ma?",
-          "de": "Dort drüben. Fahren Sie nach Mùtiányù?"
+          "pinyin": "Zài nàbiān. Nǐ qù Mùtiányù ma?",
+          "de": "Da drüben. Fährst du nach Mùtiányù?"
         },
         {
           "id": "11-06",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "对。",
-          "pinyin": "duì.",
+          "pinyin": "Duì.",
           "de": "Ja."
         },
         {
@@ -2766,15 +2761,15 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "工作人员",
           "zh": "先坐到怀柔，然后换车。",
-          "pinyin": "xiān zuò dào Huáiróu, ránhòu huàn chē.",
-          "de": "Fahren Sie zuerst bis Huáiróu und steigen Sie dort um."
+          "pinyin": "Xiān zuò dào Huáiróu, ránhòu huàn chē.",
+          "de": "Fahr zuerst bis Huáiróu, dann steig um."
         },
         {
           "id": "11-08",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "好，谢谢。",
-          "pinyin": "hǎo, xièxie.",
+          "pinyin": "Hǎo, xièxie.",
           "de": "Gut, danke."
         },
         {
@@ -2790,16 +2785,16 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "你好，到怀柔多少钱？",
-          "pinyin": "nǐ hǎo, dào Huáiróu duōshao qián?",
-          "de": "Hallo, wie viel kostet die Fahrt nach Huáiróu?"
+          "pinyin": "Nǐ hǎo, dào Huáiróu duōshao qián?",
+          "de": "Hallo, wie viel kostet es bis Huáiróu?"
         },
         {
           "id": "11-11",
           "type": "dialogue",
           "speaker": "司机",
           "zh": "十二块。你可以扫码。",
-          "pinyin": "shí’èr kuài. nǐ kěyǐ sǎomǎ.",
-          "de": "Zwölf Yuan. Sie können den QR-Code scannen."
+          "pinyin": "Shí'èr kuài. Nǐ kěyǐ sǎomǎ.",
+          "de": "Zwölf Yuan. Du kannst per QR-Code zahlen."
         },
         {
           "id": "11-12",
@@ -2838,7 +2833,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "你好，一张门票多少钱？",
-          "pinyin": "nǐ hǎo, yì zhāng ménpiào duōshao qián?",
+          "pinyin": "Nǐ hǎo, yì zhāng ménpiào duōshao qián?",
           "de": "Hallo, wie viel kostet eine Eintrittskarte?"
         },
         {
@@ -2846,23 +2841,23 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "售票员",
           "zh": "四十块。你要坐缆车吗？",
-          "pinyin": "sìshí kuài. nǐ yào zuò lǎnchē ma?",
-          "de": "Vierzig Yuan. Möchten Sie mit der Seilbahn fahren?"
+          "pinyin": "Sìshí kuài. Nǐ yào zuò lǎnchē ma?",
+          "de": "Vierzig Yuan. Möchtest du die Seilbahn nehmen?"
         },
         {
           "id": "11-18",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "缆车多少钱？",
-          "pinyin": "lǎnchē duōshao qián?",
+          "pinyin": "Lǎnchē duōshao qián?",
           "de": "Wie viel kostet die Seilbahn?"
         },
         {
           "id": "11-19",
           "type": "dialogue",
           "speaker": "售票员",
-          "zh": "单程一百，往返一百四。",
-          "pinyin": "dānchéng yìbǎi, wǎngfǎn yìbǎi sì.",
+          "zh": "单程一百，往返一百四十。",
+          "pinyin": "Dānchéng yìbǎi, wǎngfǎn yìbǎi sìshí.",
           "de": "Einfach hundert Yuan, hin und zurück hundertvierzig."
         },
         {
@@ -2878,8 +2873,8 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "我走上去。",
-          "pinyin": "wǒ zǒu shangqu.",
-          "de": "Ich gehe zu Fuß hinauf."
+          "pinyin": "Wǒ zǒu shàngqù.",
+          "de": "Ich gehe hinauf."
         },
         {
           "id": "11-22",
@@ -2910,23 +2905,23 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "游客",
           "zh": "第一次来吗？",
-          "pinyin": "dì yí cì lái ma?",
-          "de": "Bist du zum ersten Mal hier?"
+          "pinyin": "Dì-yī cì lái ma?",
+          "de": "Zum ersten Mal hier?"
         },
         {
           "id": "11-26",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "对，第一次。太美了。",
-          "pinyin": "duì, dì yí cì. tài měi le.",
-          "de": "Ja, zum ersten Mal. Es ist wunderschön."
+          "pinyin": "Duì, dì-yī cì. Tài měi le.",
+          "de": "Ja, zum ersten Mal. So schön."
         },
         {
           "id": "11-27",
           "type": "dialogue",
           "speaker": "游客",
           "zh": "你是哪里人？",
-          "pinyin": "nǐ shì nǎlǐ rén?",
+          "pinyin": "Nǐ shì nǎlǐ rén?",
           "de": "Woher kommst du?"
         },
         {
@@ -2934,32 +2929,32 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "我是上海人。你呢？",
-          "pinyin": "wǒ shì Shànghǎi rén. nǐ ne?",
-          "de": "Ich komme aus Shanghai. Und Sie?"
+          "pinyin": "Wǒ shì Shànghǎi rén. Nǐ ne?",
+          "de": "Ich komme aus Shanghai. Und du?"
         },
         {
           "id": "11-29",
           "type": "dialogue",
           "speaker": "游客",
           "zh": "我是北京人。我常常来这里。",
-          "pinyin": "wǒ shì Běijīng rén. wǒ chángcháng lái zhèlǐ.",
-          "de": "Ich komme aus Beijing. Ich bin oft hier."
+          "pinyin": "Wǒ shì Běijīngrén. Wǒ chángcháng lái zhèlǐ.",
+          "de": "Ich bin aus Beijing. Ich komme oft hierher."
         },
         {
           "id": "11-30",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "这里的人比八达岭少。",
-          "pinyin": "zhèlǐ de rén bǐ Bādálǐng shǎo.",
-          "de": "Hier sind weniger Menschen als in Bādálǐng."
+          "pinyin": "Zhèlǐ de rén bǐ Bādálǐng shǎo.",
+          "de": "Hier sind weniger Leute als in Bādálǐng."
         },
         {
           "id": "11-31",
           "type": "dialogue",
           "speaker": "游客",
           "zh": "对。慕田峪更漂亮。",
-          "pinyin": "duì. Mùtiányù gèng piàoliang.",
-          "de": "Ja. Mùtiányù ist noch schöner."
+          "pinyin": "Duì. Mùtiányù gèng piàoliang.",
+          "de": "Ja. Mùtiányù ist schöner."
         },
         {
           "id": "11-32",
@@ -2973,17 +2968,17 @@ window.CF_STORY = {
           "id": "11-33",
           "type": "dialogue",
           "speaker": "游客",
-          "zh": "你看，上面还有更高的地方。你能上去吗？",
-          "pinyin": "nǐ kàn, shàngmiàn hái yǒu gèng gāo de dìfang. nǐ néng shangqu ma?",
-          "de": "Schau, weiter oben geht es noch höher. Schaffst du es hinauf?"
+          "zh": "你看，上面更高。你能上去吗？",
+          "pinyin": "Nǐ kàn, shàngmiàn gèng gāo. Nǐ néng shàngqù ma?",
+          "de": "Schau, oben ist es höher. Schaffst du es hinauf?"
         },
         {
           "id": "11-34",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "我试试。",
-          "pinyin": "wǒ shì shì.",
-          "de": "Ich versuche es."
+          "pinyin": "Wǒ shìshi.",
+          "de": "Ich versuch's."
         },
         {
           "id": "11-35",
@@ -3005,17 +3000,17 @@ window.CF_STORY = {
           "id": "11-37",
           "type": "dialogue",
           "speaker": "商贩",
-          "zh": "要水吗？要冰的吗？",
-          "pinyin": "yào shuǐ ma? yào bīng de ma?",
-          "de": "Möchten Sie Wasser? Kaltes Wasser?"
+          "zh": "要水吗？要冰水吗？",
+          "pinyin": "Yào shuǐ ma? Yào bīngshuǐ ma?",
+          "de": "Möchtest du Wasser? Möchtest du eisgekühltes Wasser?"
         },
         {
           "id": "11-38",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "不用，谢谢。我有水。",
-          "pinyin": "bú yòng, xièxie. wǒ yǒu shuǐ.",
-          "de": "Nein, danke. Ich habe Wasser."
+          "pinyin": "Bú yòng, xièxie. Wǒ yǒu shuǐ.",
+          "de": "Nein danke, ich habe Wasser."
         },
         {
           "id": "11-39",
@@ -3109,29 +3104,28 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "你怎么了？",
-          "pinyin": "nǐ zěnme le?",
-          "de": "Was ist passiert?"
+          "pinyin": "Nǐ zěnme le?",
+          "de": "Was ist mit dir?"
         },
         {
           "id": "12-10",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "我⋯⋯我想给你一个惊喜。",
-          "pinyin": "wǒ ⋯⋯ wǒ xiǎng gěi nǐ yí ge jīng xǐ.",
-          "de": "Ich … ich wollte dich überraschen."
+          "pinyin": "Wǒ… wǒ xiǎng gěi nǐ yí ge jīngxǐ.",
+          "de": "Ich… ich wollte dich überraschen."
         },
         {
           "id": "12-11",
           "type": "dialogue",
           "speaker": "林月",
           "zh": "你成功了。",
-          "pinyin": "nǐ chéng gōng le.",
+          "pinyin": "Nǐ chénggōng le.",
           "de": "Das ist dir gelungen."
         },
         {
           "id": "12-12",
-          "type": "dialogue",
-          "speaker": "苏然看了看自己",
+          "type": "narration",
           "zh": "一只脚湿了。然后他也笑了。",
           "pinyin": "yì zhī jiǎo shī le. ránhòu tā yě xiào le.",
           "de": "Sū Rán schaut an sich hinunter: Ein Fuß ist nass. Dann muss auch er lachen."
@@ -3141,7 +3135,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "你常常来这里吗？",
-          "pinyin": "nǐ chángcháng lái zhèlǐ ma?",
+          "pinyin": "Nǐ chángcháng lái zhèlǐ ma?",
           "de": "Kommst du oft hierher?"
         },
         {
@@ -3149,24 +3143,24 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "对。我喜欢在这里拍照。",
-          "pinyin": "duì. wǒ xǐhuan zài zhèlǐ pāi zhào.",
-          "de": "Ja. Ich fotografiere hier gern."
+          "pinyin": "Duì. Wǒ xǐhuan zài zhèlǐ pāizhào.",
+          "de": "Ja. Ich mache hier gern Fotos."
         },
         {
           "id": "12-15",
           "type": "dialogue",
           "speaker": "苏然",
-          "zh": "你拍得真好。",
-          "pinyin": "nǐ pāi de zhēn hǎo.",
-          "de": "Du fotografierst wirklich gut."
+          "zh": "你拍得很好。",
+          "pinyin": "Nǐ pāi de hěn hǎo.",
+          "de": "Du fotografierst sehr gut."
         },
         {
           "id": "12-16",
           "type": "dialogue",
           "speaker": "林月",
           "zh": "谢谢。我从小就喜欢拍照。我爸爸也喜欢。",
-          "pinyin": "xièxie. wǒ cóngxiǎo jiù xǐhuan pāi zhào. wǒ bàba yě xǐhuan.",
-          "de": "Danke. Ich fotografiere schon seit meiner Kindheit gern. Mein Vater auch."
+          "pinyin": "Xièxie. Wǒ cóngxiǎo jiù xǐhuan pāizhào. Wǒ bàba yě xǐhuan.",
+          "de": "Danke. Ich fotografiere schon seit meiner Kindheit gern. Mein Vater mag es auch."
         },
         {
           "id": "12-17",
@@ -3181,16 +3175,16 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "这里可以拍照吗？我是说，那边的桥。",
-          "pinyin": "zhèlǐ kěyǐ pāi zhào ma? wǒ shì shuō, nà biān de qiáo.",
-          "de": "Darf man hier fotografieren? Ich meine die Brücke dort."
+          "pinyin": "Zhèlǐ kěyǐ pāizhào ma? Wǒ shì shuō, nàbiān de qiáo.",
+          "de": "Darf man hier fotografieren? Ich meine, die Brücke da drüben."
         },
         {
           "id": "12-19",
           "type": "dialogue",
           "speaker": "林月",
           "zh": "可以，公园里都可以。",
-          "pinyin": "kěyǐ, gōng yuán lǐ dōu kěyǐ.",
-          "de": "Ja, überall im Park darf man fotografieren."
+          "pinyin": "Kěyǐ, gōngyuán lǐ dōu kěyǐ.",
+          "de": "Ja, im Park überall."
         },
         {
           "id": "12-20",
@@ -3205,7 +3199,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "你能走吗？",
-          "pinyin": "nǐ néng zǒu ma?",
+          "pinyin": "Nǐ néng zǒu ma?",
           "de": "Kannst du laufen?"
         },
         {
@@ -3213,15 +3207,15 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "能，没问题。只是有点儿凉。",
-          "pinyin": "néng, méi wèntí. zhǐ shì yǒu diǎnr liáng.",
-          "de": "Ja, kein Problem. Es ist nur ein bisschen kalt."
+          "pinyin": "Néng, méi wèntí. Zhǐshì yǒudiǎnr liáng.",
+          "de": "Ja, kein Problem. Nur ein bisschen kühl."
         },
         {
           "id": "12-23",
           "type": "dialogue",
           "speaker": "林月",
           "zh": "你喜欢做什么？",
-          "pinyin": "nǐ xǐhuan zuò shénme?",
+          "pinyin": "Nǐ xǐhuan zuò shénme?",
           "de": "Was machst du gern?"
         },
         {
@@ -3229,32 +3223,32 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "我喜欢跑步，也喜欢听音乐。你呢？",
-          "pinyin": "wǒ xǐhuan pǎo bù, yě xǐhuan tīng yīnyuè. nǐ ne?",
-          "de": "Ich gehe gern laufen und höre gern Musik. Und du?"
+          "pinyin": "Wǒ xǐhuan pǎobù, yě xǐhuan tīng yīnyuè. Nǐ ne?",
+          "de": "Ich jogge gern und höre gern Musik. Und du?"
         },
         {
           "id": "12-25",
           "type": "dialogue",
           "speaker": "林月",
           "zh": "我喜欢拍照，有时候看书。我不太喜欢运动。",
-          "pinyin": "wǒ xǐhuan pāi zhào, yǒu shíhou kàn shū. wǒ bú tài xǐhuan yùn dòng.",
-          "de": "Ich fotografiere gern und lese manchmal. Sport mag ich nicht besonders."
+          "pinyin": "Wǒ xǐhuan pāizhào, yǒushíhou kàn shū. Wǒ bú tài xǐhuan yùndòng.",
+          "de": "Ich fotografiere gern, manchmal lese ich. Sport mag ich nicht so."
         },
         {
           "id": "12-26",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "那你会游泳吗？",
-          "pinyin": "nà nǐ huì yóu yǒng ma?",
+          "pinyin": "Nà nǐ huì yóuyǒng ma?",
           "de": "Kannst du denn schwimmen?"
         },
         {
           "id": "12-27",
           "type": "dialogue",
           "speaker": "林月",
-          "zh": "会一点儿。你今天已经游了一点儿了。",
-          "pinyin": "huì yìdiǎnr. nǐ jīntiān yǐjīng yóu le yìdiǎnr le.",
-          "de": "Ein bisschen. Du bist heute schon ein kleines Stück geschwommen."
+          "zh": "会一点儿。你今天已经游了。",
+          "pinyin": "Huì yìdiǎnr. Nǐ jīntiān yǐjīng yóu le.",
+          "de": "Ein bisschen. Du bist heute schon geschwommen."
         },
         {
           "id": "12-28",
@@ -3277,16 +3271,16 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "你最好早点儿回去，换衣服。",
-          "pinyin": "nǐ zuìhǎo zǎo diǎnr huí qù, huàn yì fú.",
-          "de": "Du gehst am besten bald zurück und ziehst dich um."
+          "pinyin": "Nǐ zuìhǎo zǎo diǎnr huíqù, huàn yīfu.",
+          "de": "Du gehst am besten früh zurück und ziehst dich um."
         },
         {
           "id": "12-31",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "我知道。但是这里很舒服。",
-          "pinyin": "wǒ zhīdào. dànshì zhèlǐ hěn shūfu.",
-          "de": "Ich weiß. Aber hier ist es so angenehm."
+          "pinyin": "Wǒ zhīdào. Dànshì zhèlǐ hěn shūfu.",
+          "de": "Ich weiß. Aber hier ist es sehr gemütlich."
         },
         {
           "id": "12-32",
@@ -3321,8 +3315,7 @@ window.CF_STORY = {
         },
         {
           "id": "13-03",
-          "type": "dialogue",
-          "speaker": "药店很大。里面有很多盒子",
+          "type": "narration",
           "zh": "白色的、红色的、绿色的，都是药。一个女人站在桌子后面。苏然走过去。她看了看他。",
           "pinyin": "bái sè de, hóngsè de, lǜsè de, dōu shì yào. yí ge nǚrén zhàn zài zhuōzi hòumiàn. Sū Rán zǒu guoqu. tā kànle kàn tā.",
           "de": "Die Apotheke ist groß. Darin stehen viele Schachteln: weiße, rote und grüne – alles Medikamente. Hinter dem Tresen steht eine Frau. Sū Rán geht zu ihr und sie schaut ihn an."
@@ -3332,7 +3325,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "药剂师",
           "zh": "你好，你怎么了？",
-          "pinyin": "nǐ hǎo, nǐ zěnme le?",
+          "pinyin": "Nǐ hǎo, nǐ zěnme le?",
           "de": "Hallo, was fehlt Ihnen?"
         },
         {
@@ -3340,15 +3333,15 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "我感冒了。我头疼，嗓子也疼。",
-          "pinyin": "wǒ gǎnmào le. wǒ tóu téng, sǎngzi yě téng.",
-          "de": "Ich bin erkältet. Ich habe Kopfschmerzen und Halsschmerzen."
+          "pinyin": "Wǒ gǎnmào le. Wǒ tóu téng, sǎngzi yě téng.",
+          "de": "Ich bin erkältet. Mein Kopf tut weh, und mein Hals auch."
         },
         {
           "id": "13-06",
           "type": "dialogue",
           "speaker": "药剂师",
           "zh": "你发烧吗？",
-          "pinyin": "nǐ fāshāo ma?",
+          "pinyin": "Nǐ fāshāo ma?",
           "de": "Haben Sie Fieber?"
         },
         {
@@ -3356,7 +3349,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "有一点儿。",
-          "pinyin": "yǒu yìdiǎnr.",
+          "pinyin": "Yǒu yìdiǎnr.",
           "de": "Ein bisschen."
         },
         {
@@ -3372,8 +3365,8 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "药剂师",
           "zh": "这是西药，这是中药。",
-          "pinyin": "zhè shì xī yào, zhè shì zhōng yào.",
-          "de": "Das hier ist westliche Medizin, das hier chinesische Medizin."
+          "pinyin": "Zhè shì xīyào, zhè shì zhōngyào.",
+          "de": "Das ist westliche Medizin, das ist chinesische Medizin."
         },
         {
           "id": "13-10",
@@ -3388,23 +3381,23 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "中药⋯⋯好喝吗？",
-          "pinyin": "zhōng yào ⋯⋯ hǎo hē ma?",
-          "de": "Chinesische Medizin … schmeckt sie gut?"
+          "pinyin": "Zhōngyào… hǎo hē ma?",
+          "de": "Chinesische Medizin… schmeckt die gut?"
         },
         {
           "id": "13-12",
           "type": "dialogue",
           "speaker": "药剂师",
           "zh": "不太好喝。但是很有用。你最好喝这个中药。",
-          "pinyin": "bú tài hǎo hē. dànshì hěn yǒu yòng. nǐ zuìhǎo hē zhège zhōng yào.",
-          "de": "Nicht besonders. Aber sie hilft gut. Sie nehmen am besten diese chinesische Medizin."
+          "pinyin": "Bú tài hǎo hē. Dànshì hěn yǒuyòng. Nǐ zuìhǎo hē zhège zhōngyào.",
+          "de": "Nicht besonders gut. Aber sehr wirksam. Am besten nehmen Sie diese chinesische Medizin."
         },
         {
           "id": "13-13",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "好，那我要中药。",
-          "pinyin": "hǎo, nà wǒ yào zhōng yào.",
+          "pinyin": "Hǎo, nà wǒ yào zhōngyào.",
           "de": "Gut, dann nehme ich die chinesische Medizin."
         },
         {
@@ -3412,8 +3405,8 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "药剂师",
           "zh": "早上、中午、晚上都喝。多喝水，好好休息。",
-          "pinyin": "zǎoshang, zhōngwǔ, wǎnshang dōu hē. duō hē shuǐ, hǎo hǎo xiū xī.",
-          "de": "Nehmen Sie sie morgens, mittags und abends. Trinken Sie viel Wasser und ruhen Sie sich gut aus."
+          "pinyin": "Zǎoshang, zhōngwǔ, wǎnshang dōu hē. Duō hē shuǐ, hǎohāo xiūxi.",
+          "de": "Trinken Sie es morgens, mittags und abends. Trinken Sie viel Wasser und ruhen Sie sich gut aus."
         },
         {
           "id": "13-15",
@@ -3436,8 +3429,8 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "我感冒了。你的公园太危险了。",
-          "pinyin": "wǒ gǎnmào le. nǐ de gōng yuán tài wēi xiǎn le.",
-          "de": "Ich bin erkältet. Dein Park ist viel zu gefährlich."
+          "pinyin": "Wǒ gǎnmào le. Nǐ de gōngyuán tài wēixiǎn le.",
+          "de": "Ich bin erkältet. Dein Park ist zu gefährlich."
         },
         {
           "id": "13-18",
@@ -3451,8 +3444,8 @@ window.CF_STORY = {
           "id": "13-19",
           "type": "dialogue",
           "speaker": "林月",
-          "zh": "我的公园？你自己滑倒了。",
-          "pinyin": "wǒ de gōng yuán? nǐ zìjǐ huá dào le.",
+          "zh": "我的公园？是你自己滑了一下。",
+          "pinyin": "Wǒ de gōngyuán? Shì nǐ zìjǐ huá le yíxià.",
           "de": "Mein Park? Du bist selbst ausgerutscht."
         },
         {
@@ -3460,7 +3453,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "⋯⋯对。",
-          "pinyin": "⋯⋯ duì.",
+          "pinyin": "… Duì.",
           "de": "… Stimmt."
         },
         {
@@ -3468,23 +3461,23 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "多喝热水。早点儿睡觉。",
-          "pinyin": "duō hē rèshuǐ. zǎo diǎnr shuìjiào.",
-          "de": "Trink viel heißes Wasser und geh früh schlafen."
+          "pinyin": "Duō hē rèshuǐ. Zǎo diǎnr shuìjiào.",
+          "de": "Trink viel heißes Wasser. Geh früh schlafen."
         },
         {
           "id": "13-22",
           "type": "dialogue",
           "speaker": "苏然",
-          "zh": "你也这么说。热水，热水。",
-          "pinyin": "nǐ yě zhème shuō. rèshuǐ, rèshuǐ.",
-          "de": "Du sagst das also auch. Heißes Wasser, heißes Wasser."
+          "zh": "你也会说这个。热水，热水。",
+          "pinyin": "Nǐ yě huì shuō zhège. Rèshuǐ, rèshuǐ.",
+          "de": "Das sagst du auch. Heißes Wasser, heißes Wasser."
         },
         {
           "id": "13-23",
           "type": "dialogue",
           "speaker": "林月",
           "zh": "每个中国人都会说。",
-          "pinyin": "měi ge zhōng guó rén dōu huì shuō.",
+          "pinyin": "Měi ge Zhōngguó rén dōu huì shuō.",
           "de": "Das sagt jeder Chinese."
         },
         {
@@ -3530,9 +3523,9 @@ window.CF_STORY = {
           "id": "14-03",
           "type": "dialogue",
           "speaker": "苏然",
-          "zh": "第一站，第二站⋯⋯天安门是第三站。",
-          "pinyin": "dì yí zhàn, dì èr zhàn ⋯⋯ Tiān’ānmén shì dì sān zhàn.",
-          "de": "Erste Station, zweite Station … Tiān’ānmén ist die dritte Station."
+          "zh": "第一站，第二站⋯⋯天安门东站是第三站。",
+          "pinyin": "Dì yī zhàn, dì èr zhàn… Tiān'ānmén Dōng Zhàn shì dì sān zhàn.",
+          "de": "Erste Station, zweite Station… Tian'anmen Ost ist die dritte Station."
         },
         {
           "id": "14-04",
@@ -3555,39 +3548,39 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "请问，天安门广场怎么走？",
-          "pinyin": "qǐngwèn, Tiān’ānmén Guǎngchǎng zěnme zǒu?",
-          "de": "Entschuldigung, wie komme ich zum Tiān’ānmén-Platz?"
+          "pinyin": "Qǐngwèn, Tiān'ānmén Guǎngchǎng zěnme zǒu?",
+          "de": "Entschuldigung, wie komme ich zum Tian'anmen-Platz?"
         },
         {
           "id": "14-07",
           "type": "dialogue",
           "speaker": "大爷",
           "zh": "天安门广场啊，不远。你一直走，到前面的路口右转。",
-          "pinyin": "Tiān’ānmén Guǎngchǎng ā, bù yuǎn. nǐ yìzhí zǒu, dào qiánmiàn de lùkǒu yòu zhuǎn.",
-          "de": "Zum Tiān’ānmén-Platz? Das ist nicht weit. Gehen Sie immer geradeaus und biegen Sie an der nächsten Kreuzung rechts ab."
+          "pinyin": "Tiān'ānmén Guǎngchǎng a, bù yuǎn. Nǐ yìzhí zǒu, dào qiánmiàn de lùkǒu yòu zhuǎn.",
+          "de": "Der Tian'anmen-Platz, ah, nicht weit. Geh geradeaus und biege an der Kreuzung vorne rechts ab."
         },
         {
           "id": "14-08",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "一直走，然后右转。",
-          "pinyin": "yìzhí zǒu, ránhòu yòu zhuǎn.",
-          "de": "Geradeaus und dann rechts."
+          "pinyin": "Yìzhí zǒu, ránhòu yòu zhuǎn.",
+          "de": "Geradeaus, dann rechts."
         },
         {
           "id": "14-09",
           "type": "dialogue",
           "speaker": "大爷",
           "zh": "对。过了安检就是天安门广场。故宫在广场北边。",
-          "pinyin": "duì. guò le ānjiǎn jiù shì Tiān’ānmén Guǎngchǎng. Gùgōng zài guǎng chǎng běi biān.",
-          "de": "Genau. Hinter der Sicherheitskontrolle liegt der Tiān’ānmén-Platz. Die Verbotene Stadt liegt nördlich davon."
+          "pinyin": "Duì. Guò le ānjiǎn jiù shì Tiān'ānmén Guǎngchǎng. Gùgōng zài guǎngchǎng běibiān.",
+          "de": "Genau. Nach der Sicherheitskontrolle bist du direkt auf dem Platz. Die Verbotene Stadt liegt an der Nordseite des Platzes."
         },
         {
           "id": "14-10",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "远吗？",
-          "pinyin": "yuǎn ma?",
+          "pinyin": "Yuǎn ma?",
           "de": "Ist es weit?"
         },
         {
@@ -3595,15 +3588,15 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "大爷",
           "zh": "不远，走十分钟。",
-          "pinyin": "bù yuǎn, zǒu shí fēnzhōng.",
-          "de": "Nein, etwa zehn Minuten zu Fuß."
+          "pinyin": "Bù yuǎn, zǒu shí fēnzhōng.",
+          "de": "Nicht weit, zehn Minuten zu Fuß."
         },
         {
           "id": "14-12",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "谢谢您！",
-          "pinyin": "xièxie nín!",
+          "pinyin": "Xièxie nín!",
           "de": "Vielen Dank!"
         },
         {
@@ -3635,7 +3628,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "工作人员",
           "zh": "你好，请出示身份证。",
-          "pinyin": "nǐ hǎo, qǐng chū shì shēnfènzhèng.",
+          "pinyin": "Nǐ hǎo, qǐng chūshì shēnfènzhèng.",
           "de": "Hallo, bitte zeigen Sie Ihren Personalausweis."
         },
         {
@@ -3643,15 +3636,15 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "好，在这里。",
-          "pinyin": "hǎo, zài zhèlǐ.",
-          "de": "Gut, hier ist er."
+          "pinyin": "Hǎo, zài zhèlǐ.",
+          "de": "Gut, hier bitte."
         },
         {
           "id": "14-18",
           "type": "dialogue",
           "speaker": "工作人员",
           "zh": "好的。入口在右边。",
-          "pinyin": "hǎo de. rùkǒu zài yòubian.",
+          "pinyin": "Hǎo de. Rùkǒu zài yòubiān.",
           "de": "In Ordnung. Der Eingang ist rechts."
         },
         {
@@ -3659,13 +3652,12 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "谢谢。",
-          "pinyin": "xièxie.",
+          "pinyin": "Xièxie.",
           "de": "Danke."
         },
         {
           "id": "14-20",
-          "type": "dialogue",
-          "speaker": "里面比他想的更大",
+          "type": "narration",
           "zh": "一个院子，还有一个院子，还有一个院子。房子是红色和黄色的。",
           "pinyin": "yí ge yuàn zi, hái yǒu yí ge yuàn zi, hái yǒu yí ge yuàn zi. fángzi shì hóngsè hé huáng sè de.",
           "de": "Drinnen ist es noch größer, als er gedacht hat: ein Innenhof, dann noch einer und noch einer. Die Gebäude sind rot und gelb."
@@ -3699,7 +3691,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "游客",
           "zh": "请问，出口在哪里？",
-          "pinyin": "qǐngwèn, chūkǒu zài nǎlǐ?",
+          "pinyin": "Qǐngwèn, chūkǒu zài nǎlǐ?",
           "de": "Entschuldigung, wo ist der Ausgang?"
         },
         {
@@ -3707,15 +3699,15 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "出口在后面。你一直走，然后右转就到了。",
-          "pinyin": "chūkǒu zài hòumiàn. nǐ yìzhí zǒu, ránhòu yòu zhuǎn jiù dào le.",
-          "de": "Der Ausgang ist hinten. Gehen Sie immer geradeaus und biegen Sie dann rechts ab."
+          "pinyin": "Chūkǒu zài hòumiàn. Nǐ yìzhí zǒu, ránhòu yòu zhuǎn jiù dào le.",
+          "de": "Der Ausgang ist hinten. Geh geradeaus, dann rechts, dann bist du da."
         },
         {
           "id": "14-26",
           "type": "dialogue",
           "speaker": "游客",
           "zh": "谢谢！",
-          "pinyin": "xièxie!",
+          "pinyin": "Xièxie!",
           "de": "Danke!"
         },
         {
@@ -3762,23 +3754,23 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "你明天就走了。",
-          "pinyin": "nǐ míngtiān jiù zǒu le.",
-          "de": "Morgen fährst du schon zurück."
+          "pinyin": "Nǐ míngtiān jiù zǒu le.",
+          "de": "Morgen fährst du schon."
         },
         {
           "id": "15-04",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "对。时间过得真快。",
-          "pinyin": "duì. shíjiān guò de zhēn kuài.",
-          "de": "Ja. Die Zeit ist wirklich schnell vergangen."
+          "pinyin": "Duì. Shíjiān guò de zhēn kuài.",
+          "de": "Ja. Die Zeit vergeht wirklich schnell."
         },
         {
           "id": "15-05",
           "type": "dialogue",
           "speaker": "林月",
           "zh": "你觉得北京怎么样？",
-          "pinyin": "nǐ juéde Běijīng zěnmeyàng?",
+          "pinyin": "Nǐ juéde Běijīng zěnmeyàng?",
           "de": "Wie findest du Beijing?"
         },
         {
@@ -3786,15 +3778,15 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "我很喜欢。北京跟上海很不一样。",
-          "pinyin": "wǒ hěn xǐhuan. Běijīng gēn Shànghǎi hěn bù yíyàng.",
-          "de": "Ich mag die Stadt sehr. Beijing ist ganz anders als Shanghai."
+          "pinyin": "Wǒ hěn xǐhuan. Běijīng gēn Shànghǎi hěn bù yíyàng.",
+          "de": "Ich mag Beijing sehr. Beijing ist ganz anders als Shanghai."
         },
         {
           "id": "15-07",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "我觉得北京的老房子比上海的多。",
-          "pinyin": "wǒ juéde Běijīng de lǎo fángzi bǐ Shànghǎi de duō.",
+          "pinyin": "Wǒ juéde Běijīng de lǎo fángzi bǐ Shànghǎi de duō.",
           "de": "Ich finde, in Beijing gibt es mehr alte Häuser als in Shanghai."
         },
         {
@@ -3810,39 +3802,39 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "那吃的呢？北京的菜跟上海的一样吗？",
-          "pinyin": "nà chī de ne? Běijīng de cài gēn Shànghǎi de yíyàng ma?",
-          "de": "Und das Essen? Ist das Essen in Beijing genauso wie in Shanghai?"
+          "pinyin": "Nà chī de ne? Běijīng de cài gēn Shànghǎi de yíyàng ma?",
+          "de": "Und das Essen? Ist das Beijinger Essen wie das aus Shanghai?"
         },
         {
           "id": "15-10",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "不一样。北京的菜比较咸，上海的比较甜。",
-          "pinyin": "bù yíyàng. Běijīng de cài bǐjiào xián, Shànghǎi de bǐjiào tián.",
-          "de": "Nein. Das Essen in Beijing ist eher salzig, das in Shanghai eher süß."
+          "pinyin": "Bù yíyàng. Běijīng de cài bǐjiào xián, Shànghǎi de bǐjiào tián.",
+          "de": "Nicht gleich. Das Beijinger Essen ist eher salzig, das aus Shanghai eher süß."
         },
         {
           "id": "15-11",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "但是我最喜欢烤鸭。",
-          "pinyin": "dànshì wǒ zuì xǐhuan kǎo yā.",
+          "pinyin": "Dànshì wǒ zuì xǐhuan kǎoyā.",
           "de": "Aber am liebsten mag ich die Peking-Ente."
         },
         {
           "id": "15-12",
           "type": "dialogue",
           "speaker": "林月",
-          "zh": "因为是我带你去吃的，所以你觉得好吃，对吗？",
-          "pinyin": "yīnwèi shì wǒ dài nǐ qù chī de, suǒyǐ nǐ juéde hǎochī, duì ma?",
-          "de": "Weil ich dich dorthin gebracht habe, findest du sie lecker, richtig?"
+          "zh": "因为是我带你去的，所以你觉得很好吃，对吗？",
+          "pinyin": "Yīnwèi shì wǒ dài nǐ qù de, suǒyǐ nǐ juéde hěn hǎochī, duì ma?",
+          "de": "Weil ich dich hingebracht habe, findest du es besonders lecker, richtig?"
         },
         {
           "id": "15-13",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "⋯⋯也许。",
-          "pinyin": "⋯⋯ yě xǔ.",
+          "pinyin": "… Yěxǔ.",
           "de": "… Vielleicht."
         },
         {
@@ -3858,24 +3850,24 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "这个星期我去过很多地方。长城、公园、故宫⋯⋯",
-          "pinyin": "zhège xīng qī wǒ qùguo hěn duō dìfang. Chángchéng, gōng yuán, Gùgōng ⋯⋯",
-          "de": "In dieser Woche war ich an vielen Orten: an der Großen Mauer, im Park, in der Verbotenen Stadt …"
+          "pinyin": "Zhège xīngqī wǒ qù guo hěn duō dìfang. Chángchéng, gōngyuán, Gùgōng…",
+          "de": "Diese Woche war ich an vielen Orten. Die Mauer, der Park, die Verbotene Stadt…"
         },
         {
           "id": "15-16",
           "type": "dialogue",
           "speaker": "林月",
           "zh": "还感冒过。",
-          "pinyin": "hái gǎnmào guo.",
-          "de": "Und du warst erkältet."
+          "pinyin": "Hái gǎnmào guo.",
+          "de": "Und erkältet warst du auch."
         },
         {
           "id": "15-17",
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "⋯⋯对，还感冒过。",
-          "pinyin": "⋯⋯ duì, hái gǎnmào guo.",
-          "de": "… Ja, ich war auch erkältet."
+          "pinyin": "… Duì, hái gǎnmào guo.",
+          "de": "… Ja, erkältet auch."
         },
         {
           "id": "15-18",
@@ -3890,7 +3882,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "我还没去过上海。",
-          "pinyin": "wǒ hái méi qùguo Shànghǎi.",
+          "pinyin": "Wǒ hái méi qù guo Shànghǎi.",
           "de": "Ich war noch nie in Shanghai."
         },
         {
@@ -3898,7 +3890,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "真的吗？",
-          "pinyin": "zhēnde ma?",
+          "pinyin": "Zhēn de ma?",
           "de": "Wirklich?"
         },
         {
@@ -3906,8 +3898,8 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "真的。虽然坐火车很方便，但是我一直没时间。",
-          "pinyin": "zhēnde. suīrán zuò huǒ chē hěn fāngbiàn, dànshì wǒ yìzhí méi shí jiān.",
-          "de": "Ja. Obwohl die Zugfahrt sehr bequem ist, hatte ich bisher nie Zeit."
+          "pinyin": "Zhēn de. Suīrán zuò huǒchē hěn fāngbiàn, dànshì wǒ yìzhí méi shíjiān.",
+          "de": "Wirklich. Obwohl es mit dem Zug sehr praktisch ist, hatte ich nie Zeit."
         },
         {
           "id": "15-22",
@@ -3922,8 +3914,8 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "那下次我带你去上海。",
-          "pinyin": "nà xiàcì wǒ dài nǐ qù Shànghǎi.",
-          "de": "Dann zeige ich dir beim nächsten Mal Shanghai."
+          "pinyin": "Nà xiàcì wǒ dài nǐ qù Shànghǎi.",
+          "de": "Dann zeige ich dir nächstes Mal Shanghai."
         },
         {
           "id": "15-24",
@@ -3946,23 +3938,23 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "路上小心。",
-          "pinyin": "lùshang xiǎo xīn.",
-          "de": "Gute Reise. Pass auf dich auf."
+          "pinyin": "Lùshang xiǎoxīn.",
+          "de": "Pass unterwegs auf dich auf."
         },
         {
           "id": "15-27",
           "type": "dialogue",
           "speaker": "苏然",
-          "zh": "谢谢你。这几天我真的很开心。",
-          "pinyin": "xièxie nǐ. zhè jǐ tiān wǒ zhēnde hěn kāixīn.",
-          "de": "Danke dir. Die letzten Tage waren wirklich schön."
+          "zh": "谢谢你。这个星期真的很开心。",
+          "pinyin": "Xièxie nǐ. Zhège xīngqī zhēn de hěn kāixīn.",
+          "de": "Danke. Diese Woche war wirklich schön."
         },
         {
           "id": "15-28",
           "type": "dialogue",
           "speaker": "林月",
           "zh": "下次见。",
-          "pinyin": "xiàcì jiàn.",
+          "pinyin": "Xiàcì jiàn.",
           "de": "Bis zum nächsten Mal."
         },
         {
@@ -3970,7 +3962,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "下次见。",
-          "pinyin": "xiàcì jiàn.",
+          "pinyin": "Xiàcì jiàn.",
           "de": "Bis zum nächsten Mal."
         },
         {
@@ -4010,7 +4002,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "列车员",
           "zh": "你好，请出示身份证。",
-          "pinyin": "nǐ hǎo, qǐng chū shì shēnfènzhèng.",
+          "pinyin": "Nǐ hǎo, qǐng chūshì shēnfènzhèng.",
           "de": "Hallo, bitte zeigen Sie Ihren Personalausweis."
         },
         {
@@ -4018,7 +4010,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "好，在这里。",
-          "pinyin": "hǎo, zài zhèlǐ.",
+          "pinyin": "Hǎo, zài zhèlǐ.",
           "de": "Gut, hier ist er."
         },
         {
@@ -4026,7 +4018,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "列车员",
           "zh": "好的，谢谢。",
-          "pinyin": "hǎo de, xièxie.",
+          "pinyin": "Hǎo de, xièxie.",
           "de": "In Ordnung, danke."
         },
         {
@@ -4042,8 +4034,8 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "苏然",
           "zh": "我在火车上了。这几天谢谢你了。",
-          "pinyin": "wǒ zài huǒ chē shàng le. zhè jǐ tiān xièxie nǐ le.",
-          "de": "Ich sitze jetzt im Zug. Vielen Dank für die letzten Tage."
+          "pinyin": "Wǒ zài huǒchē shàng le. Zhè jǐ tiān xièxie nǐ le.",
+          "de": "Ich bin jetzt im Zug. Danke für alles in den letzten Tagen."
         },
         {
           "id": "15-39",
@@ -4058,7 +4050,7 @@ window.CF_STORY = {
           "type": "dialogue",
           "speaker": "林月",
           "zh": "路上多喝热水。",
-          "pinyin": "lùshang duō hē rèshuǐ.",
+          "pinyin": "Lùshang duō hē rèshuǐ.",
           "de": "Trink unterwegs viel heißes Wasser."
         },
         {

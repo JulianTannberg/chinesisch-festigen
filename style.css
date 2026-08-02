@@ -97,7 +97,7 @@ h1{
 }
 .chapterCard:hover,.modeCard:hover{transform:translateY(-2px);background:var(--card-strong)}
 .chapterNo{font-size:13px;opacity:.78;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
-.chapterTitle{font-size:24px;font-weight:850;margin:8px 0 8px}
+.chapterTitle{font-size:clamp(18px,4.8vw,24px);line-height:1.12;font-weight:850;margin:8px 0 8px;text-wrap:balance}
 .chapterShort{font-size:14px;line-height:1.42;opacity:.84;margin:0}
 .modeCard{
   display:block;
@@ -1186,8 +1186,10 @@ img.contactAvatar{ object-fit:cover; padding:0; }
   position:sticky;
   top:0;
   z-index:30;
-  background:var(--chapter-bg);
-  padding-top:10px;
+  background:color-mix(in srgb, var(--chapter-bg) 94%, transparent);
+  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px);
+  padding-top:max(10px, env(safe-area-inset-top));
   padding-bottom:10px;
   margin-bottom:8px;
 }
@@ -2604,6 +2606,15 @@ input, textarea, select, [contenteditable="true"]{
 
 .chapterHub{max-width:860px}
 .homeButton{font-weight:850}
+.pageTitleResponsive{
+  font-size:clamp(24px, 6vw, 38px);
+  line-height:1.08;
+  overflow-wrap:normal;
+  word-break:normal;
+  hyphens:none;
+  text-wrap:balance;
+}
+.chapterHub > .subtitle{margin-top:7px}
 .learningSections{display:grid;gap:16px}
 .learningSection{
   --section-rgb:90,150,230;
@@ -2621,17 +2632,18 @@ input, textarea, select, [contenteditable="true"]{
 .sectionVocab{--section-rgb:137,104,194}
 .learningSectionHead{
   display:grid;
-  grid-template-columns:34px 50px minmax(0,1fr);
-  gap:11px;
+  grid-template-columns:minmax(88px, .34fr) minmax(0,1fr);
+  gap:15px;
   align-items:center;
   margin-bottom:13px;
 }
-.learningSectionNo{
-  width:34px;height:34px;border-radius:11px;
-  display:grid;place-items:center;
-  background:rgba(var(--section-rgb),.16);
-  color:rgb(var(--section-rgb));
-  font-size:18px;font-weight:900;
+.learningSectionIdentity{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  text-align:center;
 }
 .learningSectionIcon{
   width:50px;height:50px;border-radius:50%;
@@ -2641,17 +2653,17 @@ input, textarea, select, [contenteditable="true"]{
   font-size:20px;font-weight:900;
   letter-spacing:-2px;
 }
-.learningSectionHead h2{margin:0 0 3px;font-size:22px;line-height:1.12}
-.learningSectionHead p{margin:0;color:var(--muted);font-size:13px;line-height:1.35}
+.learningSectionHead h2{margin:0;font-size:22px;line-height:1.12}
+.learningSectionHead p{margin:0;color:var(--muted);font-size:14px;line-height:1.45}
 .learningLinks{display:grid;gap:8px}
 .learningLink{
   --progress:0%;
   position:relative;
   isolation:isolate;
   display:grid;
-  grid-template-columns:minmax(0,1fr) auto;
+  grid-template-columns:minmax(0,1fr) minmax(50px,auto) 18px;
   align-items:center;
-  gap:10px;
+  gap:9px;
   min-height:49px;
   padding:11px 13px;
   border:1px solid var(--stroke);
@@ -2662,11 +2674,12 @@ input, textarea, select, [contenteditable="true"]{
   font-weight:800;
   background:var(--button-bg);
 }
+.learningLink > span:first-child{min-width:0;overflow-wrap:anywhere}
 .learningLink::before{
   content:"";
   position:absolute;z-index:-1;inset:0;
   width:var(--progress);
-  background:rgba(var(--section-rgb),.24);
+  background:rgba(34,197,94,.23);
   transition:width .25s ease;
 }
 .learningLink::after{
@@ -2674,14 +2687,15 @@ input, textarea, select, [contenteditable="true"]{
   font-size:25px;
   line-height:1;
   opacity:.58;
-  margin-left:1px;
+  justify-self:end;
 }
 .learningLink:hover{background:var(--button-bg-hover)}
-.learningLink.complete{box-shadow:inset 0 0 0 1px rgba(34,197,94,.65)}
+.learningLink.complete{box-shadow:inset 0 0 0 1px rgba(34,197,94,.72)}
 .learningLink.unavailable{opacity:.45;cursor:default}
 .learningLink.unavailable::after{content:""}
 .activityScore{
-  margin-left:auto;
+  min-width:50px;
+  text-align:right;
   font-size:12px;
   font-weight:850;
   color:var(--muted);
@@ -2694,10 +2708,19 @@ input, textarea, select, [contenteditable="true"]{
 }
 @media(max-width:520px){
   .learningSection{padding:13px}
-  .learningSectionHead{grid-template-columns:30px 42px minmax(0,1fr);gap:9px}
-  .learningSectionNo{width:30px;height:30px;font-size:16px}
-  .learningSectionIcon{width:42px;height:42px;font-size:17px}
-  .learningSectionHead h2{font-size:20px}
+  .learningSectionHead{grid-template-columns:82px minmax(0,1fr);gap:11px}
+  .learningSectionIcon{width:43px;height:43px;font-size:17px}
+  .learningSectionHead h2{font-size:19px}
+  .learningSectionHead p{font-size:13px}
+  .learningLink{grid-template-columns:minmax(0,1fr) 48px 16px;padding:10px 11px;gap:6px}
+  .activityScore{min-width:48px;font-size:11.5px}
+}
+@media(max-width:370px){
+  .pageTitleResponsive{font-size:clamp(21px,6.2vw,27px)}
+  .learningSectionHead{grid-template-columns:72px minmax(0,1fr)}
+  .learningSectionHead h2{font-size:17px}
+  .learningSectionHead p{font-size:12.5px}
+  .learningLink{font-size:13px}
 }
 
 .gameOverview,.profileMenu{display:grid;gap:12px}
@@ -2752,3 +2775,101 @@ input, textarea, select, [contenteditable="true"]{
 .memoryChapterChoice.active{background:var(--card-strong);outline:2px solid rgba(255,255,255,.30)}
 .theme-light .memoryChapterChoice.active{outline-color:rgba(11,27,46,.28)}
 .memoryRoundDone{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:14px;padding:12px;border-radius:15px;background:var(--card-strong)}
+
+/* Hören: klare Trennung von Wort, Satz und kompletter Geschichte */
+.listenCard{min-height:0}
+.listenToolbar{align-items:stretch}
+.listenToolbar .tempoLabel{width:100%}
+.storyListenPanel{
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  gap:12px;padding:clamp(22px,7vw,48px) 16px;
+}
+.storyListenPanel[hidden]{display:none}
+.storyListenIcon{
+  width:78px;height:78px;border-radius:50%;display:grid;place-items:center;
+  padding-left:5px;font-size:30px;background:var(--card-strong);border:1px solid var(--stroke);
+}
+.storyListenPanel h2{margin:0;font-size:clamp(22px,6vw,32px)}
+.storyListenPanel p{max-width:560px;margin:0;color:var(--muted);line-height:1.5}
+.storyListenActions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;width:100%;margin-top:6px}
+.storyListenActions button{min-height:50px}
+.storyListenActions .primaryAction{min-width:min(100%,230px);font-weight:900;background:var(--card-strong)}
+.storyListenStatus{min-height:20px;color:var(--muted);font-size:13px}
+.storyListenPanel .progressBar{width:min(100%,500px)}
+.storyProgressFill{background:#22c55e}
+.speechBubble{font:inherit;text-align:left;display:flex;flex-direction:column;width:auto}
+@media(max-width:420px){
+  .app{padding-left:14px;padding-right:14px}
+  .card{padding:13px}
+  .listenApp .vocabCard{min-height:84px;padding:12px}
+  .listenApp .vocabCard .zh{font-size:clamp(28px,10vw,38px)}
+  .speechText{font-size:19px}
+  .storyListenActions{flex-direction:column}
+  .storyListenActions button{width:100%}
+}
+
+
+/* v139: finale responsive Navigation und einheitlicher Lernfortschritt */
+.pageTitleResponsive{
+  font-size:clamp(20px,5.4vw,32px)!important;
+  line-height:1.12!important;
+  text-wrap:balance;
+  overflow-wrap:normal;
+  hyphens:auto;
+}
+.topbarSticky{
+  position:sticky!important;
+  top:max(0px,env(safe-area-inset-top));
+  z-index:80;
+  background:color-mix(in srgb,var(--bg) 94%,transparent);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+.learningLink::before,.progressFill,.storyProgressFill{background:#22c55e!important;opacity:1!important}
+.activityScore{color:#16733a!important}
+.learningSectionHead{align-items:center}
+.learningSectionIdentity{align-self:stretch;justify-content:center}
+.learningSectionHead h2{order:-1;text-align:center}
+@media(max-width:480px){
+  .pageTitleResponsive{font-size:clamp(18px,5.4vw,24px)!important}
+  .learningSection{padding:11px}
+  .learningSectionHead{grid-template-columns:68px minmax(0,1fr);gap:10px}
+  .learningSectionIdentity{gap:6px}
+  .learningSectionIcon{width:40px;height:40px;font-size:16px}
+  .learningSectionHead h2{font-size:16px}
+  .learningSectionHead p{font-size:12px;line-height:1.35}
+  .learningLink{grid-template-columns:minmax(0,1fr) 46px 14px;min-height:43px;padding:9px 10px;font-size:12.5px}
+  .activityScore{min-width:46px;font-size:11px;white-space:nowrap}
+  .trainLevels{gap:6px}
+  .trainLevels button{min-width:0;padding:9px 6px;font-size:12px;white-space:normal;line-height:1.15}
+}
+@media(max-width:360px){
+  .pageTitleResponsive{font-size:18px!important}
+  .learningSectionHead{grid-template-columns:60px minmax(0,1fr)}
+  .learningLink{font-size:12px;grid-template-columns:minmax(0,1fr) 43px 12px}
+  .activityScore{min-width:43px;font-size:10.5px}
+}
+
+
+/* v139.1: Kapitelname und Navigation bleiben gemeinsam sichtbar */
+.topbarSticky{
+  background:var(--bg);
+  background:color-mix(in srgb,var(--bg) 94%,transparent);
+}
+.topbarSticky .topbarPageTitle{
+  flex:1 1 auto;
+  min-width:0;
+  margin:0!important;
+  font-size:clamp(16px,4.6vw,24px)!important;
+  line-height:1.15!important;
+  text-align:right;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  hyphens:none;
+}
+@media(max-width:360px){
+  .topbarSticky{gap:8px}
+  .topbarSticky .back{min-height:36px;padding:7px 10px;font-size:12.5px}
+  .topbarSticky .topbarPageTitle{font-size:15px!important}
+}

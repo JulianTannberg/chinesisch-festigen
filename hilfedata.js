@@ -2,7 +2,7 @@
   "use strict";
 
   window.CF_HELP = {
-    version: 1,
+    version: 3,
     categories: [
       { id:"start", label:"Erste Schritte", topics:["erste-schritte","kapitel-freischalten","fortschritt"] },
       { id:"lernen", label:"Lernen & Üben", topics:["hoeren","schreiben","sprechen","satzuebungen"] },
@@ -21,6 +21,7 @@
         answer:[
           "Lies zuerst das passende Kapitel im Buch. Öffne danach dasselbe Kapitel in der App.",
           "Eine sinnvolle Reihenfolge ist: Hören, Schreiben, Sprechen, Sätze festigen und Vokabeln festigen. Jede Übung lässt sich direkt aus der fünfteiligen Kapitelansicht öffnen.",
+          "Auf der Kapitelübersicht findest du unten Kapitel, Zeichen, Spiele und Profil. In der fünfteiligen Kapitelansicht führt Home zurück zur Übersicht; auf einer einzelnen Übungsseite führt Zurück wieder in das gewählte Kapitel.",
           "Das nächste Kapitel öffnet sich, sobald du alle fortschrittsrelevanten Übungen des aktuellen Kapitels mindestens einmal vollständig durchgearbeitet hast."
         ],
         actions:[{label:"Zur Kapitelübersicht", href:"index.html"}],
@@ -55,8 +56,8 @@
         aliases:["vokabeln anhören","geschichte hören","dialog hören","sprechtempo"],
         keywords:["hören","audio","vokabel","dialog","geschichte","tempo","langsam"],
         answer:[
-          "Hören ist in drei eigene Seiten aufgeteilt: Vokabeln, einzelne Sätze und die ganze Geschichte. Tippe Wörter oder Sätze an, um sie gezielt anzuhören; auf der Geschichtsseite wird alles zusammenhängend abgespielt.",
-          "Das Sprechtempo lässt sich verändern. Hören zählt zum Kapitel-Fortschritt, sobald du den vorgesehenen Durchgang beendet hast."
+          "Hören ist in drei eigene Seiten aufgeteilt: Vokabeln, Sätze und Geschichte. Unter „Vokabeln“ hörst du einzelne Wörter. Unter „Sätze“ tippst du jeden Dialogsatz einzeln an und sprichst ihn nach.",
+          "Unter „Geschichte“ werden Erzähltext und Dialoge vollständig in der richtigen Reihenfolge abgespielt. Dort gibt es bewusst keine Liste einzelner Sätze. Das Sprechtempo lässt sich auf allen drei Seiten verändern."
         ],
         related:["ton-audio","erste-schritte","sprechen"]
       },
@@ -173,7 +174,7 @@
         answer:[
           "Auf iPhone und iPad öffnest du die Website in Safari, tippst auf Teilen und wählst „Zum Home-Bildschirm“.",
           "Auf Android erscheint in Chrome häufig „App installieren“. Alternativ findest du die Funktion im Browser-Menü. Unter Windows kannst du die Installation in Chrome oder Edge über das Installieren-Symbol beziehungsweise das Browser-Menü starten.",
-          "Die ausführlichen Geräteschritte stehen auf der Installationsseite."
+          "Die ausführlichen Geräteschritte stehen auf der Installationsseite. Wenn du die installierte App geöffnet hast, wird der Punkt „App installieren“ im Profil nicht mehr angezeigt."
         ],
         actions:[{label:"Installationsanleitung öffnen", href:"start.html#install"}],
         related:["offline","apple-sprechen"]
@@ -246,6 +247,7 @@
         answer:[
           "Ein Konto ist nicht erforderlich. Ohne Anmeldung bleiben Name, Fortschritt und Einstellungen lokal im Browser des verwendeten Geräts.",
           "Mit der freiwilligen Anmeldung per E-Mail-Code kannst du deinen Fortschritt über Supabase sichern und auf mehreren Geräten verwenden. Ohne Internet lernst du lokal weiter; der Abgleich erfolgt beim nächsten Online-Zugriff.",
+          "Melde dich beim ersten Mal auf dem Gerät und in dem Browser an, in dem dein bisheriger Fortschritt liegt. Die App legt vor dem Abgleich eine lokale Sicherheitskopie an und übernimmt diesen Stand in dein Konto. Lösche die Browserdaten erst, wenn „Fortschritt ist synchronisiert“ angezeigt wird.",
           "Der freiwillige KI-Dialog öffnet ChatGPT außerhalb der Lern-App und unterliegt den dortigen Bedingungen."
         ],
         actions:[{label:"Konto verwalten", href:"konto.html"},{label:"Datenschutz öffnen", href:"datenschutz.html"}],

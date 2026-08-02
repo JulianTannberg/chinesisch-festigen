@@ -16,11 +16,10 @@
 </head>
 <body>
   <main class="app gapApp">
-    <div class="topbar">
+    <div class="topbar topbarSticky">
       <a class="back" id="back">← Zurück</a>
-    </div>
-    <h1 id="title">Lückenspiel</h1>
-    <p class="subtitle">Wähle das passende Wort für die Lücke. Die Aufgaben werden aus den eingetragenen Lücken und aus den Dialogsätzen des Kapitels gebildet.</p>
+    <h1 class="pageTitleResponsive topbarPageTitle" id="title">Lückenspiel</h1></div>
+    <p class="subtitle"><strong>Lücken ergänzen</strong> · Wähle das passende Wort für die Lücke. Die Aufgaben werden aus den eingetragenen Lücken und aus den Dialogsätzen des Kapitels gebildet.</p>
 
     <section class="card">
       <div id="empty" class="empty" style="display:none;">Für dieses Kapitel sind noch keine Lücken oder Dialogsätze eingetragen.</div>
@@ -62,7 +61,7 @@ document.documentElement.classList.add("noScroll");
 const $ = id => document.getElementById(id);
 $("back").href = `kapitel.html?id=${topic.id}`;
 $("finishBack").href = `kapitel.html?id=${topic.id}`;
-$("title").textContent = `${topic.id}. ${topic.title} · Lückenspiel`;
+$("title").textContent = `${Number(topic.id)}. ${topic.title}`;
 
 function shuffle(array){
   const a = array.slice();

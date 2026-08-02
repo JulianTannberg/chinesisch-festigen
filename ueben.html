@@ -33,10 +33,9 @@
 </head>
 <body>
   <main class="app puzzleApp">
-    <div class="topbar">
+    <div class="topbar topbarSticky">
       <a class="back" id="back">← Zurück</a>
-    </div>
-    <h1 id="title">Üben</h1>
+    <h1 class="pageTitleResponsive topbarPageTitle" id="title">Üben</h1></div>
     <p class="subtitle" id="subtitle"></p>
 
     <section class="card flexCard">
@@ -119,8 +118,8 @@ applyTheme(topic, `Üben: ${MODES[MODE].name}`);
 document.documentElement.classList.add("noScroll");
 $("back").href = `kapitel.html?id=${topic.id}`;
 $("finishBack").href = `kapitel.html?id=${topic.id}`;
-$("title").textContent = `${topic.id}. ${topic.title} · ${MODES[MODE].name}`;
-$("subtitle").textContent = MODES[MODE].subtitle;
+$("title").textContent = `${Number(topic.id)}. ${topic.title}`;
+$("subtitle").textContent = `${MODES[MODE].name} · ${MODES[MODE].subtitle}`;
 
 function stripZh(s){
   return String(s || "").replace(/[\s。！？!?，,、；;：:·.…—–-]/g, "");

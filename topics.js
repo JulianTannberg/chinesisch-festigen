@@ -1,11 +1,8 @@
-// Chinesisch festigen – zentrale Kapiteldaten
-// Vokabeln und Kapitelgeschichten: Stand der Typst-Dateien, Abgleich 19.07.2026.
-
 window.CF_TOPICS = [
   {
     "id": "01",
     "title": "Ankunft",
-    "short": "Bahnhof Beijing Süd, Anrempeln, Vorstellen, WeChat-Tausch",
+    "short": "Sū Rán kommt in Beijing an. Am Bahnhof trifft er Lín Yuè und findet den Weg zur U-Bahn.",
     "accent": "#03172B",
     "textColor": "#FFFFFF",
     "vocab": [
@@ -210,9 +207,9 @@ window.CF_TOPICS = [
         "de": "Modalpartikel (Vorschlag)"
       },
       {
-        "zh": "了",
-        "pinyin": "le",
-        "de": "Partikel (Handlung abgeschlossen)"
+        "zh": "路",
+        "pinyin": "lù",
+        "de": "Weg"
       },
       {
         "zh": "欢迎",
@@ -281,15 +278,15 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "苏然",
-        "zh": "没事，谢谢。我看手机了。",
-        "pinyin": "Méi shì, xièxie. Wǒ kàn shǒujī le.",
-        "de": "Alles gut, danke. Ich habe auf mein Handy geschaut."
+        "zh": "对不起，我在看手机，没看路。",
+        "pinyin": "Duìbuqǐ, wǒ zài kàn shǒujī, méi kàn lù.",
+        "de": "Entschuldigung, ich habe auf mein Handy geschaut und nicht auf den Weg geachtet."
       },
       {
         "speaker": "林月",
-        "zh": "我也看手机了。",
-        "pinyin": "Wǒ yě kàn shǒujī le.",
-        "de": "Ich habe auch aufs Handy geschaut."
+        "zh": "我也没看路。",
+        "pinyin": "Wǒ yě méi kàn lù.",
+        "de": "Ich habe auch nicht auf den Weg geachtet."
       },
       {
         "speaker": "苏然",
@@ -367,24 +364,30 @@ window.CF_TOPICS = [
     "studentDialog": [
       {
         "speaker": "A",
-        "zh": "你好，我叫 …… 。你叫什么名字？",
-        "pinyin": "Nǐ hǎo, wǒ jiào… Nǐ jiào shénme míngzi?",
+        "zh": "你好，我叫……。你叫什么名字？",
+        "pinyin": "Nǐ hǎo, wǒ jiào …… Nǐ jiào shénme míngzi?",
         "de": "Hallo, ich heiße … Wie heißt du?"
       },
       {
         "speaker": "B",
-        "zh": "你好，我叫 …… 。",
-        "pinyin": "Nǐ hǎo, wǒ jiào…",
+        "zh": "你好，我叫……。",
+        "pinyin": "Nǐ hǎo, wǒ jiào ……",
         "de": "Hallo, ich heiße …"
       },
       {
         "speaker": "A",
         "zh": "你是德国人吗？",
         "pinyin": "Nǐ shì Déguórén ma?",
-        "de": "Bist du Deutsche/r? / Kommst du aus Deutschland?"
+        "de": "Bist du Deutsche/r?"
       },
       {
         "speaker": "B",
+        "zh": "是的，我是德国人。你呢？",
+        "pinyin": "Shì de, wǒ shì Déguórén. Nǐ ne?",
+        "de": "Ja, ich bin Deutsche/r. Und du?"
+      },
+      {
+        "speaker": "A",
         "zh": "我也是德国人。",
         "pinyin": "Wǒ yě shì Déguórén.",
         "de": "Ich bin auch Deutsche/r."
@@ -403,15 +406,27 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "B",
-        "zh": "我是 …… 人。你呢？",
-        "pinyin": "Wǒ shì … rén. Nǐ ne?",
+        "zh": "我是……人。你呢？",
+        "pinyin": "Wǒ shì …… rén. Nǐ ne?",
         "de": "Ich bin … Und du?"
       },
       {
         "speaker": "A",
-        "zh": "我是 …… 人。",
-        "pinyin": "Wǒ shì … rén.",
-        "de": "Ich bin …"
+        "zh": "我也是……人。",
+        "pinyin": "Wǒ yě shì …… rén.",
+        "de": "Ich bin auch …"
+      },
+      {
+        "speaker": "B",
+        "zh": "那，再见！",
+        "pinyin": "Nà, zàijiàn!",
+        "de": "Dann, tschüss!"
+      },
+      {
+        "speaker": "A",
+        "zh": "再见！",
+        "pinyin": "Zàijiàn!",
+        "de": "Tschüss!"
       }
     ],
     "storyDialogTitle": "Ankunft",
@@ -419,161 +434,245 @@ window.CF_TOPICS = [
     "studentDialogNote": "Name, Herkunft und Begrüßung üben.",
     "sentencePuzzles": [
       {
-        "de": "Entschuldigung!",
+        "zh": "啊！",
+        "pinyin": "Ā!",
+        "de": "Ah! Entschuldigung!"
+      },
+      {
         "zh": "对不起！",
         "pinyin": "Duìbuqǐ!",
-        "tokens": [
-          "对不起",
-          "！"
-        ]
+        "de": "Ah! Entschuldigung!"
       },
       {
-        "de": "Ich habe auch aufs Handy geschaut.",
-        "zh": "我也看手机了。",
-        "pinyin": "Wǒ yě kàn shǒujī le.",
-        "tokens": [
-          "我",
-          "也",
-          "看",
-          "手机",
-          "了",
-          "。"
-        ]
+        "zh": "没关系。",
+        "pinyin": "Méi guānxi.",
+        "de": "Macht nichts. Alles in Ordnung mit dir?"
       },
       {
-        "de": "Wie heißt du?",
+        "zh": "你没事吧？",
+        "pinyin": "Nǐ méi shì ba?",
+        "de": "Macht nichts. Alles in Ordnung mit dir?"
+      },
+      {
+        "zh": "对不起，我在看手机，没看路。",
+        "pinyin": "Duìbuqǐ, wǒ zài kàn shǒujī, méi kàn lù.",
+        "de": "Entschuldigung, ich habe auf mein Handy geschaut und nicht auf den Weg geachtet."
+      },
+      {
+        "zh": "我也没看路。",
+        "pinyin": "Wǒ yě méi kàn lù.",
+        "de": "Ich habe auch nicht auf den Weg geachtet."
+      },
+      {
+        "zh": "你好，我叫苏然。",
+        "pinyin": "Nǐ hǎo, wǒ jiào Sū Rán.",
+        "de": "Hallo, ich heiße Sū Rán. Wie heißt du?"
+      },
+      {
         "zh": "你叫什么名字？",
         "pinyin": "Nǐ jiào shénme míngzi?",
-        "tokens": [
-          "你",
-          "叫",
-          "什么",
-          "名字",
-          "？"
-        ]
+        "de": "Hallo, ich heiße Sū Rán. Wie heißt du?"
       },
       {
-        "de": "Bist du aus Beijing?",
+        "zh": "嗨，我叫林月。",
+        "pinyin": "Hāi, wǒ jiào Lín Yuè.",
+        "de": "Hi, ich heiße Lín Yuè."
+      },
+      {
         "zh": "你是北京人吗？",
-        "pinyin": "Nǐ shì Běijīngrén ma?",
-        "tokens": [
-          "你",
-          "是",
-          "北京人",
-          "吗",
-          "？"
-        ]
-      },
-      {
-        "de": "Ich bin nicht aus Beijing.",
-        "zh": "我不是北京人。",
-        "pinyin": "Wǒ bú shì Běijīngrén.",
-        "tokens": [
-          "我",
-          "不",
-          "是",
-          "北京人",
-          "。"
-        ]
-      },
-      {
-        "de": "Ich komme aus Shanghai.",
-        "zh": "我从上海来。",
-        "pinyin": "Wǒ cóng Shànghǎi lái.",
-        "tokens": [
-          "我",
-          "从",
-          "上海",
-          "来",
-          "。"
-        ]
-      }
-    ],
-    "gapExercises": [
-      {
-        "prompt": "___！",
-        "answer": "对不起",
-        "choices": [
-          "对不起",
-          "北京人",
-          "上海",
-          "你好"
-        ],
-        "solution": "对不起！",
-        "pinyin": "Duìbuqǐ!",
-        "de": "Entschuldigung!"
-      },
-      {
-        "prompt": "我___看手机了。",
-        "answer": "也",
-        "choices": [
-          "也",
-          "你",
-          "是",
-          "不"
-        ],
-        "solution": "我也看手机了。",
-        "pinyin": "Wǒ yě kàn shǒujī le.",
-        "de": "Ich habe auch aufs Handy geschaut."
-      },
-      {
-        "prompt": "你叫___名字？",
-        "answer": "什么",
-        "choices": [
-          "什么",
-          "谢谢",
-          "再见",
-          "我"
-        ],
-        "solution": "你叫什么名字？",
-        "pinyin": "Nǐ jiào shénme míngzi?",
-        "de": "Wie heißt du?"
-      },
-      {
-        "prompt": "你是北京人___？",
-        "answer": "吗",
-        "choices": [
-          "吗",
-          "看",
-          "来",
-          "好"
-        ],
-        "solution": "你是北京人吗？",
         "pinyin": "Nǐ shì Běijīngrén ma?",
         "de": "Bist du aus Beijing?"
       },
       {
-        "prompt": "我___是北京人。",
-        "answer": "不",
-        "choices": [
-          "不",
-          "名字",
-          "什么",
-          "哪"
-        ],
-        "solution": "我不是北京人。",
-        "pinyin": "Wǒ bú shì Běijīngrén.",
-        "de": "Ich bin nicht aus Beijing."
+        "zh": "是的，我是北京人。",
+        "pinyin": "Shì de, wǒ shì Běijīngrén.",
+        "de": "Ja, ich bin aus Beijing. Und du?"
       },
       {
-        "prompt": "我___上海来。",
-        "answer": "从",
-        "choices": [
-          "从",
-          "德国",
-          "德国人",
-          "北京"
-        ],
-        "solution": "我从上海来。",
+        "zh": "你呢？",
+        "pinyin": "Nǐ ne?",
+        "de": "Ja, ich bin aus Beijing. Und du?"
+      },
+      {
+        "zh": "我不是北京人。",
+        "pinyin": "Wǒ bú shì Běijīngrén.",
+        "de": "Ich bin nicht aus Beijing. Ich komme aus Shanghai."
+      },
+      {
+        "zh": "我从上海来。",
         "pinyin": "Wǒ cóng Shànghǎi lái.",
-        "de": "Ich komme aus Shanghai."
+        "de": "Ich bin nicht aus Beijing. Ich komme aus Shanghai."
+      },
+      {
+        "zh": "欢迎来北京。",
+        "pinyin": "Huānyíng lái Běijīng.",
+        "de": "Willkommen in Beijing."
+      },
+      {
+        "zh": "请问，地铁在哪里？",
+        "pinyin": "Qǐngwèn, dìtiě zài nǎlǐ?",
+        "de": "Entschuldigung, wo ist die U-Bahn?"
+      },
+      {
+        "zh": "地铁在那儿。",
+        "pinyin": "Dìtiě zài nàr.",
+        "de": "Die U-Bahn ist da drüben."
+      },
+      {
+        "zh": "我们加微信吧？",
+        "pinyin": "Wǒmen jiā Wēixìn ba?",
+        "de": "Wollen wir uns auf WeChat hinzufügen?"
+      },
+      {
+        "zh": "好，谢谢你。",
+        "pinyin": "Hǎo, xièxie nǐ.",
+        "de": "Okay, danke dir."
+      },
+      {
+        "zh": "那，再见！",
+        "pinyin": "Nà, zàijiàn!",
+        "de": "Dann, tschüss!"
+      },
+      {
+        "zh": "再见！",
+        "pinyin": "Zàijiàn!",
+        "de": "Tschüss!"
+      }
+    ],
+    "gapExercises": [],
+    "speechSentences": [
+      {
+        "speaker": "苏然",
+        "zh": "啊！",
+        "pinyin": "Ā!",
+        "de": "Ah! Entschuldigung!"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "对不起！",
+        "pinyin": "Duìbuqǐ!",
+        "de": "Ah! Entschuldigung!"
+      },
+      {
+        "speaker": "林月",
+        "zh": "没关系。",
+        "pinyin": "Méi guānxi.",
+        "de": "Macht nichts. Alles in Ordnung mit dir?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "你没事吧？",
+        "pinyin": "Nǐ méi shì ba?",
+        "de": "Macht nichts. Alles in Ordnung mit dir?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "对不起，我在看手机，没看路。",
+        "pinyin": "Duìbuqǐ, wǒ zài kàn shǒujī, méi kàn lù.",
+        "de": "Entschuldigung, ich habe auf mein Handy geschaut und nicht auf den Weg geachtet."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我也没看路。",
+        "pinyin": "Wǒ yě méi kàn lù.",
+        "de": "Ich habe auch nicht auf den Weg geachtet."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你好，我叫苏然。",
+        "pinyin": "Nǐ hǎo, wǒ jiào Sū Rán.",
+        "de": "Hallo, ich heiße Sū Rán. Wie heißt du?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你叫什么名字？",
+        "pinyin": "Nǐ jiào shénme míngzi?",
+        "de": "Hallo, ich heiße Sū Rán. Wie heißt du?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "嗨，我叫林月。",
+        "pinyin": "Hāi, wǒ jiào Lín Yuè.",
+        "de": "Hi, ich heiße Lín Yuè."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你是北京人吗？",
+        "pinyin": "Nǐ shì Běijīngrén ma?",
+        "de": "Bist du aus Beijing?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "是的，我是北京人。",
+        "pinyin": "Shì de, wǒ shì Běijīngrén.",
+        "de": "Ja, ich bin aus Beijing. Und du?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "你呢？",
+        "pinyin": "Nǐ ne?",
+        "de": "Ja, ich bin aus Beijing. Und du?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我不是北京人。",
+        "pinyin": "Wǒ bú shì Běijīngrén.",
+        "de": "Ich bin nicht aus Beijing. Ich komme aus Shanghai."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我从上海来。",
+        "pinyin": "Wǒ cóng Shànghǎi lái.",
+        "de": "Ich bin nicht aus Beijing. Ich komme aus Shanghai."
+      },
+      {
+        "speaker": "林月",
+        "zh": "欢迎来北京。",
+        "pinyin": "Huānyíng lái Běijīng.",
+        "de": "Willkommen in Beijing."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "请问，地铁在哪里？",
+        "pinyin": "Qǐngwèn, dìtiě zài nǎlǐ?",
+        "de": "Entschuldigung, wo ist die U-Bahn?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "地铁在那儿。",
+        "pinyin": "Dìtiě zài nàr.",
+        "de": "Die U-Bahn ist da drüben."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我们加微信吧？",
+        "pinyin": "Wǒmen jiā Wēixìn ba?",
+        "de": "Wollen wir uns auf WeChat hinzufügen?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "好，谢谢你。",
+        "pinyin": "Hǎo, xièxie nǐ.",
+        "de": "Okay, danke dir."
+      },
+      {
+        "speaker": "林月",
+        "zh": "那，再见！",
+        "pinyin": "Nà, zàijiàn!",
+        "de": "Dann, tschüss!"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "再见！",
+        "pinyin": "Zàijiàn!",
+        "de": "Tschüss!"
       }
     ]
   },
   {
     "id": "02",
     "title": "Zum Hotel",
-    "short": "U-Bahn-Fahrt nach Wǔdàokǒu, Umsteigen, Ausgang finden",
+    "short": "Sū Rán fährt mit der U-Bahn nach Wǔdàokǒu und fragt nach Umstieg und Ausgang.",
     "accent": "#24384A",
     "textColor": "#FFFFFF",
     "vocab": [
@@ -759,13 +858,13 @@ window.CF_TOPICS = [
     "studentDialog": [
       {
         "speaker": "A",
-        "zh": "你好，请问，______ 在哪里？",
+        "zh": "你好，请问，…… 在哪里？",
         "pinyin": "Nǐ hǎo, qǐngwèn, …… zài nǎlǐ?",
         "de": "Hallo, entschuldige, wo ist …?"
       },
       {
         "speaker": "B",
-        "zh": "______ 在那里。",
+        "zh": "…… 在那里。",
         "pinyin": "…… zài nàlǐ.",
         "de": "… ist dort."
       },
@@ -783,7 +882,7 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "A",
-        "zh": "请问，去 ______ 在哪里换车？",
+        "zh": "请问，去 …… 在哪里换车？",
         "pinyin": "Qǐngwèn, qù …… zài nǎlǐ huàn chē?",
         "de": "Entschuldige, wo steigt man Richtung … um?"
       },
@@ -807,13 +906,13 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "A",
-        "zh": "请问，去 ______ 是哪个出口？",
+        "zh": "请问，去 …… 是哪个出口？",
         "pinyin": "Qǐngwèn, qù …… shì nǎ ge chūkǒu?",
         "de": "Entschuldige, welcher Ausgang ist zu …?"
       },
       {
         "speaker": "B",
-        "zh": "是 ___ 出口。",
+        "zh": "是 …… 出口。",
         "pinyin": "Shì … chūkǒu.",
         "de": "Es ist Ausgang …."
       }
@@ -823,165 +922,157 @@ window.CF_TOPICS = [
     "studentDialogNote": "Nach Ziel, Umstieg und Ausgang fragen.",
     "sentencePuzzles": [
       {
-        "de": "Entschuldigung, fährt die U-Bahn nach Wǔdàokǒu?",
         "zh": "请问，地铁去五道口吗？",
-        "pinyin": "Qǐngwèn, dìtiě qù Wǔdàokǒu ma?",
-        "tokens": [
-          "请问",
-          "，",
-          "地铁",
-          "去",
-          "五道口",
-          "吗",
-          "？"
-        ]
-      },
-      {
-        "de": "Wo steige ich um?",
-        "zh": "在哪里换车？",
-        "pinyin": "Zài nǎlǐ huàn chē?",
-        "tokens": [
-          "在",
-          "哪里",
-          "换车",
-          "？"
-        ]
-      },
-      {
-        "de": "Hier?",
-        "zh": "这里？",
-        "pinyin": "Zhèlǐ?",
-        "tokens": [
-          "这里",
-          "？"
-        ]
-      },
-      {
-        "de": "Ja, hier.",
-        "zh": "对，这儿。",
-        "pinyin": "Duì, zhèr.",
-        "tokens": [
-          "对",
-          "，",
-          "这",
-          "儿",
-          "。"
-        ]
-      },
-      {
-        "de": "Hallo, entschuldigen Sie, welcher Ausgang ist zur Tsinghua-Universität?",
-        "zh": "你好，请问，去清华大学是哪个出口？",
-        "pinyin": "Nǐ hǎo, qǐngwèn, qù Qīnghuá Dàxué shì nǎ ge chūkǒu?",
-        "tokens": [
-          "你好",
-          "，",
-          "请问",
-          "，",
-          "去",
-          "清华大学",
-          "是",
-          "哪个",
-          "出口",
-          "？"
-        ]
-      },
-      {
-        "de": "Es ist Ausgang B.",
-        "zh": "是 B 出口。",
-        "pinyin": "Shì B chūkǒu.",
-        "tokens": [
-          "是",
-          "B",
-          "出口",
-          "。"
-        ]
-      }
-    ],
-    "gapExercises": [
-      {
-        "prompt": "请问，___去五道口吗？",
-        "answer": "地铁",
-        "choices": [
-          "地铁",
-          "哪个",
-          "换车",
-          "对"
-        ],
-        "solution": "请问，地铁去五道口吗？",
         "pinyin": "Qǐngwèn, dìtiě qù Wǔdàokǒu ma?",
         "de": "Entschuldigung, fährt die U-Bahn nach Wǔdàokǒu?"
       },
       {
-        "prompt": "在哪里___？",
-        "answer": "换车",
-        "choices": [
-          "换车",
-          "地铁",
-          "那里",
-          "这里"
-        ],
-        "solution": "在哪里换车？",
+        "zh": "去。",
+        "pinyin": "Qù.",
+        "de": "Ja. (wörtlich: „fährt\")"
+      },
+      {
+        "zh": "在哪里换车？",
         "pinyin": "Zài nǎlǐ huàn chē?",
         "de": "Wo steige ich um?"
       },
       {
-        "prompt": "___？",
-        "answer": "这里",
-        "choices": [
-          "这里",
-          "在",
-          "哪里",
-          "那里"
-        ],
-        "solution": "这里？",
+        "zh": "看，在那儿。",
+        "pinyin": "Kàn, zài nàr.",
+        "de": "Schau, dort."
+      },
+      {
+        "zh": "你在这一站换车。",
+        "pinyin": "Nǐ zài zhè yí zhàn huàn chē.",
+        "de": "Du steigst an dieser Station um."
+      },
+      {
+        "zh": "这里？",
         "pinyin": "Zhèlǐ?",
         "de": "Hier?"
       },
       {
-        "prompt": "___，这儿。",
-        "answer": "对",
-        "choices": [
-          "对",
-          "不客气",
-          "请问",
-          "地铁"
-        ],
-        "solution": "对，这儿。",
+        "zh": "对，这儿。",
         "pinyin": "Duì, zhèr.",
         "de": "Ja, hier."
       },
       {
-        "prompt": "你好，请问，去清华大学是___出口？",
-        "answer": "哪个",
-        "choices": [
-          "哪个",
-          "这里",
-          "换车",
-          "对"
-        ],
-        "solution": "你好，请问，去清华大学是哪个出口？",
+        "zh": "谢谢。",
+        "pinyin": "Xièxie.",
+        "de": "Danke."
+      },
+      {
+        "zh": "不客气。",
+        "pinyin": "Bú kèqi.",
+        "de": "Gern geschehen."
+      },
+      {
+        "zh": "你好，请问，去清华大学是哪个出口？",
         "pinyin": "Nǐ hǎo, qǐngwèn, qù Qīnghuá Dàxué shì nǎ ge chūkǒu?",
         "de": "Hallo, entschuldigen Sie, welcher Ausgang ist zur Tsinghua-Universität?"
       },
       {
-        "prompt": "是 B ___。",
-        "answer": "出口",
-        "choices": [
-          "出口",
-          "哪里",
-          "那里",
-          "这里"
-        ],
-        "solution": "是 B 出口。",
+        "zh": "是 B 出口。",
         "pinyin": "Shì B chūkǒu.",
         "de": "Es ist Ausgang B."
+      },
+      {
+        "zh": "谢谢。",
+        "pinyin": "Xièxie.",
+        "de": "Danke."
+      },
+      {
+        "zh": "不客气。",
+        "pinyin": "Bú kèqi.",
+        "de": "Gern geschehen."
+      }
+    ],
+    "gapExercises": [],
+    "speechSentences": [
+      {
+        "speaker": "苏然",
+        "zh": "请问，地铁去五道口吗？",
+        "pinyin": "Qǐngwèn, dìtiě qù Wǔdàokǒu ma?",
+        "de": "Entschuldigung, fährt die U-Bahn nach Wǔdàokǒu?"
+      },
+      {
+        "speaker": "男人",
+        "zh": "去。",
+        "pinyin": "Qù.",
+        "de": "Ja. (wörtlich: „fährt\")"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "在哪里换车？",
+        "pinyin": "Zài nǎlǐ huàn chē?",
+        "de": "Wo steige ich um?"
+      },
+      {
+        "speaker": "男人",
+        "zh": "看，在那儿。",
+        "pinyin": "Kàn, zài nàr.",
+        "de": "Schau, dort."
+      },
+      {
+        "speaker": "男人",
+        "zh": "你在这一站换车。",
+        "pinyin": "Nǐ zài zhè yí zhàn huàn chē.",
+        "de": "Du steigst an dieser Station um."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "这里？",
+        "pinyin": "Zhèlǐ?",
+        "de": "Hier?"
+      },
+      {
+        "speaker": "男人",
+        "zh": "对，这儿。",
+        "pinyin": "Duì, zhèr.",
+        "de": "Ja, hier."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "谢谢。",
+        "pinyin": "Xièxie.",
+        "de": "Danke."
+      },
+      {
+        "speaker": "男人",
+        "zh": "不客气。",
+        "pinyin": "Bú kèqi.",
+        "de": "Gern geschehen."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你好，请问，去清华大学是哪个出口？",
+        "pinyin": "Nǐ hǎo, qǐngwèn, qù Qīnghuá Dàxué shì nǎ ge chūkǒu?",
+        "de": "Hallo, entschuldigen Sie, welcher Ausgang ist zur Tsinghua-Universität?"
+      },
+      {
+        "speaker": "男人",
+        "zh": "是 B 出口。",
+        "pinyin": "Shì B chūkǒu.",
+        "de": "Es ist Ausgang B."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "谢谢。",
+        "pinyin": "Xièxie.",
+        "de": "Danke."
+      },
+      {
+        "speaker": "男人",
+        "zh": "不客气。",
+        "pinyin": "Bú kèqi.",
+        "de": "Gern geschehen."
       }
     ]
   },
   {
     "id": "03",
     "title": "Im Hotel",
-    "short": "Check-in, WLAN-Problem, Frühstück und Ankunftsnachricht",
+    "short": "Sū Rán checkt im Hotel ein, erhält seine Schlüsselkarte und klärt das WLAN-Passwort.",
     "accent": "#465D73",
     "textColor": "#FFFFFF",
     "vocab": [
@@ -1243,9 +1334,9 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "B",
-        "zh": "我叫 ______。",
-        "pinyin": "Wǒ jiào ______.",
-        "de": "Ich heiße ______."
+        "zh": "我叫……。",
+        "pinyin": "Wǒ jiào …….",
+        "de": "Ich heiße ……."
       },
       {
         "speaker": "A",
@@ -1255,9 +1346,9 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "A",
-        "zh": "谢谢。你的房间是 ___ 号。这是你的房卡。",
-        "pinyin": "Xièxie. Nǐ de fángjiān shì ___ hào. Zhè shì nǐ de fángkǎ.",
-        "de": "Danke. Dein Zimmer ist Nummer ___. Das ist deine Schlüsselkarte."
+        "zh": "谢谢。你的房间是 …… 号。这是你的房卡。",
+        "pinyin": "Xièxie. Nǐ de fángjiān shì …… hào. Zhè shì nǐ de fángkǎ.",
+        "de": "Danke. Dein Zimmer ist Nummer ……. Das ist deine Schlüsselkarte."
       },
       {
         "speaker": "B",
@@ -1289,168 +1380,256 @@ window.CF_TOPICS = [
     "studentDialogNote": "Reservierung, Ausweis, Schlüsselkarte und Frühstück üben.",
     "sentencePuzzles": [
       {
-        "de": "Ich habe eine Reservierung.",
+        "zh": "你好，欢迎。",
+        "pinyin": "Nǐ hǎo, huānyíng.",
+        "de": "Hallo, willkommen."
+      },
+      {
+        "zh": "你好。",
+        "pinyin": "Nǐ hǎo.",
+        "de": "Hallo. Ich habe eine Reservierung."
+      },
+      {
         "zh": "我有预订。",
         "pinyin": "Wǒ yǒu yùdìng.",
-        "tokens": [
-          "我",
-          "有",
-          "预订",
-          "。"
-        ]
+        "de": "Hallo. Ich habe eine Reservierung."
       },
       {
-        "de": "Das ist deine Schlüsselkarte.",
+        "zh": "你叫什么名字？",
+        "pinyin": "Nǐ jiào shénme míngzi?",
+        "de": "Wie heißt du?"
+      },
+      {
+        "zh": "我叫苏然。",
+        "pinyin": "Wǒ jiào Sū Rán.",
+        "de": "Ich heiße Sū Rán."
+      },
+      {
+        "zh": "我看一下你的身份证。",
+        "pinyin": "Wǒ kàn yíxià nǐ de shēnfènzhèng.",
+        "de": "Ich schaue mir kurz deinen Personalausweis an."
+      },
+      {
+        "zh": "谢谢。",
+        "pinyin": "Xièxie.",
+        "de": "Danke. Dein Zimmer ist Nummer 302. Das ist deine Schlüsselkarte."
+      },
+      {
+        "zh": "你的房间是 302 号。",
+        "pinyin": "Nǐ de fángjiān shì sān líng èr hào.",
+        "de": "Danke. Dein Zimmer ist Nummer 302. Das ist deine Schlüsselkarte."
+      },
+      {
         "zh": "这是你的房卡。",
         "pinyin": "Zhè shì nǐ de fángkǎ.",
-        "tokens": [
-          "这",
-          "是",
-          "你",
-          "的",
-          "房卡",
-          "。"
-        ]
+        "de": "Danke. Dein Zimmer ist Nummer 302. Das ist deine Schlüsselkarte."
       },
       {
-        "de": "Das WLAN-Passwort ist hier.",
         "zh": "WiFi 的密码在这里。",
-        "pinyin": "WiFi de mìmǎ zài zhèlǐ.",
-        "tokens": [
-          "WiFi",
-          "的",
-          "密码",
-          "在",
-          "这里",
-          "。"
-        ]
-      },
-      {
-        "de": "Entschuldigung, das WLAN-Passwort scheint nicht richtig zu sein.",
-        "zh": "不好意思，WiFi 密码好像不对。",
-        "pinyin": "Bù hǎoyìsi, WiFi mìmǎ hǎoxiàng bù duì.",
-        "tokens": [
-          "不",
-          "好",
-          "意",
-          "思",
-          "，",
-          "WiFi",
-          "密码",
-          "好像",
-          "不对",
-          "。"
-        ]
-      },
-      {
-        "de": "Probier es mal.",
-        "zh": "你试一下。",
-        "pinyin": "Nǐ shì yíxià.",
-        "tokens": [
-          "你",
-          "试",
-          "一下",
-          "。"
-        ]
-      },
-      {
-        "de": "Entschuldigung, um wie viel Uhr ist Frühstück?",
-        "zh": "请问，早饭几点？",
-        "pinyin": "Qǐngwèn, zǎofàn jǐ diǎn?",
-        "tokens": [
-          "请问",
-          "，",
-          "早饭",
-          "几点",
-          "？"
-        ]
-      }
-    ],
-    "gapExercises": [
-      {
-        "prompt": "我___预订。",
-        "answer": "有",
-        "choices": [
-          "有",
-          "好像",
-          "不对",
-          "试"
-        ],
-        "solution": "我有预订。",
-        "pinyin": "Wǒ yǒu yùdìng.",
-        "de": "Ich habe eine Reservierung."
-      },
-      {
-        "prompt": "这是你的___。",
-        "answer": "房卡",
-        "choices": [
-          "房卡",
-          "到",
-          "一下",
-          "房间"
-        ],
-        "solution": "这是你的房卡。",
-        "pinyin": "Zhè shì nǐ de fángkǎ.",
-        "de": "Das ist deine Schlüsselkarte."
-      },
-      {
-        "prompt": "WiFi 的___在这里。",
-        "answer": "密码",
-        "choices": [
-          "密码",
-          "早饭",
-          "几点",
-          "早上"
-        ],
-        "solution": "WiFi 的密码在这里。",
         "pinyin": "WiFi de mìmǎ zài zhèlǐ.",
         "de": "Das WLAN-Passwort ist hier."
       },
       {
-        "prompt": "不好意思，WiFi 密码___不对。",
-        "answer": "好像",
-        "choices": [
-          "好像",
-          "到",
-          "一下",
-          "房间"
-        ],
-        "solution": "不好意思，WiFi 密码好像不对。",
+        "zh": "不好意思，WiFi 密码好像不对。",
         "pinyin": "Bù hǎoyìsi, WiFi mìmǎ hǎoxiàng bù duì.",
         "de": "Entschuldigung, das WLAN-Passwort scheint nicht richtig zu sein."
       },
       {
-        "prompt": "你___一下。",
-        "answer": "试",
-        "choices": [
-          "试",
-          "好像",
-          "不对",
-          "早饭"
-        ],
-        "solution": "你试一下。",
-        "pinyin": "Nǐ shì yíxià.",
-        "de": "Probier es mal."
+        "zh": "哦，我看一下。",
+        "pinyin": "Ó, wǒ kàn yíxià.",
+        "de": "Oh, ich schaue kurz."
       },
       {
-        "prompt": "请问，早饭___？",
-        "answer": "几点",
-        "choices": [
-          "几点",
-          "护照",
-          "看",
-          "房卡"
-        ],
-        "solution": "请问，早饭几点？",
+        "zh": "这是新的密码。",
+        "pinyin": "Zhè shì xīn de mìmǎ.",
+        "de": "Das ist das neue Passwort. Probier es mal."
+      },
+      {
+        "zh": "你试一下。",
+        "pinyin": "Nǐ shì yíxià.",
+        "de": "Das ist das neue Passwort. Probier es mal."
+      },
+      {
+        "zh": "好了，谢谢。",
+        "pinyin": "Hǎo le, xièxie.",
+        "de": "Es geht, danke."
+      },
+      {
+        "zh": "请问，早饭几点？",
         "pinyin": "Qǐngwèn, zǎofàn jǐ diǎn?",
         "de": "Entschuldigung, um wie viel Uhr ist Frühstück?"
+      },
+      {
+        "zh": "早上七点到九点。",
+        "pinyin": "Zǎoshang qī diǎn dào jiǔ diǎn.",
+        "de": "Morgens von sieben bis neun Uhr."
+      },
+      {
+        "zh": "谢谢。",
+        "pinyin": "Xièxie.",
+        "de": "Danke."
+      },
+      {
+        "zh": "不客气。",
+        "pinyin": "Bú kèqi.",
+        "de": "Gern geschehen."
+      },
+      {
+        "zh": "爸爸妈妈，我到北京了。",
+        "pinyin": "Bàba māma, wǒ dào Běijīng le.",
+        "de": "Papa, Mama, ich bin in Beijing angekommen. Mir geht es gut."
+      },
+      {
+        "zh": "我很好。",
+        "pinyin": "Wǒ hěn hǎo.",
+        "de": "Papa, Mama, ich bin in Beijing angekommen. Mir geht es gut."
+      },
+      {
+        "zh": "好，晚安。",
+        "pinyin": "Hǎo, wǎn'ān.",
+        "de": "Alles klar. Gute Nacht."
+      }
+    ],
+    "gapExercises": [],
+    "speechSentences": [
+      {
+        "speaker": "Rezeptionistin",
+        "zh": "你好，欢迎。",
+        "pinyin": "Nǐ hǎo, huānyíng.",
+        "de": "Hallo, willkommen."
+      },
+      {
+        "speaker": "Sū Rán",
+        "zh": "你好。",
+        "pinyin": "Nǐ hǎo.",
+        "de": "Hallo. Ich habe eine Reservierung."
+      },
+      {
+        "speaker": "Sū Rán",
+        "zh": "我有预订。",
+        "pinyin": "Wǒ yǒu yùdìng.",
+        "de": "Hallo. Ich habe eine Reservierung."
+      },
+      {
+        "speaker": "Rezeptionistin",
+        "zh": "你叫什么名字？",
+        "pinyin": "Nǐ jiào shénme míngzi?",
+        "de": "Wie heißt du?"
+      },
+      {
+        "speaker": "Sū Rán",
+        "zh": "我叫苏然。",
+        "pinyin": "Wǒ jiào Sū Rán.",
+        "de": "Ich heiße Sū Rán."
+      },
+      {
+        "speaker": "Rezeptionistin",
+        "zh": "我看一下你的身份证。",
+        "pinyin": "Wǒ kàn yíxià nǐ de shēnfènzhèng.",
+        "de": "Ich schaue mir kurz deinen Personalausweis an."
+      },
+      {
+        "speaker": "Rezeptionistin",
+        "zh": "谢谢。",
+        "pinyin": "Xièxie.",
+        "de": "Danke. Dein Zimmer ist Nummer 302. Das ist deine Schlüsselkarte."
+      },
+      {
+        "speaker": "Rezeptionistin",
+        "zh": "你的房间是 302 号。",
+        "pinyin": "Nǐ de fángjiān shì sān líng èr hào.",
+        "de": "Danke. Dein Zimmer ist Nummer 302. Das ist deine Schlüsselkarte."
+      },
+      {
+        "speaker": "Rezeptionistin",
+        "zh": "这是你的房卡。",
+        "pinyin": "Zhè shì nǐ de fángkǎ.",
+        "de": "Danke. Dein Zimmer ist Nummer 302. Das ist deine Schlüsselkarte."
+      },
+      {
+        "speaker": "Rezeptionistin",
+        "zh": "WiFi 的密码在这里。",
+        "pinyin": "WiFi de mìmǎ zài zhèlǐ.",
+        "de": "Das WLAN-Passwort ist hier."
+      },
+      {
+        "speaker": "Sū Rán",
+        "zh": "不好意思，WiFi 密码好像不对。",
+        "pinyin": "Bù hǎoyìsi, WiFi mìmǎ hǎoxiàng bù duì.",
+        "de": "Entschuldigung, das WLAN-Passwort scheint nicht richtig zu sein."
+      },
+      {
+        "speaker": "Rezeptionistin",
+        "zh": "哦，我看一下。",
+        "pinyin": "Ó, wǒ kàn yíxià.",
+        "de": "Oh, ich schaue kurz."
+      },
+      {
+        "speaker": "Rezeptionistin",
+        "zh": "这是新的密码。",
+        "pinyin": "Zhè shì xīn de mìmǎ.",
+        "de": "Das ist das neue Passwort. Probier es mal."
+      },
+      {
+        "speaker": "Rezeptionistin",
+        "zh": "你试一下。",
+        "pinyin": "Nǐ shì yíxià.",
+        "de": "Das ist das neue Passwort. Probier es mal."
+      },
+      {
+        "speaker": "Sū Rán",
+        "zh": "好了，谢谢。",
+        "pinyin": "Hǎo le, xièxie.",
+        "de": "Es geht, danke."
+      },
+      {
+        "speaker": "Sū Rán",
+        "zh": "请问，早饭几点？",
+        "pinyin": "Qǐngwèn, zǎofàn jǐ diǎn?",
+        "de": "Entschuldigung, um wie viel Uhr ist Frühstück?"
+      },
+      {
+        "speaker": "Rezeptionistin",
+        "zh": "早上七点到九点。",
+        "pinyin": "Zǎoshang qī diǎn dào jiǔ diǎn.",
+        "de": "Morgens von sieben bis neun Uhr."
+      },
+      {
+        "speaker": "Sū Rán",
+        "zh": "谢谢。",
+        "pinyin": "Xièxie.",
+        "de": "Danke."
+      },
+      {
+        "speaker": "Rezeptionistin",
+        "zh": "不客气。",
+        "pinyin": "Bú kèqi.",
+        "de": "Gern geschehen."
+      },
+      {
+        "speaker": "Sū Rán (WeChat)",
+        "zh": "爸爸妈妈，我到北京了。",
+        "pinyin": "Bàba māma, wǒ dào Běijīng le.",
+        "de": "Papa, Mama, ich bin in Beijing angekommen. Mir geht es gut."
+      },
+      {
+        "speaker": "Sū Rán (WeChat)",
+        "zh": "我很好。",
+        "pinyin": "Wǒ hěn hǎo.",
+        "de": "Papa, Mama, ich bin in Beijing angekommen. Mir geht es gut."
+      },
+      {
+        "speaker": "爸爸",
+        "zh": "好，晚安。",
+        "pinyin": "Hǎo, wǎn'ān.",
+        "de": "Alles klar. Gute Nacht."
       }
     ]
   },
   {
     "id": "04",
     "title": "Im Café",
-    "short": "Im Café bestellen, Zustände ausdrücken und nach der Toilette fragen",
+    "short": "Am Morgen bestellt Sū Rán im Café Kaffee und Brot und fragt nach der Toilette.",
     "accent": "#5B7086",
     "textColor": "#FFFFFF",
     "vocab": [
@@ -1544,6 +1723,11 @@ window.CF_TOPICS = [
         "pinyin": "xiàwǔ",
         "de": "Nachmittag",
         "hint": "x → ch"
+      },
+      {
+        "zh": "晚上",
+        "pinyin": "wǎnshang",
+        "de": "Abend"
       },
       {
         "zh": "好的",
@@ -1688,9 +1872,9 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "B",
-        "zh": "你好，我要一杯 ______。",
-        "pinyin": "Nǐ hǎo, wǒ yào yì bēi ______.",
-        "de": "Hallo, ich möchte ein/eine ______."
+        "zh": "你好，我要一杯……。",
+        "pinyin": "Nǐ hǎo, wǒ yào yì bēi …….",
+        "de": "Hallo, ich möchte eine Tasse/ein Glas ……."
       },
       {
         "speaker": "A",
@@ -1700,9 +1884,9 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "B",
-        "zh": "我还要一个 ______。",
-        "pinyin": "Wǒ hái yào yí ge ______.",
-        "de": "Ich möchte noch ein ______."
+        "zh": "我还要一个……。",
+        "pinyin": "Wǒ hái yào yí ge …….",
+        "de": "Ich möchte noch ein/eine ……."
       },
       {
         "speaker": "A",
@@ -1740,170 +1924,212 @@ window.CF_TOPICS = [
     "studentDialogNote": "Getränk und Essen bestellen und nach der Toilette fragen.",
     "sentencePuzzles": [
       {
-        "de": "Hallo, ich möchte einen Kaffee.",
+        "zh": "你好！",
+        "pinyin": "Nǐ hǎo!",
+        "de": "Hallo!"
+      },
+      {
         "zh": "你好，我要一杯咖啡。",
-        "pinyin": "Nǐ hǎo, wǒ yào yì bēi kāfēi.",
-        "tokens": [
-          "你好",
-          "，",
-          "我",
-          "要",
-          "一",
-          "杯",
-          "咖啡",
-          "。"
-        ]
-      },
-      {
-        "de": "Ich möchte noch ein Brötchen.",
-        "zh": "我还要一个面包。",
-        "pinyin": "Wǒ hái yào yí ge miànbāo.",
-        "tokens": [
-          "我",
-          "还",
-          "要",
-          "一",
-          "个",
-          "面包",
-          "。"
-        ]
-      },
-      {
-        "de": "Ich habe Hunger.",
-        "zh": "我很饿。",
-        "pinyin": "Wǒ hěn è.",
-        "tokens": [
-          "我",
-          "很",
-          "饿",
-          "。"
-        ]
-      },
-      {
-        "de": "Entschuldigung, wo ist die Toilette?",
-        "zh": "请问，厕所在哪里？",
-        "pinyin": "Qǐngwèn, cèsuǒ zài nǎlǐ?",
-        "tokens": [
-          "请问",
-          "，",
-          "厕所",
-          "在",
-          "哪里",
-          "？"
-        ]
-      },
-      {
-        "de": "Ich bin müde und durstig.",
-        "zh": "我很累，也很渴。",
-        "pinyin": "Wǒ hěn lèi, yě hěn kě.",
-        "tokens": [
-          "我",
-          "很",
-          "累",
-          "，",
-          "也",
-          "很",
-          "渴",
-          "。"
-        ]
-      },
-      {
-        "de": "Ich bin glücklich.",
-        "zh": "我很开心。",
-        "pinyin": "Wǒ hěn kāixīn.",
-        "tokens": [
-          "我",
-          "很",
-          "开心",
-          "。"
-        ]
-      }
-    ],
-    "gapExercises": [
-      {
-        "prompt": "你好，我___一杯咖啡。",
-        "answer": "要",
-        "choices": [
-          "要",
-          "喝",
-          "面包",
-          "很"
-        ],
-        "solution": "你好，我要一杯咖啡。",
         "pinyin": "Nǐ hǎo, wǒ yào yì bēi kāfēi.",
         "de": "Hallo, ich möchte einen Kaffee."
       },
       {
-        "prompt": "我还要一___面包。",
-        "answer": "个",
-        "choices": [
-          "个",
-          "中午",
-          "下午",
-          "好的"
-        ],
-        "solution": "我还要一个面包。",
+        "zh": "好的。",
+        "pinyin": "Hǎo de.",
+        "de": "Gut. Was möchtest du noch?"
+      },
+      {
+        "zh": "还要什么？",
+        "pinyin": "Hái yào shénme?",
+        "de": "Gut. Was möchtest du noch?"
+      },
+      {
+        "zh": "我还要一个面包。",
         "pinyin": "Wǒ hái yào yí ge miànbāo.",
-        "de": "Ich möchte noch ein Brötchen."
+        "de": "Ich möchte noch ein Brötchen. Ich habe Hunger."
       },
       {
-        "prompt": "我很___。",
-        "answer": "饿",
-        "choices": [
-          "饿",
-          "面包",
-          "还",
-          "累"
-        ],
-        "solution": "我很饿。",
+        "zh": "我很饿。",
         "pinyin": "Wǒ hěn è.",
-        "de": "Ich habe Hunger."
+        "de": "Ich möchte noch ein Brötchen. Ich habe Hunger."
       },
       {
-        "prompt": "请问，___在哪里？",
-        "answer": "厕所",
-        "choices": [
-          "厕所",
-          "中午",
-          "下午",
-          "好的"
-        ],
-        "solution": "请问，厕所在哪里？",
+        "zh": "好的。",
+        "pinyin": "Hǎo de.",
+        "de": "Gut."
+      },
+      {
+        "zh": "请问，厕所在哪里？",
         "pinyin": "Qǐngwèn, cèsuǒ zài nǎlǐ?",
         "de": "Entschuldigung, wo ist die Toilette?"
       },
       {
-        "prompt": "我很累，也很___。",
-        "answer": "渴",
-        "choices": [
-          "渴",
-          "还",
-          "饿",
-          "开心"
-        ],
-        "solution": "我很累，也很渴。",
+        "zh": "在那儿。",
+        "pinyin": "Zài nàr.",
+        "de": "Da drüben."
+      },
+      {
+        "zh": "男厕所在哪里？",
+        "pinyin": "Náncèsuǒ zài nǎlǐ?",
+        "de": "Wo ist die Herrentoilette?"
+      },
+      {
+        "zh": "男厕所在那儿，女厕所也在那儿。",
+        "pinyin": "Náncèsuǒ zài nàr, nǚcèsuǒ yě zài nàr.",
+        "de": "Die Herrentoilette ist da drüben, die Damentoilette auch."
+      },
+      {
+        "zh": "谢谢。",
+        "pinyin": "Xièxie.",
+        "de": "Danke."
+      },
+      {
+        "zh": "我很累，也很渴。",
         "pinyin": "Wǒ hěn lèi, yě hěn kě.",
         "de": "Ich bin müde und durstig."
       },
       {
-        "prompt": "我很___。",
-        "answer": "开心",
-        "choices": [
-          "开心",
-          "面包",
-          "还",
-          "累"
-        ],
-        "solution": "我很开心。",
+        "zh": "咖啡很好喝，面包也很好吃。",
+        "pinyin": "Kāfēi hěn hǎohē, miànbāo yě hěn hǎochī.",
+        "de": "Der Kaffee schmeckt gut, und das Brötchen ist auch lecker. Jetzt bin ich nicht mehr müde. Ich bin glücklich."
+      },
+      {
+        "zh": "现在不累了。",
+        "pinyin": "Xiànzài bú lèi le.",
+        "de": "Der Kaffee schmeckt gut, und das Brötchen ist auch lecker. Jetzt bin ich nicht mehr müde. Ich bin glücklich."
+      },
+      {
+        "zh": "我很开心。",
         "pinyin": "Wǒ hěn kāixīn.",
-        "de": "Ich bin glücklich."
+        "de": "Der Kaffee schmeckt gut, und das Brötchen ist auch lecker. Jetzt bin ich nicht mehr müde. Ich bin glücklich."
+      },
+      {
+        "zh": "我早上起床。",
+        "pinyin": "Wǒ zǎoshang qǐchuáng.",
+        "de": "Ich stehe morgens auf. Am Vormittag schaue ich mir Beijing an, mittags esse ich, am Nachmittag kaufe ich Geschenke."
+      },
+      {
+        "zh": "上午去看看北京，中午吃饭，下午买礼物。",
+        "pinyin": "Shàngwǔ qù kànkan Běijīng, zhōngwǔ chīfàn, xiàwǔ mǎi lǐwù.",
+        "de": "Ich stehe morgens auf. Am Vormittag schaue ich mir Beijing an, mittags esse ich, am Nachmittag kaufe ich Geschenke."
+      }
+    ],
+    "gapExercises": [],
+    "speechSentences": [
+      {
+        "speaker": "Café-Personal (店员)",
+        "zh": "你好！",
+        "pinyin": "Nǐ hǎo!",
+        "de": "Hallo!"
+      },
+      {
+        "speaker": "Sū Rán",
+        "zh": "你好，我要一杯咖啡。",
+        "pinyin": "Nǐ hǎo, wǒ yào yì bēi kāfēi.",
+        "de": "Hallo, ich möchte einen Kaffee."
+      },
+      {
+        "speaker": "店员",
+        "zh": "好的。",
+        "pinyin": "Hǎo de.",
+        "de": "Gut. Was möchtest du noch?"
+      },
+      {
+        "speaker": "店员",
+        "zh": "还要什么？",
+        "pinyin": "Hái yào shénme?",
+        "de": "Gut. Was möchtest du noch?"
+      },
+      {
+        "speaker": "Sū Rán",
+        "zh": "我还要一个面包。",
+        "pinyin": "Wǒ hái yào yí ge miànbāo.",
+        "de": "Ich möchte noch ein Brötchen. Ich habe Hunger."
+      },
+      {
+        "speaker": "Sū Rán",
+        "zh": "我很饿。",
+        "pinyin": "Wǒ hěn è.",
+        "de": "Ich möchte noch ein Brötchen. Ich habe Hunger."
+      },
+      {
+        "speaker": "店员",
+        "zh": "好的。",
+        "pinyin": "Hǎo de.",
+        "de": "Gut."
+      },
+      {
+        "speaker": "Sū Rán",
+        "zh": "请问，厕所在哪里？",
+        "pinyin": "Qǐngwèn, cèsuǒ zài nǎlǐ?",
+        "de": "Entschuldigung, wo ist die Toilette?"
+      },
+      {
+        "speaker": "店员",
+        "zh": "在那儿。",
+        "pinyin": "Zài nàr.",
+        "de": "Da drüben."
+      },
+      {
+        "speaker": "Sū Rán",
+        "zh": "男厕所在哪里？",
+        "pinyin": "Náncèsuǒ zài nǎlǐ?",
+        "de": "Wo ist die Herrentoilette?"
+      },
+      {
+        "speaker": "店员",
+        "zh": "男厕所在那儿，女厕所也在那儿。",
+        "pinyin": "Náncèsuǒ zài nàr, nǚcèsuǒ yě zài nàr.",
+        "de": "Die Herrentoilette ist da drüben, die Damentoilette auch."
+      },
+      {
+        "speaker": "Sū Rán",
+        "zh": "谢谢。",
+        "pinyin": "Xièxie.",
+        "de": "Danke."
+      },
+      {
+        "speaker": "Sū Rán",
+        "zh": "我很累，也很渴。",
+        "pinyin": "Wǒ hěn lèi, yě hěn kě.",
+        "de": "Ich bin müde und durstig."
+      },
+      {
+        "speaker": "Sū Rán",
+        "zh": "咖啡很好喝，面包也很好吃。",
+        "pinyin": "Kāfēi hěn hǎohē, miànbāo yě hěn hǎochī.",
+        "de": "Der Kaffee schmeckt gut, und das Brötchen ist auch lecker. Jetzt bin ich nicht mehr müde. Ich bin glücklich."
+      },
+      {
+        "speaker": "Sū Rán",
+        "zh": "现在不累了。",
+        "pinyin": "Xiànzài bú lèi le.",
+        "de": "Der Kaffee schmeckt gut, und das Brötchen ist auch lecker. Jetzt bin ich nicht mehr müde. Ich bin glücklich."
+      },
+      {
+        "speaker": "Sū Rán",
+        "zh": "我很开心。",
+        "pinyin": "Wǒ hěn kāixīn.",
+        "de": "Der Kaffee schmeckt gut, und das Brötchen ist auch lecker. Jetzt bin ich nicht mehr müde. Ich bin glücklich."
+      },
+      {
+        "speaker": "Sū Rán",
+        "zh": "我早上起床。",
+        "pinyin": "Wǒ zǎoshang qǐchuáng.",
+        "de": "Ich stehe morgens auf. Am Vormittag schaue ich mir Beijing an, mittags esse ich, am Nachmittag kaufe ich Geschenke."
+      },
+      {
+        "speaker": "Sū Rán",
+        "zh": "上午去看看北京，中午吃饭，下午买礼物。",
+        "pinyin": "Shàngwǔ qù kànkan Běijīng, zhōngwǔ chīfàn, xiàwǔ mǎi lǐwù.",
+        "de": "Ich stehe morgens auf. Am Vormittag schaue ich mir Beijing an, mittags esse ich, am Nachmittag kaufe ich Geschenke."
       }
     ]
   },
   {
     "id": "05",
     "title": "Souvenirs",
-    "short": "Souvenirs, Preise, Farben und Bezahlen",
+    "short": "Sū Rán kauft einen Schal und Tee als Geschenke und bezahlt per WeChat.",
     "accent": "#EDD2D7",
     "textColor": "#050B12",
     "vocab": [
@@ -2001,9 +2227,7 @@ window.CF_TOPICS = [
         "zh": "一共",
         "pinyin": "yígòng",
         "de": "insgesamt, zusammen"
-      }
-    ],
-    "understandingVocab": [
+      },
       {
         "zh": "可以",
         "pinyin": "kěyǐ",
@@ -2024,7 +2248,9 @@ window.CF_TOPICS = [
         "zh": "扫码",
         "pinyin": "sǎomǎ",
         "de": "den QR-Code scannen"
-      },
+      }
+    ],
+    "understandingVocab": [
       {
         "zh": "店员",
         "pinyin": "diànyuán",
@@ -2035,6 +2261,12 @@ window.CF_TOPICS = [
         "pinyin": "hǎokàn",
         "de": "schön (Aussehen)",
         "hint": "好 + 看"
+      },
+      {
+        "zh": "给",
+        "pinyin": "gěi",
+        "de": "für; geben",
+        "hint": "g → harter g-Laut"
       }
     ],
     "storyDialog": [
@@ -2064,8 +2296,8 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "苏然",
-        "zh": "这是我妈妈的礼物。",
-        "pinyin": "Zhè shì wǒ māma de lǐwù.",
+        "zh": "这是给我妈妈的礼物。",
+        "pinyin": "Zhè shì gěi wǒ māma de lǐwù.",
         "de": "Das ist ein Geschenk für meine Mama."
       },
       {
@@ -2146,7 +2378,7 @@ window.CF_TOPICS = [
         "speaker": "B",
         "zh": "不好意思，不可以。请扫码。",
         "pinyin": "Bù hǎoyìsi, bù kěyǐ. Qǐng sǎomǎ.",
-        "de": "Tut mir leid, das geht nicht. Bitte per QR scannen."
+        "de": "Tut mir leid, das geht nicht. Bitte scannen Sie den QR-Code."
       },
       {
         "speaker": "A",
@@ -2166,177 +2398,201 @@ window.CF_TOPICS = [
     "studentDialogNote": "Nach Preis und Farbe fragen und die Bezahlung klären.",
     "sentencePuzzles": [
       {
-        "de": "Entschuldigung, wie viel kostet dieser Schal?",
+        "zh": "你好。",
+        "pinyin": "Nǐ hǎo.",
+        "de": "Hallo. Entschuldigung, wie viel kostet dieser Schal?"
+      },
+      {
         "zh": "请问，这条围巾多少钱？",
         "pinyin": "Qǐngwèn, zhè tiáo wéijīn duōshao qián?",
-        "tokens": [
-          "请问",
-          "，",
-          "这",
-          "条",
-          "围巾",
-          "多少",
-          "钱",
-          "？"
-        ]
+        "de": "Hallo. Entschuldigung, wie viel kostet dieser Schal?"
       },
       {
-        "de": "Gibt es ihn in Rot?",
+        "zh": "八十块。",
+        "pinyin": "Bāshí kuài.",
+        "de": "Achtzig Yuan."
+      },
+      {
         "zh": "有红色的吗？",
-        "pinyin": "Yǒu hóngsè de ma?",
-        "tokens": [
-          "有",
-          "红色",
-          "的",
-          "吗",
-          "？"
-        ]
-      },
-      {
-        "de": "Das ist ein Geschenk für meine Mama.",
-        "zh": "这是我妈妈的礼物。",
-        "pinyin": "Zhè shì wǒ māma de lǐwù.",
-        "tokens": [
-          "这",
-          "是",
-          "我",
-          "妈妈",
-          "的",
-          "礼物",
-          "。"
-        ]
-      },
-      {
-        "de": "Und dieser Tee?",
-        "zh": "这盒茶呢？",
-        "pinyin": "Zhè hé chá ne?",
-        "tokens": [
-          "这",
-          "盒",
-          "茶",
-          "呢",
-          "？"
-        ]
-      },
-      {
-        "de": "Ich nehme diesen roten Schal und diesen Tee.",
-        "zh": "我要这条红色的围巾和这盒茶。",
-        "pinyin": "Wǒ yào zhè tiáo hóngsè de wéijīn hé zhè hé chá.",
-        "tokens": [
-          "我",
-          "要",
-          "这",
-          "条",
-          "红色",
-          "的",
-          "围巾",
-          "和",
-          "这",
-          "盒",
-          "茶",
-          "。"
-        ]
-      },
-      {
-        "de": "Zusammen einhundertdreißig Yuan.",
-        "zh": "一共一百三十块。",
-        "pinyin": "Yígòng yìbǎi sānshí kuài.",
-        "tokens": [
-          "一共",
-          "一",
-          "百",
-          "三",
-          "十",
-          "块",
-          "。"
-        ]
-      }
-    ],
-    "gapExercises": [
-      {
-        "prompt": "请问，这条围巾___钱？",
-        "answer": "多少",
-        "choices": [
-          "多少",
-          "茶",
-          "盒",
-          "红色"
-        ],
-        "solution": "请问，这条围巾多少钱？",
-        "pinyin": "Qǐngwèn, zhè tiáo wéijīn duōshao qián?",
-        "de": "Entschuldigung, wie viel kostet dieser Schal?"
-      },
-      {
-        "prompt": "有___的吗？",
-        "answer": "红色",
-        "choices": [
-          "红色",
-          "绿色",
-          "和",
-          "一共"
-        ],
-        "solution": "有红色的吗？",
         "pinyin": "Yǒu hóngsè de ma?",
         "de": "Gibt es ihn in Rot?"
       },
       {
-        "prompt": "这是我妈妈的___。",
-        "answer": "礼物",
-        "choices": [
-          "礼物",
-          "百",
-          "条",
-          "围巾"
-        ],
-        "solution": "这是我妈妈的礼物。",
-        "pinyin": "Zhè shì wǒ māma de lǐwù.",
+        "zh": "有。",
+        "pinyin": "Yǒu.",
+        "de": "Ja. Dieser hier ist rot."
+      },
+      {
+        "zh": "这条是红色的。",
+        "pinyin": "Zhè tiáo shì hóngsè de.",
+        "de": "Ja. Dieser hier ist rot."
+      },
+      {
+        "zh": "这是给我妈妈的礼物。",
+        "pinyin": "Zhè shì gěi wǒ māma de lǐwù.",
         "de": "Das ist ein Geschenk für meine Mama."
       },
       {
-        "prompt": "这___茶呢？",
-        "answer": "盒",
-        "choices": [
-          "盒",
-          "条",
-          "围巾",
-          "红色"
-        ],
-        "solution": "这盒茶呢？",
+        "zh": "红色很好看。",
+        "pinyin": "Hóngsè hěn hǎokàn.",
+        "de": "Rot sieht schön aus."
+      },
+      {
+        "zh": "这盒茶呢？",
         "pinyin": "Zhè hé chá ne?",
-        "de": "Und dieser Tee?"
+        "de": "Und dieser Tee? Wie viel kostet er?"
       },
       {
-        "prompt": "我要这条红色的围巾___这盒茶。",
-        "answer": "和",
-        "choices": [
-          "和",
-          "块",
-          "百",
-          "蓝色"
-        ],
-        "solution": "我要这条红色的围巾和这盒茶。",
+        "zh": "多少钱？",
+        "pinyin": "Duōshao qián?",
+        "de": "Und dieser Tee? Wie viel kostet er?"
+      },
+      {
+        "zh": "五十块。",
+        "pinyin": "Wǔshí kuài.",
+        "de": "Fünfzig Yuan."
+      },
+      {
+        "zh": "好。",
+        "pinyin": "Hǎo.",
+        "de": "Gut. Ich nehme diesen roten Schal und diesen Tee."
+      },
+      {
+        "zh": "我要这条红色的围巾和这盒茶。",
         "pinyin": "Wǒ yào zhè tiáo hóngsè de wéijīn hé zhè hé chá.",
-        "de": "Ich nehme diesen roten Schal und diesen Tee."
+        "de": "Gut. Ich nehme diesen roten Schal und diesen Tee."
       },
       {
-        "prompt": "___一百三十块。",
-        "answer": "一共",
-        "choices": [
-          "一共",
-          "红色",
-          "蓝色",
-          "绿色"
-        ],
-        "solution": "一共一百三十块。",
+        "zh": "好的。",
+        "pinyin": "Hǎo de.",
+        "de": "Gut. Zusammen einhundertdreißig Yuan."
+      },
+      {
+        "zh": "一共一百三十块。",
         "pinyin": "Yígòng yìbǎi sānshí kuài.",
-        "de": "Zusammen einhundertdreißig Yuan."
+        "de": "Gut. Zusammen einhundertdreißig Yuan."
+      },
+      {
+        "zh": "谢谢。",
+        "pinyin": "Xièxie.",
+        "de": "Danke."
+      },
+      {
+        "zh": "不客气。",
+        "pinyin": "Bú kèqi.",
+        "de": "Gern geschehen."
+      }
+    ],
+    "gapExercises": [],
+    "speechSentences": [
+      {
+        "speaker": "苏然",
+        "zh": "你好。",
+        "pinyin": "Nǐ hǎo.",
+        "de": "Hallo. Entschuldigung, wie viel kostet dieser Schal?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "请问，这条围巾多少钱？",
+        "pinyin": "Qǐngwèn, zhè tiáo wéijīn duōshao qián?",
+        "de": "Hallo. Entschuldigung, wie viel kostet dieser Schal?"
+      },
+      {
+        "speaker": "店员",
+        "zh": "八十块。",
+        "pinyin": "Bāshí kuài.",
+        "de": "Achtzig Yuan."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "有红色的吗？",
+        "pinyin": "Yǒu hóngsè de ma?",
+        "de": "Gibt es ihn in Rot?"
+      },
+      {
+        "speaker": "店员",
+        "zh": "有。",
+        "pinyin": "Yǒu.",
+        "de": "Ja. Dieser hier ist rot."
+      },
+      {
+        "speaker": "店员",
+        "zh": "这条是红色的。",
+        "pinyin": "Zhè tiáo shì hóngsè de.",
+        "de": "Ja. Dieser hier ist rot."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "这是给我妈妈的礼物。",
+        "pinyin": "Zhè shì gěi wǒ māma de lǐwù.",
+        "de": "Das ist ein Geschenk für meine Mama."
+      },
+      {
+        "speaker": "店员",
+        "zh": "红色很好看。",
+        "pinyin": "Hóngsè hěn hǎokàn.",
+        "de": "Rot sieht schön aus."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "这盒茶呢？",
+        "pinyin": "Zhè hé chá ne?",
+        "de": "Und dieser Tee? Wie viel kostet er?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "多少钱？",
+        "pinyin": "Duōshao qián?",
+        "de": "Und dieser Tee? Wie viel kostet er?"
+      },
+      {
+        "speaker": "店员",
+        "zh": "五十块。",
+        "pinyin": "Wǔshí kuài.",
+        "de": "Fünfzig Yuan."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "好。",
+        "pinyin": "Hǎo.",
+        "de": "Gut. Ich nehme diesen roten Schal und diesen Tee."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我要这条红色的围巾和这盒茶。",
+        "pinyin": "Wǒ yào zhè tiáo hóngsè de wéijīn hé zhè hé chá.",
+        "de": "Gut. Ich nehme diesen roten Schal und diesen Tee."
+      },
+      {
+        "speaker": "店员",
+        "zh": "好的。",
+        "pinyin": "Hǎo de.",
+        "de": "Gut. Zusammen einhundertdreißig Yuan."
+      },
+      {
+        "speaker": "店员",
+        "zh": "一共一百三十块。",
+        "pinyin": "Yígòng yìbǎi sānshí kuài.",
+        "de": "Gut. Zusammen einhundertdreißig Yuan."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "谢谢。",
+        "pinyin": "Xièxie.",
+        "de": "Danke."
+      },
+      {
+        "speaker": "店员",
+        "zh": "不客气。",
+        "pinyin": "Bú kèqi.",
+        "de": "Gern geschehen."
       }
     ]
   },
   {
     "id": "06",
     "title": "Verschwunden",
-    "short": "Verlorener Rucksack, um Hilfe bitten und etwas wiederfinden",
+    "short": "Sū Ráns Rucksack ist verschwunden. Mit Lín Yuès Hilfe sucht und findet er ihn wieder.",
     "accent": "#E4C4CB",
     "textColor": "#050B12",
     "vocab": [
@@ -2627,21 +2883,21 @@ window.CF_TOPICS = [
     "studentDialog": [
       {
         "speaker": "A",
-        "zh": "喂，你好。我的 ___ 丢了。你能帮我吗？",
-        "pinyin": "Wéi, nǐ hǎo. Wǒ de ___ diū le. Nǐ néng bāng wǒ ma?",
-        "de": "Hallo. Mein/e ___ ist weg. Kannst du mir helfen?"
+        "zh": "喂，你好。我的 …… 丢了。你能帮我吗？",
+        "pinyin": "Wéi, nǐ hǎo. Wǒ de …… diū le. Nǐ néng bāng wǒ ma?",
+        "de": "Hallo. Mein/e …… ist weg. Kannst du mir helfen?"
       },
       {
         "speaker": "B",
-        "zh": "别着急。你的 ___ 是什么样的？",
-        "pinyin": "Bié zháojí. Nǐ de ___ shì shénme yàng de?",
-        "de": "Keine Panik. Wie sieht dein/e ___ aus?"
+        "zh": "别着急。你的 …… 是什么样的？",
+        "pinyin": "Bié zháojí. Nǐ de …… shì shénme yàng de?",
+        "de": "Keine Panik. Wie sieht dein/e …… aus?"
       },
       {
         "speaker": "A",
-        "zh": "是 ___ 的。",
-        "pinyin": "Shì ___ de.",
-        "de": "Es ist ___ (Farbe)."
+        "zh": "是 …… 的。",
+        "pinyin": "Shì …… de.",
+        "de": "Es ist …… (Farbe)."
       },
       {
         "speaker": "B",
@@ -2651,12 +2907,12 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "B",
-        "zh": "你好，请问，有人送来一个 ___ 的 ___ 吗？",
-        "pinyin": "Nǐ hǎo, qǐngwèn, yǒu rén sònglái yí ge ___ de ___ ma?",
-        "de": "Hallo, hat jemand ein/e ___ (Farbe) ___ abgegeben?"
+        "zh": "你好，请问，有人送来一个 …… 的 …… 吗？",
+        "pinyin": "Nǐ hǎo, qǐngwèn, yǒu rén sònglái yí ge …… de …… ma?",
+        "de": "Hallo, hat jemand ein/e …… (Farbe) …… abgegeben?"
       },
       {
-        "speaker": "店员",
+        "speaker": "P",
         "zh": "有。/ 没有。",
         "pinyin": "Yǒu. / Méiyǒu.",
         "de": "Ja. / Nein."
@@ -2679,174 +2935,432 @@ window.CF_TOPICS = [
     "studentDialogNote": "Einen Verlust beschreiben und um Hilfe bitten.",
     "sentencePuzzles": [
       {
-        "de": "Hallo, Entschuldigung, gibt es hier eine schwarze Tasche?",
         "zh": "你好，请问，这里有一个黑色的包吗？",
-        "pinyin": "Nǐ hǎo, qǐngwèn, zhèlǐ yǒu yí ge hēisè de bāo ma?",
-        "tokens": [
-          "你好",
-          "，",
-          "请问",
-          "，",
-          "这里",
-          "有",
-          "一",
-          "个",
-          "黑色",
-          "的",
-          "包",
-          "吗",
-          "？"
-        ]
-      },
-      {
-        "de": "Mein Rucksack ist weg.",
-        "zh": "我的包丢了。",
-        "pinyin": "Wǒ de bāo diū le.",
-        "tokens": [
-          "我",
-          "的",
-          "包",
-          "丢了",
-          "。"
-        ]
-      },
-      {
-        "de": "Kannst du mir helfen?",
-        "zh": "你能帮我吗？",
-        "pinyin": "Nǐ néng bāng wǒ ma?",
-        "tokens": [
-          "你",
-          "能",
-          "帮",
-          "我",
-          "吗",
-          "？"
-        ]
-      },
-      {
-        "de": "Drin sind mein Personalausweis und die Schlüsselkarte.",
-        "zh": "里面有身份证和房卡。",
-        "pinyin": "Lǐmiàn yǒu shēnfènzhèng hé fángkǎ.",
-        "tokens": [
-          "里面",
-          "有",
-          "身份证",
-          "和",
-          "房卡",
-          "。"
-        ]
-      },
-      {
-        "de": "Lass uns mal fragen.",
-        "zh": "我们问一下。",
-        "pinyin": "Wǒmen wèn yíxià.",
-        "tokens": [
-          "我们",
-          "问",
-          "一下",
-          "。"
-        ]
-      },
-      {
-        "de": "Hier gibt es ein Restaurant.",
-        "zh": "这儿有一家饭馆。",
-        "pinyin": "Zhèr yǒu yì jiā fànguǎn.",
-        "tokens": [
-          "这",
-          "儿",
-          "有",
-          "一",
-          "家",
-          "饭馆",
-          "。"
-        ]
-      }
-    ],
-    "gapExercises": [
-      {
-        "prompt": "你好，请问，这里有一个黑色的___吗？",
-        "answer": "包",
-        "choices": [
-          "包",
-          "能",
-          "帮",
-          "里面"
-        ],
-        "solution": "你好，请问，这里有一个黑色的包吗？",
         "pinyin": "Nǐ hǎo, qǐngwèn, zhèlǐ yǒu yí ge hēisè de bāo ma?",
         "de": "Hallo, Entschuldigung, gibt es hier eine schwarze Tasche?"
       },
       {
-        "prompt": "我的包___。",
-        "answer": "丢了",
-        "choices": [
-          "丢了",
-          "黑色",
-          "里面",
-          "问"
-        ],
-        "solution": "我的包丢了。",
+        "zh": "包？",
+        "pinyin": "Bāo?",
+        "de": "Ein Rucksack? Nein. Hier ist keiner."
+      },
+      {
+        "zh": "没有。",
+        "pinyin": "Méiyǒu.",
+        "de": "Ein Rucksack? Nein. Hier ist keiner."
+      },
+      {
+        "zh": "这儿没有。",
+        "pinyin": "Zhèr méiyǒu.",
+        "de": "Ein Rucksack? Nein. Hier ist keiner."
+      },
+      {
+        "zh": "喂，林月？",
+        "pinyin": "Wéi, Lín Yuè?",
+        "de": "Hallo, Lín Yuè? Ich bin Sū Rán."
+      },
+      {
+        "zh": "我是苏然。",
+        "pinyin": "Wǒ shì Sū Rán.",
+        "de": "Hallo, Lín Yuè? Ich bin Sū Rán."
+      },
+      {
+        "zh": "苏然？",
+        "pinyin": "Sū Rán?",
+        "de": "Sū Rán? Was ist los?"
+      },
+      {
+        "zh": "怎么了？",
+        "pinyin": "Zěnme le?",
+        "de": "Sū Rán? Was ist los?"
+      },
+      {
+        "zh": "我的包丢了。",
         "pinyin": "Wǒ de bāo diū le.",
-        "de": "Mein Rucksack ist weg."
+        "de": "Mein Rucksack ist weg. Kannst du mir helfen?"
       },
       {
-        "prompt": "你___帮我吗？",
-        "answer": "能",
-        "choices": [
-          "能",
-          "饭馆",
-          "喂",
-          "真的"
-        ],
-        "solution": "你能帮我吗？",
+        "zh": "你能帮我吗？",
         "pinyin": "Nǐ néng bāng wǒ ma?",
-        "de": "Kannst du mir helfen?"
+        "de": "Mein Rucksack ist weg. Kannst du mir helfen?"
       },
       {
-        "prompt": "___有身份证和房卡。",
-        "answer": "里面",
-        "choices": [
-          "里面",
-          "问",
-          "家",
-          "饭馆"
-        ],
-        "solution": "里面有身份证和房卡。",
+        "zh": "别着急。",
+        "pinyin": "Bié zháojí.",
+        "de": "Keine Panik. Wo bist du?"
+      },
+      {
+        "zh": "你在哪儿？",
+        "pinyin": "Nǐ zài nǎr?",
+        "de": "Keine Panik. Wo bist du?"
+      },
+      {
+        "zh": "你的包是什么样的？",
+        "pinyin": "Nǐ de bāo shì shénme yàng de?",
+        "de": "Wie sieht dein Rucksack aus?"
+      },
+      {
+        "zh": "黑色的。",
+        "pinyin": "Hēisè de.",
+        "de": "Schwarz. Drin sind mein Personalausweis und die Schlüsselkarte."
+      },
+      {
+        "zh": "里面有身份证和房卡。",
         "pinyin": "Lǐmiàn yǒu shēnfènzhèng hé fángkǎ.",
-        "de": "Drin sind mein Personalausweis und die Schlüsselkarte."
+        "de": "Schwarz. Drin sind mein Personalausweis und die Schlüsselkarte."
       },
       {
-        "prompt": "我们___一下。",
-        "answer": "问",
-        "choices": [
-          "问",
-          "帮",
-          "黑色",
-          "里面"
-        ],
-        "solution": "我们问一下。",
+        "zh": "我们问一下。",
         "pinyin": "Wǒmen wèn yíxià.",
         "de": "Lass uns mal fragen."
       },
       {
-        "prompt": "这儿有一家___。",
-        "answer": "饭馆",
-        "choices": [
-          "饭馆",
-          "没",
-          "包",
-          "丢"
-        ],
-        "solution": "这儿有一家饭馆。",
+        "zh": "你好，请问，有人送来一个黑色的包吗？",
+        "pinyin": "Nǐ hǎo, qǐngwèn, yǒu rén sònglái yí ge hēisè de bāo ma?",
+        "de": "Hallo, hat jemand einen schwarzen Rucksack abgegeben?"
+      },
+      {
+        "zh": "没有。",
+        "pinyin": "Méiyǒu.",
+        "de": "Nein."
+      },
+      {
+        "zh": "还没找到。",
+        "pinyin": "Hái méi zhǎodào.",
+        "de": "Immer noch nicht gefunden."
+      },
+      {
+        "zh": "这儿有一家超市。",
+        "pinyin": "Zhèr yǒu yì jiā chāoshì.",
+        "de": "Hier ist ein Supermarkt. Lass uns fragen."
+      },
+      {
+        "zh": "我们问一下。",
+        "pinyin": "Wǒmen wèn yíxià.",
+        "de": "Hier ist ein Supermarkt. Lass uns fragen."
+      },
+      {
+        "zh": "别着急。",
+        "pinyin": "Bié zháojí.",
+        "de": "Keine Sorge. Und der Kiosk da?"
+      },
+      {
+        "zh": "那家便利店呢？",
+        "pinyin": "Nà jiā biànlìdiàn ne?",
+        "de": "Keine Sorge. Und der Kiosk da?"
+      },
+      {
+        "zh": "黑色的包？",
+        "pinyin": "Hēisè de bāo?",
+        "de": "Ein schwarzer Rucksack? Ja. Ein Student hat ihn gebracht."
+      },
+      {
+        "zh": "有。",
+        "pinyin": "Yǒu.",
+        "de": "Ein schwarzer Rucksack? Ja. Ein Student hat ihn gebracht."
+      },
+      {
+        "zh": "一个学生送来的。",
+        "pinyin": "Yí ge xuésheng sònglái de.",
+        "de": "Ein schwarzer Rucksack? Ja. Ein Student hat ihn gebracht."
+      },
+      {
+        "zh": "太谢谢你了！",
+        "pinyin": "Tài xièxie nǐ le!",
+        "de": "Vielen, vielen Dank!"
+      },
+      {
+        "zh": "不客气。",
+        "pinyin": "Bú kèqi.",
+        "de": "Gern geschehen."
+      },
+      {
+        "zh": "找到了。",
+        "pinyin": "Zhǎodào le.",
+        "de": "Gefunden."
+      },
+      {
+        "zh": "太谢谢你了。",
+        "pinyin": "Tài xièxie nǐ le.",
+        "de": "Vielen Dank. Wirklich."
+      },
+      {
+        "zh": "真的。",
+        "pinyin": "Zhēn de.",
+        "de": "Vielen Dank. Wirklich."
+      },
+      {
+        "zh": "你饿吗？",
+        "pinyin": "Nǐ è ma?",
+        "de": "Hast du Hunger? Ich lade dich zum Essen ein."
+      },
+      {
+        "zh": "我请你吃饭。",
+        "pinyin": "Wǒ qǐng nǐ chīfàn.",
+        "de": "Hast du Hunger? Ich lade dich zum Essen ein."
+      },
+      {
+        "zh": "不用了，你不用这么客气。",
+        "pinyin": "Bú yòng le, nǐ bú yòng zhème kèqi.",
+        "de": "Ach nein, das musst du nicht. Du musst nicht so förmlich sein."
+      },
+      {
+        "zh": "真的。",
+        "pinyin": "Zhēn de.",
+        "de": "Doch, wirklich. Ich lade dich zum Essen ein."
+      },
+      {
+        "zh": "我请你吃饭。",
+        "pinyin": "Wǒ qǐng nǐ chīfàn.",
+        "de": "Doch, wirklich. Ich lade dich zum Essen ein."
+      },
+      {
+        "zh": "好吧。",
+        "pinyin": "Hǎo ba.",
+        "de": "Na gut. Hier gibt es ein Restaurant."
+      },
+      {
+        "zh": "这儿有一家饭馆。",
         "pinyin": "Zhèr yǒu yì jiā fànguǎn.",
-        "de": "Hier gibt es ein Restaurant."
+        "de": "Na gut. Hier gibt es ein Restaurant."
+      }
+    ],
+    "gapExercises": [],
+    "speechSentences": [
+      {
+        "speaker": "苏然",
+        "zh": "你好，请问，这里有一个黑色的包吗？",
+        "pinyin": "Nǐ hǎo, qǐngwèn, zhèlǐ yǒu yí ge hēisè de bāo ma?",
+        "de": "Hallo, Entschuldigung, gibt es hier eine schwarze Tasche?"
+      },
+      {
+        "speaker": "店员",
+        "zh": "包？",
+        "pinyin": "Bāo?",
+        "de": "Ein Rucksack? Nein. Hier ist keiner."
+      },
+      {
+        "speaker": "店员",
+        "zh": "没有。",
+        "pinyin": "Méiyǒu.",
+        "de": "Ein Rucksack? Nein. Hier ist keiner."
+      },
+      {
+        "speaker": "店员",
+        "zh": "这儿没有。",
+        "pinyin": "Zhèr méiyǒu.",
+        "de": "Ein Rucksack? Nein. Hier ist keiner."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "喂，林月？",
+        "pinyin": "Wéi, Lín Yuè?",
+        "de": "Hallo, Lín Yuè? Ich bin Sū Rán."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我是苏然。",
+        "pinyin": "Wǒ shì Sū Rán.",
+        "de": "Hallo, Lín Yuè? Ich bin Sū Rán."
+      },
+      {
+        "speaker": "林月",
+        "zh": "苏然？",
+        "pinyin": "Sū Rán?",
+        "de": "Sū Rán? Was ist los?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "怎么了？",
+        "pinyin": "Zěnme le?",
+        "de": "Sū Rán? Was ist los?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我的包丢了。",
+        "pinyin": "Wǒ de bāo diū le.",
+        "de": "Mein Rucksack ist weg. Kannst du mir helfen?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你能帮我吗？",
+        "pinyin": "Nǐ néng bāng wǒ ma?",
+        "de": "Mein Rucksack ist weg. Kannst du mir helfen?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "别着急。",
+        "pinyin": "Bié zháojí.",
+        "de": "Keine Panik. Wo bist du?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "你在哪儿？",
+        "pinyin": "Nǐ zài nǎr?",
+        "de": "Keine Panik. Wo bist du?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "你的包是什么样的？",
+        "pinyin": "Nǐ de bāo shì shénme yàng de?",
+        "de": "Wie sieht dein Rucksack aus?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "黑色的。",
+        "pinyin": "Hēisè de.",
+        "de": "Schwarz. Drin sind mein Personalausweis und die Schlüsselkarte."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "里面有身份证和房卡。",
+        "pinyin": "Lǐmiàn yǒu shēnfènzhèng hé fángkǎ.",
+        "de": "Schwarz. Drin sind mein Personalausweis und die Schlüsselkarte."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我们问一下。",
+        "pinyin": "Wǒmen wèn yíxià.",
+        "de": "Lass uns mal fragen."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你好，请问，有人送来一个黑色的包吗？",
+        "pinyin": "Nǐ hǎo, qǐngwèn, yǒu rén sònglái yí ge hēisè de bāo ma?",
+        "de": "Hallo, hat jemand einen schwarzen Rucksack abgegeben?"
+      },
+      {
+        "speaker": "店员",
+        "zh": "没有。",
+        "pinyin": "Méiyǒu.",
+        "de": "Nein."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "还没找到。",
+        "pinyin": "Hái méi zhǎodào.",
+        "de": "Immer noch nicht gefunden."
+      },
+      {
+        "speaker": "林月",
+        "zh": "这儿有一家超市。",
+        "pinyin": "Zhèr yǒu yì jiā chāoshì.",
+        "de": "Hier ist ein Supermarkt. Lass uns fragen."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我们问一下。",
+        "pinyin": "Wǒmen wèn yíxià.",
+        "de": "Hier ist ein Supermarkt. Lass uns fragen."
+      },
+      {
+        "speaker": "林月",
+        "zh": "别着急。",
+        "pinyin": "Bié zháojí.",
+        "de": "Keine Sorge. Und der Kiosk da?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "那家便利店呢？",
+        "pinyin": "Nà jiā biànlìdiàn ne?",
+        "de": "Keine Sorge. Und der Kiosk da?"
+      },
+      {
+        "speaker": "店员",
+        "zh": "黑色的包？",
+        "pinyin": "Hēisè de bāo?",
+        "de": "Ein schwarzer Rucksack? Ja. Ein Student hat ihn gebracht."
+      },
+      {
+        "speaker": "店员",
+        "zh": "有。",
+        "pinyin": "Yǒu.",
+        "de": "Ein schwarzer Rucksack? Ja. Ein Student hat ihn gebracht."
+      },
+      {
+        "speaker": "店员",
+        "zh": "一个学生送来的。",
+        "pinyin": "Yí ge xuésheng sònglái de.",
+        "de": "Ein schwarzer Rucksack? Ja. Ein Student hat ihn gebracht."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "太谢谢你了！",
+        "pinyin": "Tài xièxie nǐ le!",
+        "de": "Vielen, vielen Dank!"
+      },
+      {
+        "speaker": "店员",
+        "zh": "不客气。",
+        "pinyin": "Bú kèqi.",
+        "de": "Gern geschehen."
+      },
+      {
+        "speaker": "林月",
+        "zh": "找到了。",
+        "pinyin": "Zhǎodào le.",
+        "de": "Gefunden."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "太谢谢你了。",
+        "pinyin": "Tài xièxie nǐ le.",
+        "de": "Vielen Dank. Wirklich."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "真的。",
+        "pinyin": "Zhēn de.",
+        "de": "Vielen Dank. Wirklich."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你饿吗？",
+        "pinyin": "Nǐ è ma?",
+        "de": "Hast du Hunger? Ich lade dich zum Essen ein."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我请你吃饭。",
+        "pinyin": "Wǒ qǐng nǐ chīfàn.",
+        "de": "Hast du Hunger? Ich lade dich zum Essen ein."
+      },
+      {
+        "speaker": "林月",
+        "zh": "不用了，你不用这么客气。",
+        "pinyin": "Bú yòng le, nǐ bú yòng zhème kèqi.",
+        "de": "Ach nein, das musst du nicht. Du musst nicht so förmlich sein."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "真的。",
+        "pinyin": "Zhēn de.",
+        "de": "Doch, wirklich. Ich lade dich zum Essen ein."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我请你吃饭。",
+        "pinyin": "Wǒ qǐng nǐ chīfàn.",
+        "de": "Doch, wirklich. Ich lade dich zum Essen ein."
+      },
+      {
+        "speaker": "林月",
+        "zh": "好吧。",
+        "pinyin": "Hǎo ba.",
+        "de": "Na gut. Hier gibt es ein Restaurant."
+      },
+      {
+        "speaker": "林月",
+        "zh": "这儿有一家饭馆。",
+        "pinyin": "Zhèr yǒu yì jiā fànguǎn.",
+        "de": "Na gut. Hier gibt es ein Restaurant."
       }
     ]
   },
   {
     "id": "07",
     "title": "Peking-Ente",
-    "short": "Peking-Ente bestellen, Geschmack, Erfahrungen und Bezahlen",
+    "short": "Sū Rán und Lín Yuè essen Peking-Ente, bestellen gemeinsam und klären die Rechnung.",
     "accent": "#D9A6AF",
     "textColor": "#050B12",
     "vocab": [
@@ -2880,6 +3394,11 @@ window.CF_TOPICS = [
         "zh": "盘",
         "pinyin": "pán",
         "de": "Teller (Zählwort)"
+      },
+      {
+        "zh": "份",
+        "pinyin": "fèn",
+        "de": "Portion (Zählwort)"
       },
       {
         "zh": "米饭",
@@ -2955,11 +3474,6 @@ window.CF_TOPICS = [
         "de": "(dünner) Pfannkuchen, Fladen"
       },
       {
-        "zh": "份",
-        "pinyin": "fèn",
-        "de": "Portion (Zählwort)"
-      },
-      {
         "zh": "点",
         "pinyin": "diǎn",
         "de": "bestellen, auswählen"
@@ -3015,13 +3529,13 @@ window.CF_TOPICS = [
       {
         "speaker": "林月",
         "zh": "你吃过北京烤鸭吗？",
-        "pinyin": "Nǐ chīguo Běijīng kǎoyā ma?",
+        "pinyin": "Nǐ chī guo Běijīng kǎoyā ma?",
         "de": "Hast du schon mal Peking-Ente gegessen?"
       },
       {
         "speaker": "苏然",
         "zh": "我没吃过。",
-        "pinyin": "Wǒ méi chīguo.",
+        "pinyin": "Wǒ méi chī guo.",
         "de": "Nein, noch nie."
       },
       {
@@ -3166,9 +3680,9 @@ window.CF_TOPICS = [
     "studentDialog": [
       {
         "speaker": "A",
-        "zh": "服务员，我要一份",
-        "pinyin": "Fúwùyuán, wǒ yào yí fèn ___.",
-        "de": "Bedienung, ich möchte eine Portion ___."
+        "zh": "服务员，我要一份 ……。",
+        "pinyin": "Fúwùyuán, wǒ yào yí fèn …….",
+        "de": "Bedienung, ich möchte eine Portion ……."
       },
       {
         "speaker": "A",
@@ -3177,7 +3691,7 @@ window.CF_TOPICS = [
         "de": "Und zwei Schalen Reis."
       },
       {
-        "speaker": "服务员",
+        "speaker": "B",
         "zh": "好的。",
         "pinyin": "Hǎo de.",
         "de": "In Ordnung."
@@ -3189,7 +3703,7 @@ window.CF_TOPICS = [
         "de": "Ist das scharf?"
       },
       {
-        "speaker": "服务员",
+        "speaker": "B",
         "zh": "有一点辣。/ 不辣。",
         "pinyin": "Yǒu yìdiǎn là. / Bú là.",
         "de": "Ein bisschen scharf. / Nicht scharf."
@@ -3201,7 +3715,7 @@ window.CF_TOPICS = [
         "de": "Sehr lecker. Bedienung, die Rechnung bitte."
       },
       {
-        "speaker": "服务员",
+        "speaker": "B",
         "zh": "好的。",
         "pinyin": "Hǎo de.",
         "de": "In Ordnung."
@@ -3212,168 +3726,399 @@ window.CF_TOPICS = [
     "studentDialogNote": "Bestellen, nach Schärfe fragen und die Rechnung verlangen.",
     "sentencePuzzles": [
       {
-        "de": "Hast du schon mal Peking-Ente gegessen?",
+        "zh": "我有点饿了。",
+        "pinyin": "Wǒ yǒudiǎn è le.",
+        "de": "Ich habe etwas Hunger."
+      },
+      {
+        "zh": "这家的北京烤鸭很有名。",
+        "pinyin": "Zhè jiā de Běijīng kǎoyā hěn yǒumíng.",
+        "de": "Die Peking-Ente hier ist berühmt. Magst du Ente?"
+      },
+      {
+        "zh": "你喜欢吃鸭子吗？",
+        "pinyin": "Nǐ xǐhuan chī yāzi ma?",
+        "de": "Die Peking-Ente hier ist berühmt. Magst du Ente?"
+      },
+      {
+        "zh": "喜欢。",
+        "pinyin": "Xǐhuan.",
+        "de": "Ja, mag ich."
+      },
+      {
         "zh": "你吃过北京烤鸭吗？",
-        "pinyin": "Nǐ chīguo Běijīng kǎoyā ma?",
-        "tokens": [
-          "你",
-          "吃",
-          "过",
-          "北京烤鸭",
-          "吗",
-          "？"
-        ]
-      },
-      {
-        "de": "Bedienung, wir möchten eine Portion Peking-Ente.",
-        "zh": "服务员，我们要一份北京烤鸭。",
-        "pinyin": "Fúwùyuán, wǒmen yào yí fèn Běijīng kǎoyā.",
-        "tokens": [
-          "服务员",
-          "，",
-          "我们",
-          "要",
-          "一",
-          "份",
-          "北京烤鸭",
-          "。"
-        ]
-      },
-      {
-        "de": "Und zwei Schalen Reis.",
-        "zh": "来两碗米饭。",
-        "pinyin": "Lái liǎng wǎn mǐfàn.",
-        "tokens": [
-          "来",
-          "两",
-          "碗",
-          "米饭",
-          "。"
-        ]
-      },
-      {
-        "de": "Ist dieses Gericht scharf?",
-        "zh": "这个菜辣吗？",
-        "pinyin": "Zhège cài là ma?",
-        "tokens": [
-          "这",
-          "个",
-          "菜",
-          "辣",
-          "吗",
-          "？"
-        ]
-      },
-      {
-        "de": "Ich finde es auch sehr lecker.",
-        "zh": "我也觉得很好吃。",
-        "pinyin": "Wǒ yě juéde hěn hǎochī.",
-        "tokens": [
-          "我",
-          "也",
-          "觉得",
-          "很",
-          "好吃",
-          "。"
-        ]
-      },
-      {
-        "de": "Bedienung, die Rechnung bitte.",
-        "zh": "服务员，买单。",
-        "pinyin": "Fúwùyuán, mǎidān.",
-        "tokens": [
-          "服务员",
-          "，",
-          "买单",
-          "。"
-        ]
-      }
-    ],
-    "gapExercises": [
-      {
-        "prompt": "你吃___北京烤鸭吗？",
-        "answer": "过",
-        "choices": [
-          "过",
-          "米饭",
-          "好吃",
-          "辣"
-        ],
-        "solution": "你吃过北京烤鸭吗？",
-        "pinyin": "Nǐ chīguo Běijīng kǎoyā ma?",
+        "pinyin": "Nǐ chī guo Běijīng kǎoyā ma?",
         "de": "Hast du schon mal Peking-Ente gegessen?"
       },
       {
-        "prompt": "服务员，我们___一份北京烤鸭。",
-        "answer": "要",
-        "choices": [
-          "要",
-          "菜单",
-          "来",
-          "碗"
-        ],
-        "solution": "服务员，我们要一份北京烤鸭。",
+        "zh": "我没吃过。",
+        "pinyin": "Wǒ méi chī guo.",
+        "de": "Nein, noch nie."
+      },
+      {
+        "zh": "菜单上有很多菜。",
+        "pinyin": "Càidān shàng yǒu hěn duō cài.",
+        "de": "Auf der Speisekarte stehen viele Gerichte. Was empfiehlst du?"
+      },
+      {
+        "zh": "你推荐什么？",
+        "pinyin": "Nǐ tuījiàn shénme?",
+        "de": "Auf der Speisekarte stehen viele Gerichte. Was empfiehlst du?"
+      },
+      {
+        "zh": "来一份北京烤鸭吧。",
+        "pinyin": "Lái yí fèn Běijīng kǎoyā ba.",
+        "de": "Lass uns eine Portion Peking-Ente nehmen. Zur Ente gibt es Pfannkuchen."
+      },
+      {
+        "zh": "烤鸭有饼。",
+        "pinyin": "Kǎoyā yǒu bǐng.",
+        "de": "Lass uns eine Portion Peking-Ente nehmen. Zur Ente gibt es Pfannkuchen."
+      },
+      {
+        "zh": "服务员，我们要一份北京烤鸭。",
         "pinyin": "Fúwùyuán, wǒmen yào yí fèn Běijīng kǎoyā.",
         "de": "Bedienung, wir möchten eine Portion Peking-Ente."
       },
       {
-        "prompt": "来两___米饭。",
-        "answer": "碗",
-        "choices": [
-          "碗",
-          "过",
-          "饿",
-          "菜单"
-        ],
-        "solution": "来两碗米饭。",
+        "zh": "来两碗米饭。",
         "pinyin": "Lái liǎng wǎn mǐfàn.",
         "de": "Und zwei Schalen Reis."
       },
       {
-        "prompt": "这个菜___吗？",
-        "answer": "辣",
-        "choices": [
-          "辣",
-          "饿",
-          "菜单",
-          "要"
-        ],
-        "solution": "这个菜辣吗？",
+        "zh": "再来一盘青菜。",
+        "pinyin": "Zài lái yì pán qīngcài.",
+        "de": "Und noch einen Teller Gemüse."
+      },
+      {
+        "zh": "我们点的够了吗？",
+        "pinyin": "Wǒmen diǎn de gòu le ma?",
+        "de": "Haben wir genug bestellt?"
+      },
+      {
+        "zh": "够了。",
+        "pinyin": "Gòu le.",
+        "de": "Ja, das reicht."
+      },
+      {
+        "zh": "好的。",
+        "pinyin": "Hǎo de.",
+        "de": "In Ordnung."
+      },
+      {
+        "zh": "这个菜辣吗？",
         "pinyin": "Zhège cài là ma?",
         "de": "Ist dieses Gericht scharf?"
       },
       {
-        "prompt": "我也___很好吃。",
-        "answer": "觉得",
-        "choices": [
-          "觉得",
-          "饿",
-          "菜单",
-          "要"
-        ],
-        "solution": "我也觉得很好吃。",
+        "zh": "有一点辣。",
+        "pinyin": "Yǒu yìdiǎn là.",
+        "de": "Ein bisschen scharf."
+      },
+      {
+        "zh": "那不要了。",
+        "pinyin": "Nà bú yào le.",
+        "de": "Dann lieber nicht."
+      },
+      {
+        "zh": "很好吃。",
+        "pinyin": "Hěn hǎochī.",
+        "de": "Sehr lecker."
+      },
+      {
+        "zh": "我也觉得很好吃。",
         "pinyin": "Wǒ yě juéde hěn hǎochī.",
         "de": "Ich finde es auch sehr lecker."
       },
       {
-        "prompt": "服务员，___。",
-        "answer": "买单",
-        "choices": [
-          "买单",
-          "米饭",
-          "好吃",
-          "辣"
-        ],
-        "solution": "服务员，买单。",
+        "zh": "我小时候不喜欢鸭子，只喜欢饼。",
+        "pinyin": "Wǒ xiǎoshíhou bù xǐhuan yāzi, zhǐ xǐhuan bǐng.",
+        "de": "Als Kind mochte ich keine Ente, nur die Pfannkuchen."
+      },
+      {
+        "zh": "现在呢？",
+        "pinyin": "Xiànzài ne?",
+        "de": "Und jetzt?"
+      },
+      {
+        "zh": "现在都喜欢。",
+        "pinyin": "Xiànzài dōu xǐhuan.",
+        "de": "Jetzt mag ich beides."
+      },
+      {
+        "zh": "来，干杯。",
+        "pinyin": "Lái, gānbēi.",
+        "de": "Komm, prost. Mit Tee statt Wein."
+      },
+      {
+        "zh": "以茶代酒。",
+        "pinyin": "Yǐchá-dàijiǔ.",
+        "de": "Komm, prost. Mit Tee statt Wein."
+      },
+      {
+        "zh": "干杯。",
+        "pinyin": "Gānbēi.",
+        "de": "Prost."
+      },
+      {
+        "zh": "服务员，买单。",
         "pinyin": "Fúwùyuán, mǎidān.",
         "de": "Bedienung, die Rechnung bitte."
+      },
+      {
+        "zh": "我来吧。",
+        "pinyin": "Wǒ lái ba.",
+        "de": "Ich zahle."
+      },
+      {
+        "zh": "不用。",
+        "pinyin": "Bú yòng.",
+        "de": "Nicht nötig. Ich lade ein. Du hast mir geholfen."
+      },
+      {
+        "zh": "我请客。",
+        "pinyin": "Wǒ qǐngkè.",
+        "de": "Nicht nötig. Ich lade ein. Du hast mir geholfen."
+      },
+      {
+        "zh": "你帮了我。",
+        "pinyin": "Nǐ bāng le wǒ.",
+        "de": "Nicht nötig. Ich lade ein. Du hast mir geholfen."
+      },
+      {
+        "zh": "好。",
+        "pinyin": "Hǎo.",
+        "de": "Gut. Dann lade ich dich nächstes Mal ein."
+      },
+      {
+        "zh": "那下次我请你。",
+        "pinyin": "Nà xiàcì wǒ qǐng nǐ.",
+        "de": "Gut. Dann lade ich dich nächstes Mal ein."
+      },
+      {
+        "zh": "好。",
+        "pinyin": "Hǎo.",
+        "de": "Abgemacht."
+      }
+    ],
+    "gapExercises": [],
+    "speechSentences": [
+      {
+        "speaker": "苏然",
+        "zh": "我有点饿了。",
+        "pinyin": "Wǒ yǒudiǎn è le.",
+        "de": "Ich habe etwas Hunger."
+      },
+      {
+        "speaker": "林月",
+        "zh": "这家的北京烤鸭很有名。",
+        "pinyin": "Zhè jiā de Běijīng kǎoyā hěn yǒumíng.",
+        "de": "Die Peking-Ente hier ist berühmt. Magst du Ente?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "你喜欢吃鸭子吗？",
+        "pinyin": "Nǐ xǐhuan chī yāzi ma?",
+        "de": "Die Peking-Ente hier ist berühmt. Magst du Ente?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "喜欢。",
+        "pinyin": "Xǐhuan.",
+        "de": "Ja, mag ich."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你吃过北京烤鸭吗？",
+        "pinyin": "Nǐ chī guo Běijīng kǎoyā ma?",
+        "de": "Hast du schon mal Peking-Ente gegessen?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我没吃过。",
+        "pinyin": "Wǒ méi chī guo.",
+        "de": "Nein, noch nie."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "菜单上有很多菜。",
+        "pinyin": "Càidān shàng yǒu hěn duō cài.",
+        "de": "Auf der Speisekarte stehen viele Gerichte. Was empfiehlst du?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你推荐什么？",
+        "pinyin": "Nǐ tuījiàn shénme?",
+        "de": "Auf der Speisekarte stehen viele Gerichte. Was empfiehlst du?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "来一份北京烤鸭吧。",
+        "pinyin": "Lái yí fèn Běijīng kǎoyā ba.",
+        "de": "Lass uns eine Portion Peking-Ente nehmen. Zur Ente gibt es Pfannkuchen."
+      },
+      {
+        "speaker": "林月",
+        "zh": "烤鸭有饼。",
+        "pinyin": "Kǎoyā yǒu bǐng.",
+        "de": "Lass uns eine Portion Peking-Ente nehmen. Zur Ente gibt es Pfannkuchen."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "服务员，我们要一份北京烤鸭。",
+        "pinyin": "Fúwùyuán, wǒmen yào yí fèn Běijīng kǎoyā.",
+        "de": "Bedienung, wir möchten eine Portion Peking-Ente."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "来两碗米饭。",
+        "pinyin": "Lái liǎng wǎn mǐfàn.",
+        "de": "Und zwei Schalen Reis."
+      },
+      {
+        "speaker": "林月",
+        "zh": "再来一盘青菜。",
+        "pinyin": "Zài lái yì pán qīngcài.",
+        "de": "Und noch einen Teller Gemüse."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我们点的够了吗？",
+        "pinyin": "Wǒmen diǎn de gòu le ma?",
+        "de": "Haben wir genug bestellt?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "够了。",
+        "pinyin": "Gòu le.",
+        "de": "Ja, das reicht."
+      },
+      {
+        "speaker": "服务员",
+        "zh": "好的。",
+        "pinyin": "Hǎo de.",
+        "de": "In Ordnung."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "这个菜辣吗？",
+        "pinyin": "Zhège cài là ma?",
+        "de": "Ist dieses Gericht scharf?"
+      },
+      {
+        "speaker": "服务员",
+        "zh": "有一点辣。",
+        "pinyin": "Yǒu yìdiǎn là.",
+        "de": "Ein bisschen scharf."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "那不要了。",
+        "pinyin": "Nà bú yào le.",
+        "de": "Dann lieber nicht."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "很好吃。",
+        "pinyin": "Hěn hǎochī.",
+        "de": "Sehr lecker."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我也觉得很好吃。",
+        "pinyin": "Wǒ yě juéde hěn hǎochī.",
+        "de": "Ich finde es auch sehr lecker."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我小时候不喜欢鸭子，只喜欢饼。",
+        "pinyin": "Wǒ xiǎoshíhou bù xǐhuan yāzi, zhǐ xǐhuan bǐng.",
+        "de": "Als Kind mochte ich keine Ente, nur die Pfannkuchen."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "现在呢？",
+        "pinyin": "Xiànzài ne?",
+        "de": "Und jetzt?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "现在都喜欢。",
+        "pinyin": "Xiànzài dōu xǐhuan.",
+        "de": "Jetzt mag ich beides."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "来，干杯。",
+        "pinyin": "Lái, gānbēi.",
+        "de": "Komm, prost. Mit Tee statt Wein."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "以茶代酒。",
+        "pinyin": "Yǐchá-dàijiǔ.",
+        "de": "Komm, prost. Mit Tee statt Wein."
+      },
+      {
+        "speaker": "林月",
+        "zh": "干杯。",
+        "pinyin": "Gānbēi.",
+        "de": "Prost."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "服务员，买单。",
+        "pinyin": "Fúwùyuán, mǎidān.",
+        "de": "Bedienung, die Rechnung bitte."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我来吧。",
+        "pinyin": "Wǒ lái ba.",
+        "de": "Ich zahle."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "不用。",
+        "pinyin": "Bú yòng.",
+        "de": "Nicht nötig. Ich lade ein. Du hast mir geholfen."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我请客。",
+        "pinyin": "Wǒ qǐngkè.",
+        "de": "Nicht nötig. Ich lade ein. Du hast mir geholfen."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你帮了我。",
+        "pinyin": "Nǐ bāng le wǒ.",
+        "de": "Nicht nötig. Ich lade ein. Du hast mir geholfen."
+      },
+      {
+        "speaker": "林月",
+        "zh": "好。",
+        "pinyin": "Hǎo.",
+        "de": "Gut. Dann lade ich dich nächstes Mal ein."
+      },
+      {
+        "speaker": "林月",
+        "zh": "那下次我请你。",
+        "pinyin": "Nà xiàcì wǒ qǐng nǐ.",
+        "de": "Gut. Dann lade ich dich nächstes Mal ein."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "好。",
+        "pinyin": "Hǎo.",
+        "de": "Abgemacht."
       }
     ]
   },
   {
     "id": "08",
     "title": "Familie",
-    "short": "Familie, Studium, Alter und Berufe",
+    "short": "Beim Spaziergang sprechen Sū Rán und Lín Yuè über Studium, Alter, Familie und Berufe.",
     "accent": "#C98E9B",
     "textColor": "#050B12",
     "vocab": [
@@ -3661,21 +4406,21 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "B",
-        "zh": "我学 ___ 。你呢？",
-        "pinyin": "Wǒ xué ___. Nǐ ne?",
-        "de": "Ich studiere ___. Und du?"
+        "zh": "我学 ……。你呢？",
+        "pinyin": "Wǒ xué ……. Nǐ ne?",
+        "de": "Ich studiere ……. Und du?"
       },
       {
         "speaker": "A",
-        "zh": "我学 ___ 。你今年多大？",
-        "pinyin": "Wǒ xué ___. Nǐ jīnnián duō dà?",
-        "de": "Ich studiere ___. Wie alt bist du?"
+        "zh": "我学 ……。你今年多大？",
+        "pinyin": "Wǒ xué ……. Nǐ jīnnián duō dà?",
+        "de": "Ich studiere ……. Wie alt bist du?"
       },
       {
         "speaker": "B",
-        "zh": "我今年 ___ 岁。",
-        "pinyin": "Wǒ jīnnián ___ suì.",
-        "de": "Ich bin ___ Jahre alt."
+        "zh": "我今年 …… 岁。",
+        "pinyin": "Wǒ jīnnián …… suì.",
+        "de": "Ich bin …… Jahre alt."
       },
       {
         "speaker": "A",
@@ -3697,9 +4442,9 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "B",
-        "zh": "我爸爸是 ___ ，我妈妈是",
-        "pinyin": "Wǒ bàba shì ___, wǒ māma shì ___.",
-        "de": "Mein Vater ist ___, meine Mutter ist ___."
+        "zh": "我爸爸是 ……，我妈妈是 ……。",
+        "pinyin": "Wǒ bàba shì ……, wǒ māma shì …….",
+        "de": "Mein Vater ist ……, meine Mutter ist ……."
       }
     ],
     "storyDialogTitle": "Familie",
@@ -3707,166 +4452,355 @@ window.CF_TOPICS = [
     "studentDialogNote": "Studium, Alter, Geschwister und Berufe austauschen.",
     "sentencePuzzles": [
       {
-        "de": "Ich studiere Wirtschaft.",
+        "zh": "你在上海学什么？",
+        "pinyin": "Nǐ zài Shànghǎi xué shénme?",
+        "de": "Was studierst du in Shanghai?"
+      },
+      {
         "zh": "我学经济。",
         "pinyin": "Wǒ xué jīngjì.",
-        "tokens": [
-          "我",
-          "学",
-          "经济",
-          "。"
-        ]
+        "de": "Ich studiere Wirtschaft. Und du?"
       },
       {
-        "de": "Wie alt bist du dieses Jahr?",
+        "zh": "你呢？",
+        "pinyin": "Nǐ ne?",
+        "de": "Ich studiere Wirtschaft. Und du?"
+      },
+      {
+        "zh": "我在清华大学学设计。",
+        "pinyin": "Wǒ zài Qīnghuá Dàxué xué shèjì.",
+        "de": "Ich studiere Design an der Tsinghua-Universität."
+      },
+      {
+        "zh": "清华大学很有名。",
+        "pinyin": "Qīnghuá Dàxué hěn yǒumíng.",
+        "de": "Die Tsinghua ist sehr berühmt."
+      },
+      {
         "zh": "你今年多大？",
-        "pinyin": "Nǐ jīnnián duō dà?",
-        "tokens": [
-          "你",
-          "今年",
-          "多大",
-          "？"
-        ]
-      },
-      {
-        "de": "Ich bin einundzwanzig.",
-        "zh": "我今年二十一岁。",
-        "pinyin": "Wǒ jīnnián èrshíyī suì.",
-        "tokens": [
-          "我",
-          "今年",
-          "二",
-          "十",
-          "一",
-          "岁",
-          "。"
-        ]
-      },
-      {
-        "de": "Wir haben beide keine Geschwister.",
-        "zh": "我们都没有兄弟姐妹。",
-        "pinyin": "Wǒmen dōu méiyǒu xiōngdì jiěmèi.",
-        "tokens": [
-          "我们",
-          "都",
-          "没",
-          "有",
-          "兄弟姐妹",
-          "。"
-        ]
-      },
-      {
-        "de": "Was arbeiten deine Eltern?",
-        "zh": "你爸爸妈妈做什么工作？",
-        "pinyin": "Nǐ bàba māma zuò shénme gōngzuò?",
-        "tokens": [
-          "你",
-          "爸爸",
-          "妈妈",
-          "做",
-          "什么",
-          "工作",
-          "？"
-        ]
-      },
-      {
-        "de": "Ich zeig es dir.",
-        "zh": "我给你看。",
-        "pinyin": "Wǒ gěi nǐ kàn.",
-        "tokens": [
-          "我",
-          "给",
-          "你",
-          "看",
-          "。"
-        ]
-      }
-    ],
-    "gapExercises": [
-      {
-        "prompt": "我___经济。",
-        "answer": "学",
-        "choices": [
-          "学",
-          "都",
-          "工作",
-          "他们"
-        ],
-        "solution": "我学经济。",
-        "pinyin": "Wǒ xué jīngjì.",
-        "de": "Ich studiere Wirtschaft."
-      },
-      {
-        "prompt": "你___多大？",
-        "answer": "今年",
-        "choices": [
-          "今年",
-          "姐姐",
-          "妹妹",
-          "老师"
-        ],
-        "solution": "你今年多大？",
         "pinyin": "Nǐ jīnnián duō dà?",
         "de": "Wie alt bist du dieses Jahr?"
       },
       {
-        "prompt": "我今年二十一___。",
-        "answer": "岁",
-        "choices": [
-          "岁",
-          "忙",
-          "爸爸",
-          "妈妈"
-        ],
-        "solution": "我今年二十一岁。",
+        "zh": "我今年二十一岁。",
         "pinyin": "Wǒ jīnnián èrshíyī suì.",
-        "de": "Ich bin einundzwanzig."
+        "de": "Ich bin einundzwanzig. Und du?"
       },
       {
-        "prompt": "我们___没有兄弟姐妹。",
-        "answer": "都",
-        "choices": [
-          "都",
-          "工作",
-          "他们",
-          "做"
-        ],
-        "solution": "我们都没有兄弟姐妹。",
+        "zh": "你呢？",
+        "pinyin": "Nǐ ne?",
+        "de": "Ich bin einundzwanzig. Und du?"
+      },
+      {
+        "zh": "我也二十一岁。",
+        "pinyin": "Wǒ yě èrshíyī suì.",
+        "de": "Ich bin auch einundzwanzig. Wir sind gleich alt."
+      },
+      {
+        "zh": "我们一样大。",
+        "pinyin": "Wǒmen yíyàng dà.",
+        "de": "Ich bin auch einundzwanzig. Wir sind gleich alt."
+      },
+      {
+        "zh": "你有兄弟姐妹吗？",
+        "pinyin": "Nǐ yǒu xiōngdì jiěmèi ma?",
+        "de": "Hast du Geschwister?"
+      },
+      {
+        "zh": "没有。",
+        "pinyin": "Méiyǒu.",
+        "de": "Nein. Und du? Hast du einen älteren Bruder?"
+      },
+      {
+        "zh": "你呢？",
+        "pinyin": "Nǐ ne?",
+        "de": "Nein. Und du? Hast du einen älteren Bruder?"
+      },
+      {
+        "zh": "你有哥哥吗？",
+        "pinyin": "Nǐ yǒu gēge ma?",
+        "de": "Nein. Und du? Hast du einen älteren Bruder?"
+      },
+      {
+        "zh": "没有。",
+        "pinyin": "Méiyǒu.",
+        "de": "Nein. Ich habe keinen älteren und keinen jüngeren Bruder."
+      },
+      {
+        "zh": "我没有哥哥，也没有弟弟。",
+        "pinyin": "Wǒ méiyǒu gēge, yě méiyǒu dìdi.",
+        "de": "Nein. Ich habe keinen älteren und keinen jüngeren Bruder."
+      },
+      {
+        "zh": "姐姐妹妹呢？",
+        "pinyin": "Jiějie mèimei ne?",
+        "de": "Und Schwestern?"
+      },
+      {
+        "zh": "也没有。",
+        "pinyin": "Yě méiyǒu.",
+        "de": "Auch nicht."
+      },
+      {
+        "zh": "我们都没有兄弟姐妹。",
         "pinyin": "Wǒmen dōu méiyǒu xiōngdì jiěmèi.",
         "de": "Wir haben beide keine Geschwister."
       },
       {
-        "prompt": "你爸爸妈妈做什么___？",
-        "answer": "工作",
-        "choices": [
-          "工作",
-          "都",
-          "他们",
-          "给"
-        ],
-        "solution": "你爸爸妈妈做什么工作？",
+        "zh": "在中国，很多学生都没有兄弟姐妹。",
+        "pinyin": "Zài Zhōngguó, hěn duō xuésheng dōu méiyǒu xiōngdì jiěmèi.",
+        "de": "In China haben viele Studenten keine Geschwister."
+      },
+      {
+        "zh": "你爸爸妈妈做什么工作？",
         "pinyin": "Nǐ bàba māma zuò shénme gōngzuò?",
         "de": "Was arbeiten deine Eltern?"
       },
       {
-        "prompt": "我___你看。",
-        "answer": "给",
-        "choices": [
-          "给",
-          "他们",
-          "做",
-          "忙"
-        ],
-        "solution": "我给你看。",
+        "zh": "我爸爸是工程师，我妈妈是老师。",
+        "pinyin": "Wǒ bàba shì gōngchéngshī, wǒ māma shì lǎoshī.",
+        "de": "Mein Vater ist Ingenieur, meine Mutter ist Lehrerin."
+      },
+      {
+        "zh": "他们都在上海工作。",
+        "pinyin": "Tāmen dōu zài Shànghǎi gōngzuò.",
+        "de": "Sie arbeiten beide in Shanghai. Und deine?"
+      },
+      {
+        "zh": "你呢？",
+        "pinyin": "Nǐ ne?",
+        "de": "Sie arbeiten beide in Shanghai. Und deine?"
+      },
+      {
+        "zh": "我妈妈是医生。",
+        "pinyin": "Wǒ māma shì yīshēng.",
+        "de": "Meine Mutter ist Ärztin. Mein Vater ist Fotograf, er ist sehr beschäftigt."
+      },
+      {
+        "zh": "我爸爸是摄影师，很忙。",
+        "pinyin": "Wǒ bàba shì shèyǐngshī, hěn máng.",
+        "de": "Meine Mutter ist Ärztin. Mein Vater ist Fotograf, er ist sehr beschäftigt."
+      },
+      {
+        "zh": "我给你看。",
         "pinyin": "Wǒ gěi nǐ kàn.",
         "de": "Ich zeig es dir."
+      },
+      {
+        "zh": "不早了。",
+        "pinyin": "Bù zǎo le.",
+        "de": "Es ist schon spät. Morgen nehme ich dich zu einem Hutong mit, okay?"
+      },
+      {
+        "zh": "明天我带你去一个胡同，好吗？",
+        "pinyin": "Míngtiān wǒ dài nǐ qù yí ge hútòng, hǎo ma?",
+        "de": "Es ist schon spät. Morgen nehme ich dich zu einem Hutong mit, okay?"
+      },
+      {
+        "zh": "好。",
+        "pinyin": "Hǎo.",
+        "de": "Gern. Danke dir."
+      },
+      {
+        "zh": "谢谢你。",
+        "pinyin": "Xièxie nǐ.",
+        "de": "Gern. Danke dir."
+      }
+    ],
+    "gapExercises": [],
+    "speechSentences": [
+      {
+        "speaker": "林月",
+        "zh": "你在上海学什么？",
+        "pinyin": "Nǐ zài Shànghǎi xué shénme?",
+        "de": "Was studierst du in Shanghai?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我学经济。",
+        "pinyin": "Wǒ xué jīngjì.",
+        "de": "Ich studiere Wirtschaft. Und du?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你呢？",
+        "pinyin": "Nǐ ne?",
+        "de": "Ich studiere Wirtschaft. Und du?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "我在清华大学学设计。",
+        "pinyin": "Wǒ zài Qīnghuá Dàxué xué shèjì.",
+        "de": "Ich studiere Design an der Tsinghua-Universität."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "清华大学很有名。",
+        "pinyin": "Qīnghuá Dàxué hěn yǒumíng.",
+        "de": "Die Tsinghua ist sehr berühmt."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你今年多大？",
+        "pinyin": "Nǐ jīnnián duō dà?",
+        "de": "Wie alt bist du dieses Jahr?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我今年二十一岁。",
+        "pinyin": "Wǒ jīnnián èrshíyī suì.",
+        "de": "Ich bin einundzwanzig. Und du?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你呢？",
+        "pinyin": "Nǐ ne?",
+        "de": "Ich bin einundzwanzig. Und du?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "我也二十一岁。",
+        "pinyin": "Wǒ yě èrshíyī suì.",
+        "de": "Ich bin auch einundzwanzig. Wir sind gleich alt."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我们一样大。",
+        "pinyin": "Wǒmen yíyàng dà.",
+        "de": "Ich bin auch einundzwanzig. Wir sind gleich alt."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你有兄弟姐妹吗？",
+        "pinyin": "Nǐ yǒu xiōngdì jiěmèi ma?",
+        "de": "Hast du Geschwister?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "没有。",
+        "pinyin": "Méiyǒu.",
+        "de": "Nein. Und du? Hast du einen älteren Bruder?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "你呢？",
+        "pinyin": "Nǐ ne?",
+        "de": "Nein. Und du? Hast du einen älteren Bruder?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "你有哥哥吗？",
+        "pinyin": "Nǐ yǒu gēge ma?",
+        "de": "Nein. Und du? Hast du einen älteren Bruder?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "没有。",
+        "pinyin": "Méiyǒu.",
+        "de": "Nein. Ich habe keinen älteren und keinen jüngeren Bruder."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我没有哥哥，也没有弟弟。",
+        "pinyin": "Wǒ méiyǒu gēge, yě méiyǒu dìdi.",
+        "de": "Nein. Ich habe keinen älteren und keinen jüngeren Bruder."
+      },
+      {
+        "speaker": "林月",
+        "zh": "姐姐妹妹呢？",
+        "pinyin": "Jiějie mèimei ne?",
+        "de": "Und Schwestern?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "也没有。",
+        "pinyin": "Yě méiyǒu.",
+        "de": "Auch nicht."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我们都没有兄弟姐妹。",
+        "pinyin": "Wǒmen dōu méiyǒu xiōngdì jiěmèi.",
+        "de": "Wir haben beide keine Geschwister."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "在中国，很多学生都没有兄弟姐妹。",
+        "pinyin": "Zài Zhōngguó, hěn duō xuésheng dōu méiyǒu xiōngdì jiěmèi.",
+        "de": "In China haben viele Studenten keine Geschwister."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你爸爸妈妈做什么工作？",
+        "pinyin": "Nǐ bàba māma zuò shénme gōngzuò?",
+        "de": "Was arbeiten deine Eltern?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我爸爸是工程师，我妈妈是老师。",
+        "pinyin": "Wǒ bàba shì gōngchéngshī, wǒ māma shì lǎoshī.",
+        "de": "Mein Vater ist Ingenieur, meine Mutter ist Lehrerin."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "他们都在上海工作。",
+        "pinyin": "Tāmen dōu zài Shànghǎi gōngzuò.",
+        "de": "Sie arbeiten beide in Shanghai. Und deine?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你呢？",
+        "pinyin": "Nǐ ne?",
+        "de": "Sie arbeiten beide in Shanghai. Und deine?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "我妈妈是医生。",
+        "pinyin": "Wǒ māma shì yīshēng.",
+        "de": "Meine Mutter ist Ärztin. Mein Vater ist Fotograf, er ist sehr beschäftigt."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我爸爸是摄影师，很忙。",
+        "pinyin": "Wǒ bàba shì shèyǐngshī, hěn máng.",
+        "de": "Meine Mutter ist Ärztin. Mein Vater ist Fotograf, er ist sehr beschäftigt."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我给你看。",
+        "pinyin": "Wǒ gěi nǐ kàn.",
+        "de": "Ich zeig es dir."
+      },
+      {
+        "speaker": "林月",
+        "zh": "不早了。",
+        "pinyin": "Bù zǎo le.",
+        "de": "Es ist schon spät. Morgen nehme ich dich zu einem Hutong mit, okay?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "明天我带你去一个胡同，好吗？",
+        "pinyin": "Míngtiān wǒ dài nǐ qù yí ge hútòng, hǎo ma?",
+        "de": "Es ist schon spät. Morgen nehme ich dich zu einem Hutong mit, okay?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "好。",
+        "pinyin": "Hǎo.",
+        "de": "Gern. Danke dir."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "谢谢你。",
+        "pinyin": "Xièxie nǐ.",
+        "de": "Gern. Danke dir."
       }
     ]
   },
   {
     "id": "09",
     "title": "Im Hutong",
-    "short": "Hutongs, Wohnen, Möbel und Positionswörter",
+    "short": "Lín Yuè zeigt Sū Rán einen Hutong und beschreibt Höfe, Zimmer und Gegenstände.",
     "accent": "#E9CDC0",
     "textColor": "#050B12",
     "vocab": [
@@ -4100,15 +5034,15 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "林月",
-        "zh": "我住在学校的宿舍。房间里有一张床和一张桌子。",
-        "pinyin": "Wǒ zhù zài xuéxiào de sùshè. Fángjiān lǐ yǒu yì zhāng chuáng hé yì zhāng zhuōzi.",
-        "de": "Ich wohne im Wohnheim der Uni. Im Zimmer stehen ein Bett und ein Tisch."
+        "zh": "我住在学校的宿舍。房间里有四张床和四张桌子。",
+        "pinyin": "Wǒ zhù zài xuéxiào de sùshè. Fángjiān lǐ yǒu sì zhāng chuáng hé sì zhāng zhuōzi.",
+        "de": "Ich wohne im Wohnheim der Uni. Im Zimmer stehen vier Betten und vier Tische."
       },
       {
         "speaker": "苏然",
         "zh": "你们几个人住一个房间？",
         "pinyin": "Nǐmen jǐ ge rén zhù yí ge fángjiān?",
-        "de": "Zu wie vielt wohnt ihr in einem Zimmer?"
+        "de": "Mit wie vielen Personen wohnt ihr in einem Zimmer?"
       },
       {
         "speaker": "林月",
@@ -4150,9 +5084,9 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "B",
-        "zh": "我住在",
-        "pinyin": "Wǒ zhù zài ___ .",
-        "de": "Ich wohne in ___ ."
+        "zh": "我住在 ……。",
+        "pinyin": "Wǒ zhù zài …… .",
+        "de": "Ich wohne in …… ."
       },
       {
         "speaker": "A",
@@ -4162,21 +5096,21 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "B",
-        "zh": "房间里面有一张床和一张桌子。",
-        "pinyin": "Fángjiān lǐmiàn yǒu yì zhāng chuáng hé yì zhāng zhuōzi.",
-        "de": "Im Zimmer stehen ein Bett und ein Tisch."
+        "zh": "房间里面有四张床和四张桌子。",
+        "pinyin": "Fángjiān lǐmiàn yǒu sì zhāng chuáng hé sì zhāng zhuōzi.",
+        "de": "Im Zimmer stehen vier Betten und vier Tische."
       },
       {
         "speaker": "A",
         "zh": "桌子在哪里？",
         "pinyin": "Zhuōzi zài nǎlǐ?",
-        "de": "Wo ist der Tisch?"
+        "de": "Wo stehen die Tische?"
       },
       {
         "speaker": "B",
-        "zh": "在 ___ 旁边。",
-        "pinyin": "Zài ___ pángbiān.",
-        "de": "Neben ___ ."
+        "zh": "在 …… 旁边。",
+        "pinyin": "Zài …… pángbiān.",
+        "de": "Sie stehen neben …… ."
       }
     ],
     "storyDialogTitle": "Im Hutong",
@@ -4184,180 +5118,278 @@ window.CF_TOPICS = [
     "studentDialogNote": "Wohnort, Möbel und ihre Positionen beschreiben.",
     "sentencePuzzles": [
       {
-        "de": "Schau, die Häuser hier sind sehr alt.",
+        "zh": "这是胡同。",
+        "pinyin": "Zhè shì hútòng.",
+        "de": "Das ist ein Hutong. Schau, die Häuser hier sind sehr alt."
+      },
+      {
         "zh": "你看，这里的房子很老。",
         "pinyin": "Nǐ kàn, zhèlǐ de fángzi hěn lǎo.",
-        "tokens": [
-          "你",
-          "看",
-          "，",
-          "这里",
-          "的",
-          "房子",
-          "很",
-          "老",
-          "。"
-        ]
+        "de": "Das ist ein Hutong. Schau, die Häuser hier sind sehr alt."
       },
       {
-        "de": "In der Mitte ist der Hof.",
+        "zh": "真漂亮。",
+        "pinyin": "Zhēn piàoliang.",
+        "de": "Wirklich schön. Wie heißen diese Häuser?"
+      },
+      {
+        "zh": "这些房子叫什么？",
+        "pinyin": "Zhèxiē fángzi jiào shénme?",
+        "de": "Wirklich schön. Wie heißen diese Häuser?"
+      },
+      {
+        "zh": "四合院。",
+        "pinyin": "Sìhéyuàn.",
+        "de": "Sìhéyuàn. In der Mitte ist der Hof."
+      },
+      {
         "zh": "中间是院子。",
         "pinyin": "Zhōngjiān shì yuànzi.",
-        "tokens": [
-          "中间",
-          "是",
-          "院子",
-          "。"
-        ]
+        "de": "Sìhéyuàn. In der Mitte ist der Hof."
       },
       {
-        "de": "Schau, der Stuhl steht unter dem Baum.",
+        "zh": "你看，左边是四合院，右边有一个咖啡馆。",
+        "pinyin": "Nǐ kàn, zuǒbiān shì sìhéyuàn, yòubiān yǒu yí ge kāfēiguǎn.",
+        "de": "Schau, links sind Hofhäuser, rechts ist ein Café."
+      },
+      {
+        "zh": "院子里面有一棵树。",
+        "pinyin": "Yuànzi lǐmiàn yǒu yì kē shù.",
+        "de": "Im Hof steht ein Baum."
+      },
+      {
         "zh": "你看，椅子在树下面。",
-        "pinyin": "Nǐ kàn, yǐzi zài shù xiàmiàn.",
-        "tokens": [
-          "你",
-          "看",
-          "，",
-          "椅子",
-          "在",
-          "树",
-          "下面",
-          "。"
-        ]
-      },
-      {
-        "de": "Der Tisch steht neben dem Fenster, auf dem Tisch steht eine Tasse Tee.",
-        "zh": "桌子在窗户旁边，桌子上面有一杯茶。",
-        "pinyin": "Zhuōzi zài chuānghu pángbiān, zhuōzi shàngmiàn yǒu yì bēi chá.",
-        "tokens": [
-          "桌子",
-          "在",
-          "窗户",
-          "旁边",
-          "，",
-          "桌子",
-          "上面",
-          "有",
-          "一",
-          "杯",
-          "茶",
-          "。"
-        ]
-      },
-      {
-        "de": "Ich wohne im Wohnheim der Uni.",
-        "zh": "我住在学校的宿舍。",
-        "pinyin": "Wǒ zhù zài xuéxiào de sùshè.",
-        "tokens": [
-          "我",
-          "住",
-          "在",
-          "学",
-          "校",
-          "的",
-          "宿舍",
-          "。"
-        ]
-      },
-      {
-        "de": "Aber jetzt ist es sehr teuer.",
-        "zh": "但是现在很贵。",
-        "pinyin": "Dànshì xiànzài hěn guì.",
-        "tokens": [
-          "但是",
-          "现",
-          "在",
-          "很",
-          "贵",
-          "。"
-        ]
-      }
-    ],
-    "gapExercises": [
-      {
-        "prompt": "你看，这里的___很老。",
-        "answer": "房子",
-        "choices": [
-          "房子",
-          "中间",
-          "舒服",
-          "但是"
-        ],
-        "solution": "你看，这里的房子很老。",
-        "pinyin": "Nǐ kàn, zhèlǐ de fángzi hěn lǎo.",
-        "de": "Schau, die Häuser hier sind sehr alt."
-      },
-      {
-        "prompt": "___是院子。",
-        "answer": "中间",
-        "choices": [
-          "中间",
-          "舒服",
-          "但是",
-          "贵"
-        ],
-        "solution": "中间是院子。",
-        "pinyin": "Zhōngjiān shì yuànzi.",
-        "de": "In der Mitte ist der Hof."
-      },
-      {
-        "prompt": "你看，椅子在树___。",
-        "answer": "下面",
-        "choices": [
-          "下面",
-          "里面",
-          "旁边",
-          "左边"
-        ],
-        "solution": "你看，椅子在树下面。",
         "pinyin": "Nǐ kàn, yǐzi zài shù xiàmiàn.",
         "de": "Schau, der Stuhl steht unter dem Baum."
       },
       {
-        "prompt": "桌子在窗户___，桌子上面有一杯茶。",
-        "answer": "旁边",
-        "choices": [
-          "旁边",
-          "漂亮",
-          "住",
-          "想"
-        ],
-        "solution": "桌子在窗户旁边，桌子上面有一杯茶。",
+        "zh": "你看那个房间。",
+        "pinyin": "Nǐ kàn nàge fángjiān.",
+        "de": "Schau, das Zimmer da. Der Tisch steht neben dem Fenster, auf dem Tisch steht eine Tasse Tee."
+      },
+      {
+        "zh": "桌子在窗户旁边，桌子上面有一杯茶。",
         "pinyin": "Zhuōzi zài chuānghu pángbiān, zhuōzi shàngmiàn yǒu yì bēi chá.",
-        "de": "Der Tisch steht neben dem Fenster, auf dem Tisch steht eine Tasse Tee."
+        "de": "Schau, das Zimmer da. Der Tisch steht neben dem Fenster, auf dem Tisch steht eine Tasse Tee."
       },
       {
-        "prompt": "我___在学校的宿舍。",
-        "answer": "住",
-        "choices": [
-          "住",
-          "房间",
-          "老",
-          "漂亮"
-        ],
-        "solution": "我住在学校的宿舍。",
+        "zh": "房间很小，但是很舒服。",
+        "pinyin": "Fángjiān hěn xiǎo, dànshì hěn shūfu.",
+        "de": "Das Zimmer ist klein, aber sehr gemütlich."
+      },
+      {
+        "zh": "你住在哪里？",
+        "pinyin": "Nǐ zhù zài nǎlǐ?",
+        "de": "Wo wohnst du?"
+      },
+      {
+        "zh": "我住在学校的宿舍。",
         "pinyin": "Wǒ zhù zài xuéxiào de sùshè.",
-        "de": "Ich wohne im Wohnheim der Uni."
+        "de": "Ich wohne im Wohnheim der Uni. Im Zimmer stehen vier Betten und vier Tische."
       },
       {
-        "prompt": "但是现在很___。",
-        "answer": "贵",
-        "choices": [
-          "贵",
-          "房子",
-          "房间",
-          "老"
-        ],
-        "solution": "但是现在很贵。",
+        "zh": "房间里有四张床和四张桌子。",
+        "pinyin": "Fángjiān lǐ yǒu sì zhāng chuáng hé sì zhāng zhuōzi.",
+        "de": "Ich wohne im Wohnheim der Uni. Im Zimmer stehen vier Betten und vier Tische."
+      },
+      {
+        "zh": "你们几个人住一个房间？",
+        "pinyin": "Nǐmen jǐ ge rén zhù yí ge fángjiān?",
+        "de": "Mit wie vielen Personen wohnt ihr in einem Zimmer?"
+      },
+      {
+        "zh": "四个人。",
+        "pinyin": "Sì ge rén.",
+        "de": "Vier Personen. Das Zimmer ist etwas klein."
+      },
+      {
+        "zh": "房间有点小。",
+        "pinyin": "Fángjiān yǒudiǎn xiǎo.",
+        "de": "Vier Personen. Das Zimmer ist etwas klein."
+      },
+      {
+        "zh": "你想住四合院吗？",
+        "pinyin": "Nǐ xiǎng zhù sìhéyuàn ma?",
+        "de": "Möchtest du in einem Sìhéyuàn wohnen?"
+      },
+      {
+        "zh": "想。",
+        "pinyin": "Xiǎng.",
+        "de": "Ja. Aber jetzt ist es sehr teuer. Früher haben viele Leute im Hutong gewohnt, jetzt ist es anders."
+      },
+      {
+        "zh": "但是现在很贵。",
         "pinyin": "Dànshì xiànzài hěn guì.",
-        "de": "Aber jetzt ist es sehr teuer."
+        "de": "Ja. Aber jetzt ist es sehr teuer. Früher haben viele Leute im Hutong gewohnt, jetzt ist es anders."
+      },
+      {
+        "zh": "以前很多人住在胡同里，现在不一样了。",
+        "pinyin": "Yǐqián hěn duō rén zhù zài hútòng lǐ, xiànzài bù yíyàng le.",
+        "de": "Ja. Aber jetzt ist es sehr teuer. Früher haben viele Leute im Hutong gewohnt, jetzt ist es anders."
+      },
+      {
+        "zh": "你明天想做什么？",
+        "pinyin": "Nǐ míngtiān xiǎng zuò shénme?",
+        "de": "Was möchtest du morgen machen?"
+      },
+      {
+        "zh": "我想去长城。",
+        "pinyin": "Wǒ xiǎng qù Chángchéng.",
+        "de": "Ich möchte zur Mauer."
+      }
+    ],
+    "gapExercises": [],
+    "speechSentences": [
+      {
+        "speaker": "林月",
+        "zh": "这是胡同。",
+        "pinyin": "Zhè shì hútòng.",
+        "de": "Das ist ein Hutong. Schau, die Häuser hier sind sehr alt."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你看，这里的房子很老。",
+        "pinyin": "Nǐ kàn, zhèlǐ de fángzi hěn lǎo.",
+        "de": "Das ist ein Hutong. Schau, die Häuser hier sind sehr alt."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "真漂亮。",
+        "pinyin": "Zhēn piàoliang.",
+        "de": "Wirklich schön. Wie heißen diese Häuser?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "这些房子叫什么？",
+        "pinyin": "Zhèxiē fángzi jiào shénme?",
+        "de": "Wirklich schön. Wie heißen diese Häuser?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "四合院。",
+        "pinyin": "Sìhéyuàn.",
+        "de": "Sìhéyuàn. In der Mitte ist der Hof."
+      },
+      {
+        "speaker": "林月",
+        "zh": "中间是院子。",
+        "pinyin": "Zhōngjiān shì yuànzi.",
+        "de": "Sìhéyuàn. In der Mitte ist der Hof."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你看，左边是四合院，右边有一个咖啡馆。",
+        "pinyin": "Nǐ kàn, zuǒbiān shì sìhéyuàn, yòubiān yǒu yí ge kāfēiguǎn.",
+        "de": "Schau, links sind Hofhäuser, rechts ist ein Café."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "院子里面有一棵树。",
+        "pinyin": "Yuànzi lǐmiàn yǒu yì kē shù.",
+        "de": "Im Hof steht ein Baum."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你看，椅子在树下面。",
+        "pinyin": "Nǐ kàn, yǐzi zài shù xiàmiàn.",
+        "de": "Schau, der Stuhl steht unter dem Baum."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你看那个房间。",
+        "pinyin": "Nǐ kàn nàge fángjiān.",
+        "de": "Schau, das Zimmer da. Der Tisch steht neben dem Fenster, auf dem Tisch steht eine Tasse Tee."
+      },
+      {
+        "speaker": "林月",
+        "zh": "桌子在窗户旁边，桌子上面有一杯茶。",
+        "pinyin": "Zhuōzi zài chuānghu pángbiān, zhuōzi shàngmiàn yǒu yì bēi chá.",
+        "de": "Schau, das Zimmer da. Der Tisch steht neben dem Fenster, auf dem Tisch steht eine Tasse Tee."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "房间很小，但是很舒服。",
+        "pinyin": "Fángjiān hěn xiǎo, dànshì hěn shūfu.",
+        "de": "Das Zimmer ist klein, aber sehr gemütlich."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你住在哪里？",
+        "pinyin": "Nǐ zhù zài nǎlǐ?",
+        "de": "Wo wohnst du?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "我住在学校的宿舍。",
+        "pinyin": "Wǒ zhù zài xuéxiào de sùshè.",
+        "de": "Ich wohne im Wohnheim der Uni. Im Zimmer stehen vier Betten und vier Tische."
+      },
+      {
+        "speaker": "林月",
+        "zh": "房间里有四张床和四张桌子。",
+        "pinyin": "Fángjiān lǐ yǒu sì zhāng chuáng hé sì zhāng zhuōzi.",
+        "de": "Ich wohne im Wohnheim der Uni. Im Zimmer stehen vier Betten und vier Tische."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你们几个人住一个房间？",
+        "pinyin": "Nǐmen jǐ ge rén zhù yí ge fángjiān?",
+        "de": "Mit wie vielen Personen wohnt ihr in einem Zimmer?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "四个人。",
+        "pinyin": "Sì ge rén.",
+        "de": "Vier Personen. Das Zimmer ist etwas klein."
+      },
+      {
+        "speaker": "林月",
+        "zh": "房间有点小。",
+        "pinyin": "Fángjiān yǒudiǎn xiǎo.",
+        "de": "Vier Personen. Das Zimmer ist etwas klein."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你想住四合院吗？",
+        "pinyin": "Nǐ xiǎng zhù sìhéyuàn ma?",
+        "de": "Möchtest du in einem Sìhéyuàn wohnen?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "想。",
+        "pinyin": "Xiǎng.",
+        "de": "Ja. Aber jetzt ist es sehr teuer. Früher haben viele Leute im Hutong gewohnt, jetzt ist es anders."
+      },
+      {
+        "speaker": "林月",
+        "zh": "但是现在很贵。",
+        "pinyin": "Dànshì xiànzài hěn guì.",
+        "de": "Ja. Aber jetzt ist es sehr teuer. Früher haben viele Leute im Hutong gewohnt, jetzt ist es anders."
+      },
+      {
+        "speaker": "林月",
+        "zh": "以前很多人住在胡同里，现在不一样了。",
+        "pinyin": "Yǐqián hěn duō rén zhù zài hútòng lǐ, xiànzài bù yíyàng le.",
+        "de": "Ja. Aber jetzt ist es sehr teuer. Früher haben viele Leute im Hutong gewohnt, jetzt ist es anders."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你明天想做什么？",
+        "pinyin": "Nǐ míngtiān xiǎng zuò shénme?",
+        "de": "Was möchtest du morgen machen?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我想去长城。",
+        "pinyin": "Wǒ xiǎng qù Chángchéng.",
+        "de": "Ich möchte zur Mauer."
       }
     ]
   },
   {
     "id": "10",
     "title": "Wetter und Pläne",
-    "short": "Wetter, Jahreszeiten und einen Ausflug planen",
+    "short": "Sū Rán plant einen Ausflug zur Großen Mauer und spricht mit Lín Yuè über Wetter und Wege.",
     "accent": "#E7C6B7",
     "textColor": "#050B12",
     "vocab": [
@@ -4467,6 +5499,12 @@ window.CF_TOPICS = [
         "hint": "sh → sch / j → dsch"
       },
       {
+        "zh": "小时",
+        "pinyin": "xiǎoshí",
+        "de": "Stunde",
+        "hint": "x → ch / sh → sch"
+      },
+      {
         "zh": "早点儿",
         "pinyin": "zǎo diǎnr",
         "de": "etwas früher",
@@ -4526,6 +5564,12 @@ window.CF_TOPICS = [
     ],
     "understandingVocab": [
       {
+        "zh": "季节",
+        "pinyin": "jìjié",
+        "de": "Jahreszeit",
+        "hint": "j → dsch"
+      },
+      {
         "zh": "有一点儿",
         "pinyin": "yǒu yìdiǎnr",
         "de": "ein bisschen (zu)",
@@ -4542,6 +5586,12 @@ window.CF_TOPICS = [
         "pinyin": "xiàng",
         "de": "wie (sein), ähneln",
         "hint": "Zeichen aus 好像 (Kapitel 3)"
+      },
+      {
+        "zh": "少",
+        "pinyin": "shǎo",
+        "de": "wenig, wenige",
+        "hint": "sh → sch"
       },
       {
         "zh": "长城",
@@ -4757,171 +5807,366 @@ window.CF_TOPICS = [
     "studentDialogNote": "Wetter, Weg, Dauer und Treffpunkt besprechen.",
     "sentencePuzzles": [
       {
-        "de": "Wie wird morgen das Wetter?",
         "zh": "明天天气怎么样？",
-        "pinyin": "Míngtiān tiānqì zěnmeyàng?",
-        "tokens": [
-          "明",
-          "天",
-          "天气",
-          "怎么样",
-          "？"
-        ]
-      },
-      {
-        "de": "Morgen ist es sonnig.",
-        "zh": "明天是晴天。",
-        "pinyin": "Míngtiān shì qíngtiān.",
-        "tokens": [
-          "明",
-          "天",
-          "是",
-          "晴天",
-          "。"
-        ]
-      },
-      {
-        "de": "Du gehst am besten nach Mùtiányù.",
-        "zh": "你最好去慕田峪。",
-        "pinyin": "Nǐ zuìhǎo qù Mùtiányù.",
-        "tokens": [
-          "你",
-          "最好",
-          "去",
-          "慕田峪",
-          "。"
-        ]
-      },
-      {
-        "de": "Du fährst zuerst mit der U-Bahn nach Dōngzhímén, dann mit dem Bus.",
-        "zh": "你先坐地铁去东直门，然后坐公共汽车。",
-        "pinyin": "Nǐ xiān zuò dìtiě qù Dōngzhímén, ránhòu zuò gōnggòng qìchē.",
-        "tokens": [
-          "你",
-          "先",
-          "坐",
-          "地铁",
-          "去",
-          "东直门",
-          "，",
-          "然后",
-          "坐",
-          "公共汽车",
-          "。"
-        ]
-      },
-      {
-        "de": "Wie lange dauert die Busfahrt?",
-        "zh": "坐公共汽车要多长时间？",
-        "pinyin": "Zuò gōnggòng qìchē yào duō cháng shíjiān?",
-        "tokens": [
-          "坐",
-          "公共汽车",
-          "要",
-          "多长时间",
-          "？"
-        ]
-      },
-      {
-        "de": "Ich habe vor, morgens um sechs aufzustehen.",
-        "zh": "我打算早上六点起床。",
-        "pinyin": "Wǒ dǎsuàn zǎoshang liù diǎn qǐchuáng.",
-        "tokens": [
-          "我",
-          "打算",
-          "早上",
-          "六",
-          "点",
-          "起床",
-          "。"
-        ]
-      }
-    ],
-    "gapExercises": [
-      {
-        "prompt": "明天___怎么样？",
-        "answer": "天气",
-        "choices": [
-          "天气",
-          "先",
-          "然后",
-          "坐"
-        ],
-        "solution": "明天天气怎么样？",
         "pinyin": "Míngtiān tiānqì zěnmeyàng?",
         "de": "Wie wird morgen das Wetter?"
       },
       {
-        "prompt": "明天是___。",
-        "answer": "晴天",
-        "choices": [
-          "晴天",
-          "后天",
-          "常常",
-          "一起"
-        ],
-        "solution": "明天是晴天。",
+        "zh": "我看看。",
+        "pinyin": "Wǒ kànkan.",
+        "de": "Ich schau mal."
+      },
+      {
+        "zh": "明天是晴天。",
         "pinyin": "Míngtiān shì qíngtiān.",
-        "de": "Morgen ist es sonnig."
+        "de": "Morgen ist es sonnig. Nicht kalt und nicht heiß."
       },
       {
-        "prompt": "你___去慕田峪。",
-        "answer": "最好",
-        "choices": [
-          "最好",
-          "走",
-          "打算",
-          "昨天"
-        ],
-        "solution": "你最好去慕田峪。",
+        "zh": "不冷，也不热。",
+        "pinyin": "Bù lěng, yě bú rè.",
+        "de": "Morgen ist es sonnig. Nicht kalt und nicht heiß."
+      },
+      {
+        "zh": "太好了。",
+        "pinyin": "Tài hǎo le.",
+        "de": "Sehr gut."
+      },
+      {
+        "zh": "你想去长城，对吗？",
+        "pinyin": "Nǐ xiǎng qù Chángchéng, duì ma?",
+        "de": "Du möchtest zur Großen Mauer, richtig?"
+      },
+      {
+        "zh": "对。",
+        "pinyin": "Duì.",
+        "de": "Ja. Aber ich weiß nicht, wohin."
+      },
+      {
+        "zh": "但是我不知道去哪里。",
+        "pinyin": "Dànshì wǒ bù zhīdào qù nǎlǐ.",
+        "de": "Ja. Aber ich weiß nicht, wohin."
+      },
+      {
+        "zh": "八达岭很有名，但是人很多。",
+        "pinyin": "Bādálǐng hěn yǒumíng, dànshì rén hěn duō.",
+        "de": "Bādálǐng ist sehr berühmt, aber es sind sehr viele Leute da."
+      },
+      {
+        "zh": "你最好去慕田峪。",
         "pinyin": "Nǐ zuìhǎo qù Mùtiányù.",
-        "de": "Du gehst am besten nach Mùtiányù."
+        "de": "Du gehst am besten nach Mùtiányù. Dort sind wenige Leute, und es ist sehr schön."
       },
       {
-        "prompt": "你___坐地铁去东直门，然后坐公共汽车。",
-        "answer": "先",
-        "choices": [
-          "先",
-          "公园",
-          "睡觉",
-          "天气"
-        ],
-        "solution": "你先坐地铁去东直门，然后坐公共汽车。",
+        "zh": "那里人少，也很漂亮。",
+        "pinyin": "Nàlǐ rén shǎo, yě hěn piàoliang.",
+        "de": "Du gehst am besten nach Mùtiányù. Dort sind wenige Leute, und es ist sehr schön."
+      },
+      {
+        "zh": "慕田峪远吗？",
+        "pinyin": "Mùtiányù yuǎn ma?",
+        "de": "Ist Mùtiányù weit?"
+      },
+      {
+        "zh": "有一点儿远。",
+        "pinyin": "Yǒu yìdiǎnr yuǎn.",
+        "de": "Ein bisschen weit. Du fährst zuerst mit der U-Bahn nach Dōngzhímén, dann mit dem Bus."
+      },
+      {
+        "zh": "你先坐地铁去东直门，然后坐公共汽车。",
         "pinyin": "Nǐ xiān zuò dìtiě qù Dōngzhímén, ránhòu zuò gōnggòng qìchē.",
-        "de": "Du fährst zuerst mit der U-Bahn nach Dōngzhímén, dann mit dem Bus."
+        "de": "Ein bisschen weit. Du fährst zuerst mit der U-Bahn nach Dōngzhímén, dann mit dem Bus."
       },
       {
-        "prompt": "坐公共汽车要___？",
-        "answer": "多长时间",
-        "choices": [
-          "多长时间",
-          "远",
-          "先",
-          "然后"
-        ],
-        "solution": "坐公共汽车要多长时间？",
+        "zh": "坐公共汽车要多长时间？",
         "pinyin": "Zuò gōnggòng qìchē yào duō cháng shíjiān?",
         "de": "Wie lange dauert die Busfahrt?"
       },
       {
-        "prompt": "我___早上六点起床。",
-        "answer": "打算",
-        "choices": [
-          "打算",
-          "昨天",
-          "今天",
-          "后天"
-        ],
-        "solution": "我打算早上六点起床。",
+        "zh": "差不多两个小时。",
+        "pinyin": "Chàbuduō liǎng ge xiǎoshí.",
+        "de": "Ungefähr zwei Stunden. Du solltest früh losfahren."
+      },
+      {
+        "zh": "你要早点儿走。",
+        "pinyin": "Nǐ yào zǎo diǎnr zǒu.",
+        "de": "Ungefähr zwei Stunden. Du solltest früh losfahren."
+      },
+      {
+        "zh": "我打算早上六点起床。",
         "pinyin": "Wǒ dǎsuàn zǎoshang liù diǎn qǐchuáng.",
         "de": "Ich habe vor, morgens um sechs aufzustehen."
+      },
+      {
+        "zh": "六点？",
+        "pinyin": "Liù diǎn?",
+        "de": "Um sechs? Wann bist du gestern aufgestanden?"
+      },
+      {
+        "zh": "你昨天几点起床？",
+        "pinyin": "Nǐ zuótiān jǐ diǎn qǐchuáng?",
+        "de": "Um sechs? Wann bist du gestern aufgestanden?"
+      },
+      {
+        "zh": "⋯⋯十点。",
+        "pinyin": "… Shí diǎn.",
+        "de": "… Um zehn."
+      },
+      {
+        "zh": "秋天是北京最好的季节。",
+        "pinyin": "Qiūtiān shì Běijīng zuì hǎo de jìjié.",
+        "de": "Der Herbst ist Beijings beste Jahreszeit. Nicht wie der Sommer und nicht wie der Winter."
+      },
+      {
+        "zh": "不像夏天，也不像冬天。",
+        "pinyin": "Bú xiàng xiàtiān, yě bú xiàng dōngtiān.",
+        "de": "Der Herbst ist Beijings beste Jahreszeit. Nicht wie der Sommer und nicht wie der Winter."
+      },
+      {
+        "zh": "冬天很冷吗？",
+        "pinyin": "Dōngtiān hěn lěng ma?",
+        "de": "Ist der Winter sehr kalt?"
+      },
+      {
+        "zh": "很冷。",
+        "pinyin": "Hěn lěng.",
+        "de": "Sehr kalt. Der Sommer ist zu heiß, und es regnet oft."
+      },
+      {
+        "zh": "夏天太热了，还常常下雨。",
+        "pinyin": "Xiàtiān tài rè le, hái chángcháng xià yǔ.",
+        "de": "Sehr kalt. Der Sommer ist zu heiß, und es regnet oft."
+      },
+      {
+        "zh": "后天我有时间。",
+        "pinyin": "Hòutiān wǒ yǒu shíjiān.",
+        "de": "Übermorgen habe ich Zeit. Sollen wir zusammen in den Park gehen?"
+      },
+      {
+        "zh": "我们一起去公园，好吗？",
+        "pinyin": "Wǒmen yìqǐ qù gōngyuán, hǎo ma?",
+        "de": "Übermorgen habe ich Zeit. Sollen wir zusammen in den Park gehen?"
+      },
+      {
+        "zh": "好。",
+        "pinyin": "Hǎo.",
+        "de": "Gut. Bis übermorgen."
+      },
+      {
+        "zh": "后天见。",
+        "pinyin": "Hòutiān jiàn.",
+        "de": "Gut. Bis übermorgen."
+      },
+      {
+        "zh": "今天晚上早点儿睡觉。",
+        "pinyin": "Jīntiān wǎnshang zǎo diǎnr shuìjiào.",
+        "de": "Geh heute Abend früh schlafen."
+      },
+      {
+        "zh": "我知道。",
+        "pinyin": "Wǒ zhīdào.",
+        "de": "Ich weiß."
+      }
+    ],
+    "gapExercises": [],
+    "speechSentences": [
+      {
+        "speaker": "苏然",
+        "zh": "明天天气怎么样？",
+        "pinyin": "Míngtiān tiānqì zěnmeyàng?",
+        "de": "Wie wird morgen das Wetter?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "我看看。",
+        "pinyin": "Wǒ kànkan.",
+        "de": "Ich schau mal."
+      },
+      {
+        "speaker": "林月",
+        "zh": "明天是晴天。",
+        "pinyin": "Míngtiān shì qíngtiān.",
+        "de": "Morgen ist es sonnig. Nicht kalt und nicht heiß."
+      },
+      {
+        "speaker": "林月",
+        "zh": "不冷，也不热。",
+        "pinyin": "Bù lěng, yě bú rè.",
+        "de": "Morgen ist es sonnig. Nicht kalt und nicht heiß."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "太好了。",
+        "pinyin": "Tài hǎo le.",
+        "de": "Sehr gut."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你想去长城，对吗？",
+        "pinyin": "Nǐ xiǎng qù Chángchéng, duì ma?",
+        "de": "Du möchtest zur Großen Mauer, richtig?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "对。",
+        "pinyin": "Duì.",
+        "de": "Ja. Aber ich weiß nicht, wohin."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "但是我不知道去哪里。",
+        "pinyin": "Dànshì wǒ bù zhīdào qù nǎlǐ.",
+        "de": "Ja. Aber ich weiß nicht, wohin."
+      },
+      {
+        "speaker": "林月",
+        "zh": "八达岭很有名，但是人很多。",
+        "pinyin": "Bādálǐng hěn yǒumíng, dànshì rén hěn duō.",
+        "de": "Bādálǐng ist sehr berühmt, aber es sind sehr viele Leute da."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你最好去慕田峪。",
+        "pinyin": "Nǐ zuìhǎo qù Mùtiányù.",
+        "de": "Du gehst am besten nach Mùtiányù. Dort sind wenige Leute, und es ist sehr schön."
+      },
+      {
+        "speaker": "林月",
+        "zh": "那里人少，也很漂亮。",
+        "pinyin": "Nàlǐ rén shǎo, yě hěn piàoliang.",
+        "de": "Du gehst am besten nach Mùtiányù. Dort sind wenige Leute, und es ist sehr schön."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "慕田峪远吗？",
+        "pinyin": "Mùtiányù yuǎn ma?",
+        "de": "Ist Mùtiányù weit?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "有一点儿远。",
+        "pinyin": "Yǒu yìdiǎnr yuǎn.",
+        "de": "Ein bisschen weit. Du fährst zuerst mit der U-Bahn nach Dōngzhímén, dann mit dem Bus."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你先坐地铁去东直门，然后坐公共汽车。",
+        "pinyin": "Nǐ xiān zuò dìtiě qù Dōngzhímén, ránhòu zuò gōnggòng qìchē.",
+        "de": "Ein bisschen weit. Du fährst zuerst mit der U-Bahn nach Dōngzhímén, dann mit dem Bus."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "坐公共汽车要多长时间？",
+        "pinyin": "Zuò gōnggòng qìchē yào duō cháng shíjiān?",
+        "de": "Wie lange dauert die Busfahrt?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "差不多两个小时。",
+        "pinyin": "Chàbuduō liǎng ge xiǎoshí.",
+        "de": "Ungefähr zwei Stunden. Du solltest früh losfahren."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你要早点儿走。",
+        "pinyin": "Nǐ yào zǎo diǎnr zǒu.",
+        "de": "Ungefähr zwei Stunden. Du solltest früh losfahren."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我打算早上六点起床。",
+        "pinyin": "Wǒ dǎsuàn zǎoshang liù diǎn qǐchuáng.",
+        "de": "Ich habe vor, morgens um sechs aufzustehen."
+      },
+      {
+        "speaker": "林月",
+        "zh": "六点？",
+        "pinyin": "Liù diǎn?",
+        "de": "Um sechs? Wann bist du gestern aufgestanden?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "你昨天几点起床？",
+        "pinyin": "Nǐ zuótiān jǐ diǎn qǐchuáng?",
+        "de": "Um sechs? Wann bist du gestern aufgestanden?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "⋯⋯十点。",
+        "pinyin": "… Shí diǎn.",
+        "de": "… Um zehn."
+      },
+      {
+        "speaker": "林月",
+        "zh": "秋天是北京最好的季节。",
+        "pinyin": "Qiūtiān shì Běijīng zuì hǎo de jìjié.",
+        "de": "Der Herbst ist Beijings beste Jahreszeit. Nicht wie der Sommer und nicht wie der Winter."
+      },
+      {
+        "speaker": "林月",
+        "zh": "不像夏天，也不像冬天。",
+        "pinyin": "Bú xiàng xiàtiān, yě bú xiàng dōngtiān.",
+        "de": "Der Herbst ist Beijings beste Jahreszeit. Nicht wie der Sommer und nicht wie der Winter."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "冬天很冷吗？",
+        "pinyin": "Dōngtiān hěn lěng ma?",
+        "de": "Ist der Winter sehr kalt?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "很冷。",
+        "pinyin": "Hěn lěng.",
+        "de": "Sehr kalt. Der Sommer ist zu heiß, und es regnet oft."
+      },
+      {
+        "speaker": "林月",
+        "zh": "夏天太热了，还常常下雨。",
+        "pinyin": "Xiàtiān tài rè le, hái chángcháng xià yǔ.",
+        "de": "Sehr kalt. Der Sommer ist zu heiß, und es regnet oft."
+      },
+      {
+        "speaker": "林月",
+        "zh": "后天我有时间。",
+        "pinyin": "Hòutiān wǒ yǒu shíjiān.",
+        "de": "Übermorgen habe ich Zeit. Sollen wir zusammen in den Park gehen?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "我们一起去公园，好吗？",
+        "pinyin": "Wǒmen yìqǐ qù gōngyuán, hǎo ma?",
+        "de": "Übermorgen habe ich Zeit. Sollen wir zusammen in den Park gehen?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "好。",
+        "pinyin": "Hǎo.",
+        "de": "Gut. Bis übermorgen."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "后天见。",
+        "pinyin": "Hòutiān jiàn.",
+        "de": "Gut. Bis übermorgen."
+      },
+      {
+        "speaker": "林月",
+        "zh": "今天晚上早点儿睡觉。",
+        "pinyin": "Jīntiān wǎnshang zǎo diǎnr shuìjiào.",
+        "de": "Geh heute Abend früh schlafen."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我知道。",
+        "pinyin": "Wǒ zhīdào.",
+        "de": "Ich weiß."
       }
     ]
   },
   {
     "id": "11",
     "title": "Die Mauer",
-    "short": "Bus nach Mùtiányù, Tickets, Preise und Vergleiche",
+    "short": "Sū Rán besucht die Große Mauer und vergleicht Wege, Aussichten, Preise und Möglichkeiten.",
     "accent": "#D8B6A0",
     "textColor": "#050B12",
     "vocab": [
@@ -4977,21 +6222,27 @@ window.CF_TOPICS = [
         "pinyin": "shàngqù",
         "de": "hinaufgehen",
         "hint": "sh → sch / q → tsch"
-      }
-    ],
-    "understandingVocab": [
+      },
+      {
+        "zh": "少",
+        "pinyin": "shǎo",
+        "de": "wenig, weniger",
+        "hint": "sh → sch"
+      },
       {
         "zh": "第一次",
         "pinyin": "dì-yī cì",
         "de": "zum ersten Mal",
-        "hint": "第 kommt in Kapitel 14"
+        "hint": "Als feste Wendung lernen; 第 wird in Kapitel 14 genauer behandelt."
       },
       {
         "zh": "缆车",
         "pinyin": "lǎnchē",
         "de": "Seilbahn",
         "hint": "ch → tsch"
-      },
+      }
+    ],
+    "understandingVocab": [
       {
         "zh": "售票员",
         "pinyin": "shòupiàoyuán",
@@ -5169,12 +6420,12 @@ window.CF_TOPICS = [
         "speaker": "商贩",
         "zh": "要水吗？要冰水吗？",
         "pinyin": "Yào shuǐ ma? Yào bīngshuǐ ma?",
-        "de": "Möchtest du Wasser? Möchtest du kaltes Wasser?"
+        "de": "Möchtest du Wasser? Möchtest du eisgekühltes Wasser?"
       },
       {
         "speaker": "苏然",
         "zh": "不用，谢谢。我有水。",
-        "pinyin": "Búyòng, xièxie. Wǒ yǒu shuǐ.",
+        "pinyin": "Bú yòng, xièxie. Wǒ yǒu shuǐ.",
         "de": "Nein danke, ich habe Wasser."
       }
     ],
@@ -5212,20 +6463,20 @@ window.CF_TOPICS = [
       {
         "speaker": "B",
         "zh": "不用，谢谢。我走上去。",
-        "pinyin": "Búyòng, xièxie. Wǒ zǒu shàngqù.",
+        "pinyin": "Bú yòng, xièxie. Wǒ zǒu shàngqù.",
         "de": "Nein danke. Ich gehe zu Fuß hinauf."
       },
       {
         "speaker": "A",
         "zh": "第一次来吗？",
-        "pinyin": "Dì yī cì lái ma?",
+        "pinyin": "Dì-yī cì lái ma?",
         "de": "Zum ersten Mal hier?"
       },
       {
         "speaker": "B",
         "zh": "对，第一次。太美了。你呢？",
-        "pinyin": "Duì, dì yī cì. Tài měi le. Nǐ ne?",
-        "de": "Ja, zum ersten Mal. So schön. Und Sie?"
+        "pinyin": "Duì, dì-yī cì. Tài měi le. Nǐ ne?",
+        "de": "Ja, zum ersten Mal. So schön. Und du?"
       },
       {
         "speaker": "A",
@@ -5245,160 +6496,369 @@ window.CF_TOPICS = [
     "studentDialogNote": "Tickets kaufen und Orte miteinander vergleichen.",
     "sentencePuzzles": [
       {
-        "de": "Da drüben.",
+        "zh": "你好，请问，916路在哪里坐？",
+        "pinyin": "Nǐ hǎo, qǐngwèn, jiǔ yāo liù lù zài nǎlǐ zuò?",
+        "de": "Hallo, entschuldigen Sie, wo kann ich die Buslinie 916 nehmen?"
+      },
+      {
         "zh": "在那边。",
         "pinyin": "Zài nàbiān.",
-        "tokens": [
-          "在",
-          "那边",
-          "。"
-        ]
+        "de": "Da drüben. Fährst du nach Mùtiányù?"
       },
       {
-        "de": "Hallo, wie viel kostet eine Eintrittskarte?",
+        "zh": "你去慕田峪吗？",
+        "pinyin": "Nǐ qù Mùtiányù ma?",
+        "de": "Da drüben. Fährst du nach Mùtiányù?"
+      },
+      {
+        "zh": "对。",
+        "pinyin": "Duì.",
+        "de": "Ja."
+      },
+      {
+        "zh": "先坐到怀柔，然后换车。",
+        "pinyin": "Xiān zuò dào Huáiróu, ránhòu huàn chē.",
+        "de": "Fahr zuerst bis Huáiróu, dann steig um."
+      },
+      {
+        "zh": "好，谢谢。",
+        "pinyin": "Hǎo, xièxie.",
+        "de": "Gut, danke."
+      },
+      {
+        "zh": "你好，到怀柔多少钱？",
+        "pinyin": "Nǐ hǎo, dào Huáiróu duōshao qián?",
+        "de": "Hallo, wie viel kostet es bis Huáiróu?"
+      },
+      {
+        "zh": "十二块。",
+        "pinyin": "Shí'èr kuài.",
+        "de": "Zwölf Yuan. Du kannst per QR-Code zahlen."
+      },
+      {
+        "zh": "你可以扫码。",
+        "pinyin": "Nǐ kěyǐ sǎomǎ.",
+        "de": "Zwölf Yuan. Du kannst per QR-Code zahlen."
+      },
+      {
         "zh": "你好，一张门票多少钱？",
-        "pinyin": "Nǐ hǎo, yì zhāng ménpiào duōshao qián?",
-        "tokens": [
-          "你好",
-          "，",
-          "一",
-          "张",
-          "门票",
-          "多少",
-          "钱",
-          "？"
-        ]
-      },
-      {
-        "de": "Ich gehe hinauf.",
-        "zh": "我走上去。",
-        "pinyin": "Wǒ zǒu shàngqù.",
-        "tokens": [
-          "我",
-          "走",
-          "上去",
-          "。"
-        ]
-      },
-      {
-        "de": "Hier sind weniger Leute als in Bādálǐng.",
-        "zh": "这里的人比八达岭少。",
-        "pinyin": "Zhèlǐ de rén bǐ Bādálǐng shǎo.",
-        "tokens": [
-          "这里",
-          "的",
-          "人",
-          "比",
-          "八达岭",
-          "少",
-          "。"
-        ]
-      },
-      {
-        "de": "Mùtiányù ist schöner.",
-        "zh": "慕田峪更漂亮。",
-        "pinyin": "Mùtiányù gèng piàoliang.",
-        "tokens": [
-          "慕田峪",
-          "更",
-          "漂亮",
-          "。"
-        ]
-      },
-      {
-        "de": "Nein danke, ich habe Wasser.",
-        "zh": "不用，谢谢。我有水。",
-        "pinyin": "Búyòng, xièxie. Wǒ yǒu shuǐ.",
-        "tokens": [
-          "不",
-          "用",
-          "，",
-          "谢谢",
-          "。",
-          "我",
-          "有",
-          "水",
-          "。"
-        ]
-      }
-    ],
-    "gapExercises": [
-      {
-        "prompt": "在___。",
-        "answer": "那边",
-        "choices": [
-          "那边",
-          "上去",
-          "比",
-          "更"
-        ],
-        "solution": "在那边。",
-        "pinyin": "Zài nàbiān.",
-        "de": "Da drüben."
-      },
-      {
-        "prompt": "你好，一张___多少钱？",
-        "answer": "门票",
-        "choices": [
-          "门票",
-          "更",
-          "高",
-          "美"
-        ],
-        "solution": "你好，一张门票多少钱？",
         "pinyin": "Nǐ hǎo, yì zhāng ménpiào duōshao qián?",
         "de": "Hallo, wie viel kostet eine Eintrittskarte?"
       },
       {
-        "prompt": "我走___。",
-        "answer": "上去",
-        "choices": [
-          "上去",
-          "那边",
-          "门票",
-          "水"
-        ],
-        "solution": "我走上去。",
+        "zh": "四十块。",
+        "pinyin": "Sìshí kuài.",
+        "de": "Vierzig Yuan. Möchtest du die Seilbahn nehmen?"
+      },
+      {
+        "zh": "你要坐缆车吗？",
+        "pinyin": "Nǐ yào zuò lǎnchē ma?",
+        "de": "Vierzig Yuan. Möchtest du die Seilbahn nehmen?"
+      },
+      {
+        "zh": "缆车多少钱？",
+        "pinyin": "Lǎnchē duōshao qián?",
+        "de": "Wie viel kostet die Seilbahn?"
+      },
+      {
+        "zh": "单程一百，往返一百四十。",
+        "pinyin": "Dānchéng yìbǎi, wǎngfǎn yìbǎi sìshí.",
+        "de": "Einfach hundert Yuan, hin und zurück hundertvierzig."
+      },
+      {
+        "zh": "我走上去。",
         "pinyin": "Wǒ zǒu shàngqù.",
         "de": "Ich gehe hinauf."
       },
       {
-        "prompt": "这里的人___八达岭少。",
-        "answer": "比",
-        "choices": [
-          "比",
-          "路",
-          "那边",
-          "门票"
-        ],
-        "solution": "这里的人比八达岭少。",
+        "zh": "第一次来吗？",
+        "pinyin": "Dì-yī cì lái ma?",
+        "de": "Zum ersten Mal hier?"
+      },
+      {
+        "zh": "对，第一次。",
+        "pinyin": "Duì, dì-yī cì.",
+        "de": "Ja, zum ersten Mal. So schön."
+      },
+      {
+        "zh": "太美了。",
+        "pinyin": "Tài měi le.",
+        "de": "Ja, zum ersten Mal. So schön."
+      },
+      {
+        "zh": "你是哪里人？",
+        "pinyin": "Nǐ shì nǎlǐ rén?",
+        "de": "Woher kommst du?"
+      },
+      {
+        "zh": "我是上海人。",
+        "pinyin": "Wǒ shì Shànghǎi rén.",
+        "de": "Ich komme aus Shanghai. Und du?"
+      },
+      {
+        "zh": "你呢？",
+        "pinyin": "Nǐ ne?",
+        "de": "Ich komme aus Shanghai. Und du?"
+      },
+      {
+        "zh": "我是北京人。",
+        "pinyin": "Wǒ shì Běijīngrén.",
+        "de": "Ich bin aus Beijing. Ich komme oft hierher."
+      },
+      {
+        "zh": "我常常来这里。",
+        "pinyin": "Wǒ chángcháng lái zhèlǐ.",
+        "de": "Ich bin aus Beijing. Ich komme oft hierher."
+      },
+      {
+        "zh": "这里的人比八达岭少。",
         "pinyin": "Zhèlǐ de rén bǐ Bādálǐng shǎo.",
         "de": "Hier sind weniger Leute als in Bādálǐng."
       },
       {
-        "prompt": "慕田峪___漂亮。",
-        "answer": "更",
-        "choices": [
-          "更",
-          "路",
-          "那边",
-          "门票"
-        ],
-        "solution": "慕田峪更漂亮。",
-        "pinyin": "Mùtiányù gèng piàoliang.",
-        "de": "Mùtiányù ist schöner."
+        "zh": "对。",
+        "pinyin": "Duì.",
+        "de": "Ja. Mùtiányù ist schöner."
       },
       {
-        "prompt": "不用，谢谢。我有___。",
-        "answer": "水",
-        "choices": [
-          "水",
-          "美",
-          "路",
-          "那边"
-        ],
-        "solution": "不用，谢谢。我有水。",
-        "pinyin": "Búyòng, xièxie. Wǒ yǒu shuǐ.",
+        "zh": "慕田峪更漂亮。",
+        "pinyin": "Mùtiányù gèng piàoliang.",
+        "de": "Ja. Mùtiányù ist schöner."
+      },
+      {
+        "zh": "你看，上面更高。",
+        "pinyin": "Nǐ kàn, shàngmiàn gèng gāo.",
+        "de": "Schau, oben ist es höher. Schaffst du es hinauf?"
+      },
+      {
+        "zh": "你能上去吗？",
+        "pinyin": "Nǐ néng shàngqù ma?",
+        "de": "Schau, oben ist es höher. Schaffst du es hinauf?"
+      },
+      {
+        "zh": "我试试。",
+        "pinyin": "Wǒ shìshi.",
+        "de": "Ich versuch's."
+      },
+      {
+        "zh": "要水吗？",
+        "pinyin": "Yào shuǐ ma?",
+        "de": "Möchtest du Wasser? Möchtest du eisgekühltes Wasser?"
+      },
+      {
+        "zh": "要冰水吗？",
+        "pinyin": "Yào bīngshuǐ ma?",
+        "de": "Möchtest du Wasser? Möchtest du eisgekühltes Wasser?"
+      },
+      {
+        "zh": "不用，谢谢。",
+        "pinyin": "Bú yòng, xièxie.",
+        "de": "Nein danke, ich habe Wasser."
+      },
+      {
+        "zh": "我有水。",
+        "pinyin": "Wǒ yǒu shuǐ.",
+        "de": "Nein danke, ich habe Wasser."
+      }
+    ],
+    "gapExercises": [],
+    "speechSentences": [
+      {
+        "speaker": "苏然",
+        "zh": "你好，请问，916路在哪里坐？",
+        "pinyin": "Nǐ hǎo, qǐngwèn, jiǔ yāo liù lù zài nǎlǐ zuò?",
+        "de": "Hallo, entschuldigen Sie, wo kann ich die Buslinie 916 nehmen?"
+      },
+      {
+        "speaker": "工作人员",
+        "zh": "在那边。",
+        "pinyin": "Zài nàbiān.",
+        "de": "Da drüben. Fährst du nach Mùtiányù?"
+      },
+      {
+        "speaker": "工作人员",
+        "zh": "你去慕田峪吗？",
+        "pinyin": "Nǐ qù Mùtiányù ma?",
+        "de": "Da drüben. Fährst du nach Mùtiányù?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "对。",
+        "pinyin": "Duì.",
+        "de": "Ja."
+      },
+      {
+        "speaker": "工作人员",
+        "zh": "先坐到怀柔，然后换车。",
+        "pinyin": "Xiān zuò dào Huáiróu, ránhòu huàn chē.",
+        "de": "Fahr zuerst bis Huáiróu, dann steig um."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "好，谢谢。",
+        "pinyin": "Hǎo, xièxie.",
+        "de": "Gut, danke."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你好，到怀柔多少钱？",
+        "pinyin": "Nǐ hǎo, dào Huáiróu duōshao qián?",
+        "de": "Hallo, wie viel kostet es bis Huáiróu?"
+      },
+      {
+        "speaker": "司机",
+        "zh": "十二块。",
+        "pinyin": "Shí'èr kuài.",
+        "de": "Zwölf Yuan. Du kannst per QR-Code zahlen."
+      },
+      {
+        "speaker": "司机",
+        "zh": "你可以扫码。",
+        "pinyin": "Nǐ kěyǐ sǎomǎ.",
+        "de": "Zwölf Yuan. Du kannst per QR-Code zahlen."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你好，一张门票多少钱？",
+        "pinyin": "Nǐ hǎo, yì zhāng ménpiào duōshao qián?",
+        "de": "Hallo, wie viel kostet eine Eintrittskarte?"
+      },
+      {
+        "speaker": "售票员",
+        "zh": "四十块。",
+        "pinyin": "Sìshí kuài.",
+        "de": "Vierzig Yuan. Möchtest du die Seilbahn nehmen?"
+      },
+      {
+        "speaker": "售票员",
+        "zh": "你要坐缆车吗？",
+        "pinyin": "Nǐ yào zuò lǎnchē ma?",
+        "de": "Vierzig Yuan. Möchtest du die Seilbahn nehmen?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "缆车多少钱？",
+        "pinyin": "Lǎnchē duōshao qián?",
+        "de": "Wie viel kostet die Seilbahn?"
+      },
+      {
+        "speaker": "售票员",
+        "zh": "单程一百，往返一百四十。",
+        "pinyin": "Dānchéng yìbǎi, wǎngfǎn yìbǎi sìshí.",
+        "de": "Einfach hundert Yuan, hin und zurück hundertvierzig."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我走上去。",
+        "pinyin": "Wǒ zǒu shàngqù.",
+        "de": "Ich gehe hinauf."
+      },
+      {
+        "speaker": "游客",
+        "zh": "第一次来吗？",
+        "pinyin": "Dì-yī cì lái ma?",
+        "de": "Zum ersten Mal hier?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "对，第一次。",
+        "pinyin": "Duì, dì-yī cì.",
+        "de": "Ja, zum ersten Mal. So schön."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "太美了。",
+        "pinyin": "Tài měi le.",
+        "de": "Ja, zum ersten Mal. So schön."
+      },
+      {
+        "speaker": "游客",
+        "zh": "你是哪里人？",
+        "pinyin": "Nǐ shì nǎlǐ rén?",
+        "de": "Woher kommst du?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我是上海人。",
+        "pinyin": "Wǒ shì Shànghǎi rén.",
+        "de": "Ich komme aus Shanghai. Und du?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你呢？",
+        "pinyin": "Nǐ ne?",
+        "de": "Ich komme aus Shanghai. Und du?"
+      },
+      {
+        "speaker": "游客",
+        "zh": "我是北京人。",
+        "pinyin": "Wǒ shì Běijīngrén.",
+        "de": "Ich bin aus Beijing. Ich komme oft hierher."
+      },
+      {
+        "speaker": "游客",
+        "zh": "我常常来这里。",
+        "pinyin": "Wǒ chángcháng lái zhèlǐ.",
+        "de": "Ich bin aus Beijing. Ich komme oft hierher."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "这里的人比八达岭少。",
+        "pinyin": "Zhèlǐ de rén bǐ Bādálǐng shǎo.",
+        "de": "Hier sind weniger Leute als in Bādálǐng."
+      },
+      {
+        "speaker": "游客",
+        "zh": "对。",
+        "pinyin": "Duì.",
+        "de": "Ja. Mùtiányù ist schöner."
+      },
+      {
+        "speaker": "游客",
+        "zh": "慕田峪更漂亮。",
+        "pinyin": "Mùtiányù gèng piàoliang.",
+        "de": "Ja. Mùtiányù ist schöner."
+      },
+      {
+        "speaker": "游客",
+        "zh": "你看，上面更高。",
+        "pinyin": "Nǐ kàn, shàngmiàn gèng gāo.",
+        "de": "Schau, oben ist es höher. Schaffst du es hinauf?"
+      },
+      {
+        "speaker": "游客",
+        "zh": "你能上去吗？",
+        "pinyin": "Nǐ néng shàngqù ma?",
+        "de": "Schau, oben ist es höher. Schaffst du es hinauf?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我试试。",
+        "pinyin": "Wǒ shìshi.",
+        "de": "Ich versuch's."
+      },
+      {
+        "speaker": "商贩",
+        "zh": "要水吗？",
+        "pinyin": "Yào shuǐ ma?",
+        "de": "Möchtest du Wasser? Möchtest du eisgekühltes Wasser?"
+      },
+      {
+        "speaker": "商贩",
+        "zh": "要冰水吗？",
+        "pinyin": "Yào bīngshuǐ ma?",
+        "de": "Möchtest du Wasser? Möchtest du eisgekühltes Wasser?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "不用，谢谢。",
+        "pinyin": "Bú yòng, xièxie.",
+        "de": "Nein danke, ich habe Wasser."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我有水。",
+        "pinyin": "Wǒ yǒu shuǐ.",
         "de": "Nein danke, ich habe Wasser."
       }
     ]
@@ -5406,7 +6866,7 @@ window.CF_TOPICS = [
   {
     "id": "12",
     "title": "Im Park",
-    "short": "Hobbys im Park und 能、会、可以 unterscheiden",
+    "short": "Im Park sprechen beide über Hobbys, Fähigkeiten, Fotos und gemeinsame Pläne.",
     "accent": "#C7A080",
     "textColor": "#050B12",
     "vocab": [
@@ -5664,7 +7124,7 @@ window.CF_TOPICS = [
       {
         "speaker": "B",
         "zh": "我喜欢……，也喜欢……。你呢？",
-        "pinyin": "Wǒ xǐhuan ……, yě xǐhuan …….",
+        "pinyin": "Wǒ xǐhuan ……, yě xǐhuan ……. Nǐ ne?",
         "de": "Ich mag … und auch …. Und du?"
       },
       {
@@ -5697,176 +7157,322 @@ window.CF_TOPICS = [
     "studentDialogNote": "Hobbys nennen und über Können und Erlaubnis sprechen.",
     "sentencePuzzles": [
       {
-        "de": "Ich mache hier gern Fotos.",
+        "zh": "苏然？！",
+        "pinyin": "Sū Rán?!",
+        "de": "Sū Rán?!"
+      },
+      {
+        "zh": "你怎么了？",
+        "pinyin": "Nǐ zěnme le?",
+        "de": "Was ist mit dir?"
+      },
+      {
+        "zh": "我⋯⋯我想给你一个惊喜。",
+        "pinyin": "Wǒ… wǒ xiǎng gěi nǐ yí ge jīngxǐ.",
+        "de": "Ich… ich wollte dich überraschen."
+      },
+      {
+        "zh": "你成功了。",
+        "pinyin": "Nǐ chénggōng le.",
+        "de": "Das ist dir gelungen."
+      },
+      {
+        "zh": "你常常来这里吗？",
+        "pinyin": "Nǐ chángcháng lái zhèlǐ ma?",
+        "de": "Kommst du oft hierher?"
+      },
+      {
+        "zh": "对。",
+        "pinyin": "Duì.",
+        "de": "Ja. Ich mache hier gern Fotos."
+      },
+      {
         "zh": "我喜欢在这里拍照。",
         "pinyin": "Wǒ xǐhuan zài zhèlǐ pāizhào.",
-        "tokens": [
-          "我",
-          "喜欢",
-          "在",
-          "这里",
-          "拍照",
-          "。"
-        ]
+        "de": "Ja. Ich mache hier gern Fotos."
       },
       {
-        "de": "Ich jogge gern und höre gern Musik.",
+        "zh": "你拍得很好。",
+        "pinyin": "Nǐ pāi de hěn hǎo.",
+        "de": "Du fotografierst sehr gut."
+      },
+      {
+        "zh": "谢谢。",
+        "pinyin": "Xièxie.",
+        "de": "Danke. Ich fotografiere schon seit meiner Kindheit gern. Mein Vater mag es auch."
+      },
+      {
+        "zh": "我从小就喜欢拍照。",
+        "pinyin": "Wǒ cóngxiǎo jiù xǐhuan pāizhào.",
+        "de": "Danke. Ich fotografiere schon seit meiner Kindheit gern. Mein Vater mag es auch."
+      },
+      {
+        "zh": "我爸爸也喜欢。",
+        "pinyin": "Wǒ bàba yě xǐhuan.",
+        "de": "Danke. Ich fotografiere schon seit meiner Kindheit gern. Mein Vater mag es auch."
+      },
+      {
+        "zh": "这里可以拍照吗？",
+        "pinyin": "Zhèlǐ kěyǐ pāizhào ma?",
+        "de": "Darf man hier fotografieren? Ich meine, die Brücke da drüben."
+      },
+      {
+        "zh": "我是说，那边的桥。",
+        "pinyin": "Wǒ shì shuō, nàbiān de qiáo.",
+        "de": "Darf man hier fotografieren? Ich meine, die Brücke da drüben."
+      },
+      {
+        "zh": "可以，公园里都可以。",
+        "pinyin": "Kěyǐ, gōngyuán lǐ dōu kěyǐ.",
+        "de": "Ja, im Park überall."
+      },
+      {
+        "zh": "你能走吗？",
+        "pinyin": "Nǐ néng zǒu ma?",
+        "de": "Kannst du laufen?"
+      },
+      {
+        "zh": "能，没问题。",
+        "pinyin": "Néng, méi wèntí.",
+        "de": "Ja, kein Problem. Nur ein bisschen kühl."
+      },
+      {
+        "zh": "只是有点儿凉。",
+        "pinyin": "Zhǐshì yǒudiǎnr liáng.",
+        "de": "Ja, kein Problem. Nur ein bisschen kühl."
+      },
+      {
+        "zh": "你喜欢做什么？",
+        "pinyin": "Nǐ xǐhuan zuò shénme?",
+        "de": "Was machst du gern?"
+      },
+      {
         "zh": "我喜欢跑步，也喜欢听音乐。",
         "pinyin": "Wǒ xǐhuan pǎobù, yě xǐhuan tīng yīnyuè.",
-        "tokens": [
-          "我",
-          "喜欢",
-          "跑步",
-          "，",
-          "也",
-          "喜欢",
-          "听",
-          "音乐",
-          "。"
-        ]
+        "de": "Ich jogge gern und höre gern Musik. Und du?"
       },
       {
-        "de": "Sport mag ich nicht so.",
-        "zh": "我不太喜欢运动。",
-        "pinyin": "Wǒ bú tài xǐhuan yùndòng.",
-        "tokens": [
-          "我",
-          "不",
-          "太",
-          "喜欢",
-          "运动",
-          "。"
-        ]
+        "zh": "你呢？",
+        "pinyin": "Nǐ ne?",
+        "de": "Ich jogge gern und höre gern Musik. Und du?"
       },
       {
-        "de": "Ich fotografiere gern, manchmal lese ich.",
         "zh": "我喜欢拍照，有时候看书。",
         "pinyin": "Wǒ xǐhuan pāizhào, yǒushíhou kàn shū.",
-        "tokens": [
-          "我",
-          "喜欢",
-          "拍照",
-          "，",
-          "有时候",
-          "看",
-          "书",
-          "。"
-        ]
+        "de": "Ich fotografiere gern, manchmal lese ich. Sport mag ich nicht so."
       },
       {
-        "de": "Du bist heute schon geschwommen.",
+        "zh": "我不太喜欢运动。",
+        "pinyin": "Wǒ bú tài xǐhuan yùndòng.",
+        "de": "Ich fotografiere gern, manchmal lese ich. Sport mag ich nicht so."
+      },
+      {
+        "zh": "那你会游泳吗？",
+        "pinyin": "Nà nǐ huì yóuyǒng ma?",
+        "de": "Kannst du denn schwimmen?"
+      },
+      {
+        "zh": "会一点儿。",
+        "pinyin": "Huì yìdiǎnr.",
+        "de": "Ein bisschen. Du bist heute schon geschwommen."
+      },
+      {
         "zh": "你今天已经游了。",
         "pinyin": "Nǐ jīntiān yǐjīng yóu le.",
-        "tokens": [
-          "你",
-          "今天",
-          "已经",
-          "游",
-          "了",
-          "。"
-        ]
+        "de": "Ein bisschen. Du bist heute schon geschwommen."
       },
       {
-        "de": "Du gehst am besten früh zurück und ziehst dich um.",
         "zh": "你最好早点儿回去，换衣服。",
         "pinyin": "Nǐ zuìhǎo zǎo diǎnr huíqù, huàn yīfu.",
-        "tokens": [
-          "你",
-          "最好",
-          "早点儿",
-          "回去",
-          "，",
-          "换",
-          "衣服",
-          "。"
-        ]
+        "de": "Du gehst am besten früh zurück und ziehst dich um."
+      },
+      {
+        "zh": "我知道。",
+        "pinyin": "Wǒ zhīdào.",
+        "de": "Ich weiß. Aber hier ist es sehr gemütlich."
+      },
+      {
+        "zh": "但是这里很舒服。",
+        "pinyin": "Dànshì zhèlǐ hěn shūfu.",
+        "de": "Ich weiß. Aber hier ist es sehr gemütlich."
       }
     ],
-    "gapExercises": [
+    "gapExercises": [],
+    "speechSentences": [
       {
-        "prompt": "我喜欢在这里___。",
-        "answer": "拍照",
-        "choices": [
-          "拍照",
-          "凉",
-          "跑步",
-          "游泳"
-        ],
-        "solution": "我喜欢在这里拍照。",
+        "speaker": "林月",
+        "zh": "苏然？！",
+        "pinyin": "Sū Rán?!",
+        "de": "Sū Rán?!"
+      },
+      {
+        "speaker": "林月",
+        "zh": "你怎么了？",
+        "pinyin": "Nǐ zěnme le?",
+        "de": "Was ist mit dir?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我⋯⋯我想给你一个惊喜。",
+        "pinyin": "Wǒ… wǒ xiǎng gěi nǐ yí ge jīngxǐ.",
+        "de": "Ich… ich wollte dich überraschen."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你成功了。",
+        "pinyin": "Nǐ chénggōng le.",
+        "de": "Das ist dir gelungen."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你常常来这里吗？",
+        "pinyin": "Nǐ chángcháng lái zhèlǐ ma?",
+        "de": "Kommst du oft hierher?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "对。",
+        "pinyin": "Duì.",
+        "de": "Ja. Ich mache hier gern Fotos."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我喜欢在这里拍照。",
         "pinyin": "Wǒ xǐhuan zài zhèlǐ pāizhào.",
-        "de": "Ich mache hier gern Fotos."
+        "de": "Ja. Ich mache hier gern Fotos."
       },
       {
-        "prompt": "我喜欢___，也喜欢听音乐。",
-        "answer": "跑步",
-        "choices": [
-          "跑步",
-          "凉",
-          "拍照",
-          "游泳"
-        ],
-        "solution": "我喜欢跑步，也喜欢听音乐。",
+        "speaker": "苏然",
+        "zh": "你拍得很好。",
+        "pinyin": "Nǐ pāi de hěn hǎo.",
+        "de": "Du fotografierst sehr gut."
+      },
+      {
+        "speaker": "林月",
+        "zh": "谢谢。",
+        "pinyin": "Xièxie.",
+        "de": "Danke. Ich fotografiere schon seit meiner Kindheit gern. Mein Vater mag es auch."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我从小就喜欢拍照。",
+        "pinyin": "Wǒ cóngxiǎo jiù xǐhuan pāizhào.",
+        "de": "Danke. Ich fotografiere schon seit meiner Kindheit gern. Mein Vater mag es auch."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我爸爸也喜欢。",
+        "pinyin": "Wǒ bàba yě xǐhuan.",
+        "de": "Danke. Ich fotografiere schon seit meiner Kindheit gern. Mein Vater mag es auch."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "这里可以拍照吗？",
+        "pinyin": "Zhèlǐ kěyǐ pāizhào ma?",
+        "de": "Darf man hier fotografieren? Ich meine, die Brücke da drüben."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我是说，那边的桥。",
+        "pinyin": "Wǒ shì shuō, nàbiān de qiáo.",
+        "de": "Darf man hier fotografieren? Ich meine, die Brücke da drüben."
+      },
+      {
+        "speaker": "林月",
+        "zh": "可以，公园里都可以。",
+        "pinyin": "Kěyǐ, gōngyuán lǐ dōu kěyǐ.",
+        "de": "Ja, im Park überall."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你能走吗？",
+        "pinyin": "Nǐ néng zǒu ma?",
+        "de": "Kannst du laufen?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "能，没问题。",
+        "pinyin": "Néng, méi wèntí.",
+        "de": "Ja, kein Problem. Nur ein bisschen kühl."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "只是有点儿凉。",
+        "pinyin": "Zhǐshì yǒudiǎnr liáng.",
+        "de": "Ja, kein Problem. Nur ein bisschen kühl."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你喜欢做什么？",
+        "pinyin": "Nǐ xǐhuan zuò shénme?",
+        "de": "Was machst du gern?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我喜欢跑步，也喜欢听音乐。",
         "pinyin": "Wǒ xǐhuan pǎobù, yě xǐhuan tīng yīnyuè.",
-        "de": "Ich jogge gern und höre gern Musik."
+        "de": "Ich jogge gern und höre gern Musik. Und du?"
       },
       {
-        "prompt": "我不太喜欢___。",
-        "answer": "运动",
-        "choices": [
-          "运动",
-          "回去",
-          "衣服",
-          "没问题"
-        ],
-        "solution": "我不太喜欢运动。",
-        "pinyin": "Wǒ bú tài xǐhuan yùndòng.",
-        "de": "Sport mag ich nicht so."
+        "speaker": "苏然",
+        "zh": "你呢？",
+        "pinyin": "Nǐ ne?",
+        "de": "Ich jogge gern und höre gern Musik. Und du?"
       },
       {
-        "prompt": "我喜欢拍照，___看书。",
-        "answer": "有时候",
-        "choices": [
-          "有时候",
-          "听",
-          "音乐",
-          "已经"
-        ],
-        "solution": "我喜欢拍照，有时候看书。",
+        "speaker": "林月",
+        "zh": "我喜欢拍照，有时候看书。",
         "pinyin": "Wǒ xǐhuan pāizhào, yǒushíhou kàn shū.",
-        "de": "Ich fotografiere gern, manchmal lese ich."
+        "de": "Ich fotografiere gern, manchmal lese ich. Sport mag ich nicht so."
       },
       {
-        "prompt": "你今天___游了。",
-        "answer": "已经",
-        "choices": [
-          "已经",
-          "衣服",
-          "没问题",
-          "有点儿"
-        ],
-        "solution": "你今天已经游了。",
+        "speaker": "林月",
+        "zh": "我不太喜欢运动。",
+        "pinyin": "Wǒ bú tài xǐhuan yùndòng.",
+        "de": "Ich fotografiere gern, manchmal lese ich. Sport mag ich nicht so."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "那你会游泳吗？",
+        "pinyin": "Nà nǐ huì yóuyǒng ma?",
+        "de": "Kannst du denn schwimmen?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "会一点儿。",
+        "pinyin": "Huì yìdiǎnr.",
+        "de": "Ein bisschen. Du bist heute schon geschwommen."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你今天已经游了。",
         "pinyin": "Nǐ jīntiān yǐjīng yóu le.",
-        "de": "Du bist heute schon geschwommen."
+        "de": "Ein bisschen. Du bist heute schon geschwommen."
       },
       {
-        "prompt": "你最好早点儿___，换衣服。",
-        "answer": "回去",
-        "choices": [
-          "回去",
-          "有时候",
-          "已经",
-          "没问题"
-        ],
-        "solution": "你最好早点儿回去，换衣服。",
+        "speaker": "林月",
+        "zh": "你最好早点儿回去，换衣服。",
         "pinyin": "Nǐ zuìhǎo zǎo diǎnr huíqù, huàn yīfu.",
         "de": "Du gehst am besten früh zurück und ziehst dich um."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我知道。",
+        "pinyin": "Wǒ zhīdào.",
+        "de": "Ich weiß. Aber hier ist es sehr gemütlich."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "但是这里很舒服。",
+        "pinyin": "Dànshì zhèlǐ hěn shūfu.",
+        "de": "Ich weiß. Aber hier ist es sehr gemütlich."
       }
     ]
   },
   {
     "id": "13",
     "title": "Erkältet",
-    "short": "Erkältung, Beschwerden und Ratschläge in der Apotheke",
+    "short": "Sū Rán ist erkältet und bekommt in einer Apotheke Fragen, Medizin und Ratschläge.",
     "accent": "#CD984B",
     "textColor": "#050B12",
     "vocab": [
@@ -5952,9 +7558,9 @@ window.CF_TOPICS = [
         "hint": "好好休息 = ruh dich gut aus"
       },
       {
-        "zh": "滑倒",
-        "pinyin": "huádǎo",
-        "de": "ausrutschen"
+        "zh": "滑了一下",
+        "pinyin": "huá le yíxià",
+        "de": "kurz ausgerutscht"
       },
       {
         "zh": "药剂师",
@@ -6026,8 +7632,8 @@ window.CF_TOPICS = [
       },
       {
         "speaker": "林月",
-        "zh": "我的公园？你自己滑倒了。",
-        "pinyin": "Wǒ de gōngyuán? Nǐ zìjǐ huádǎo le.",
+        "zh": "我的公园？是你自己滑了一下。",
+        "pinyin": "Wǒ de gōngyuán? Shì nǐ zìjǐ huá le yíxià.",
         "de": "Mein Park? Du bist selbst ausgerutscht."
       },
       {
@@ -6084,7 +7690,7 @@ window.CF_TOPICS = [
         "speaker": "A",
         "zh": "你最好喝这个药。早上、中午、晚上都喝。",
         "pinyin": "Nǐ zuìhǎo hē zhège yào. Zǎoshang, zhōngwǔ, wǎnshang dōu hē.",
-        "de": "Nehmen Sie am besten dieses Mittel. Morgens, mittags und abends trinken."
+        "de": "Trinken Sie dieses Mittel am besten morgens, mittags und abends."
       },
       {
         "speaker": "B",
@@ -6104,168 +7710,267 @@ window.CF_TOPICS = [
     "studentDialogNote": "Beschwerden nennen und Ratschläge verstehen.",
     "sentencePuzzles": [
       {
-        "de": "Ich bin erkältet.",
+        "zh": "你好，你怎么了？",
+        "pinyin": "Nǐ hǎo, nǐ zěnme le?",
+        "de": "Hallo, was fehlt Ihnen?"
+      },
+      {
         "zh": "我感冒了。",
         "pinyin": "Wǒ gǎnmào le.",
-        "tokens": [
-          "我",
-          "感冒",
-          "了",
-          "。"
-        ]
+        "de": "Ich bin erkältet. Mein Kopf tut weh, und mein Hals auch."
       },
       {
-        "de": "Mein Kopf tut weh, und mein Hals auch.",
         "zh": "我头疼，嗓子也疼。",
         "pinyin": "Wǒ tóu téng, sǎngzi yě téng.",
-        "tokens": [
-          "我",
-          "头",
-          "疼",
-          "，",
-          "嗓子",
-          "也",
-          "疼",
-          "。"
-        ]
+        "de": "Ich bin erkältet. Mein Kopf tut weh, und mein Hals auch."
       },
       {
-        "de": "Haben Sie Fieber?",
         "zh": "你发烧吗？",
-        "pinyin": "Nǐ fāshāo ma?",
-        "tokens": [
-          "你",
-          "发烧",
-          "吗",
-          "？"
-        ]
-      },
-      {
-        "de": "Das ist westliche Medizin, das ist chinesische Medizin.",
-        "zh": "这是西药，这是中药。",
-        "pinyin": "Zhè shì xīyào, zhè shì zhōngyào.",
-        "tokens": [
-          "这",
-          "是",
-          "西药",
-          "，",
-          "这",
-          "是",
-          "中药",
-          "。"
-        ]
-      },
-      {
-        "de": "Aber sehr wirksam.",
-        "zh": "但是很有用。",
-        "pinyin": "Dànshì hěn yǒuyòng.",
-        "tokens": [
-          "但是",
-          "很",
-          "有用",
-          "。"
-        ]
-      },
-      {
-        "de": "Trinken Sie viel Wasser und ruhen Sie sich gut aus.",
-        "zh": "多喝水，好好休息。",
-        "pinyin": "Duō hē shuǐ, hǎohāo xiūxi.",
-        "tokens": [
-          "多",
-          "喝",
-          "水",
-          "，",
-          "好好",
-          "休息",
-          "。"
-        ]
-      }
-    ],
-    "gapExercises": [
-      {
-        "prompt": "我___了。",
-        "answer": "感冒",
-        "choices": [
-          "感冒",
-          "有用",
-          "休息",
-          "热水"
-        ],
-        "solution": "我感冒了。",
-        "pinyin": "Wǒ gǎnmào le.",
-        "de": "Ich bin erkältet."
-      },
-      {
-        "prompt": "我头___，嗓子也疼。",
-        "answer": "疼",
-        "choices": [
-          "疼",
-          "西药",
-          "有用",
-          "休息"
-        ],
-        "solution": "我头疼，嗓子也疼。",
-        "pinyin": "Wǒ tóu téng, sǎngzi yě téng.",
-        "de": "Mein Kopf tut weh, und mein Hals auch."
-      },
-      {
-        "prompt": "你___吗？",
-        "answer": "发烧",
-        "choices": [
-          "发烧",
-          "有用",
-          "休息",
-          "热水"
-        ],
-        "solution": "你发烧吗？",
         "pinyin": "Nǐ fāshāo ma?",
         "de": "Haben Sie Fieber?"
       },
       {
-        "prompt": "这是西药，这是___。",
-        "answer": "中药",
-        "choices": [
-          "中药",
-          "有用",
-          "休息",
-          "热水"
-        ],
-        "solution": "这是西药，这是中药。",
+        "zh": "有一点儿。",
+        "pinyin": "Yǒu yìdiǎnr.",
+        "de": "Ein bisschen."
+      },
+      {
+        "zh": "这是西药，这是中药。",
         "pinyin": "Zhè shì xīyào, zhè shì zhōngyào.",
         "de": "Das ist westliche Medizin, das ist chinesische Medizin."
       },
       {
-        "prompt": "但是很___。",
-        "answer": "有用",
-        "choices": [
-          "有用",
-          "热水",
-          "自己",
-          "每"
-        ],
-        "solution": "但是很有用。",
-        "pinyin": "Dànshì hěn yǒuyòng.",
-        "de": "Aber sehr wirksam."
+        "zh": "中药⋯⋯好喝吗？",
+        "pinyin": "Zhōngyào… hǎo hē ma?",
+        "de": "Chinesische Medizin… schmeckt die gut?"
       },
       {
-        "prompt": "多喝水，好好___。",
-        "answer": "休息",
-        "choices": [
-          "休息",
-          "危险",
-          "感冒",
-          "头"
-        ],
-        "solution": "多喝水，好好休息。",
+        "zh": "不太好喝。",
+        "pinyin": "Bú tài hǎo hē.",
+        "de": "Nicht besonders gut. Aber sehr wirksam. Am besten nehmen Sie diese chinesische Medizin."
+      },
+      {
+        "zh": "但是很有用。",
+        "pinyin": "Dànshì hěn yǒuyòng.",
+        "de": "Nicht besonders gut. Aber sehr wirksam. Am besten nehmen Sie diese chinesische Medizin."
+      },
+      {
+        "zh": "你最好喝这个中药。",
+        "pinyin": "Nǐ zuìhǎo hē zhège zhōngyào.",
+        "de": "Nicht besonders gut. Aber sehr wirksam. Am besten nehmen Sie diese chinesische Medizin."
+      },
+      {
+        "zh": "好，那我要中药。",
+        "pinyin": "Hǎo, nà wǒ yào zhōngyào.",
+        "de": "Gut, dann nehme ich die chinesische Medizin."
+      },
+      {
+        "zh": "早上、中午、晚上都喝。",
+        "pinyin": "Zǎoshang, zhōngwǔ, wǎnshang dōu hē.",
+        "de": "Trinken Sie es morgens, mittags und abends. Trinken Sie viel Wasser und ruhen Sie sich gut aus."
+      },
+      {
+        "zh": "多喝水，好好休息。",
         "pinyin": "Duō hē shuǐ, hǎohāo xiūxi.",
-        "de": "Trinken Sie viel Wasser und ruhen Sie sich gut aus."
+        "de": "Trinken Sie es morgens, mittags und abends. Trinken Sie viel Wasser und ruhen Sie sich gut aus."
+      },
+      {
+        "zh": "我感冒了。",
+        "pinyin": "Wǒ gǎnmào le.",
+        "de": "Ich bin erkältet. Dein Park ist zu gefährlich."
+      },
+      {
+        "zh": "你的公园太危险了。",
+        "pinyin": "Nǐ de gōngyuán tài wēixiǎn le.",
+        "de": "Ich bin erkältet. Dein Park ist zu gefährlich."
+      },
+      {
+        "zh": "我的公园？",
+        "pinyin": "Wǒ de gōngyuán?",
+        "de": "Mein Park? Du bist selbst ausgerutscht."
+      },
+      {
+        "zh": "是你自己滑了一下。",
+        "pinyin": "Shì nǐ zìjǐ huá le yíxià.",
+        "de": "Mein Park? Du bist selbst ausgerutscht."
+      },
+      {
+        "zh": "⋯⋯对。",
+        "pinyin": "… Duì.",
+        "de": "… Stimmt."
+      },
+      {
+        "zh": "多喝热水。",
+        "pinyin": "Duō hē rèshuǐ.",
+        "de": "Trink viel heißes Wasser. Geh früh schlafen."
+      },
+      {
+        "zh": "早点儿睡觉。",
+        "pinyin": "Zǎo diǎnr shuìjiào.",
+        "de": "Trink viel heißes Wasser. Geh früh schlafen."
+      },
+      {
+        "zh": "你也会说这个。",
+        "pinyin": "Nǐ yě huì shuō zhège.",
+        "de": "Das sagst du auch. Heißes Wasser, heißes Wasser."
+      },
+      {
+        "zh": "热水，热水。",
+        "pinyin": "Rèshuǐ, rèshuǐ.",
+        "de": "Das sagst du auch. Heißes Wasser, heißes Wasser."
+      },
+      {
+        "zh": "每个中国人都会说。",
+        "pinyin": "Měi ge Zhōngguó rén dōu huì shuō.",
+        "de": "Das sagt jeder Chinese."
+      }
+    ],
+    "gapExercises": [],
+    "speechSentences": [
+      {
+        "speaker": "药剂师",
+        "zh": "你好，你怎么了？",
+        "pinyin": "Nǐ hǎo, nǐ zěnme le?",
+        "de": "Hallo, was fehlt Ihnen?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我感冒了。",
+        "pinyin": "Wǒ gǎnmào le.",
+        "de": "Ich bin erkältet. Mein Kopf tut weh, und mein Hals auch."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我头疼，嗓子也疼。",
+        "pinyin": "Wǒ tóu téng, sǎngzi yě téng.",
+        "de": "Ich bin erkältet. Mein Kopf tut weh, und mein Hals auch."
+      },
+      {
+        "speaker": "药剂师",
+        "zh": "你发烧吗？",
+        "pinyin": "Nǐ fāshāo ma?",
+        "de": "Haben Sie Fieber?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "有一点儿。",
+        "pinyin": "Yǒu yìdiǎnr.",
+        "de": "Ein bisschen."
+      },
+      {
+        "speaker": "药剂师",
+        "zh": "这是西药，这是中药。",
+        "pinyin": "Zhè shì xīyào, zhè shì zhōngyào.",
+        "de": "Das ist westliche Medizin, das ist chinesische Medizin."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "中药⋯⋯好喝吗？",
+        "pinyin": "Zhōngyào… hǎo hē ma?",
+        "de": "Chinesische Medizin… schmeckt die gut?"
+      },
+      {
+        "speaker": "药剂师",
+        "zh": "不太好喝。",
+        "pinyin": "Bú tài hǎo hē.",
+        "de": "Nicht besonders gut. Aber sehr wirksam. Am besten nehmen Sie diese chinesische Medizin."
+      },
+      {
+        "speaker": "药剂师",
+        "zh": "但是很有用。",
+        "pinyin": "Dànshì hěn yǒuyòng.",
+        "de": "Nicht besonders gut. Aber sehr wirksam. Am besten nehmen Sie diese chinesische Medizin."
+      },
+      {
+        "speaker": "药剂师",
+        "zh": "你最好喝这个中药。",
+        "pinyin": "Nǐ zuìhǎo hē zhège zhōngyào.",
+        "de": "Nicht besonders gut. Aber sehr wirksam. Am besten nehmen Sie diese chinesische Medizin."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "好，那我要中药。",
+        "pinyin": "Hǎo, nà wǒ yào zhōngyào.",
+        "de": "Gut, dann nehme ich die chinesische Medizin."
+      },
+      {
+        "speaker": "药剂师",
+        "zh": "早上、中午、晚上都喝。",
+        "pinyin": "Zǎoshang, zhōngwǔ, wǎnshang dōu hē.",
+        "de": "Trinken Sie es morgens, mittags und abends. Trinken Sie viel Wasser und ruhen Sie sich gut aus."
+      },
+      {
+        "speaker": "药剂师",
+        "zh": "多喝水，好好休息。",
+        "pinyin": "Duō hē shuǐ, hǎohāo xiūxi.",
+        "de": "Trinken Sie es morgens, mittags und abends. Trinken Sie viel Wasser und ruhen Sie sich gut aus."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我感冒了。",
+        "pinyin": "Wǒ gǎnmào le.",
+        "de": "Ich bin erkältet. Dein Park ist zu gefährlich."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你的公园太危险了。",
+        "pinyin": "Nǐ de gōngyuán tài wēixiǎn le.",
+        "de": "Ich bin erkältet. Dein Park ist zu gefährlich."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我的公园？",
+        "pinyin": "Wǒ de gōngyuán?",
+        "de": "Mein Park? Du bist selbst ausgerutscht."
+      },
+      {
+        "speaker": "林月",
+        "zh": "是你自己滑了一下。",
+        "pinyin": "Shì nǐ zìjǐ huá le yíxià.",
+        "de": "Mein Park? Du bist selbst ausgerutscht."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "⋯⋯对。",
+        "pinyin": "… Duì.",
+        "de": "… Stimmt."
+      },
+      {
+        "speaker": "林月",
+        "zh": "多喝热水。",
+        "pinyin": "Duō hē rèshuǐ.",
+        "de": "Trink viel heißes Wasser. Geh früh schlafen."
+      },
+      {
+        "speaker": "林月",
+        "zh": "早点儿睡觉。",
+        "pinyin": "Zǎo diǎnr shuìjiào.",
+        "de": "Trink viel heißes Wasser. Geh früh schlafen."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你也会说这个。",
+        "pinyin": "Nǐ yě huì shuō zhège.",
+        "de": "Das sagst du auch. Heißes Wasser, heißes Wasser."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "热水，热水。",
+        "pinyin": "Rèshuǐ, rèshuǐ.",
+        "de": "Das sagst du auch. Heißes Wasser, heißes Wasser."
+      },
+      {
+        "speaker": "林月",
+        "zh": "每个中国人都会说。",
+        "pinyin": "Měi ge Zhōngguó rén dōu huì shuō.",
+        "de": "Das sagt jeder Chinese."
       }
     ]
   },
   {
     "id": "14",
     "title": "In der Stadt",
-    "short": "Nach dem Weg fragen, Ordnungszahlen und Sicherheitskontrolle",
+    "short": "Sū Rán findet seinen Weg durch die Stadt und fragt nach Stationen, Straßen und Sicherheit.",
     "accent": "#EBBC6A",
     "textColor": "#050B12",
     "vocab": [
@@ -6374,9 +8079,9 @@ window.CF_TOPICS = [
     "storyDialog": [
       {
         "speaker": "苏然",
-        "zh": "第一站，第二站⋯⋯天安门是第三站。",
-        "pinyin": "Dì yī zhàn, dì èr zhàn… Tiān'ānmén shì dì sān zhàn.",
-        "de": "Erste Station, zweite Station… Tian'anmen ist die dritte Station."
+        "zh": "第一站，第二站⋯⋯天安门东站是第三站。",
+        "pinyin": "Dì yī zhàn, dì èr zhàn… Tiān'ānmén Dōng Zhàn shì dì sān zhàn.",
+        "de": "Erste Station, zweite Station… Tian'anmen Ost ist die dritte Station."
       },
       {
         "speaker": "苏然",
@@ -6399,7 +8104,7 @@ window.CF_TOPICS = [
       {
         "speaker": "大爷",
         "zh": "对。过了安检就是天安门广场。故宫在广场北边。",
-        "pinyin": "Duì. Guòle ānjiǎn jiù shì Tiān'ānmén Guǎngchǎng. Gùgōng zài guǎngchǎng běibiān.",
+        "pinyin": "Duì. Guò le ānjiǎn jiù shì Tiān'ānmén Guǎngchǎng. Gùgōng zài guǎngchǎng běibiān.",
         "de": "Genau. Nach der Sicherheitskontrolle bist du direkt auf dem Platz. Die Verbotene Stadt liegt an der Nordseite des Platzes."
       },
       {
@@ -6474,7 +8179,7 @@ window.CF_TOPICS = [
         "speaker": "B",
         "zh": "不远。你一直走，到前面的路口右转。",
         "pinyin": "Bù yuǎn. Nǐ yìzhí zǒu, dào qiánmiàn de lùkǒu yòu zhuǎn.",
-        "de": "Nicht weit. Geh geradeaus, an der Kreuzung vorne rechts."
+        "de": "Nicht weit. Geh geradeaus und biege an der Kreuzung vorne rechts ab."
       },
       {
         "speaker": "A",
@@ -6506,182 +8211,234 @@ window.CF_TOPICS = [
     "studentDialogNote": "Wegbeschreibung, Entfernung und Eingang üben.",
     "sentencePuzzles": [
       {
-        "de": "Erste Station, zweite Station… Tian'anmen ist die dritte Station.",
-        "zh": "第一站，第二站⋯⋯天安门是第三站。",
-        "pinyin": "Dì yī zhàn, dì èr zhàn… Tiān'ānmén shì dì sān zhàn.",
-        "tokens": [
-          "第",
-          "一",
-          "站",
-          "，",
-          "第",
-          "二",
-          "站",
-          "⋯",
-          "⋯",
-          "天安门",
-          "是",
-          "第",
-          "三",
-          "站",
-          "。"
-        ]
+        "zh": "第一站，第二站⋯⋯天安门东站是第三站。",
+        "pinyin": "Dì yī zhàn, dì èr zhàn… Tiān'ānmén Dōng Zhàn shì dì sān zhàn.",
+        "de": "Erste Station, zweite Station… Tian'anmen Ost ist die dritte Station."
       },
       {
-        "de": "Entschuldigung, wie komme ich zum Tian'anmen-Platz?",
         "zh": "请问，天安门广场怎么走？",
-        "pinyin": "Qǐngwèn, Tiān'ānmén Guǎngchǎng zěnme zǒu?",
-        "tokens": [
-          "请问",
-          "，",
-          "天安门广场",
-          "怎么走",
-          "？"
-        ]
-      },
-      {
-        "de": "Geh geradeaus, und an der Kreuzung vorne rechts.",
-        "zh": "你一直走，到前面的路口右转。",
-        "pinyin": "Nǐ yìzhí zǒu, dào qiánmiàn de lùkǒu yòu zhuǎn.",
-        "tokens": [
-          "你",
-          "一直",
-          "走",
-          "，",
-          "到",
-          "前面",
-          "的",
-          "路口",
-          "右转",
-          "。"
-        ]
-      },
-      {
-        "de": "Geradeaus, dann rechts.",
-        "zh": "一直走，然后右转。",
-        "pinyin": "Yìzhí zǒu, ránhòu yòu zhuǎn.",
-        "tokens": [
-          "一直",
-          "走",
-          "，",
-          "然后",
-          "右转",
-          "。"
-        ]
-      },
-      {
-        "de": "Nicht weit, zehn Minuten zu Fuß.",
-        "zh": "不远，走十分钟。",
-        "pinyin": "Bù yuǎn, zǒu shí fēnzhōng.",
-        "tokens": [
-          "不",
-          "远",
-          "，",
-          "走",
-          "十",
-          "分钟",
-          "。"
-        ]
-      },
-      {
-        "de": "Hallo, bitte zeigen Sie Ihren Personalausweis.",
-        "zh": "你好，请出示身份证。",
-        "pinyin": "Nǐ hǎo, qǐng chūshì shēnfènzhèng.",
-        "tokens": [
-          "你好",
-          "，",
-          "请",
-          "出示",
-          "身份证",
-          "。"
-        ]
-      }
-    ],
-    "gapExercises": [
-      {
-        "prompt": "___一站，第二站⋯⋯天安门是第三站。",
-        "answer": "第",
-        "choices": [
-          "第",
-          "一直",
-          "路口",
-          "右转"
-        ],
-        "solution": "第一站，第二站⋯⋯天安门是第三站。",
-        "pinyin": "Dì yī zhàn, dì èr zhàn… Tiān'ānmén shì dì sān zhàn.",
-        "de": "Erste Station, zweite Station… Tian'anmen ist die dritte Station."
-      },
-      {
-        "prompt": "请问，天安门广场___？",
-        "answer": "怎么走",
-        "choices": [
-          "怎么走",
-          "出示",
-          "入口",
-          "北边"
-        ],
-        "solution": "请问，天安门广场怎么走？",
         "pinyin": "Qǐngwèn, Tiān'ānmén Guǎngchǎng zěnme zǒu?",
         "de": "Entschuldigung, wie komme ich zum Tian'anmen-Platz?"
       },
       {
-        "prompt": "你___走，到前面的路口右转。",
-        "answer": "一直",
-        "choices": [
-          "一直",
-          "第",
-          "怎么走",
-          "后面"
-        ],
-        "solution": "你一直走，到前面的路口右转。",
-        "pinyin": "Nǐ yìzhí zǒu, dào qiánmiàn de lùkǒu yòu zhuǎn.",
-        "de": "Geh geradeaus, und an der Kreuzung vorne rechts."
+        "zh": "天安门广场啊，不远。",
+        "pinyin": "Tiān'ānmén Guǎngchǎng a, bù yuǎn.",
+        "de": "Der Tian'anmen-Platz, ah, nicht weit. Geh geradeaus und biege an der Kreuzung vorne rechts ab."
       },
       {
-        "prompt": "一直走，然后___。",
-        "answer": "右转",
-        "choices": [
-          "右转",
-          "安检",
-          "出示",
-          "入口"
-        ],
-        "solution": "一直走，然后右转。",
+        "zh": "你一直走，到前面的路口右转。",
+        "pinyin": "Nǐ yìzhí zǒu, dào qiánmiàn de lùkǒu yòu zhuǎn.",
+        "de": "Der Tian'anmen-Platz, ah, nicht weit. Geh geradeaus und biege an der Kreuzung vorne rechts ab."
+      },
+      {
+        "zh": "一直走，然后右转。",
         "pinyin": "Yìzhí zǒu, ránhòu yòu zhuǎn.",
         "de": "Geradeaus, dann rechts."
       },
       {
-        "prompt": "不远，走十___。",
-        "answer": "分钟",
-        "choices": [
-          "分钟",
-          "怎么走",
-          "一直",
-          "路口"
-        ],
-        "solution": "不远，走十分钟。",
+        "zh": "对。",
+        "pinyin": "Duì.",
+        "de": "Genau. Nach der Sicherheitskontrolle bist du direkt auf dem Platz. Die Verbotene Stadt liegt an der Nordseite des Platzes."
+      },
+      {
+        "zh": "过了安检就是天安门广场。",
+        "pinyin": "Guò le ānjiǎn jiù shì Tiān'ānmén Guǎngchǎng.",
+        "de": "Genau. Nach der Sicherheitskontrolle bist du direkt auf dem Platz. Die Verbotene Stadt liegt an der Nordseite des Platzes."
+      },
+      {
+        "zh": "故宫在广场北边。",
+        "pinyin": "Gùgōng zài guǎngchǎng běibiān.",
+        "de": "Genau. Nach der Sicherheitskontrolle bist du direkt auf dem Platz. Die Verbotene Stadt liegt an der Nordseite des Platzes."
+      },
+      {
+        "zh": "远吗？",
+        "pinyin": "Yuǎn ma?",
+        "de": "Ist es weit?"
+      },
+      {
+        "zh": "不远，走十分钟。",
         "pinyin": "Bù yuǎn, zǒu shí fēnzhōng.",
         "de": "Nicht weit, zehn Minuten zu Fuß."
       },
       {
-        "prompt": "你好，请___身份证。",
-        "answer": "出示",
-        "choices": [
-          "出示",
-          "分钟",
-          "广场",
-          "安检"
-        ],
-        "solution": "你好，请出示身份证。",
+        "zh": "谢谢您！",
+        "pinyin": "Xièxie nín!",
+        "de": "Vielen Dank!"
+      },
+      {
+        "zh": "你好，请出示身份证。",
         "pinyin": "Nǐ hǎo, qǐng chūshì shēnfènzhèng.",
         "de": "Hallo, bitte zeigen Sie Ihren Personalausweis."
+      },
+      {
+        "zh": "好，在这里。",
+        "pinyin": "Hǎo, zài zhèlǐ.",
+        "de": "Gut, hier bitte."
+      },
+      {
+        "zh": "好的。",
+        "pinyin": "Hǎo de.",
+        "de": "In Ordnung. Der Eingang ist rechts."
+      },
+      {
+        "zh": "入口在右边。",
+        "pinyin": "Rùkǒu zài yòubiān.",
+        "de": "In Ordnung. Der Eingang ist rechts."
+      },
+      {
+        "zh": "谢谢。",
+        "pinyin": "Xièxie.",
+        "de": "Danke."
+      },
+      {
+        "zh": "请问，出口在哪里？",
+        "pinyin": "Qǐngwèn, chūkǒu zài nǎlǐ?",
+        "de": "Entschuldigung, wo ist der Ausgang?"
+      },
+      {
+        "zh": "出口在后面。",
+        "pinyin": "Chūkǒu zài hòumiàn.",
+        "de": "Der Ausgang ist hinten. Geh geradeaus, dann rechts, dann bist du da."
+      },
+      {
+        "zh": "你一直走，然后右转就到了。",
+        "pinyin": "Nǐ yìzhí zǒu, ránhòu yòu zhuǎn jiù dào le.",
+        "de": "Der Ausgang ist hinten. Geh geradeaus, dann rechts, dann bist du da."
+      },
+      {
+        "zh": "谢谢！",
+        "pinyin": "Xièxie!",
+        "de": "Danke!"
+      }
+    ],
+    "gapExercises": [],
+    "speechSentences": [
+      {
+        "speaker": "苏然",
+        "zh": "第一站，第二站⋯⋯天安门东站是第三站。",
+        "pinyin": "Dì yī zhàn, dì èr zhàn… Tiān'ānmén Dōng Zhàn shì dì sān zhàn.",
+        "de": "Erste Station, zweite Station… Tian'anmen Ost ist die dritte Station."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "请问，天安门广场怎么走？",
+        "pinyin": "Qǐngwèn, Tiān'ānmén Guǎngchǎng zěnme zǒu?",
+        "de": "Entschuldigung, wie komme ich zum Tian'anmen-Platz?"
+      },
+      {
+        "speaker": "大爷",
+        "zh": "天安门广场啊，不远。",
+        "pinyin": "Tiān'ānmén Guǎngchǎng a, bù yuǎn.",
+        "de": "Der Tian'anmen-Platz, ah, nicht weit. Geh geradeaus und biege an der Kreuzung vorne rechts ab."
+      },
+      {
+        "speaker": "大爷",
+        "zh": "你一直走，到前面的路口右转。",
+        "pinyin": "Nǐ yìzhí zǒu, dào qiánmiàn de lùkǒu yòu zhuǎn.",
+        "de": "Der Tian'anmen-Platz, ah, nicht weit. Geh geradeaus und biege an der Kreuzung vorne rechts ab."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "一直走，然后右转。",
+        "pinyin": "Yìzhí zǒu, ránhòu yòu zhuǎn.",
+        "de": "Geradeaus, dann rechts."
+      },
+      {
+        "speaker": "大爷",
+        "zh": "对。",
+        "pinyin": "Duì.",
+        "de": "Genau. Nach der Sicherheitskontrolle bist du direkt auf dem Platz. Die Verbotene Stadt liegt an der Nordseite des Platzes."
+      },
+      {
+        "speaker": "大爷",
+        "zh": "过了安检就是天安门广场。",
+        "pinyin": "Guò le ānjiǎn jiù shì Tiān'ānmén Guǎngchǎng.",
+        "de": "Genau. Nach der Sicherheitskontrolle bist du direkt auf dem Platz. Die Verbotene Stadt liegt an der Nordseite des Platzes."
+      },
+      {
+        "speaker": "大爷",
+        "zh": "故宫在广场北边。",
+        "pinyin": "Gùgōng zài guǎngchǎng běibiān.",
+        "de": "Genau. Nach der Sicherheitskontrolle bist du direkt auf dem Platz. Die Verbotene Stadt liegt an der Nordseite des Platzes."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "远吗？",
+        "pinyin": "Yuǎn ma?",
+        "de": "Ist es weit?"
+      },
+      {
+        "speaker": "大爷",
+        "zh": "不远，走十分钟。",
+        "pinyin": "Bù yuǎn, zǒu shí fēnzhōng.",
+        "de": "Nicht weit, zehn Minuten zu Fuß."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "谢谢您！",
+        "pinyin": "Xièxie nín!",
+        "de": "Vielen Dank!"
+      },
+      {
+        "speaker": "工作人员",
+        "zh": "你好，请出示身份证。",
+        "pinyin": "Nǐ hǎo, qǐng chūshì shēnfènzhèng.",
+        "de": "Hallo, bitte zeigen Sie Ihren Personalausweis."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "好，在这里。",
+        "pinyin": "Hǎo, zài zhèlǐ.",
+        "de": "Gut, hier bitte."
+      },
+      {
+        "speaker": "工作人员",
+        "zh": "好的。",
+        "pinyin": "Hǎo de.",
+        "de": "In Ordnung. Der Eingang ist rechts."
+      },
+      {
+        "speaker": "工作人员",
+        "zh": "入口在右边。",
+        "pinyin": "Rùkǒu zài yòubiān.",
+        "de": "In Ordnung. Der Eingang ist rechts."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "谢谢。",
+        "pinyin": "Xièxie.",
+        "de": "Danke."
+      },
+      {
+        "speaker": "游客",
+        "zh": "请问，出口在哪里？",
+        "pinyin": "Qǐngwèn, chūkǒu zài nǎlǐ?",
+        "de": "Entschuldigung, wo ist der Ausgang?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "出口在后面。",
+        "pinyin": "Chūkǒu zài hòumiàn.",
+        "de": "Der Ausgang ist hinten. Geh geradeaus, dann rechts, dann bist du da."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "你一直走，然后右转就到了。",
+        "pinyin": "Nǐ yìzhí zǒu, ránhòu yòu zhuǎn jiù dào le.",
+        "de": "Der Ausgang ist hinten. Geh geradeaus, dann rechts, dann bist du da."
+      },
+      {
+        "speaker": "游客",
+        "zh": "谢谢！",
+        "pinyin": "Xièxie!",
+        "de": "Danke!"
       }
     ]
   },
   {
     "id": "15",
     "title": "Bis bald",
-    "short": "Reiserückblick, Vergleiche und Abschied",
+    "short": "Am Ende der Reise blicken Sū Rán und Lín Yuè zurück und verabschieden sich.",
     "accent": "#EDC877",
     "textColor": "#050B12",
     "vocab": [
@@ -6851,25 +8608,25 @@ window.CF_TOPICS = [
       {
         "speaker": "苏然",
         "zh": "这个星期我去过很多地方。长城、公园、故宫⋯⋯",
-        "pinyin": "Zhège xīngqī wǒ qùguo hěn duō dìfang. Chángchéng, gōngyuán, Gùgōng…",
+        "pinyin": "Zhège xīngqī wǒ qù guo hěn duō dìfang. Chángchéng, gōngyuán, Gùgōng…",
         "de": "Diese Woche war ich an vielen Orten. Die Mauer, der Park, die Verbotene Stadt…"
       },
       {
         "speaker": "林月",
-        "zh": "还感冒了。",
-        "pinyin": "Hái gǎnmào le.",
+        "zh": "还感冒过。",
+        "pinyin": "Hái gǎnmào guo.",
         "de": "Und erkältet warst du auch."
       },
       {
         "speaker": "苏然",
-        "zh": "⋯⋯对，还感冒了。",
-        "pinyin": "… Duì, hái gǎnmào le.",
+        "zh": "⋯⋯对，还感冒过。",
+        "pinyin": "… Duì, hái gǎnmào guo.",
         "de": "… Ja, erkältet auch."
       },
       {
         "speaker": "林月",
         "zh": "我还没去过上海。",
-        "pinyin": "Wǒ hái méi qùguo Shànghǎi.",
+        "pinyin": "Wǒ hái méi qù guo Shànghǎi.",
         "de": "Ich war noch nie in Shanghai."
       },
       {
@@ -6956,24 +8713,24 @@ window.CF_TOPICS = [
         "speaker": "B",
         "zh": "我很喜欢。……跟……很不一样。",
         "pinyin": "Wǒ hěn xǐhuan. …… gēn …… hěn bù yíyàng.",
-        "de": "Sehr gern. … ist ganz anders als …."
+        "de": "Ich mag es sehr. … ist ganz anders als …."
       },
       {
         "speaker": "A",
         "zh": "你去过很多地方吗？",
-        "pinyin": "Nǐ qùguo hěn duō dìfang ma?",
+        "pinyin": "Nǐ qù guo hěn duō dìfang ma?",
         "de": "Warst du an vielen Orten?"
       },
       {
         "speaker": "B",
         "zh": "去过……、……。你呢？",
-        "pinyin": "Qùguo ……, …….  Nǐ ne?",
+        "pinyin": "Qù guo ……, ……. Nǐ ne?",
         "de": "Ich war in …, …. Und du?"
       },
       {
         "speaker": "A",
         "zh": "我还没去过……。",
-        "pinyin": "Wǒ hái méi qùguo …….",
+        "pinyin": "Wǒ hái méi qù guo …….",
         "de": "Ich war noch nie in …."
       },
       {
@@ -7000,183 +8757,381 @@ window.CF_TOPICS = [
     "studentDialogNote": "Orte vergleichen, Erfahrungen erzählen und Abschied nehmen.",
     "sentencePuzzles": [
       {
-        "de": "Beijing ist ganz anders als Shanghai.",
+        "zh": "你明天就走了。",
+        "pinyin": "Nǐ míngtiān jiù zǒu le.",
+        "de": "Morgen fährst du schon."
+      },
+      {
+        "zh": "对。",
+        "pinyin": "Duì.",
+        "de": "Ja. Die Zeit vergeht wirklich schnell."
+      },
+      {
+        "zh": "时间过得真快。",
+        "pinyin": "Shíjiān guò de zhēn kuài.",
+        "de": "Ja. Die Zeit vergeht wirklich schnell."
+      },
+      {
+        "zh": "你觉得北京怎么样？",
+        "pinyin": "Nǐ juéde Běijīng zěnmeyàng?",
+        "de": "Wie findest du Beijing?"
+      },
+      {
+        "zh": "我很喜欢。",
+        "pinyin": "Wǒ hěn xǐhuan.",
+        "de": "Ich mag Beijing sehr. Beijing ist ganz anders als Shanghai."
+      },
+      {
         "zh": "北京跟上海很不一样。",
         "pinyin": "Běijīng gēn Shànghǎi hěn bù yíyàng.",
-        "tokens": [
-          "北京",
-          "跟",
-          "上海",
-          "很",
-          "不一样",
-          "。"
-        ]
+        "de": "Ich mag Beijing sehr. Beijing ist ganz anders als Shanghai."
       },
       {
-        "de": "Das Beijinger Essen ist eher salzig, das aus Shanghai eher süß.",
+        "zh": "我觉得北京的老房子比上海的多。",
+        "pinyin": "Wǒ juéde Běijīng de lǎo fángzi bǐ Shànghǎi de duō.",
+        "de": "Ich finde, in Beijing gibt es mehr alte Häuser als in Shanghai."
+      },
+      {
+        "zh": "那吃的呢？",
+        "pinyin": "Nà chī de ne?",
+        "de": "Und das Essen? Ist das Beijinger Essen wie das aus Shanghai?"
+      },
+      {
+        "zh": "北京的菜跟上海的一样吗？",
+        "pinyin": "Běijīng de cài gēn Shànghǎi de yíyàng ma?",
+        "de": "Und das Essen? Ist das Beijinger Essen wie das aus Shanghai?"
+      },
+      {
+        "zh": "不一样。",
+        "pinyin": "Bù yíyàng.",
+        "de": "Nicht gleich. Das Beijinger Essen ist eher salzig, das aus Shanghai eher süß."
+      },
+      {
         "zh": "北京的菜比较咸，上海的比较甜。",
         "pinyin": "Běijīng de cài bǐjiào xián, Shànghǎi de bǐjiào tián.",
-        "tokens": [
-          "北京",
-          "的",
-          "菜",
-          "比较",
-          "咸",
-          "，",
-          "上海",
-          "的",
-          "比较",
-          "甜",
-          "。"
-        ]
+        "de": "Nicht gleich. Das Beijinger Essen ist eher salzig, das aus Shanghai eher süß."
       },
       {
-        "de": "Weil ich dich hingebracht habe, hat es geschmeckt, richtig?",
-        "zh": "因为是我带你去的，所以好吃，对吗？",
-        "pinyin": "Yīnwèi shì wǒ dài nǐ qù de, suǒyǐ hǎochī, duì ma?",
-        "tokens": [
-          "因为",
-          "是",
-          "我",
-          "带",
-          "你",
-          "去",
-          "的",
-          "，",
-          "所以",
-          "好吃",
-          "，",
-          "对",
-          "吗",
-          "？"
-        ]
+        "zh": "但是我最喜欢烤鸭。",
+        "pinyin": "Dànshì wǒ zuì xǐhuan kǎoyā.",
+        "de": "Aber am liebsten mag ich die Peking-Ente."
       },
       {
-        "de": "Obwohl es mit dem Zug sehr praktisch ist, hatte ich nie Zeit.",
+        "zh": "因为是我带你去的，所以你觉得很好吃，对吗？",
+        "pinyin": "Yīnwèi shì wǒ dài nǐ qù de, suǒyǐ nǐ juéde hěn hǎochī, duì ma?",
+        "de": "Weil ich dich hingebracht habe, findest du es besonders lecker, richtig?"
+      },
+      {
+        "zh": "⋯⋯也许。",
+        "pinyin": "… Yěxǔ.",
+        "de": "… Vielleicht."
+      },
+      {
+        "zh": "这个星期我去过很多地方。",
+        "pinyin": "Zhège xīngqī wǒ qù guo hěn duō dìfang.",
+        "de": "Diese Woche war ich an vielen Orten. Die Mauer, der Park, die Verbotene Stadt…"
+      },
+      {
+        "zh": "长城、公园、故宫⋯⋯",
+        "pinyin": "Chángchéng, gōngyuán, Gùgōng…",
+        "de": "Diese Woche war ich an vielen Orten. Die Mauer, der Park, die Verbotene Stadt…"
+      },
+      {
+        "zh": "还感冒过。",
+        "pinyin": "Hái gǎnmào guo.",
+        "de": "Und erkältet warst du auch."
+      },
+      {
+        "zh": "⋯⋯对，还感冒过。",
+        "pinyin": "… Duì, hái gǎnmào guo.",
+        "de": "… Ja, erkältet auch."
+      },
+      {
+        "zh": "我还没去过上海。",
+        "pinyin": "Wǒ hái méi qù guo Shànghǎi.",
+        "de": "Ich war noch nie in Shanghai."
+      },
+      {
+        "zh": "真的吗？",
+        "pinyin": "Zhēn de ma?",
+        "de": "Wirklich?"
+      },
+      {
+        "zh": "真的。",
+        "pinyin": "Zhēn de.",
+        "de": "Wirklich. Obwohl es mit dem Zug sehr praktisch ist, hatte ich nie Zeit."
+      },
+      {
         "zh": "虽然坐火车很方便，但是我一直没时间。",
         "pinyin": "Suīrán zuò huǒchē hěn fāngbiàn, dànshì wǒ yìzhí méi shíjiān.",
-        "tokens": [
-          "虽然",
-          "坐",
-          "火",
-          "车",
-          "很",
-          "方便",
-          "，",
-          "但是",
-          "我",
-          "一直",
-          "没",
-          "时间",
-          "。"
-        ]
+        "de": "Wirklich. Obwohl es mit dem Zug sehr praktisch ist, hatte ich nie Zeit."
       },
       {
-        "de": "Diese Woche war ich an vielen Orten.",
-        "zh": "这个星期我去过很多地方。",
-        "pinyin": "Zhège xīngqī wǒ qùguo hěn duō dìfang.",
-        "tokens": [
-          "这",
-          "个",
-          "星期",
-          "我",
-          "去",
-          "过",
-          "很",
-          "多",
-          "地方",
-          "。"
-        ]
+        "zh": "那下次我带你去上海。",
+        "pinyin": "Nà xiàcì wǒ dài nǐ qù Shànghǎi.",
+        "de": "Dann zeige ich dir nächstes Mal Shanghai."
       },
       {
-        "de": "Pass unterwegs auf dich auf.",
         "zh": "路上小心。",
         "pinyin": "Lùshang xiǎoxīn.",
-        "tokens": [
-          "路上",
-          "小心",
-          "。"
-        ]
+        "de": "Pass unterwegs auf dich auf."
+      },
+      {
+        "zh": "谢谢你。",
+        "pinyin": "Xièxie nǐ.",
+        "de": "Danke. Diese Woche war wirklich schön."
+      },
+      {
+        "zh": "这个星期真的很开心。",
+        "pinyin": "Zhège xīngqī zhēn de hěn kāixīn.",
+        "de": "Danke. Diese Woche war wirklich schön."
+      },
+      {
+        "zh": "下次见。",
+        "pinyin": "Xiàcì jiàn.",
+        "de": "Bis zum nächsten Mal."
+      },
+      {
+        "zh": "下次见。",
+        "pinyin": "Xiàcì jiàn.",
+        "de": "Bis zum nächsten Mal."
+      },
+      {
+        "zh": "你好，请出示身份证。",
+        "pinyin": "Nǐ hǎo, qǐng chūshì shēnfènzhèng.",
+        "de": "Hallo, bitte zeigen Sie Ihren Personalausweis."
+      },
+      {
+        "zh": "好，在这里。",
+        "pinyin": "Hǎo, zài zhèlǐ.",
+        "de": "Gut, hier ist er."
+      },
+      {
+        "zh": "好的，谢谢。",
+        "pinyin": "Hǎo de, xièxie.",
+        "de": "In Ordnung, danke."
+      },
+      {
+        "zh": "我在火车上了。",
+        "pinyin": "Wǒ zài huǒchē shàng le.",
+        "de": "Ich bin jetzt im Zug. Danke für alles in den letzten Tagen."
+      },
+      {
+        "zh": "这几天谢谢你了。",
+        "pinyin": "Zhè jǐ tiān xièxie nǐ le.",
+        "de": "Ich bin jetzt im Zug. Danke für alles in den letzten Tagen."
+      },
+      {
+        "zh": "路上多喝热水。",
+        "pinyin": "Lùshang duō hē rèshuǐ.",
+        "de": "Trink unterwegs viel heißes Wasser."
       }
     ],
-    "gapExercises": [
+    "gapExercises": [],
+    "speechSentences": [
       {
-        "prompt": "北京___上海很不一样。",
-        "answer": "跟",
-        "choices": [
-          "跟",
-          "比较",
-          "咸",
-          "甜"
-        ],
-        "solution": "北京跟上海很不一样。",
+        "speaker": "林月",
+        "zh": "你明天就走了。",
+        "pinyin": "Nǐ míngtiān jiù zǒu le.",
+        "de": "Morgen fährst du schon."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "对。",
+        "pinyin": "Duì.",
+        "de": "Ja. Die Zeit vergeht wirklich schnell."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "时间过得真快。",
+        "pinyin": "Shíjiān guò de zhēn kuài.",
+        "de": "Ja. Die Zeit vergeht wirklich schnell."
+      },
+      {
+        "speaker": "林月",
+        "zh": "你觉得北京怎么样？",
+        "pinyin": "Nǐ juéde Běijīng zěnmeyàng?",
+        "de": "Wie findest du Beijing?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我很喜欢。",
+        "pinyin": "Wǒ hěn xǐhuan.",
+        "de": "Ich mag Beijing sehr. Beijing ist ganz anders als Shanghai."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "北京跟上海很不一样。",
         "pinyin": "Běijīng gēn Shànghǎi hěn bù yíyàng.",
-        "de": "Beijing ist ganz anders als Shanghai."
+        "de": "Ich mag Beijing sehr. Beijing ist ganz anders als Shanghai."
       },
       {
-        "prompt": "北京的菜比较___，上海的比较甜。",
-        "answer": "咸",
-        "choices": [
-          "咸",
-          "虽然",
-          "星期",
-          "地方"
-        ],
-        "solution": "北京的菜比较咸，上海的比较甜。",
+        "speaker": "苏然",
+        "zh": "我觉得北京的老房子比上海的多。",
+        "pinyin": "Wǒ juéde Běijīng de lǎo fángzi bǐ Shànghǎi de duō.",
+        "de": "Ich finde, in Beijing gibt es mehr alte Häuser als in Shanghai."
+      },
+      {
+        "speaker": "林月",
+        "zh": "那吃的呢？",
+        "pinyin": "Nà chī de ne?",
+        "de": "Und das Essen? Ist das Beijinger Essen wie das aus Shanghai?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "北京的菜跟上海的一样吗？",
+        "pinyin": "Běijīng de cài gēn Shànghǎi de yíyàng ma?",
+        "de": "Und das Essen? Ist das Beijinger Essen wie das aus Shanghai?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "不一样。",
+        "pinyin": "Bù yíyàng.",
+        "de": "Nicht gleich. Das Beijinger Essen ist eher salzig, das aus Shanghai eher süß."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "北京的菜比较咸，上海的比较甜。",
         "pinyin": "Běijīng de cài bǐjiào xián, Shànghǎi de bǐjiào tián.",
-        "de": "Das Beijinger Essen ist eher salzig, das aus Shanghai eher süß."
+        "de": "Nicht gleich. Das Beijinger Essen ist eher salzig, das aus Shanghai eher süß."
       },
       {
-        "prompt": "___是我带你去的，所以好吃，对吗？",
-        "answer": "因为",
-        "choices": [
-          "因为",
-          "虽然",
-          "星期",
-          "地方"
-        ],
-        "solution": "因为是我带你去的，所以好吃，对吗？",
-        "pinyin": "Yīnwèi shì wǒ dài nǐ qù de, suǒyǐ hǎochī, duì ma?",
-        "de": "Weil ich dich hingebracht habe, hat es geschmeckt, richtig?"
+        "speaker": "苏然",
+        "zh": "但是我最喜欢烤鸭。",
+        "pinyin": "Dànshì wǒ zuì xǐhuan kǎoyā.",
+        "de": "Aber am liebsten mag ich die Peking-Ente."
       },
       {
-        "prompt": "___坐火车很方便，但是我一直没时间。",
-        "answer": "虽然",
-        "choices": [
-          "虽然",
-          "甜",
-          "因为",
-          "所以"
-        ],
-        "solution": "虽然坐火车很方便，但是我一直没时间。",
+        "speaker": "林月",
+        "zh": "因为是我带你去的，所以你觉得很好吃，对吗？",
+        "pinyin": "Yīnwèi shì wǒ dài nǐ qù de, suǒyǐ nǐ juéde hěn hǎochī, duì ma?",
+        "de": "Weil ich dich hingebracht habe, findest du es besonders lecker, richtig?"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "⋯⋯也许。",
+        "pinyin": "… Yěxǔ.",
+        "de": "… Vielleicht."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "这个星期我去过很多地方。",
+        "pinyin": "Zhège xīngqī wǒ qù guo hěn duō dìfang.",
+        "de": "Diese Woche war ich an vielen Orten. Die Mauer, der Park, die Verbotene Stadt…"
+      },
+      {
+        "speaker": "苏然",
+        "zh": "长城、公园、故宫⋯⋯",
+        "pinyin": "Chángchéng, gōngyuán, Gùgōng…",
+        "de": "Diese Woche war ich an vielen Orten. Die Mauer, der Park, die Verbotene Stadt…"
+      },
+      {
+        "speaker": "林月",
+        "zh": "还感冒过。",
+        "pinyin": "Hái gǎnmào guo.",
+        "de": "Und erkältet warst du auch."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "⋯⋯对，还感冒过。",
+        "pinyin": "… Duì, hái gǎnmào guo.",
+        "de": "… Ja, erkältet auch."
+      },
+      {
+        "speaker": "林月",
+        "zh": "我还没去过上海。",
+        "pinyin": "Wǒ hái méi qù guo Shànghǎi.",
+        "de": "Ich war noch nie in Shanghai."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "真的吗？",
+        "pinyin": "Zhēn de ma?",
+        "de": "Wirklich?"
+      },
+      {
+        "speaker": "林月",
+        "zh": "真的。",
+        "pinyin": "Zhēn de.",
+        "de": "Wirklich. Obwohl es mit dem Zug sehr praktisch ist, hatte ich nie Zeit."
+      },
+      {
+        "speaker": "林月",
+        "zh": "虽然坐火车很方便，但是我一直没时间。",
         "pinyin": "Suīrán zuò huǒchē hěn fāngbiàn, dànshì wǒ yìzhí méi shíjiān.",
-        "de": "Obwohl es mit dem Zug sehr praktisch ist, hatte ich nie Zeit."
+        "de": "Wirklich. Obwohl es mit dem Zug sehr praktisch ist, hatte ich nie Zeit."
       },
       {
-        "prompt": "这个___我去过很多地方。",
-        "answer": "星期",
-        "choices": [
-          "星期",
-          "跟",
-          "快",
-          "比较"
-        ],
-        "solution": "这个星期我去过很多地方。",
-        "pinyin": "Zhège xīngqī wǒ qùguo hěn duō dìfang.",
-        "de": "Diese Woche war ich an vielen Orten."
+        "speaker": "苏然",
+        "zh": "那下次我带你去上海。",
+        "pinyin": "Nà xiàcì wǒ dài nǐ qù Shànghǎi.",
+        "de": "Dann zeige ich dir nächstes Mal Shanghai."
       },
       {
-        "prompt": "路上___。",
-        "answer": "小心",
-        "choices": [
-          "小心",
-          "星期",
-          "地方",
-          "方便"
-        ],
-        "solution": "路上小心。",
+        "speaker": "林月",
+        "zh": "路上小心。",
         "pinyin": "Lùshang xiǎoxīn.",
         "de": "Pass unterwegs auf dich auf."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "谢谢你。",
+        "pinyin": "Xièxie nǐ.",
+        "de": "Danke. Diese Woche war wirklich schön."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "这个星期真的很开心。",
+        "pinyin": "Zhège xīngqī zhēn de hěn kāixīn.",
+        "de": "Danke. Diese Woche war wirklich schön."
+      },
+      {
+        "speaker": "林月",
+        "zh": "下次见。",
+        "pinyin": "Xiàcì jiàn.",
+        "de": "Bis zum nächsten Mal."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "下次见。",
+        "pinyin": "Xiàcì jiàn.",
+        "de": "Bis zum nächsten Mal."
+      },
+      {
+        "speaker": "列车员",
+        "zh": "你好，请出示身份证。",
+        "pinyin": "Nǐ hǎo, qǐng chūshì shēnfènzhèng.",
+        "de": "Hallo, bitte zeigen Sie Ihren Personalausweis."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "好，在这里。",
+        "pinyin": "Hǎo, zài zhèlǐ.",
+        "de": "Gut, hier ist er."
+      },
+      {
+        "speaker": "列车员",
+        "zh": "好的，谢谢。",
+        "pinyin": "Hǎo de, xièxie.",
+        "de": "In Ordnung, danke."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "我在火车上了。",
+        "pinyin": "Wǒ zài huǒchē shàng le.",
+        "de": "Ich bin jetzt im Zug. Danke für alles in den letzten Tagen."
+      },
+      {
+        "speaker": "苏然",
+        "zh": "这几天谢谢你了。",
+        "pinyin": "Zhè jǐ tiān xièxie nǐ le.",
+        "de": "Ich bin jetzt im Zug. Danke für alles in den letzten Tagen."
+      },
+      {
+        "speaker": "林月",
+        "zh": "路上多喝热水。",
+        "pinyin": "Lùshang duō hē rèshuǐ.",
+        "de": "Trink unterwegs viel heißes Wasser."
       }
     ]
   }
