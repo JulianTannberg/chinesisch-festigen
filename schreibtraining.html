@@ -5,7 +5,7 @@
   <meta name="robots" content="noindex, nofollow" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Schreibtraining · Chinesisch festigen</title>
-  <link rel="stylesheet" href="style.css?v=144" />
+  <link rel="stylesheet" href="style.css?v=145" />
   <meta name="theme-color" content="#03172B" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" href="icons/icon-192.png" />
@@ -50,7 +50,18 @@
         linear-gradient(to right,transparent calc(50% - .6px),rgba(0,0,0,.13) calc(50% - .6px),rgba(0,0,0,.13) calc(50% + .6px),transparent calc(50% + .6px)),
         linear-gradient(to bottom,transparent calc(50% - .6px),rgba(0,0,0,.13) calc(50% - .6px),rgba(0,0,0,.13) calc(50% + .6px),transparent calc(50% + .6px));
       touch-action:none;
+      position:relative;
     }
+    #trainTarget .trainLayer{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+    }
+    #trainReferenceLayer{z-index:1;pointer-events:none;opacity:.72}
+    #trainQuizLayer{z-index:2}
+    #trainHintLayer{z-index:3;pointer-events:none}
+    #trainReferenceLayer svg,#trainQuizLayer svg,#trainHintLayer svg{display:block}
     .trainStatus{min-height:24px;text-align:center;font-weight:800;font-size:14px;line-height:1.3;margin:0 0 5px}
     .trainStatus.ok{color:#86efac}.trainStatus.bad{color:#fecaca}
     .trainSummary{
@@ -140,11 +151,11 @@
     </section>
   </main>
 
-<script src="topics.js?v=144"></script>
-<script src="bausteine.js?v=144"></script>
-<script src="config.js?v=144"></script>
-<script src="sync.js?v=144"></script>
-<script src="common.js?v=144"></script>
+<script src="topics.js?v=145"></script>
+<script src="bausteine.js?v=145"></script>
+<script src="config.js?v=145"></script>
+<script src="sync.js?v=145"></script>
+<script src="common.js?v=145"></script>
 <script>
 const topic = getTopic();
 const $ = id => document.getElementById(id);
@@ -176,28 +187,22 @@ const words = (() => {
 })();
 
 const LEVELS = {
-  // Anfänger: Strichfolge wird zuerst animiert; danach bleibt das Zeichen sichtbar.
   beginner: {
     label:"Anfänger",
-    showCharacter:true,
-    showOutline:true,
-    previewStrokes:true,
+    reference:true,
+    demo:true,
     hintAfter:1
   },
-  // Fortgeschritten: Das vollständige Zeichen bleibt sichtbar, aber ohne Vorführung.
   advanced: {
     label:"Fortgeschritten",
-    showCharacter:true,
-    showOutline:false,
-    previewStrokes:false,
+    reference:true,
+    demo:false,
     hintAfter:2
   },
-  // Profi: Keine Vorlage; das Zeichen wird vollständig aus dem Gedächtnis geschrieben.
   pro: {
     label:"Profi",
-    showCharacter:false,
-    showOutline:false,
-    previewStrokes:false,
+    reference:false,
+    demo:false,
     hintAfter:3
   }
 };
@@ -208,6 +213,10 @@ let queue = [];
 let pos = 0;
 let charPos = 0;
 let writer = null;
+let referenceWriter = null;
+let hintWriter = null;
+let writerToken = 0;
+let activeStrokeIndex = 0;
 let wordHadMistake = false;
 let passStarted = false;
 
@@ -259,11 +268,62 @@ function rebuildQueue(){
   passStarted = false;
 }
 function destroyWriter(){
+  writerToken++;
   if(writer && typeof writer.cancelQuiz === "function"){
     try{ writer.cancelQuiz(); }catch(_err){}
   }
   writer = null;
-  $("trainTarget").innerHTML = "";
+  referenceWriter = null;
+  hintWriter = null;
+  const target = $("trainTarget");
+  if(target) target.innerHTML = "";
+}
+function makeTrainLayer(id){
+  const layer = document.createElement("div");
+  layer.id = id;
+  layer.className = "trainLayer";
+  $("trainTarget").appendChild(layer);
+  return layer;
+}
+function clearHintLayer(){
+  const layer = $("trainHintLayer");
+  if(layer) layer.innerHTML = "";
+  hintWriter = null;
+}
+function showStrokeHint(char, strokeIndex, size, token, done){
+  const layer = $("trainHintLayer");
+  if(!layer || token !== writerToken){ if(done) done(); return; }
+  clearHintLayer();
+  try{
+    hintWriter = HanziWriter.create("trainHintLayer", char, {
+      width:size,
+      height:size,
+      padding:18,
+      showCharacter:false,
+      showOutline:false,
+      strokeColor:"#111111",
+      radicalColor:"#c0392b",
+      drawingColor:"#111111",
+      drawingWidth:18,
+      strokeAnimationSpeed:1,
+      delayBetweenStrokes:90
+    });
+    let returned = null;
+    try{ returned = hintWriter.animateStroke(Math.max(0,strokeIndex)); }catch(_err){}
+    const finish = () => {
+      if(token !== writerToken) return;
+      setTimeout(() => {
+        if(token !== writerToken) return;
+        clearHintLayer();
+        if(done) done();
+      },120);
+    };
+    if(returned && typeof returned.then === "function") returned.then(finish).catch(finish);
+    else setTimeout(finish,700);
+  }catch(_err){
+    clearHintLayer();
+    if(done) done();
+  }
 }
 function showFinish(){
   destroyWriter();
@@ -295,35 +355,84 @@ function renderWord(){
   $("promptMeta").textContent = `${LEVELS[level].label} · Wort ${pos+1} von ${queue.length} · ${word.chars.length} ${word.chars.length===1?"Zeichen":"Zeichen"}`;
   startCharacter();
 }
-function startCharacter(skipBeginnerPreview=false){
+function startCharacter(){
   const word = currentWord();
   if(!word){ showFinish(); return; }
   const char = word.chars[charPos];
   const cfg = LEVELS[level];
-  const previewNow = cfg.previewStrokes && !skipBeginnerPreview;
 
   destroyWriter();
+  const token = writerToken;
+  activeStrokeIndex = 0;
   const size = Math.min(300,Math.max(220,Math.floor(window.innerWidth*.78)));
 
+  if(cfg.reference){
+    makeTrainLayer("trainReferenceLayer");
+    try{
+      referenceWriter = HanziWriter.create("trainReferenceLayer", char, {
+        width:size,
+        height:size,
+        padding:18,
+        showCharacter:true,
+        showOutline:false,
+        strokeColor:"#111111",
+        radicalColor:"#c0392b"
+      });
+    }catch(_err){}
+  }
+
+  makeTrainLayer("trainQuizLayer");
+  makeTrainLayer("trainHintLayer");
+
   function beginQuiz(){
+    if(token !== writerToken || !writer) return;
     if(level === "beginner"){
-      setStatus(`Zeichen ${charPos+1} von ${word.chars.length}: Schreibe die vorgezeigten Striche nach.`);
+      setStatus(`Zeichen ${charPos+1} von ${word.chars.length}: Zeichne den vorgezeigten Strich nach.`);
     }else if(level === "advanced"){
       setStatus(`Zeichen ${charPos+1} von ${word.chars.length}: Schreibe das sichtbare Zeichen nach.`);
     }else{
       setStatus(`Zeichen ${charPos+1} von ${word.chars.length}: Schreibe es aus dem Gedächtnis.`);
     }
 
+    let missesOnStroke = 0;
     writer.quiz({
-      showHintAfterMisses:cfg.hintAfter,
+      showHintAfterMisses:9999,
       highlightOnComplete:true,
       onMistake:() => {
+        if(token !== writerToken) return;
         wordHadMistake = true;
-        setStatus("Noch nicht ganz – versuche den Strich noch einmal.","bad");
+        missesOnStroke++;
+        if(missesOnStroke >= cfg.hintAfter){
+          missesOnStroke = 0;
+          setStatus("Schau her – so verläuft dieser Strich.","bad");
+          showStrokeHint(char,activeStrokeIndex,size,token);
+        }else{
+          setStatus("Noch nicht ganz – versuche den Strich noch einmal.","bad");
+        }
+      },
+      onCorrectStroke:(data) => {
+        if(token !== writerToken) return;
+        missesOnStroke = 0;
+        const completed = data && Number.isInteger(data.strokeNum)
+          ? data.strokeNum + 1
+          : activeStrokeIndex + 1;
+        activeStrokeIndex = Math.max(activeStrokeIndex,completed);
+        const total = writer?._character?.strokes?.length || 0;
+        if(cfg.demo && total && activeStrokeIndex < total){
+          setTimeout(() => {
+            if(token !== writerToken) return;
+            setStatus(`Zeichen ${charPos+1} von ${word.chars.length}: Nächster Strich …`);
+            showStrokeHint(char,activeStrokeIndex,size,token);
+          },160);
+        }else{
+          setStatus("Gut – weiter so.","ok");
+        }
       },
       onComplete:() => {
+        if(token !== writerToken) return;
         setStatus("Richtig!", "ok");
         setTimeout(() => {
+          if(token !== writerToken) return;
           charPos++;
           if(charPos < word.chars.length){
             startCharacter();
@@ -336,37 +445,26 @@ function startCharacter(skipBeginnerPreview=false){
   }
 
   try{
-    writer = HanziWriter.create("trainTarget", char, {
+    writer = HanziWriter.create("trainQuizLayer", char, {
       width:size,
       height:size,
       padding:18,
-      // Beim Anfänger wird das Zeichen für die Animation zunächst ausgeblendet.
-      // Danach bleibt es als Vorlage sichtbar.
-      showCharacter:cfg.showCharacter && !previewNow,
-      showOutline:cfg.showOutline,
-      strokeColor:"#18314f",
-      outlineColor:"#d5dbe2",
-      drawingColor:"#276fbf",
-      drawingWidth:16,
-      strokeAnimationSpeed:1,
-      delayBetweenStrokes:120
+      showCharacter:false,
+      showOutline:false,
+      strokeColor:"#111111",
+      radicalColor:"#c0392b",
+      drawingColor:"#111111",
+      drawingWidth:18,
+      leniency:cfg.reference?1.25:1.08
     });
 
-    if(previewNow){
-      setStatus(`Zeichen ${charPos+1} von ${word.chars.length}: Sieh dir zuerst die Strichfolge an.`);
-      writer.animateCharacter({
-        onComplete:() => {
-          if(typeof writer.showCharacter === "function"){
-            writer.showCharacter({duration:120,onComplete:beginQuiz});
-          }else{
-            beginQuiz();
-          }
-        }
-      });
+    if(cfg.demo){
+      setStatus(`Zeichen ${charPos+1} von ${word.chars.length}: Sieh dir zuerst den ersten Strich an.`);
+      showStrokeHint(char,0,size,token,beginQuiz);
     }else{
-      beginQuiz();
+      setTimeout(beginQuiz,70);
     }
-  }catch(err){
+  }catch(_err){
     setStatus("Das Zeichen konnte nicht geladen werden. Prüfe kurz die Internetverbindung.","bad");
   }
 }
@@ -405,15 +503,13 @@ function resetCurrentLevel(){
 
 $("playBtn").onclick = () => { const w=currentWord(); if(w) cfSpeakZh(w.word,{rate:.82}); };
 $("hintBtn").onclick = () => {
-  if(!writer) return;
+  const word = currentWord();
+  if(!writer || !word) return;
   wordHadMistake = true;
+  const token = writerToken;
+  const size = Math.min(300,Math.max(220,Math.floor(window.innerWidth*.78)));
   setStatus("Hinweis wird gezeigt; das Wort bleibt danach noch offen.","bad");
-  try{
-    if(typeof writer.cancelQuiz === "function") writer.cancelQuiz();
-    writer.animateCharacter({
-      onComplete:() => setTimeout(() => startCharacter(true),300)
-    });
-  }catch(_err){}
+  showStrokeHint(word.chars[charPos],activeStrokeIndex,size,token);
 };
 $("repeatOpen").onclick = () => { rebuildQueue(); renderWord(); };
 $("resetLevel").onclick = async () => {

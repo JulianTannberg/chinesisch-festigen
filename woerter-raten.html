@@ -5,250 +5,442 @@
   <meta name="robots" content="noindex, nofollow" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Wörter raten · Chinesisch festigen</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=145" />
   <meta name="theme-color" content="#03172B" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" href="icons/icon-192.png" />
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <style>
+    .guessModes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+    .guessModes button.active{background:var(--card-strong);outline:2px solid rgba(255,255,255,.28)}
+    .guessPanel[hidden],#roomBox[hidden],#roundCard[hidden]{display:none!important}
+    .guessSetupGrid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(250px,.8fr);gap:12px}
+    .guessBlock{border:1px solid var(--stroke);border-radius:16px;padding:12px;background:rgba(255,255,255,.06)}
+    .guessBlock h2,.guessBlock h3{margin:0 0 10px}
+    .guessNameRow,.guessJoinRow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+    .guessNameRow input,.guessJoinRow input{min-height:46px}
+    .guessOptions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .guessOptions button.active{background:var(--card-strong);outline:2px solid rgba(255,255,255,.28)}
+    .guessChapters{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:7px;max-height:310px;overflow:auto}
+    .guessChapter{min-height:52px;text-align:left;white-space:normal;line-height:1.2}
+    .guessChapter strong{display:block}.guessChapter span{display:block;font-size:12px;color:var(--muted);margin-top:3px}
+    .guessChapter.active{background:var(--card-strong);outline:2px solid rgba(255,255,255,.28)}
+    .guessChapter.locked{opacity:.45}
+    .guessRoomCode{text-align:center;font-size:clamp(32px,9vw,56px);font-weight:950;letter-spacing:.12em;margin:8px 0}
+    .guessPlayers{display:grid;gap:7px;max-height:280px;overflow:auto;margin:10px 0}
+    .guessPlayer{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;padding:9px 10px;border:1px solid var(--stroke);border-radius:14px;background:rgba(255,255,255,.07)}
+    .guessPlayer.current{outline:2px solid rgba(246,208,131,.75)}
+    .guessPlayerName{font-weight:850;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .guessPlayerMeta{font-size:12px;color:var(--muted)}
+    .guessPlayer button{min-height:36px;padding:7px 10px}
+    .guessLobbyActions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+    .guessStatus{min-height:23px;color:var(--muted);font-size:13px;line-height:1.4;margin-top:8px}
+    .guessStatus.ok{color:#86efac}.guessStatus.bad{color:#fecaca}
+    .roundHead{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin-bottom:12px}
+    .roundTimer{text-align:center;font-size:clamp(34px,10vw,70px);font-weight:950;line-height:1}
+    .roundRole{font-weight:850}.roundScore{text-align:right;font-weight:850}
+    .guesserView,.explainerView{min-height:310px;border:1px solid var(--stroke);border-radius:22px;background:rgba(255,255,255,.08);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
+    .guesserView h2{font-size:clamp(30px,8vw,58px);margin:0 0 10px}.guesserView p{color:var(--muted);max-width:520px}
+    .guessWord{font-size:clamp(48px,15vw,110px);font-weight:950;line-height:1.05;overflow-wrap:anywhere}
+    .guessWord.de{font-size:clamp(34px,10vw,72px)}
+    .guessPinyin{font-size:clamp(20px,5vw,34px);margin-top:10px;color:var(--muted)}
+    .guessMeaning{font-size:18px;margin-top:8px;opacity:.88}
+    .guessJudgeActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:min(560px,100%);margin-top:22px}
+    .guessJudgeActions button{min-height:62px;font-size:18px}.guessCorrect{background:rgba(34,197,94,.24)}.guessSkip{background:rgba(245,158,11,.22)}
+    .scoreBoard{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:7px;margin-top:12px}
+    .scoreChip{padding:9px;border:1px solid var(--stroke);border-radius:13px;background:rgba(255,255,255,.06)}
+    .scoreChip strong{display:block;font-size:20px}.scoreChip span{display:block;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    @media(max-width:720px){.guessSetupGrid{grid-template-columns:1fr}.guessOptions{grid-template-columns:1fr 1fr}}
+    @media(max-width:440px){.guessModes{grid-template-columns:1fr}.guessNameRow,.guessJoinRow{grid-template-columns:1fr}.roundHead{grid-template-columns:1fr auto}.roundScore{grid-column:1/-1;text-align:center}.guessJudgeActions{grid-template-columns:1fr 1fr}}
+  </style>
 </head>
 <body>
   <main class="app">
     <div class="topbar topbarSticky"><a class="back" href="spiele.html">← Zurück</a></div>
     <h1 class="pageTitleResponsive">Wörter raten</h1>
-    <p class="subtitle">Vor Ort bleibt das bekannte Stirnraten erhalten. Online spielt ihr ein gemeinsames Wörterduell.</p>
+    <p class="subtitle">Spielt gemeinsam mit euren eigenen Handys. Nur die ratende Person sieht das gesuchte Wort nicht.</p>
 
-    <section class="card" id="modeCard">
-      <div class="cfOnlineModes">
-        <button id="localMode" class="active" type="button">Vor Ort</button>
-        <button id="onlineMode" type="button">Online-Duell</button>
+    <section class="card" id="setupCard">
+      <div class="guessModes">
+        <button id="groupMode" class="active" type="button">Gemeinsam mit Handys</button>
+        <button id="deviceMode" type="button">Auf einem Gerät</button>
       </div>
 
-      <div id="localPanel" class="cfOnlinePanel">
-        <h2>Stirnraten vor Ort</h2>
-        <p class="small">Halte das Gerät an die Stirn. Eine andere Person erklärt das angezeigte Wort.</p>
-        <a class="miniBtn" href="stirnspiel.html?from=woerter-raten">Stirnraten starten</a>
-      </div>
-
-      <div id="onlinePanel" class="cfOnlinePanel" hidden>
-        <h2>Online-Wörterduell</h2>
-        <p class="small">Beide sehen dieselbe Aufgabe. Wer zuerst richtig antwortet, bekommt den Punkt.</p>
-
-        <div class="setTitle">Kapitel auswählen</div>
-        <div class="toolbar">
-          <button id="selectAll" type="button">Alle verfügbaren</button>
-          <button id="clearAll" type="button">Auswahl löschen</button>
-        </div>
-        <div class="memoryChapterPicker" id="chapterPicker"></div>
-        <p class="small" id="selectionInfo">Noch kein Kapitel ausgewählt.</p>
-
-        <div class="toolbar"><button id="createRoom" type="button">Neuen Raum erstellen</button></div>
-        <div class="cfJoinRow">
-          <input id="roomInput" type="text" maxlength="6" placeholder="Raumcode" autocomplete="off" />
-          <button id="joinRoom" type="button">Beitreten</button>
-        </div>
-        <div class="cfOnlineStatus" id="onlineStatus">Erstelle einen Raum oder gib einen Einladungscode ein.</div>
-
-        <div class="cfRoomBox" id="roomBox" hidden>
-          <div class="small" style="text-align:center">Dein Raumcode</div>
-          <div class="cfRoomCode" id="roomCode">------</div>
-          <div class="cfRoomActions">
-            <button id="copyInvite" type="button">Link kopieren</button>
-            <button id="shareInvite" type="button">Einladen</button>
-            <button id="startDuel" type="button" disabled>Duell starten</button>
+      <div class="guessSetupGrid">
+        <section class="guessBlock">
+          <h2>Kapitel auswählen</h2>
+          <div class="toolbar">
+            <button id="selectAll" type="button">Alle verfügbaren</button>
+            <button id="clearAll" type="button">Auswahl löschen</button>
           </div>
-          <div class="cfOnlineStatus" id="roomStatus">Warte auf die zweite Person …</div>
-        </div>
+          <div class="guessChapters" id="chapterPicker"></div>
+          <p class="small" id="selectionInfo"></p>
+        </section>
+
+        <section class="guessBlock">
+          <div id="groupPanel" class="guessPanel">
+            <h2>Gemeinsamer Raum</h2>
+            <div class="guessNameRow">
+              <input id="playerName" type="text" maxlength="28" placeholder="Dein Name" autocomplete="name" />
+              <button id="saveName" type="button">Speichern</button>
+            </div>
+
+            <h3 style="margin-top:14px">Anzeige für die Erklärenden</h3>
+            <div class="guessOptions" id="languageOptions">
+              <button type="button" data-language="zh" class="active">Chinesisch</button>
+              <button type="button" data-language="de">Deutsch</button>
+            </div>
+            <h3 style="margin-top:14px">Rundenzeit</h3>
+            <div class="guessOptions" id="durationOptions">
+              <button type="button" data-duration="30">30 Sekunden</button>
+              <button type="button" data-duration="60" class="active">60 Sekunden</button>
+              <button type="button" data-duration="90">90 Sekunden</button>
+              <button type="button" data-duration="120">120 Sekunden</button>
+            </div>
+
+            <div class="toolbar" style="margin-top:14px"><button id="createRoom" type="button">Neuen Raum erstellen</button></div>
+            <div class="guessJoinRow">
+              <input id="roomInput" type="text" maxlength="6" placeholder="Raumcode" autocomplete="off" />
+              <button id="joinRoom" type="button">Beitreten</button>
+            </div>
+            <div class="guessStatus" id="connectionStatus">Erstelle einen Raum oder gib einen Einladungscode ein.</div>
+          </div>
+
+          <div id="devicePanel" class="guessPanel" hidden>
+            <h2>Ein Gerät weitergeben</h2>
+            <p class="small">Diese Variante verwendet das bisherige Stirnraten auf einem einzigen Gerät.</p>
+            <button id="startDeviceGame" type="button">Stirnraten starten</button>
+          </div>
+        </section>
       </div>
+
+      <section class="guessBlock" id="roomBox" hidden style="margin-top:12px">
+        <div class="small" style="text-align:center">Raumcode</div>
+        <div class="guessRoomCode" id="roomCode">------</div>
+        <div class="toolbar" style="justify-content:center">
+          <button id="copyInvite" type="button">Link kopieren</button>
+          <button id="shareInvite" type="button">Einladen</button>
+        </div>
+        <div class="guessPlayers" id="playerList"></div>
+        <div class="guessLobbyActions">
+          <button id="myTurn" type="button">Ich bin dran</button>
+          <button id="leaveRoom" type="button">Raum verlassen</button>
+        </div>
+        <div class="guessStatus" id="roomStatus">Warte auf weitere Personen.</div>
+      </section>
     </section>
 
-    <section class="card" id="duelCard" hidden>
-      <div class="duelScoreboard">
-        <div class="duelScore"><span id="leftLabel">Du</span><strong id="leftScore">0</strong></div>
-        <div class="duelVs">:</div>
-        <div class="duelScore"><span id="rightLabel">Mitspieler</span><strong id="rightScore">0</strong></div>
+    <section class="card" id="roundCard" hidden>
+      <div class="roundHead">
+        <div class="roundRole" id="roundRole">–</div>
+        <div class="roundTimer" id="roundTimer">60</div>
+        <div class="roundScore" id="roundScore">0 Punkte</div>
       </div>
-      <div class="small" id="roundLabel" style="text-align:center;margin-bottom:8px">Runde –</div>
-      <button class="duelPrompt" id="duelPrompt" type="button">–</button>
-      <div class="duelChoices" id="duelChoices"></div>
-      <div class="cfOnlineStatus" id="duelStatus"></div>
-      <div class="toolbar" style="justify-content:center">
-        <button id="restartDuel" type="button" hidden>Noch einmal</button>
-        <a class="miniBtn" href="spiele.html">Spiel beenden</a>
+
+      <div class="guesserView" id="guesserView" hidden>
+        <h2>Du bist dran!</h2>
+        <p>Das Wort ist nur auf den Handys der anderen Personen sichtbar. Höre auf ihre Erklärungen.</p>
+        <button id="requestEnd" type="button">Runde beenden</button>
+      </div>
+
+      <div class="explainerView" id="explainerView" hidden>
+        <div class="guessWord" id="guessWord">–</div>
+        <div class="guessPinyin" id="guessPinyin"></div>
+        <div class="guessMeaning" id="guessMeaning"></div>
+        <div class="guessJudgeActions">
+          <button id="markCorrect" class="guessCorrect" type="button">✓ Richtig</button>
+          <button id="markSkip" class="guessSkip" type="button">↷ Überspringen</button>
+        </div>
+      </div>
+
+      <div class="scoreBoard" id="scoreBoard"></div>
+      <div class="guessStatus" id="roundStatus"></div>
+      <div class="toolbar" id="hostRoundTools" style="justify-content:center" hidden>
+        <button id="hostEndRound" type="button">Runde beenden</button>
       </div>
     </section>
   </main>
 
-<script src="topics.js"></script>
-<script src="config.js"></script>
-<script src="sync.js"></script>
-<script src="common.js"></script>
-<script src="realtime-games.js"></script>
+<script src="topics.js?v=145"></script>
+<script src="config.js?v=145"></script>
+<script src="sync.js?v=145"></script>
+<script src="common.js?v=145"></script>
+<script src="realtime-games.js?v=145"></script>
 <script>
-const allTopics=(window.CF_TOPICS||[]).filter(t=>(t.vocab||[]).some(v=>v&&v.zh&&v.de));
-const $=id=>document.getElementById(id);
-const selected=new Set();
-const me=CF_REALTIME.playerId();
-let signedIn=false;
-let role="";
-let room="";
-let rtClient=null;
-let channel=null;
-let peerReady=false;
-let guestId="";
-let guestSignedIn=false;
-let joinTimer=null;
-let state=null;
-let answer="";
-let roundDeck=[];
-let roundTimer=null;
+const $ = id => document.getElementById(id);
+const me = CF_REALTIME.playerId();
+const topics = (window.CF_TOPICS || []).filter(t => (t.vocab || []).some(v => v && v.zh && v.de));
+const selected = new Set();
+let signedIn = false;
+let mode = "group";
+let language = localStorage.getItem("cf_group_guess_language") || "zh";
+let duration = Number(localStorage.getItem("cf_group_guess_duration")) || 60;
+let room = "";
+let role = "";
+let client = null;
+let channel = null;
+let joined = false;
+let joinTimer = null;
+let heartbeatTimer = null;
+let stateTimer = null;
+let roundTimeout = null;
+let tickTimer = null;
+let gameState = null;
+let hostDeck = [];
+let hostDeckPos = 0;
+let actionLocked = false;
 
-function allowedTopics(){return signedIn?allTopics:allTopics.filter(t=>t.id==="01");}
-function shuffle(list){const a=list.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-function normalize(v){return String(v||"").trim().toLocaleLowerCase("de");}
-function setStatus(id,text,kind){const el=$(id);el.textContent=text||"";el.className="cfOnlineStatus"+(kind?` ${kind}`:"");}
-function pool(chapters){
-  const ids=new Set(chapters||[...selected]);
+function escapeValue(value){ return String(value == null ? "" : value); }
+function shuffle(list){ const a=list.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function playerName(){ return ($("playerName").value || "").trim().slice(0,28); }
+function setStatus(id,text,kind){ const el=$(id); if(!el)return; el.textContent=text||""; el.className="guessStatus"+(kind?` ${kind}`:""); }
+function allowedTopics(){ return signedIn ? topics : topics.filter(t => t.id === "01"); }
+function selectionNeedsLogin(chapters){ return (chapters || [...selected]).some(id => id !== "01"); }
+function selectedPool(chapters){
+  const wanted = new Set(chapters || [...selected]);
   const out=[];
-  allTopics.filter(t=>ids.has(t.id)).forEach(t=>(t.vocab||[]).filter(v=>v&&v.zh&&v.de).forEach((v,i)=>out.push({key:`${t.id}_${i}_${v.zh}`,zh:v.writeZh||v.zh,de:v.writeDe||v.de,pinyin:v.writePinyin||v.pinyin||""})));
+  topics.filter(t=>wanted.has(t.id)).forEach(t=>{
+    (t.vocab||[]).forEach((v,index)=>{
+      if(!v||!v.zh||!v.de)return;
+      out.push({id:`${t.id}_${index}_${v.zh}`,chapter:t.id,zh:v.writeZh||v.zh,de:v.writeDe||v.de,pinyin:v.writePinyin||v.pinyin||""});
+    });
+  });
   return out;
 }
+function saveSelection(){ localStorage.setItem("cf_group_guess_chapters",JSON.stringify([...selected])); }
 function loadSelection(){
-  try{const saved=JSON.parse(localStorage.getItem("cf_duel_selected_chapters_v1")||"[]");saved.forEach(id=>{if(allowedTopics().some(t=>t.id===id))selected.add(id);});}catch(_err){}
-  if(!selected.size&&allowedTopics()[0])selected.add(allowedTopics()[0].id);
+  try{ (JSON.parse(localStorage.getItem("cf_group_guess_chapters")||"[]")||[]).forEach(id=>{if(allowedTopics().some(t=>t.id===id))selected.add(id);}); }catch(_err){}
+  if(!selected.size && allowedTopics()[0]) selected.add(allowedTopics()[0].id);
 }
-function saveSelection(){localStorage.setItem("cf_duel_selected_chapters_v1",JSON.stringify([...selected]));}
-function renderPicker(){
-  const mount=$("chapterPicker");mount.innerHTML="";
-  allTopics.forEach(t=>{
-    const blocked=!signedIn&&t.id!=="01";
-    const b=document.createElement("button");b.type="button";b.className="memoryChapterChoice";b.dataset.id=t.id;b.classList.toggle("active",selected.has(t.id));
+function renderChapters(){
+  const mount=$("chapterPicker"); mount.innerHTML="";
+  const guestLocked = role === "guest" && joined;
+  topics.forEach(t=>{
+    const blocked = !signedIn && t.id !== "01";
+    const b=document.createElement("button");
+    b.type="button"; b.className="guessChapter"; b.classList.toggle("active",selected.has(t.id));
     b.innerHTML=`<strong>Kapitel ${escapeHtml(t.id)}</strong><span>${escapeHtml(t.title)}</span>`;
-    if(blocked){b.classList.add("cfLoginLockedChapter");b.dataset.cfAccessBlocked="1";b.setAttribute("aria-disabled","true");}
-    else b.onclick=()=>{selected.has(t.id)?selected.delete(t.id):selected.add(t.id);saveSelection();renderPicker();};
+    if(blocked || guestLocked || (gameState && gameState.phase === "round")){
+      b.disabled=true; b.classList.add("locked");
+    }else{
+      b.onclick=()=>{ selected.has(t.id)?selected.delete(t.id):selected.add(t.id); saveSelection(); renderChapters(); hostApplySettings(); };
+    }
     mount.appendChild(b);
   });
-  const count=pool([...selected]).length;
-  $("selectionInfo").textContent=selected.size?`${selected.size} Kapitel · ${count} Vokabeln verfügbar`:"Noch kein Kapitel ausgewählt.";
-  const needsLogin=[...selected].some(id=>id!=="01");
-  $("startDuel").disabled=!(role==="host"&&peerReady&&count>=4&&(!needsLogin||guestSignedIn));
-  if(role==="host"&&peerReady&&needsLogin&&!guestSignedIn)setStatus("roomStatus","Die eingeladene Person muss sich für Kapitel ab 2 anmelden.","bad");
+  const count=selectedPool([...selected]).length;
+  $("selectionInfo").textContent=selected.size?`${selected.size} Kapitel · ${count} Wörter verfügbar`:"Noch kein Kapitel ausgewählt.";
+  $("startDeviceGame").disabled=count<2;
 }
-function switchMode(mode){
-  $("localMode").classList.toggle("active",mode==="local");$("onlineMode").classList.toggle("active",mode==="online");
-  $("localPanel").hidden=mode!=="local";$("onlinePanel").hidden=mode!=="online";
+function renderOptions(){
+  document.querySelectorAll("#languageOptions button").forEach(b=>b.classList.toggle("active",b.dataset.language===language));
+  document.querySelectorAll("#durationOptions button").forEach(b=>b.classList.toggle("active",Number(b.dataset.duration)===duration));
+  const disabled = role === "guest" && joined || (gameState && gameState.phase === "round");
+  document.querySelectorAll("#languageOptions button,#durationOptions button").forEach(b=>b.disabled=disabled);
 }
-async function disconnect(){clearInterval(joinTimer);clearTimeout(roundTimer);joinTimer=null;roundTimer=null;await CF_REALTIME.remove(rtClient,channel);rtClient=null;channel=null;peerReady=false;role="";room="";guestId="";guestSignedIn=false;}
+function currentPlayer(){ return gameState?.players?.find(p=>p.id===me) || null; }
+function currentGuesser(){ return gameState?.players?.find(p=>p.id===gameState.guesserId) || null; }
+function hostPlayer(){ return gameState?.players?.find(p=>p.id===gameState.hostId) || null; }
+function publicState(){ return gameState ? JSON.parse(JSON.stringify(gameState)) : null; }
+function broadcastState(){ if(role==="host"&&channel&&gameState) CF_REALTIME.send(channel,"state",{state:publicState()}).catch(()=>{}); }
+function playerListText(){ const n=gameState?.players?.length||0; return `${n} ${n===1?"Person ist":"Personen sind"} im Raum.`; }
+function renderPlayers(){
+  const mount=$("playerList"); mount.innerHTML="";
+  (gameState?.players||[]).forEach(p=>{
+    const row=document.createElement("div"); row.className="guessPlayer"+(p.id===gameState.guesserId?" current":"");
+    const left=document.createElement("div");
+    left.innerHTML=`<div class="guessPlayerName">${escapeHtml(p.name)}${p.id===me?" · du":""}</div><div class="guessPlayerMeta">${p.score||0} Punkte${p.signedIn?"":" · nur Kapitel 1"}</div>`;
+    row.appendChild(left);
+    if(role==="host" && gameState?.phase!=="round"){
+      const choose=document.createElement("button"); choose.type="button"; choose.textContent="Ist dran"; choose.onclick=()=>hostStartRound(p.id); row.appendChild(choose);
+    }
+    mount.appendChild(row);
+  });
+  const canStart = joined && gameState?.phase!=="round" && (gameState?.players||[]).length>=2;
+  $("myTurn").disabled=!canStart;
+  setStatus("roomStatus",gameState?.phase==="round"?`${escapeValue(currentGuesser()?.name)} rät gerade.`:playerListText(),gameState?.players?.length>=2?"ok":"");
+}
+function renderScores(){
+  const mount=$("scoreBoard"); mount.innerHTML="";
+  (gameState?.players||[]).forEach(p=>{
+    const chip=document.createElement("div"); chip.className="scoreChip";
+    chip.innerHTML=`<strong>${Number(p.score)||0}</strong><span>${escapeHtml(p.name)}</span>`; mount.appendChild(chip);
+  });
+}
+function renderState(){
+  if(!gameState)return;
+  gameState.players=(gameState.players||[]).filter(Boolean);
+  selected.clear(); (gameState.chapters||[]).forEach(id=>selected.add(id));
+  language=gameState.language||language; duration=Number(gameState.duration)||duration;
+  renderChapters(); renderOptions(); renderPlayers(); renderScores();
+  $("setupCard").hidden=gameState.phase==="round";
+  $("roundCard").hidden=gameState.phase!=="round";
+  if(gameState.phase!=="round")return;
+  const guesser=currentGuesser();
+  const amGuesser=gameState.guesserId===me;
+  $("roundRole").textContent=amGuesser?"Du rätst":`${guesser?.name||"Jemand"} rät`;
+  $("roundScore").textContent=`${guesser?.score||0} Punkte`;
+  $("guesserView").hidden=!amGuesser;
+  $("explainerView").hidden=amGuesser;
+  $("hostRoundTools").hidden=role!=="host";
+  if(!amGuesser){
+    const card=gameState.card||{};
+    const showZh=gameState.language!=="de";
+    $("guessWord").textContent=showZh?(card.zh||"–"):(card.de||"–");
+    $("guessWord").classList.toggle("de",!showZh);
+    $("guessPinyin").textContent=showZh?(card.pinyin||""):"";
+    $("guessMeaning").textContent="";
+    $("markCorrect").disabled=actionLocked;
+    $("markSkip").disabled=actionLocked;
+    setStatus("roundStatus","Erklärt das Wort, ohne es direkt zu nennen.");
+  }else{
+    setStatus("roundStatus","Das Wort bleibt auf deinem Bildschirm verborgen.","ok");
+  }
+  updateTimer();
+}
+function updateTimer(){
+  if(!gameState||gameState.phase!=="round"){ $("roundTimer").textContent="–"; return; }
+  const left=Math.max(0,Math.ceil((Number(gameState.deadline)-Date.now())/1000));
+  $("roundTimer").textContent=String(left);
+  if(left<=0 && role==="host") hostEndRound("Die Zeit ist abgelaufen.");
+}
+function ensureDeck(){
+  if(hostDeckPos>=hostDeck.length){ hostDeck=shuffle(selectedPool(gameState.chapters)); hostDeckPos=0; }
+  if(!hostDeck.length)return null;
+  return hostDeck[hostDeckPos++];
+}
+function allPlayersAllowed(){
+  if(!selectionNeedsLogin(gameState.chapters))return true;
+  return (gameState.players||[]).every(p=>p.signedIn);
+}
+function hostApplySettings(){
+  if(role!=="host"||!gameState||gameState.phase==="round")return;
+  gameState.chapters=[...selected]; gameState.language=language; gameState.duration=duration; broadcastState(); renderState();
+}
+function hostStartRound(guesserId){
+  if(role!=="host"||!gameState||gameState.phase==="round")return;
+  if((gameState.players||[]).length<2){ setStatus("roomStatus","Mindestens zwei Personen müssen im Raum sein.","bad"); return; }
+  if(selectedPool(gameState.chapters).length<2){ setStatus("roomStatus","Bitte mindestens ein Kapitel mit genügend Wörtern auswählen.","bad"); return; }
+  if(!allPlayersAllowed()){ setStatus("roomStatus","Für Kapitel ab 2 müssen alle Personen angemeldet sein.","bad"); return; }
+  if(!(gameState.players||[]).some(p=>p.id===guesserId))return;
+  hostDeck=shuffle(selectedPool(gameState.chapters)); hostDeckPos=0;
+  const card=ensureDeck(); if(!card)return;
+  gameState.phase="round"; gameState.guesserId=guesserId; gameState.card=card; gameState.round=(gameState.round||0)+1; gameState.deadline=Date.now()+gameState.duration*1000;
+  clearTimeout(roundTimeout); roundTimeout=setTimeout(()=>hostEndRound("Die Zeit ist abgelaufen."),gameState.duration*1000+250);
+  broadcastState(); renderState();
+}
+function hostAdvance(kind,actor){
+  if(role!=="host"||!gameState||gameState.phase!=="round"||actionLocked)return;
+  if(actor===gameState.guesserId)return;
+  actionLocked=true;
+  if(kind==="correct"){
+    const p=gameState.players.find(x=>x.id===gameState.guesserId); if(p)p.score=(Number(p.score)||0)+1;
+  }
+  const next=ensureDeck();
+  if(next)gameState.card=next;
+  broadcastState(); renderState();
+  setTimeout(()=>{actionLocked=false;renderState();},350);
+}
+function hostEndRound(message){
+  if(role!=="host"||!gameState||gameState.phase!=="round")return;
+  clearTimeout(roundTimeout); gameState.phase="lobby"; gameState.card=null; gameState.deadline=0; gameState.guesserId=""; broadcastState(); renderState(); setStatus("roomStatus",message||"Die Runde ist beendet.","ok");
+}
+function requestTurn(){
+  if(!joined||!gameState||gameState.phase==="round")return;
+  if(role==="host")hostStartRound(me); else CF_REALTIME.send(channel,"request_turn",{player:me}).catch(()=>{});
+}
+async function disconnect(){
+  clearInterval(joinTimer);clearInterval(heartbeatTimer);clearInterval(stateTimer);clearTimeout(roundTimeout);
+  joinTimer=heartbeatTimer=stateTimer=roundTimeout=null;
+  await CF_REALTIME.remove(client,channel); client=null;channel=null;room="";role="";joined=false;gameState=null;hostDeck=[];hostDeckPos=0;
+}
 async function openChannel(code,nextRole){
-  await disconnect();room=CF_REALTIME.normalizeRoom(code);if(room.length!==6)throw new Error("Bitte einen vollständigen Raumcode eingeben.");role=nextRole;
-  const pair=await CF_REALTIME.createChannel(`cf-duel-${room}`);rtClient=pair.client;channel=pair.channel;
+  await disconnect(); room=CF_REALTIME.normalizeRoom(code); if(room.length!==6)throw new Error("Bitte einen vollständigen Raumcode eingeben."); role=nextRole;
+  const pair=await CF_REALTIME.createChannel(`cf-group-guess-${room}`); client=pair.client;channel=pair.channel;
   channel
     .on("broadcast",{event:"join"},({payload})=>{
       if(role!=="host"||!payload||payload.player===me)return;
-      if(guestId&&guestId!==payload.player){CF_REALTIME.send(channel,"full",{to:payload.player});return;}
-      guestId=payload.player;guestSignedIn=Boolean(payload.signedIn);peerReady=true;renderPicker();setStatus("roomStatus","Die zweite Person ist verbunden.","ok");CF_REALTIME.send(channel,"welcome",{to:guestId});if(state)broadcastState();
+      let p=gameState.players.find(x=>x.id===payload.player);
+      if(gameState.phase==="round"&&!p){ CF_REALTIME.send(channel,"rejected",{to:payload.player,message:"Die Runde läuft bereits. Bitte warte kurz und tritt danach erneut bei."}); return; }
+      if(selectionNeedsLogin(gameState.chapters)&&!payload.signedIn&&!p){ CF_REALTIME.send(channel,"rejected",{to:payload.player,message:"Für die ausgewählten Kapitel musst du angemeldet sein."}); return; }
+      if(!p){ p={id:payload.player,name:String(payload.name||"Mitspieler").slice(0,28),signedIn:Boolean(payload.signedIn),score:0}; gameState.players.push(p); }
+      else{ p.name=String(payload.name||p.name).slice(0,28);p.signedIn=Boolean(payload.signedIn); }
+      CF_REALTIME.send(channel,"welcome",{to:payload.player,state:publicState()}); broadcastState(); renderState();
     })
     .on("broadcast",{event:"welcome"},({payload})=>{
-      if(role!=="guest"||!payload||payload.to!==me)return;peerReady=true;clearInterval(joinTimer);setStatus("roomStatus","Verbunden. Warte auf den Start.","ok");
+      if(role!=="guest"||!payload||payload.to!==me)return; joined=true; clearInterval(joinTimer); gameState=payload.state; $("roomBox").hidden=false; $("roomCode").textContent=room; renderState(); setStatus("connectionStatus","Mit dem Raum verbunden.","ok");
+      heartbeatTimer=setInterval(()=>CF_REALTIME.send(channel,"join",{player:me,name:playerName(),signedIn}).catch(()=>{}),8000);
     })
-    .on("broadcast",{event:"full"},({payload})=>{if(role==="guest"&&payload&&payload.to===me)setStatus("roomStatus","Dieser Raum ist bereits voll.","bad");})
-    .on("broadcast",{event:"state"},({payload})=>{if(role!=="guest"||!payload)return;const incoming=payload.state||null;if(incoming&&!signedIn&&(incoming.chapters||[]).some(id=>id!=="01")){setStatus("roomStatus","Bitte melde dich an, damit du Kapitel ab 2 mitspielen kannst.","bad");return;}state=incoming;if(state){$("modeCard").hidden=true;$("duelCard").hidden=false;renderState();}})
-    .on("broadcast",{event:"answer"},({payload})=>{if(role!=="host"||!payload)return;handleAnswer(payload.player,payload.choice);})
-    .on("broadcast",{event:"restart"},()=>{if(role==="host")startGame();})
+    .on("broadcast",{event:"rejected"},({payload})=>{ if(role==="guest"&&payload?.to===me)setStatus("connectionStatus",payload.message||"Beitritt nicht möglich.","bad"); })
+    .on("broadcast",{event:"state"},({payload})=>{ if(role!=="guest"||!payload?.state)return; gameState=payload.state; joined=true; $("roomBox").hidden=false; $("roomCode").textContent=room; renderState(); })
+    .on("broadcast",{event:"request_turn"},({payload})=>{ if(role==="host"&&payload?.player)hostStartRound(payload.player); })
+    .on("broadcast",{event:"mark"},({payload})=>{ if(role==="host"&&payload?.player)hostAdvance(payload.kind,payload.player); })
+    .on("broadcast",{event:"end_request"},({payload})=>{ if(role==="host"&&payload?.player===gameState?.guesserId)hostEndRound("Die ratende Person hat die Runde beendet."); })
+    .on("broadcast",{event:"leave"},({payload})=>{
+      if(role!=="host"||!payload?.player||!gameState)return;
+      const wasGuesser=gameState.guesserId===payload.player;
+      gameState.players=(gameState.players||[]).filter(p=>p.id!==payload.player);
+      if(wasGuesser&&gameState.phase==="round")hostEndRound("Die ratende Person hat den Raum verlassen.");
+      else{broadcastState();renderState();}
+    })
+    .on("broadcast",{event:"room_closed"},()=>{if(role==="guest"){setStatus("connectionStatus","Die Raumleitung hat den Raum beendet.","bad");setStatus("roomStatus","Der Raum ist geschlossen.","bad");}})
     .subscribe(status=>{
       if(status==="SUBSCRIBED"&&role==="guest"){
-        const announce=()=>CF_REALTIME.send(channel,"join",{player:me,signedIn}).catch(()=>{});announce();joinTimer=setInterval(announce,1800);
+        const announce=()=>CF_REALTIME.send(channel,"join",{player:me,name:playerName(),signedIn}).catch(()=>{}); announce(); joinTimer=setInterval(announce,1800);
       }
-      if(status==="CHANNEL_ERROR"||status==="TIMED_OUT")setStatus(role==="host"?"roomStatus":"onlineStatus","Online-Verbindung nicht möglich.","bad");
+      if(status==="CHANNEL_ERROR"||status==="TIMED_OUT")setStatus("connectionStatus","Die Online-Verbindung konnte nicht hergestellt werden.","bad");
     });
 }
-function publicState(){return state?JSON.parse(JSON.stringify(state)):null;}
-function broadcastState(){if(role==="host"&&channel&&state)CF_REALTIME.send(channel,"state",{state:publicState()}).catch(()=>setStatus("duelStatus","Verbindung unterbrochen.","bad"));}
 async function createRoom(){
-  try{await openChannel(CF_REALTIME.randomRoom(),"host");$("roomBox").hidden=false;$("roomCode").textContent=room;$("startDuel").hidden=false;setStatus("roomStatus","Warte auf die zweite Person …");renderPicker();}
-  catch(err){setStatus("onlineStatus",err.message||"Raum konnte nicht erstellt werden.","bad");}
+  if(!playerName()){ setStatus("connectionStatus","Bitte zuerst deinen Namen eingeben.","bad"); return; }
+  if(selectedPool([...selected]).length<2){ setStatus("connectionStatus","Bitte mindestens ein Kapitel auswählen.","bad"); return; }
+  try{
+    await openChannel(CF_REALTIME.randomRoom(),"host"); joined=true;
+    gameState={phase:"lobby",hostId:me,chapters:[...selected],language,duration,round:0,guesserId:"",deadline:0,card:null,players:[{id:me,name:playerName(),signedIn,score:0}]};
+    $("roomBox").hidden=false; $("roomCode").textContent=room; renderState(); setStatus("connectionStatus","Raum erstellt. Lade jetzt die anderen Personen ein.","ok");
+    stateTimer=setInterval(()=>broadcastState(),3500);
+  }catch(err){ setStatus("connectionStatus",err.message||"Raum konnte nicht erstellt werden.","bad"); }
 }
 async function joinRoom(){
-  try{await openChannel($("roomInput").value,"guest");$("roomBox").hidden=false;$("roomCode").textContent=room;$("startDuel").hidden=true;setStatus("roomStatus","Verbindung wird hergestellt …");}
-  catch(err){setStatus("onlineStatus",err.message||"Beitritt nicht möglich.","bad");}
-}
-function makeRound(index){
-  const item=roundDeck[index];
-  if(!item){state.phase="finished";state.result=null;broadcastState();renderState();return;}
-  const basePool=pool(state.chapters);
-  const direction=Math.random()<.5?"zhde":"dezh";
-  answer=direction==="zhde"?item.de:item.zh;
-  const distractors=shuffle(basePool.map(v=>direction==="zhde"?v.de:v.zh).filter(x=>normalize(x)!==normalize(answer))).slice(0,3);
-  state.roundNo=index+1;state.direction=direction;state.prompt=direction==="zhde"?item.zh:item.de;state.pinyin=item.pinyin;state.choices=shuffle([answer,...distractors]);state.phase="playing";state.responses={host:null,guest:null};state.result=null;
-  broadcastState();renderState();
-}
-function startGame(){
-  if(role!=="host"||!peerReady)return;
-  saveSelection();const items=shuffle(pool([...selected]));if(items.length<4)return;
-  roundDeck=items.slice(0,Math.min(10,items.length));
-  state={chapters:[...selected],totalRounds:roundDeck.length,roundNo:0,scores:{host:0,guest:0},phase:"playing",prompt:"",choices:[],responses:{host:null,guest:null},result:null,direction:"zhde",pinyin:""};
-  $("modeCard").hidden=true;$("duelCard").hidden=false;makeRound(0);
-}
-function roleForPlayer(id){if(id===me&&role==="host")return"host";if(id===guestId)return"guest";return"";}
-function handleAnswer(player,choice){
-  if(role!=="host"||!state||state.phase!=="playing")return;
-  const who=roleForPlayer(player);if(!who||state.responses[who])return;
-  const ok=normalize(choice)===normalize(answer);state.responses[who]={choice,ok};
-  if(ok&&!state.result){state.scores[who]++;state.result={correct:answer,winner:who};state.phase="result";}
-  else if(state.responses.host&&state.responses.guest&&!state.result){state.result={correct:answer,winner:""};state.phase="result";}
-  broadcastState();renderState();
-  if(state.phase==="result")roundTimer=setTimeout(()=>makeRound(state.roundNo),1800);
-}
-function answerChoice(choice){
-  if(!state||state.phase!=="playing")return;
-  const myRole=role;if(state.responses&&state.responses[myRole])return;
-  if(role==="host")handleAnswer(me,choice);else CF_REALTIME.send(channel,"answer",{player:me,choice});
-}
-function renderState(){
-  if(!state)return;
-  const mine=role==="host"?"host":"guest";const other=mine==="host"?"guest":"host";
-  $("leftLabel").textContent="Du";$("rightLabel").textContent="Mitspieler";$("leftScore").textContent=String(state.scores?.[mine]||0);$("rightScore").textContent=String(state.scores?.[other]||0);
-  $("roundLabel").textContent=state.phase==="finished"?"Duell beendet":`Runde ${state.roundNo} von ${state.totalRounds}`;
-  $("duelPrompt").textContent=state.phase==="finished"?"Geschafft!":state.prompt||"–";
-  $("duelPrompt").disabled=state.direction!=="zhde"||state.phase==="finished";
-  const mount=$("duelChoices");mount.innerHTML="";
-  (state.choices||[]).forEach(choice=>{
-    const b=document.createElement("button");b.type="button";b.textContent=choice;
-    if(state.phase==="result"&&state.result){if(normalize(choice)===normalize(state.result.correct))b.classList.add("correct");else if(state.responses?.[mine]?.choice===choice)b.classList.add("wrong");}
-    b.disabled=state.phase!=="playing"||Boolean(state.responses?.[mine]);b.onclick=()=>answerChoice(choice);mount.appendChild(b);
-  });
-  if(state.phase==="playing")setStatus("duelStatus",state.responses?.[mine]?"Antwort gesendet – warte auf die andere Person.":"Wähle die richtige Antwort.");
-  else if(state.phase==="result"){
-    const winner=state.result?.winner;
-    setStatus("duelStatus",winner===mine?"Du bekommst den Punkt!":winner===other?"Die andere Person war schneller.":"Niemand hat richtig geantwortet.",winner===mine?"ok":"");
-  }else{
-    const a=state.scores?.[mine]||0,b=state.scores?.[other]||0;
-    setStatus("duelStatus",a>b?"Du hast das Duell gewonnen!":a<b?"Die andere Person hat gewonnen.":"Unentschieden!",a>=b?"ok":"");
-  }
-  $("restartDuel").hidden=state.phase!=="finished";
+  if(!playerName()){ setStatus("connectionStatus","Bitte zuerst deinen Namen eingeben.","bad"); return; }
+  try{ await openChannel($("roomInput").value,"guest"); $("roomBox").hidden=false; $("roomCode").textContent=room; setStatus("connectionStatus","Verbindung wird hergestellt …"); }
+  catch(err){ setStatus("connectionStatus",err.message||"Beitritt nicht möglich.","bad"); }
 }
 async function invite(copyOnly){
   const url=CF_REALTIME.roomUrl("woerter-raten.html",room);
   try{
-    if(copyOnly){await CF_REALTIME.copyText(url);setStatus("roomStatus","Einladungslink wurde kopiert.","ok");}
-    else{const result=await CF_REALTIME.shareInvite("Wörterduell – Chinesisch festigen",`Spiele mit mir ein Wörterduell. Raumcode: ${room}`,url);setStatus("roomStatus",result==="copied"?"Einladungslink wurde kopiert.":"Einladung geöffnet.","ok");}
-  }catch(_err){setStatus("roomStatus","Der Link konnte nicht geteilt werden.","bad");}
+    if(copyOnly){ await CF_REALTIME.copyText(url); setStatus("roomStatus","Einladungslink wurde kopiert.","ok"); }
+    else{ const result=await CF_REALTIME.shareInvite("Wörter raten – Chinesisch festigen",`Komm in meinen Wörter-raten-Raum. Code: ${room}`,url); setStatus("roomStatus",result==="copied"?"Einladungslink wurde kopiert.":"Einladung geöffnet.","ok"); }
+  }catch(_err){ setStatus("roomStatus","Der Link konnte nicht geteilt werden.","bad"); }
 }
+function startDeviceGame(){
+  saveSelection(); localStorage.setItem("cf_heads_chapters",JSON.stringify([...selected])); localStorage.setItem("cf_heads_language",language); location.href="stirnspiel.html?from=woerter-raten";
+}
+function switchMode(next){ mode=next; $("groupMode").classList.toggle("active",mode==="group"); $("deviceMode").classList.toggle("active",mode==="device"); $("groupPanel").hidden=mode!=="group"; $("devicePanel").hidden=mode!=="device"; }
 
-$("localMode").onclick=()=>switchMode("local");$("onlineMode").onclick=()=>switchMode("online");
-$("selectAll").onclick=()=>{allowedTopics().forEach(t=>selected.add(t.id));saveSelection();renderPicker();};
-$("clearAll").onclick=()=>{selected.clear();saveSelection();renderPicker();};
-$("createRoom").onclick=createRoom;$("joinRoom").onclick=joinRoom;$("startDuel").onclick=startGame;
-$("copyInvite").onclick=()=>invite(true);$("shareInvite").onclick=()=>invite(false);
+$("groupMode").onclick=()=>switchMode("group"); $("deviceMode").onclick=()=>switchMode("device");
+$("saveName").onclick=()=>{ const n=playerName(); if(n){ localStorage.setItem("cf_group_guess_name",n); setStatus("connectionStatus","Name gespeichert.","ok"); } };
+$("selectAll").onclick=()=>{ if(role==="guest"&&joined)return; allowedTopics().forEach(t=>selected.add(t.id));saveSelection();renderChapters();hostApplySettings(); };
+$("clearAll").onclick=()=>{ if(role==="guest"&&joined)return; selected.clear();saveSelection();renderChapters();hostApplySettings(); };
+document.querySelectorAll("#languageOptions button").forEach(b=>b.onclick=()=>{ if(role==="guest"&&joined)return; language=b.dataset.language;localStorage.setItem("cf_group_guess_language",language);renderOptions();hostApplySettings(); });
+document.querySelectorAll("#durationOptions button").forEach(b=>b.onclick=()=>{ if(role==="guest"&&joined)return; duration=Number(b.dataset.duration)||60;localStorage.setItem("cf_group_guess_duration",String(duration));renderOptions();hostApplySettings(); });
+$("createRoom").onclick=createRoom; $("joinRoom").onclick=joinRoom; $("startDeviceGame").onclick=startDeviceGame;
+$("myTurn").onclick=requestTurn; $("copyInvite").onclick=()=>invite(true); $("shareInvite").onclick=()=>invite(false);
+$("leaveRoom").onclick=async()=>{ if(channel&&joined){try{if(role==="host")await CF_REALTIME.send(channel,"room_closed",{});else await CF_REALTIME.send(channel,"leave",{player:me});}catch(_err){}} await disconnect();location.reload(); };
+$("markCorrect").onclick=()=>{ if(role==="host")hostAdvance("correct",me); else CF_REALTIME.send(channel,"mark",{player:me,kind:"correct"}); };
+$("markSkip").onclick=()=>{ if(role==="host")hostAdvance("skip",me); else CF_REALTIME.send(channel,"mark",{player:me,kind:"skip"}); };
+$("requestEnd").onclick=()=>{ if(role==="host")hostEndRound("Runde beendet."); else CF_REALTIME.send(channel,"end_request",{player:me}); };
+$("hostEndRound").onclick=()=>hostEndRound("Runde beendet.");
 $("roomInput").oninput=()=>{$("roomInput").value=CF_REALTIME.normalizeRoom($("roomInput").value);};
-$("duelPrompt").onclick=()=>{if(state&&state.direction==="zhde"&&state.prompt)cfSpeakZh(state.prompt,{rate:.85});};
-$("restartDuel").onclick=()=>{if(role==="host")startGame();else CF_REALTIME.send(channel,"restart",{player:me});};
-window.addEventListener("beforeunload",()=>disconnect());
+window.addEventListener("beforeunload",()=>{try{if(channel&&joined){if(role==="host")CF_REALTIME.send(channel,"room_closed",{});else CF_REALTIME.send(channel,"leave",{player:me});}}catch(_err){}disconnect();});
 
+tickTimer=setInterval(updateTimer,250);
 (async function init(){
   if(window.CF_SYNC&&CF_SYNC.ready){try{await CF_SYNC.ready;}catch(_err){}}
-  signedIn=Boolean(window.CF_SYNC&&CF_SYNC.getState&&CF_SYNC.getState().signedIn);loadSelection();renderPicker();
+  signedIn=Boolean(window.CF_SYNC&&CF_SYNC.getState&&CF_SYNC.getState().signedIn);
+  $("playerName").value=localStorage.getItem("cf_group_guess_name")||localStorage.getItem("cf_user_name")||"";
+  loadSelection(); renderChapters(); renderOptions();
   const incoming=CF_REALTIME.normalizeRoom(new URLSearchParams(location.search).get("room"));
-  if(incoming){switchMode("online");$("roomInput").value=incoming;joinRoom();}
+  if(incoming){ switchMode("group"); $("roomInput").value=incoming; setStatus("connectionStatus","Gib deinen Namen ein und tippe auf Beitreten."); }
 })();
 </script>
 </body>

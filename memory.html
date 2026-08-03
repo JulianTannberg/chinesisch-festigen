@@ -5,368 +5,120 @@
   <meta name="robots" content="noindex, nofollow" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Memory · Chinesisch festigen</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=145" />
   <meta name="theme-color" content="#03172B" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" href="icons/icon-192.png" />
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <style>
+    .memModes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}.memModes button.active{background:var(--card-strong);outline:2px solid rgba(255,255,255,.28)}
+    .memSetupGrid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(250px,.8fr);gap:12px}.memBlock{border:1px solid var(--stroke);border-radius:16px;padding:12px;background:rgba(255,255,255,.06)}.memBlock h2,.memBlock h3{margin:0 0 10px}
+    .memChapters{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:7px;max-height:300px;overflow:auto}.memChapter{text-align:left;white-space:normal;line-height:1.2;min-height:52px}.memChapter strong,.memChapter span{display:block}.memChapter span{font-size:12px;color:var(--muted);margin-top:3px}.memChapter.active{background:var(--card-strong);outline:2px solid rgba(255,255,255,.28)}.memChapter.locked{opacity:.45}
+    .memNameRow,.memJoinRow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}.memNameRow input,.memJoinRow input{min-height:46px}
+    .colorPicker{display:flex;gap:8px;flex-wrap:wrap}.colorChoice{width:42px;height:42px;border-radius:50%;padding:0;border:3px solid rgba(255,255,255,.32);background:var(--pick)}.colorChoice.active{outline:3px solid #fff;outline-offset:2px}.colorChoice.taken{opacity:.25;cursor:not-allowed}
+    .memRoomCode{text-align:center;font-size:clamp(32px,9vw,56px);font-weight:950;letter-spacing:.12em;margin:8px 0}.memLobby{display:grid;gap:7px;margin:10px 0}.memLobbyPlayer{display:flex;align-items:center;gap:9px;padding:9px;border:1px solid var(--stroke);border-radius:13px;background:rgba(255,255,255,.06)}.memDot{width:18px;height:18px;border-radius:50%;background:var(--player);flex:0 0 18px}.memLobbyPlayer strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.memLobbyPlayer span{margin-left:auto;color:var(--muted);font-size:12px}
+    .memStatus{min-height:23px;color:var(--muted);font-size:13px;line-height:1.4;margin-top:8px}.memStatus.ok{color:#86efac}.memStatus.bad{color:#fecaca}
+    .memScoreboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:7px;margin:0 0 10px}.memScore{border:1px solid var(--stroke);border-radius:13px;padding:8px;background:rgba(255,255,255,.06);box-shadow:inset 4px 0 var(--player)}.memScore.current{outline:2px solid var(--player)}.memScore strong{display:block;font-size:20px}.memScore span{display:block;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .memoryGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.memoryCard{position:relative;min-height:105px;border-radius:17px;overflow:hidden}.memoryCard.open,.memoryCard.matched{background:color-mix(in srgb,var(--owner) 35%,rgba(255,255,255,.15));outline:3px solid var(--owner)}.memoryCard.matched::after{content:"✓";position:absolute;right:7px;top:4px;font-weight:950;color:var(--owner)}.memoryCard:disabled{cursor:default}.memoryText{overflow-wrap:anywhere}.memoryText.hidden{font-size:34px;opacity:.7}
+    .memGameTop{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:8px}.memTurn{font-weight:900}.memRoundDone{text-align:center;padding:16px;margin-top:12px;border:1px solid var(--stroke);border-radius:16px;background:rgba(255,255,255,.07)}
+    @media(max-width:720px){.memSetupGrid{grid-template-columns:1fr}.memoryGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media(max-width:460px){.memModes{grid-template-columns:1fr}.memNameRow,.memJoinRow{grid-template-columns:1fr}.memoryGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.memoryCard{min-height:96px}}
+  </style>
 </head>
 <body>
   <main class="app memoryApp">
     <div class="topbar topbarSticky"><a class="back" href="spiele.html">← Zurück</a></div>
     <h1 class="pageTitleResponsive">Memory</h1>
-    <p class="subtitle">Spiele allein oder lade jemanden mit einem Link beziehungsweise Raumcode ein.</p>
+    <p class="subtitle">Spiele allein oder mit zwei bis vier Personen. Im Gruppenspiel wählt jede Person einen Namen und eine Farbe.</p>
 
     <section class="card" id="setupCard">
-      <div class="cfOnlineModes">
-        <button id="soloMode" class="active" type="button">Allein spielen</button>
-        <button id="onlineMode" type="button">Mit jemandem spielen</button>
+      <div class="memModes"><button id="soloMode" class="active" type="button">Allein</button><button id="groupMode" type="button">2–4 Personen</button></div>
+      <div class="memSetupGrid">
+        <section class="memBlock">
+          <h2>Kapitel auswählen</h2>
+          <div class="toolbar"><button id="selectAll" type="button">Alle verfügbaren</button><button id="clearAll" type="button">Auswahl löschen</button></div>
+          <div class="memChapters" id="chapterPicker"></div><p class="small" id="selectionInfo"></p>
+        </section>
+        <section class="memBlock">
+          <div id="soloPanel"><h2>Allein spielen</h2><button id="startSolo" type="button">Memory starten</button></div>
+          <div id="groupPanel" hidden>
+            <h2>Deine Spielfigur</h2>
+            <div class="memNameRow"><input id="playerName" type="text" maxlength="24" placeholder="Dein Name" autocomplete="name"/><button id="saveProfile" type="button">Speichern</button></div>
+            <h3 style="margin-top:13px">Farbe auswählen</h3><div class="colorPicker" id="colorPicker"></div>
+            <div class="toolbar" style="margin-top:14px"><button id="createRoom" type="button">Neuen Raum erstellen</button></div>
+            <div class="memJoinRow"><input id="roomInput" type="text" maxlength="6" placeholder="Raumcode" autocomplete="off"/><button id="joinRoom" type="button">Beitreten</button></div>
+            <div class="memStatus" id="connectionStatus">Erstelle einen Raum oder gib einen Einladungscode ein.</div>
+          </div>
+        </section>
       </div>
-
-      <div id="selectionBlock">
-        <div class="setTitle">Kapitel auswählen</div>
-        <div class="toolbar">
-          <button id="selectAll" type="button">Alle verfügbaren</button>
-          <button id="clearAll" type="button">Auswahl löschen</button>
-        </div>
-        <div class="memoryChapterPicker" id="chapterPicker"></div>
-        <p class="small" id="selectionInfo">Noch kein Kapitel ausgewählt.</p>
-      </div>
-
-      <div id="soloPanel" class="cfOnlinePanel">
-        <button id="startSolo" type="button" disabled>Memory starten</button>
-      </div>
-
-      <div id="onlinePanel" class="cfOnlinePanel" hidden>
-        <div class="toolbar">
-          <button id="createRoom" type="button">Neuen Raum erstellen</button>
-        </div>
-        <div class="cfJoinRow">
-          <input id="roomInput" type="text" maxlength="6" placeholder="Raumcode" autocomplete="off" />
-          <button id="joinRoom" type="button">Beitreten</button>
-        </div>
-        <div class="cfOnlineStatus" id="onlineStatus">Erstelle einen Raum oder gib einen Einladungscode ein.</div>
-      </div>
-
-      <div class="cfRoomBox" id="roomBox" hidden>
-        <div class="small" style="text-align:center">Dein Raumcode</div>
-        <div class="cfRoomCode" id="roomCode">------</div>
-        <div class="cfRoomActions">
-          <button id="copyInvite" type="button">Link kopieren</button>
-          <button id="shareInvite" type="button">Einladen</button>
-          <button id="startOnline" type="button" disabled>Gemeinsames Spiel starten</button>
-        </div>
-        <div class="cfOnlineStatus" id="roomStatus">Warte auf die zweite Person …</div>
-      </div>
+      <section class="memBlock" id="roomBox" hidden style="margin-top:12px">
+        <div class="small" style="text-align:center">Raumcode</div><div class="memRoomCode" id="roomCode">------</div>
+        <div class="toolbar" style="justify-content:center"><button id="copyInvite" type="button">Link kopieren</button><button id="shareInvite" type="button">Einladen</button><button id="startOnline" type="button">Spiel starten</button></div>
+        <div class="memLobby" id="lobbyList"></div><div class="memStatus" id="roomStatus"></div>
+      </section>
     </section>
 
     <section class="card" id="gameCard" hidden>
-      <div class="memTopRow">
-        <div class="memStats">
-          <div class="memStat">Runde <strong id="roundNo">1</strong></div>
-          <div class="memStat">Paare <strong id="pairCount">0/0</strong></div>
-          <div class="memStat">Züge <strong id="moveCount">0</strong></div>
-        </div>
-        <div class="memActions">
-          <button id="soundToggle" type="button">Ton an</button>
-          <button id="changeSelection" type="button">Kapitel ändern</button>
-        </div>
-      </div>
-      <div class="cfOnlineStatus" id="gameStatus"></div>
-      <div class="memoryGrid" id="memoryGrid" aria-label="Memory-Karten"></div>
-      <div class="memoryRoundDone" id="roundDone" hidden>
-        <strong>Runde geschafft!</strong>
-        <span id="roundDoneText"></span>
-        <button id="nextRound" type="button">Neue Runde →</button>
-      </div>
+      <div class="memGameTop"><div class="memTurn" id="turnText">–</div><div><button id="soundToggle" type="button">Ton an</button><button id="leaveGame" type="button">Beenden</button></div></div>
+      <div class="memScoreboard" id="scoreboard"></div>
+      <div class="memStatus" id="gameStatus"></div>
+      <div class="memoryGrid" id="memoryGrid"></div>
+      <div class="memRoundDone" id="roundDone" hidden><strong>Runde geschafft!</strong><p id="roundDoneText"></p><button id="nextRound" type="button">Neue Runde</button></div>
     </section>
   </main>
 
-<script src="topics.js"></script>
-<script src="config.js"></script>
-<script src="sync.js"></script>
-<script src="common.js"></script>
-<script src="realtime-games.js"></script>
+<script src="topics.js?v=145"></script><script src="config.js?v=145"></script><script src="sync.js?v=145"></script><script src="common.js?v=145"></script><script src="realtime-games.js?v=145"></script>
 <script>
-const allTopics = (window.CF_TOPICS || []).filter(t => (t.vocab || []).some(v => v && v.zh && v.de));
-const $ = id => document.getElementById(id);
-const selected = new Set();
-const PAIRS_PER_ROUND = 6;
-let signedIn = false;
-let playMode = "solo";
-let soundOn = localStorage.getItem("cf_memory_global_sound") !== "0";
-let localState = null;
-let onlineState = null;
-let role = "";
-let room = "";
-let rtClient = null;
-let channel = null;
-let peerReady = false;
-let guestSignedIn = false;
-let joinTimer = null;
-const me = CF_REALTIME.playerId();
-
-function allowedTopics(){ return signedIn ? allTopics : allTopics.filter(t => t.id === "01"); }
-function shuffleLocal(list){
-  const a = list.slice();
-  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
-  return a;
-}
-function writeZh(v){ return v.writeZh || v.zh || ""; }
-function writeDe(v){ return v.writeDe || v.de || ""; }
-function setStatus(id,text,kind){ const el=$(id); el.textContent=text||""; el.className="cfOnlineStatus"+(kind?` ${kind}`:""); }
-function updateSoundButton(){ $("soundToggle").textContent = soundOn ? "Ton an" : "Ton aus"; $("soundToggle").classList.toggle("active",soundOn); }
-function speakZh(text){ if(soundOn && text) cfSpeakZh(text,{rate:.85}); }
-
-function saveSelection(){ try{ localStorage.setItem("cf_memory_selected_chapters_v2",JSON.stringify([...selected])); }catch(_err){} }
-function loadSelection(){
-  try{
-    const saved=JSON.parse(localStorage.getItem("cf_memory_selected_chapters_v2")||"[]");
-    saved.forEach(id=>{if(allowedTopics().some(t=>t.id===id))selected.add(id);});
-  }catch(_err){}
-  if(!selected.size && allowedTopics()[0]) selected.add(allowedTopics()[0].id);
-}
-function selectedVocabCount(){
-  return allowedTopics().filter(t=>selected.has(t.id)).reduce((n,t)=>n+(t.vocab||[]).filter(v=>v&&v.zh&&v.de).length,0);
-}
-function renderPicker(){
-  const mount=$("chapterPicker"); mount.innerHTML="";
-  allTopics.forEach(t=>{
-    const blocked = !signedIn && t.id !== "01";
-    const b=document.createElement("button");
-    b.type="button"; b.className="memoryChapterChoice"; b.dataset.id=t.id;
-    b.classList.toggle("active",selected.has(t.id));
-    b.innerHTML=`<strong>Kapitel ${escapeHtml(t.id)}</strong><span>${escapeHtml(t.title)}</span>`;
-    if(blocked){
-      b.classList.add("cfLoginLockedChapter");
-      b.dataset.cfAccessBlocked="1";
-      b.setAttribute("aria-disabled","true");
-    }else{
-      b.addEventListener("click",()=>{
-        if(selected.has(t.id))selected.delete(t.id);else selected.add(t.id);
-        saveSelection();renderPicker();
-      });
-    }
-    mount.appendChild(b);
-  });
-  const count=selectedVocabCount();
-  $("selectionInfo").textContent=selected.size?`${selected.size} Kapitel · ${count} Vokabeln verfügbar`:"Noch kein Kapitel ausgewählt.";
-  $("startSolo").disabled=count<2;
-  const needsLogin=[...selected].some(id=>id!=="01");
-  $("startOnline").disabled=!(count>=2 && peerReady && role==="host" && (!needsLogin || guestSignedIn));
-  if(role==="host" && peerReady && needsLogin && !guestSignedIn) setStatus("roomStatus","Die eingeladene Person muss sich für Kapitel ab 2 anmelden.","bad");
-}
-function buildPool(chapters){
-  const wanted = new Set(chapters || [...selected]);
-  const pool=[];
-  allTopics.filter(t=>wanted.has(t.id)).forEach(t=>{
-    (t.vocab||[]).filter(v=>v&&v.zh&&v.de).forEach((v,i)=>pool.push({...v,_chapter:t.id,_key:`${t.id}_${i}_${v.zh}`}));
-  });
-  return pool;
-}
-function createRound(roundNo,chapters){
-  const pool=buildPool(chapters);
-  const picks=shuffleLocal(pool).slice(0,Math.min(PAIRS_PER_ROUND,pool.length));
-  const stamp=`${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
-  return {
-    roundNo:roundNo||1,
-    chapters:chapters||[...selected],
-    cards:shuffleLocal(picks.flatMap((v,i)=>[
-      {id:`${stamp}_${i}_zh`,pair:i,type:"zh",text:writeZh(v),open:false,matched:false},
-      {id:`${stamp}_${i}_de`,pair:i,type:"de",text:writeDe(v),open:false,matched:false}
-    ])),
-    openIds:[],locked:false,pairsFound:0,moves:0,done:false
-  };
-}
-function activeState(){ return playMode==="online" ? onlineState : localState; }
-function renderGame(){
-  const state=activeState();
-  if(!state) return;
-  updateSoundButton();
-  $("roundNo").textContent=String(state.roundNo||1);
-  $("pairCount").textContent=`${state.pairsFound}/${state.cards.length/2}`;
-  $("moveCount").textContent=String(state.moves||0);
-  $("changeSelection").hidden=playMode==="online";
-  $("gameStatus").textContent=playMode==="online"?(role==="host"?"Gemeinsames Memory · Du hast den Raum erstellt.":"Gemeinsames Memory · Du bist beigetreten."):"";
-  const grid=$("memoryGrid");grid.innerHTML="";
-  state.cards.forEach(card=>{
-    const b=document.createElement("button");b.type="button";
-    b.className="memoryCard"+((card.open||card.matched)?" open":"")+(card.matched?" matched":"");
-    if(card.type==="zh")b.classList.add("zhCard");
-    b.innerHTML=(card.open||card.matched)?`<span class="memoryText">${escapeHtml(card.text)}</span>`:'<span class="memoryText memoryHidden">?</span>';
-    b.addEventListener("click",()=>flip(card.id));grid.appendChild(b);
-  });
-  $("roundDone").hidden=!state.done;
-  if(state.done) $("roundDoneText").textContent=`${state.moves} Züge`;
-}
-function processFlip(state,id,after){
-  if(!state||state.locked||state.done)return;
-  const card=state.cards.find(c=>c.id===id);
-  if(!card||card.open||card.matched)return;
-  card.open=true;
-  state.openIds.push(card.id);
-  if(card.type==="zh")speakZh(card.text);
-  if(state.openIds.length===2){
-    state.moves++;
-    const a=state.cards.find(c=>c.id===state.openIds[0]);
-    const b=state.cards.find(c=>c.id===state.openIds[1]);
-    if(a&&b&&a.pair===b.pair&&a.type!==b.type){
-      a.matched=b.matched=true;state.pairsFound++;state.openIds=[];cfPlayFeedback(true);
-      if(state.pairsFound>=state.cards.length/2)state.done=true;
-      after();
-    }else{
-      state.locked=true;after();
-      setTimeout(()=>{
-        if(a)a.open=false;if(b)b.open=false;
-        state.openIds=[];state.locked=false;after();
-      },850);
-    }
-  }else after();
-}
-function flip(id){
-  if(playMode==="solo"){
-    processFlip(localState,id,renderGame);
-  }else if(role==="host"){
-    processFlip(onlineState,id,()=>{renderGame();broadcastState();});
-  }else{
-    CF_REALTIME.send(channel,"flip",{id,player:me}).catch(()=>setStatus("gameStatus","Die Karte konnte nicht gesendet werden.","bad"));
-  }
-}
-function startSolo(){
-  playMode="solo";saveSelection();
-  localState=createRound(1,[...selected]);
-  $("setupCard").hidden=true;$("gameCard").hidden=false;renderGame();
-}
-function nextSolo(){ localState=createRound((localState?.roundNo||1)+1,[...selected]);renderGame(); }
-
-async function disconnect(){
-  clearInterval(joinTimer);joinTimer=null;
-  await CF_REALTIME.remove(rtClient,channel);
-  rtClient=null;channel=null;peerReady=false;guestSignedIn=false;role="";room="";
-}
-async function openChannel(code,nextRole){
-  await disconnect();
-  room=CF_REALTIME.normalizeRoom(code);
-  if(room.length!==6)throw new Error("Bitte einen vollständigen Raumcode eingeben.");
-  role=nextRole;
-  const pair=await CF_REALTIME.createChannel(`cf-memory-${room}`);
-  rtClient=pair.client;channel=pair.channel;
-  channel
-    .on("broadcast",{event:"join"},({payload})=>{
-      if(role!=="host"||!payload||payload.player===me)return;
-      peerReady=true;guestSignedIn=Boolean(payload.signedIn);renderPicker();
-      setStatus("roomStatus","Die zweite Person ist verbunden.","ok");
-      CF_REALTIME.send(channel,"welcome",{to:payload.player,host:me});
-      if(onlineState)broadcastState();
-    })
-    .on("broadcast",{event:"welcome"},({payload})=>{
-      if(role!=="guest"||!payload||payload.to!==me)return;
-      peerReady=true;clearInterval(joinTimer);
-      setStatus("roomStatus","Mit dem Raum verbunden. Warte auf den Start.","ok");
-    })
-    .on("broadcast",{event:"state"},({payload})=>{
-      if(role!=="guest"||!payload||payload.to&&payload.to!==me)return;
-      const incomingState=payload.state||null;
-      if(incomingState && !signedIn && (incomingState.chapters||[]).some(id=>id!=="01")){
-        setStatus("roomStatus","Bitte melde dich an, damit du Kapitel ab 2 mitspielen kannst.","bad");
-        return;
-      }
-      onlineState=incomingState;
-      if(onlineState){$("setupCard").hidden=true;$("gameCard").hidden=false;renderGame();}
-    })
-    .on("broadcast",{event:"flip"},({payload})=>{
-      if(role!=="host"||!payload)return;
-      processFlip(onlineState,payload.id,()=>{renderGame();broadcastState();});
-    })
-    .on("broadcast",{event:"next"},()=>{
-      if(role!=="host")return;
-      makeNextOnlineRound();
-    })
-    .subscribe(status=>{
-      if(status==="SUBSCRIBED"){
-        if(role==="guest"){
-          const announce=()=>CF_REALTIME.send(channel,"join",{player:me,signedIn}).catch(()=>{});
-          announce();joinTimer=setInterval(announce,1800);
-        }
-      }else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"){
-        setStatus(role==="host"?"roomStatus":"onlineStatus","Online-Verbindung nicht möglich.","bad");
-      }
-    });
-}
-function broadcastState(){
-  if(role!=="host"||!channel||!onlineState)return;
-  CF_REALTIME.send(channel,"state",{state:onlineState}).catch(()=>setStatus("gameStatus","Verbindung unterbrochen.","bad"));
-}
-async function createRoom(){
-  try{
-    playMode="online";peerReady=false;
-    await openChannel(CF_REALTIME.randomRoom(),"host");
-    $("roomBox").hidden=false;$("roomCode").textContent=room;
-    setStatus("roomStatus","Warte auf die zweite Person …");
-    renderPicker();
-  }catch(err){setStatus("onlineStatus",err.message||"Raum konnte nicht erstellt werden.","bad");}
-}
-async function joinRoom(){
-  try{
-    playMode="online";
-    const code=CF_REALTIME.normalizeRoom($("roomInput").value);
-    await openChannel(code,"guest");
-    $("roomBox").hidden=false;$("roomCode").textContent=room;
-    $("startOnline").hidden=true;
-    setStatus("roomStatus","Verbindung wird hergestellt …");
-  }catch(err){setStatus("onlineStatus",err.message||"Beitritt nicht möglich.","bad");}
-}
-function startOnline(){
-  if(role!=="host"||!peerReady)return;
-  saveSelection();onlineState=createRound(1,[...selected]);
-  $("setupCard").hidden=true;$("gameCard").hidden=false;renderGame();broadcastState();
-}
-function makeNextOnlineRound(){
-  if(role!=="host"||!onlineState)return;
-  onlineState=createRound((onlineState.roundNo||1)+1,onlineState.chapters||[...selected]);renderGame();broadcastState();
-}
-async function invite(copyOnly){
-  const url=CF_REALTIME.roomUrl("memory.html",room);
-  try{
-    if(copyOnly){await CF_REALTIME.copyText(url);setStatus("roomStatus","Einladungslink wurde kopiert.","ok");}
-    else{
-      const result=await CF_REALTIME.shareInvite("Memory – Chinesisch festigen",`Spiele mit mir Memory. Raumcode: ${room}`,url);
-      setStatus("roomStatus",result==="copied"?"Einladungslink wurde kopiert.":"Einladung geöffnet.","ok");
-    }
-  }catch(_err){setStatus("roomStatus","Der Link konnte nicht geteilt werden.","bad");}
-}
-function switchMode(next){
-  playMode=next;
-  $("soloMode").classList.toggle("active",next==="solo");
-  $("onlineMode").classList.toggle("active",next==="online");
-  $("soloPanel").hidden=next!=="solo";
-  $("onlinePanel").hidden=next!=="online";
-  if(next==="solo")$("roomBox").hidden=true;
-}
-
-$("selectAll").onclick=()=>{allowedTopics().forEach(t=>selected.add(t.id));saveSelection();renderPicker();};
-$("clearAll").onclick=()=>{selected.clear();saveSelection();renderPicker();};
-$("startSolo").onclick=startSolo;
-$("soloMode").onclick=()=>switchMode("solo");
-$("onlineMode").onclick=()=>switchMode("online");
-$("createRoom").onclick=createRoom;
-$("joinRoom").onclick=joinRoom;
-$("copyInvite").onclick=()=>invite(true);
-$("shareInvite").onclick=()=>invite(false);
-$("startOnline").onclick=startOnline;
-$("nextRound").onclick=()=>{if(playMode==="solo")nextSolo();else if(role==="host")makeNextOnlineRound();else CF_REALTIME.send(channel,"next",{player:me});};
-$("changeSelection").onclick=()=>{$("gameCard").hidden=true;$("setupCard").hidden=false;renderPicker();};
-$("soundToggle").onclick=()=>{soundOn=!soundOn;localStorage.setItem("cf_memory_global_sound",soundOn?"1":"0");updateSoundButton();};
-$("roomInput").addEventListener("input",()=>{$("roomInput").value=CF_REALTIME.normalizeRoom($("roomInput").value);});
-window.addEventListener("beforeunload",()=>disconnect());
-
-(async function init(){
-  if(window.CF_SYNC&&CF_SYNC.ready){try{await CF_SYNC.ready;}catch(_err){}}
-  signedIn=Boolean(window.CF_SYNC&&CF_SYNC.getState&&CF_SYNC.getState().signedIn);
-  loadSelection();renderPicker();updateSoundButton();
-  const incoming=CF_REALTIME.normalizeRoom(new URLSearchParams(location.search).get("room"));
-  if(incoming){switchMode("online");$("roomInput").value=incoming;joinRoom();}
-})();
+const $=id=>document.getElementById(id);const me=CF_REALTIME.playerId();
+const topics=(window.CF_TOPICS||[]).filter(t=>(t.vocab||[]).some(v=>v&&v.zh&&v.de));const selected=new Set();
+const COLORS=[{id:"blue",hex:"#3b82f6"},{id:"red",hex:"#ef4444"},{id:"green",hex:"#22c55e"},{id:"purple",hex:"#a855f7"},{id:"orange",hex:"#f59e0b"},{id:"pink",hex:"#ec4899"},{id:"teal",hex:"#14b8a6"},{id:"yellow",hex:"#eab308"}];
+const PAIRS=6;let signedIn=false,mode="solo",soundOn=localStorage.getItem("cf_memory_global_sound")!=="0";
+let chosenColor=localStorage.getItem("cf_memory_player_color")||"blue";let room="",role="",client=null,channel=null,joined=false,joinTimer=null,heartbeatTimer=null,stateTimer=null;
+let gameState=null,soloState=null,flipTimer=null;
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function nameValue(){return ($("playerName").value||"").trim().slice(0,24)}function setStatus(id,text,kind){const e=$(id);if(!e)return;e.textContent=text||"";e.className="memStatus"+(kind?` ${kind}`:"")}
+function allowedTopics(){return signedIn?topics:topics.filter(t=>t.id==="01")}function needsLogin(chapters){return(chapters||[...selected]).some(id=>id!=="01")}
+function pool(chapters){const ids=new Set(chapters||[...selected]),out=[];topics.filter(t=>ids.has(t.id)).forEach(t=>(t.vocab||[]).forEach((v,i)=>{if(v&&v.zh&&v.de)out.push({key:`${t.id}_${i}_${v.zh}`,zh:v.writeZh||v.zh,de:v.writeDe||v.de})}));return out}
+function saveSelection(){localStorage.setItem("cf_memory_selected_chapters_v3",JSON.stringify([...selected]))}function loadSelection(){try{(JSON.parse(localStorage.getItem("cf_memory_selected_chapters_v3")||"[]")||[]).forEach(id=>{if(allowedTopics().some(t=>t.id===id))selected.add(id)})}catch(_e){}if(!selected.size&&allowedTopics()[0])selected.add(allowedTopics()[0].id)}
+function playerColor(id){const state=mode==="solo"?soloState:gameState;return(state?.players||[]).find(p=>p.id===id)?.color||"#94a3b8"}function currentPlayer(){return(gameState?.players||[])[gameState?.turnIndex||0]||null}
+function renderChapters(){const m=$("chapterPicker");m.innerHTML="";const locked=role==="guest"&&joined||gameState?.phase==="playing";topics.forEach(t=>{const blocked=!signedIn&&t.id!=="01";const b=document.createElement("button");b.type="button";b.className="memChapter";b.classList.toggle("active",selected.has(t.id));b.innerHTML=`<strong>Kapitel ${escapeHtml(t.id)}</strong><span>${escapeHtml(t.title)}</span>`;if(blocked||locked){b.disabled=true;b.classList.add("locked")}else b.onclick=()=>{selected.has(t.id)?selected.delete(t.id):selected.add(t.id);saveSelection();renderChapters();hostApplySelection()};m.appendChild(b)});const n=pool([...selected]).length;$("selectionInfo").textContent=selected.size?`${selected.size} Kapitel · ${n} Vokabeln verfügbar`:"Noch kein Kapitel ausgewählt.";$("startSolo").disabled=n<2}
+function takenColors(){return new Set((gameState?.players||[]).filter(p=>p.id!==me).map(p=>p.colorId))}
+function renderColors(){const m=$("colorPicker");m.innerHTML="";const taken=takenColors();COLORS.forEach(c=>{const b=document.createElement("button");b.type="button";b.className="colorChoice";b.style.setProperty("--pick",c.hex);b.title=c.id;b.classList.toggle("active",c.id===chosenColor);if(taken.has(c.id)){b.disabled=true;b.classList.add("taken")}else b.onclick=()=>chooseColor(c.id);m.appendChild(b)})}
+function chooseColor(id){if(takenColors().has(id))return;chosenColor=id;localStorage.setItem("cf_memory_player_color",id);renderColors();if(joined){if(role==="host")hostUpdatePlayer(me,nameValue(),id);else CF_REALTIME.send(channel,"player_update",{player:me,name:nameValue(),colorId:id})}}
+function renderLobby(){const m=$("lobbyList");m.innerHTML="";(gameState?.players||[]).forEach(p=>{const r=document.createElement("div");r.className="memLobbyPlayer";r.style.setProperty("--player",p.color);r.innerHTML=`<i class="memDot"></i><strong>${escapeHtml(p.name)}${p.id===me?" · du":""}</strong><span>${p.score||0} Paare</span>`;m.appendChild(r)});const n=gameState?.players?.length||0;$("startOnline").hidden=role!=="host";$("startOnline").disabled=!(role==="host"&&n>=2&&n<=4&&pool(gameState.chapters).length>=2&&(!needsLogin(gameState.chapters)||(gameState.players||[]).every(p=>p.signedIn)));setStatus("roomStatus",n<2?"Warte auf mindestens eine weitere Person.":`${n} Personen sind bereit.`,n>=2?"ok":"");renderColors()}
+function renderScoreboard(){const m=$("scoreboard");m.innerHTML="";const cur=currentPlayer();(gameState?.players||[]).forEach(p=>{const d=document.createElement("div");d.className="memScore"+(cur?.id===p.id?" current":"");d.style.setProperty("--player",p.color);d.innerHTML=`<strong>${p.score||0}</strong><span>${escapeHtml(p.name)}</span>`;m.appendChild(d)})}
+function renderState(){if(mode==="solo"){renderSolo();return}if(!gameState)return;const mine=(gameState.players||[]).find(p=>p.id===me);if(mine?.colorId)chosenColor=mine.colorId;selected.clear();(gameState.chapters||[]).forEach(id=>selected.add(id));renderChapters();renderLobby();renderScoreboard();$("setupCard").hidden=gameState.phase==="playing"||gameState.phase==="done";$("gameCard").hidden=gameState.phase==="lobby";if(gameState.phase==="lobby")return;const cur=currentPlayer();$("turnText").textContent=gameState.phase==="done"?"Runde beendet":cur?.id===me?"Du bist dran":`${cur?.name||"Jemand"} ist dran`;$("gameStatus").textContent=gameState.phase==="playing"?(cur?.id===me?"Dein Zug: Decke zwei Karten auf.":"Warte auf den Zug der anderen Person."):"Alle Paare wurden gefunden.";renderCards(gameState);$("roundDone").hidden=gameState.phase!=="done";$("nextRound").hidden=role!=="host";if(gameState.phase==="done")$("roundDoneText").textContent=`${gameState.moves||0} Züge`}
+function renderCards(state){const m=$("memoryGrid");m.innerHTML="";const cur=currentPlayer();state.cards.forEach(card=>{const b=document.createElement("button");b.type="button";b.className="memoryCard"+(card.open?" open":"")+(card.matched?" matched":"");const owner=card.matchedBy||card.openedBy||"";b.style.setProperty("--owner",playerColor(owner));b.innerHTML=card.open||card.matched?`<span class="memoryText">${escapeHtml(card.text)}</span>`:'<span class="memoryText hidden">?</span>';const can=mode==="solo"?!state.locked&&!card.open&&!card.matched:state.phase==="playing"&&cur?.id===me&&!state.locked&&!card.open&&!card.matched;b.disabled=!can;b.onclick=()=>flip(card.id);m.appendChild(b)})}
+function makeCards(chapters,roundNo){const picks=shuffle(pool(chapters)).slice(0,Math.min(PAIRS,pool(chapters).length));const stamp=`${Date.now()}_${Math.random().toString(36).slice(2,7)}`;return{roundNo:roundNo||1,chapters:chapters.slice(),cards:shuffle(picks.flatMap((v,i)=>[{id:`${stamp}_${i}_zh`,pair:i,type:"zh",text:v.zh,open:false,matched:false,openedBy:"",matchedBy:""},{id:`${stamp}_${i}_de`,pair:i,type:"de",text:v.de,open:false,matched:false,openedBy:"",matchedBy:""}])),openIds:[],locked:false,moves:0,pairsFound:0}}
+function speak(card){if(soundOn&&card?.type==="zh")cfSpeakZh(card.text,{rate:.85})}
+function processFlip(state,id,playerId,after){if(!state||state.locked||state.phase==="done")return;const c=state.cards.find(x=>x.id===id);if(!c||c.open||c.matched)return;c.open=true;c.openedBy=playerId;state.openIds.push(id);speak(c);if(state.openIds.length<2){after();return}state.moves++;const a=state.cards.find(x=>x.id===state.openIds[0]),b=state.cards.find(x=>x.id===state.openIds[1]);if(a&&b&&a.pair===b.pair&&a.type!==b.type){a.matched=b.matched=true;a.matchedBy=b.matchedBy=playerId;state.pairsFound++;state.openIds=[];const p=(state.players||[]).find(x=>x.id===playerId);if(p)p.score=(p.score||0)+1;if(state.pairsFound>=state.cards.length/2)state.phase="done";cfPlayFeedback(true);after()}else{state.locked=true;after();clearTimeout(flipTimer);flipTimer=setTimeout(()=>{if(a){a.open=false;a.openedBy=""}if(b){b.open=false;b.openedBy=""}state.openIds=[];state.locked=false;if(mode!=="solo"&&state.players?.length)state.turnIndex=(state.turnIndex+1)%state.players.length;after()},900)}}
+function flip(id){if(mode==="solo")processFlip(soloState,id,me,renderSolo);else if(role==="host")hostFlip(id,me);else CF_REALTIME.send(channel,"flip",{player:me,id}).catch(()=>{})}
+function startSolo(){mode="solo";saveSelection();const base=makeCards([...selected],1);soloState={...base,phase:"playing",players:[{id:me,name:"Du",color:COLORS.find(c=>c.id===chosenColor)?.hex||COLORS[0].hex,score:0}],turnIndex:0};$("setupCard").hidden=true;$("gameCard").hidden=false;renderSolo()}
+function renderSolo(){if(!soloState)return;$("turnText").textContent="Allein spielen";$("gameStatus").textContent="Finde alle passenden Paare.";$("scoreboard").innerHTML="";renderCards(soloState);$("roundDone").hidden=soloState.phase!=="done";$("nextRound").hidden=false;if(soloState.phase==="done")$("roundDoneText").textContent=`${soloState.moves} Züge`}
+function hostUpdatePlayer(id,name,colorId){if(role!=="host"||!gameState||gameState.phase!=="lobby")return;const other=gameState.players.find(p=>p.id!==id&&p.colorId===colorId);if(other){if(id!==me)CF_REALTIME.send(channel,"color_taken",{to:id,colorId});return}const p=gameState.players.find(x=>x.id===id);if(!p)return;p.name=(name||p.name).slice(0,24);p.colorId=colorId;p.color=COLORS.find(c=>c.id===colorId)?.hex||COLORS[0].hex;broadcastState();renderState()}
+function hostApplySelection(){if(role!=="host"||!gameState||gameState.phase!=="lobby")return;gameState.chapters=[...selected];broadcastState();renderState()}
+function publicState(){return gameState?JSON.parse(JSON.stringify(gameState)):null}function broadcastState(){if(role==="host"&&channel&&gameState)CF_REALTIME.send(channel,"state",{state:publicState()}).catch(()=>{})}
+function hostStart(){if(role!=="host"||!gameState)return;const n=gameState.players.length;if(n<2||n>4)return;if(pool(gameState.chapters).length<2)return;if(needsLogin(gameState.chapters)&&!gameState.players.every(p=>p.signedIn)){setStatus("roomStatus","Für Kapitel ab 2 müssen alle Personen angemeldet sein.","bad");return}const base=makeCards(gameState.chapters,(gameState.roundNo||0)+1);gameState={...gameState,...base,phase:"playing",turnIndex:0};broadcastState();renderState()}
+function hostFlip(id,player){if(role!=="host"||gameState?.phase!=="playing"||currentPlayer()?.id!==player)return;processFlip(gameState,id,player,()=>{broadcastState();renderState()})}
+function nextRound(){if(mode==="solo"){const n=(soloState?.roundNo||1)+1;const base=makeCards([...selected],n);soloState={...base,phase:"playing",players:soloState.players,turnIndex:0};renderSolo();return}if(role==="host")hostStart()}
+async function disconnect(){clearInterval(joinTimer);clearInterval(heartbeatTimer);clearInterval(stateTimer);clearTimeout(flipTimer);joinTimer=heartbeatTimer=stateTimer=flipTimer=null;await CF_REALTIME.remove(client,channel);client=null;channel=null;room="";role="";joined=false;gameState=null}
+async function openChannel(code,nextRole){await disconnect();room=CF_REALTIME.normalizeRoom(code);if(room.length!==6)throw new Error("Bitte einen vollständigen Raumcode eingeben.");role=nextRole;const pair=await CF_REALTIME.createChannel(`cf-memory-v2-${room}`);client=pair.client;channel=pair.channel;channel
+.on("broadcast",{event:"join"},({payload})=>{if(role!=="host"||!payload||payload.player===me)return;let p=gameState.players.find(x=>x.id===payload.player);if(gameState.phase!=="lobby"&&!p){CF_REALTIME.send(channel,"full",{to:payload.player,message:"Das Spiel läuft bereits."});return}if(gameState.players.length>=4&&!p){CF_REALTIME.send(channel,"full",{to:payload.player,message:"In diesem Raum spielen bereits vier Personen."});return}if(gameState.players.some(x=>x.id!==payload.player&&x.colorId===payload.colorId)){CF_REALTIME.send(channel,"color_taken",{to:payload.player,colorId:payload.colorId});return}if(!p){p={id:payload.player,name:String(payload.name||"Mitspieler").slice(0,24),colorId:payload.colorId,signedIn:Boolean(payload.signedIn),score:0};gameState.players.push(p)}p.name=String(payload.name||p.name).slice(0,24);p.colorId=payload.colorId;p.color=COLORS.find(c=>c.id===p.colorId)?.hex||COLORS[0].hex;p.signedIn=Boolean(payload.signedIn);CF_REALTIME.send(channel,"welcome",{to:p.id,state:publicState()});broadcastState();renderState()})
+.on("broadcast",{event:"welcome"},({payload})=>{if(role!=="guest"||payload?.to!==me)return;joined=true;clearInterval(joinTimer);gameState=payload.state;$("roomBox").hidden=false;$("roomCode").textContent=room;renderState();setStatus("connectionStatus","Mit dem Raum verbunden.","ok");heartbeatTimer=setInterval(()=>CF_REALTIME.send(channel,"join",{player:me,name:nameValue(),colorId:chosenColor,signedIn}).catch(()=>{}),8000)})
+.on("broadcast",{event:"full"},({payload})=>{if(role==="guest"&&payload?.to===me)setStatus("connectionStatus",payload.message||"Der Raum ist voll.","bad")})
+.on("broadcast",{event:"color_taken"},({payload})=>{if(role==="guest"&&payload?.to===me){setStatus("connectionStatus","Diese Farbe ist schon vergeben. Bitte wähle eine andere.","bad");joined=Boolean(gameState?.players?.some(p=>p.id===me));renderColors()}})
+.on("broadcast",{event:"state"},({payload})=>{if(role!=="guest"||!payload?.state)return;gameState=payload.state;joined=true;selected.clear();(gameState.chapters||[]).forEach(id=>selected.add(id));$("roomBox").hidden=false;$("roomCode").textContent=room;renderState()})
+.on("broadcast",{event:"flip"},({payload})=>{if(role==="host"&&payload?.player)hostFlip(payload.id,payload.player)})
+.on("broadcast",{event:"player_update"},({payload})=>{if(role==="host"&&payload?.player)hostUpdatePlayer(payload.player,payload.name,payload.colorId)})
+.on("broadcast",{event:"leave"},({payload})=>{if(role!=="host"||!payload?.player||!gameState)return;const idx=gameState.players.findIndex(p=>p.id===payload.player);if(idx<0)return;gameState.players.splice(idx,1);if(gameState.phase==="playing"||gameState.phase==="done"){if(!gameState.players.length){gameState.phase="lobby";gameState.turnIndex=0}else{if(idx<gameState.turnIndex)gameState.turnIndex--;gameState.turnIndex=Math.max(0,gameState.turnIndex%gameState.players.length)}}broadcastState();renderState()})
+.on("broadcast",{event:"room_closed"},()=>{if(role==="guest"){setStatus("connectionStatus","Die Raumleitung hat den Raum beendet.","bad");setStatus("gameStatus","Der Raum ist geschlossen.","bad")}})
+.subscribe(status=>{if(status==="SUBSCRIBED"&&role==="guest"){const a=()=>CF_REALTIME.send(channel,"join",{player:me,name:nameValue(),colorId:chosenColor,signedIn}).catch(()=>{});a();joinTimer=setInterval(a,1800)}if(status==="CHANNEL_ERROR"||status==="TIMED_OUT")setStatus("connectionStatus","Online-Verbindung nicht möglich.","bad")})}
+async function createRoom(){if(!nameValue()){setStatus("connectionStatus","Bitte zuerst deinen Namen eingeben.","bad");return}try{await openChannel(CF_REALTIME.randomRoom(),"host");joined=true;const color=COLORS.find(c=>c.id===chosenColor)||COLORS[0];gameState={phase:"lobby",hostId:me,chapters:[...selected],roundNo:0,players:[{id:me,name:nameValue(),colorId:color.id,color:color.hex,signedIn,score:0}]};$("roomBox").hidden=false;$("roomCode").textContent=room;renderState();setStatus("connectionStatus","Raum erstellt.","ok");stateTimer=setInterval(broadcastState,3500)}catch(e){setStatus("connectionStatus",e.message||"Raum konnte nicht erstellt werden.","bad")}}
+async function joinRoom(){if(!nameValue()){setStatus("connectionStatus","Bitte zuerst deinen Namen eingeben.","bad");return}try{await openChannel($("roomInput").value,"guest");$("roomBox").hidden=false;$("roomCode").textContent=room;setStatus("connectionStatus","Verbindung wird hergestellt …")}catch(e){setStatus("connectionStatus",e.message||"Beitritt nicht möglich.","bad")}}
+async function invite(copyOnly){const url=CF_REALTIME.roomUrl("memory.html",room);try{if(copyOnly){await CF_REALTIME.copyText(url);setStatus("roomStatus","Einladungslink kopiert.","ok")}else{const r=await CF_REALTIME.shareInvite("Memory – Chinesisch festigen",`Spiele mit mir Memory. Code: ${room}`,url);setStatus("roomStatus",r==="copied"?"Einladungslink kopiert.":"Einladung geöffnet.","ok")}}catch(_e){setStatus("roomStatus","Link konnte nicht geteilt werden.","bad")}}
+function switchMode(next){mode=next;$("soloMode").classList.toggle("active",mode==="solo");$("groupMode").classList.toggle("active",mode==="group");$("soloPanel").hidden=mode!=="solo";$("groupPanel").hidden=mode!=="group";renderChapters()}
+$("soloMode").onclick=()=>switchMode("solo");$("groupMode").onclick=()=>switchMode("group");$("selectAll").onclick=()=>{if(role==="guest"&&joined)return;allowedTopics().forEach(t=>selected.add(t.id));saveSelection();renderChapters();hostApplySelection()};$("clearAll").onclick=()=>{if(role==="guest"&&joined)return;selected.clear();saveSelection();renderChapters();hostApplySelection()};$("startSolo").onclick=startSolo;$("saveProfile").onclick=()=>{if(nameValue())localStorage.setItem("cf_memory_player_name",nameValue());if(joined){if(role==="host")hostUpdatePlayer(me,nameValue(),chosenColor);else CF_REALTIME.send(channel,"player_update",{player:me,name:nameValue(),colorId:chosenColor})}};$("createRoom").onclick=createRoom;$("joinRoom").onclick=joinRoom;$("startOnline").onclick=hostStart;$("copyInvite").onclick=()=>invite(true);$("shareInvite").onclick=()=>invite(false);$("nextRound").onclick=nextRound;$("soundToggle").onclick=()=>{soundOn=!soundOn;localStorage.setItem("cf_memory_global_sound",soundOn?"1":"0");$("soundToggle").textContent=soundOn?"Ton an":"Ton aus"};$("leaveGame").onclick=async()=>{if(channel&&joined){try{if(role==="host")await CF_REALTIME.send(channel,"room_closed",{});else await CF_REALTIME.send(channel,"leave",{player:me})}catch(_e){}}await disconnect();location.reload()};$("roomInput").oninput=()=>{$("roomInput").value=CF_REALTIME.normalizeRoom($("roomInput").value)};window.addEventListener("beforeunload",()=>{try{if(channel&&joined){if(role==="host")CF_REALTIME.send(channel,"room_closed",{});else CF_REALTIME.send(channel,"leave",{player:me})}}catch(_e){}disconnect()});
+(async function(){if(window.CF_SYNC&&CF_SYNC.ready){try{await CF_SYNC.ready}catch(_e){}}signedIn=Boolean(window.CF_SYNC&&CF_SYNC.getState&&CF_SYNC.getState().signedIn);$("playerName").value=localStorage.getItem("cf_memory_player_name")||localStorage.getItem("cf_user_name")||"";loadSelection();renderChapters();renderColors();$("soundToggle").textContent=soundOn?"Ton an":"Ton aus";const incoming=CF_REALTIME.normalizeRoom(new URLSearchParams(location.search).get("room"));if(incoming){switchMode("group");$("roomInput").value=incoming;setStatus("connectionStatus","Namen und Farbe wählen, dann beitreten.")}})();
 </script>
 </body>
 </html>

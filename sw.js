@@ -1,5 +1,5 @@
 // Chinesisch festigen – Service Worker
-const CACHE = "cf-v144-writing-levels";
+const CACHE = "cf-v145-writing-and-group-games";
 
 const SHELL = [
   "./",
