@@ -1,0 +1,193 @@
+/* Chinesisch festigen – gemeinsame Korrekturen v141 */
+
+/* Lange Wortkarten müssen vollständig im anklickbaren Button bleiben. */
+.wordToken{
+  width:auto;
+  max-width:100%;
+  min-width:0;
+  height:auto;
+  min-height:48px;
+  white-space:normal!important;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+  hyphens:auto;
+  line-height:1.2;
+  text-align:center;
+  touch-action:manipulation;
+  position:relative;
+  z-index:1;
+}
+.tokenBank,.dropZone{
+  align-items:stretch!important;
+  overflow:visible!important;
+}
+
+/* Kapitelübersicht ohne dekorative Bereichssymbole. */
+.chapterHub .learningSectionHead{
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:6px!important;
+}
+.chapterHub .learningSectionIdentity{
+  display:block!important;
+  text-align:left!important;
+}
+.chapterHub .learningSectionIcon{display:none!important}
+
+/* Gehörte Einträge sind sichtbar, ohne die Kapitel-Farbwelt zu stören. */
+.vocabCard.heard,.speechBubble.heard{
+  box-shadow:inset 0 0 0 2px rgba(134,239,172,.7),0 8px 24px rgba(0,0,0,.14);
+}
+.listenProgressLine{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:0 0 12px;
+  padding:9px 12px;
+  border:1px solid var(--stroke);
+  border-radius:13px;
+  background:rgba(255,255,255,.07);
+  font-size:13px;
+  color:var(--muted);
+}
+
+/* Profilbild */
+.profileAvatarLarge{
+  overflow:hidden;
+  position:relative;
+}
+.profileAvatarLarge img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+}
+.cfAvatarControls{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:12px;
+}
+.cfAvatarControls button,.cfAvatarControls label{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:9px 13px;
+  border:1px solid var(--stroke);
+  border-radius:999px;
+  background:var(--button-bg);
+  color:var(--chapter-text);
+  font:inherit;
+  font-size:14px;
+  font-weight:750;
+  cursor:pointer;
+}
+.cfAvatarControls input{position:absolute;left:-9999px}
+.cfAvatarHint{font-size:12px;color:var(--muted);margin:7px 0 0}
+
+/* Gemeinsame Online-Spiel-Bausteine */
+.cfOnlineModes{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin:0 0 14px;
+}
+.cfOnlineModes button.active{
+  background:var(--card-strong);
+  outline:2px solid rgba(255,255,255,.28);
+}
+.cfOnlinePanel[hidden]{display:none!important}
+.cfRoomBox{
+  margin-top:14px;
+  padding:14px;
+  border:1px solid var(--stroke);
+  border-radius:16px;
+  background:rgba(255,255,255,.07);
+}
+.cfRoomCode{
+  font-size:clamp(30px,8vw,54px);
+  letter-spacing:.12em;
+  font-weight:950;
+  text-align:center;
+  margin:8px 0 12px;
+}
+.cfRoomActions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.cfJoinRow{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:8px;
+}
+.cfJoinRow input{
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-weight:850;
+}
+.cfOnlineStatus{
+  min-height:22px;
+  margin-top:10px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.4;
+}
+.cfOnlineStatus.ok{color:#86efac}
+.cfOnlineStatus.bad{color:#fecaca}
+
+/* Wörterduell */
+.duelScoreboard{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  gap:10px;
+  align-items:center;
+  margin-bottom:14px;
+}
+.duelScore{
+  text-align:center;
+  padding:10px;
+  border:1px solid var(--stroke);
+  border-radius:14px;
+  background:rgba(255,255,255,.08);
+}
+.duelScore strong{display:block;font-size:28px}
+.duelVs{font-weight:900;opacity:.75}
+.duelPrompt{
+  min-height:140px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:20px;
+  border:1px solid var(--stroke);
+  border-radius:20px;
+  background:rgba(255,255,255,.10);
+  font-size:clamp(30px,8vw,64px);
+  line-height:1.15;
+  font-weight:950;
+  overflow-wrap:anywhere;
+}
+.duelChoices{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin-top:12px;
+}
+.duelChoices button{
+  min-height:58px;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  line-height:1.25;
+}
+.duelChoices button.correct{outline:3px solid #4ade80;background:rgba(34,197,94,.25)}
+.duelChoices button.wrong{outline:3px solid #f87171;background:rgba(239,68,68,.22)}
+
+@media(max-width:560px){
+  .cfOnlineModes,.duelChoices{grid-template-columns:1fr}
+  .cfJoinRow{grid-template-columns:1fr}
+  .wordToken{font-size:clamp(16px,5.4vw,24px)!important;padding:10px 11px!important}
+}

@@ -9,22 +9,55 @@
   <meta name="theme-color" content="#03172B" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
 </head>
 <body>
   <main class="app memoryApp">
     <div class="topbar topbarSticky"><a class="back" href="spiele.html">← Zurück</a></div>
     <h1 class="pageTitleResponsive">Memory</h1>
-    <p class="subtitle">Wähle die Kapitel aus. Jede neue Runde mischt andere Vokabeln aus deiner Auswahl.</p>
+    <p class="subtitle">Spiele allein oder lade jemanden mit einem Link beziehungsweise Raumcode ein.</p>
 
     <section class="card" id="setupCard">
-      <div class="setTitle">Kapitel auswählen</div>
-      <div class="toolbar">
-        <button id="selectAll" type="button">Alle verfügbaren</button>
-        <button id="clearAll" type="button">Auswahl löschen</button>
+      <div class="cfOnlineModes">
+        <button id="soloMode" class="active" type="button">Allein spielen</button>
+        <button id="onlineMode" type="button">Mit jemandem spielen</button>
       </div>
-      <div class="memoryChapterPicker" id="chapterPicker"></div>
-      <p class="small" id="selectionInfo">Noch kein Kapitel ausgewählt.</p>
-      <button id="startGame" type="button" disabled>Memory starten</button>
+
+      <div id="selectionBlock">
+        <div class="setTitle">Kapitel auswählen</div>
+        <div class="toolbar">
+          <button id="selectAll" type="button">Alle verfügbaren</button>
+          <button id="clearAll" type="button">Auswahl löschen</button>
+        </div>
+        <div class="memoryChapterPicker" id="chapterPicker"></div>
+        <p class="small" id="selectionInfo">Noch kein Kapitel ausgewählt.</p>
+      </div>
+
+      <div id="soloPanel" class="cfOnlinePanel">
+        <button id="startSolo" type="button" disabled>Memory starten</button>
+      </div>
+
+      <div id="onlinePanel" class="cfOnlinePanel" hidden>
+        <div class="toolbar">
+          <button id="createRoom" type="button">Neuen Raum erstellen</button>
+        </div>
+        <div class="cfJoinRow">
+          <input id="roomInput" type="text" maxlength="6" placeholder="Raumcode" autocomplete="off" />
+          <button id="joinRoom" type="button">Beitreten</button>
+        </div>
+        <div class="cfOnlineStatus" id="onlineStatus">Erstelle einen Raum oder gib einen Einladungscode ein.</div>
+      </div>
+
+      <div class="cfRoomBox" id="roomBox" hidden>
+        <div class="small" style="text-align:center">Dein Raumcode</div>
+        <div class="cfRoomCode" id="roomCode">------</div>
+        <div class="cfRoomActions">
+          <button id="copyInvite" type="button">Link kopieren</button>
+          <button id="shareInvite" type="button">Einladen</button>
+          <button id="startOnline" type="button" disabled>Gemeinsames Spiel starten</button>
+        </div>
+        <div class="cfOnlineStatus" id="roomStatus">Warte auf die zweite Person …</div>
+      </div>
     </section>
 
     <section class="card" id="gameCard" hidden>
@@ -39,9 +72,8 @@
           <button id="changeSelection" type="button">Kapitel ändern</button>
         </div>
       </div>
-
+      <div class="cfOnlineStatus" id="gameStatus"></div>
       <div class="memoryGrid" id="memoryGrid" aria-label="Memory-Karten"></div>
-
       <div class="memoryRoundDone" id="roundDone" hidden>
         <strong>Runde geschafft!</strong>
         <span id="roundDoneText"></span>
@@ -54,20 +86,27 @@
 <script src="config.js"></script>
 <script src="sync.js"></script>
 <script src="common.js"></script>
+<script src="realtime-games.js"></script>
 <script>
-const topics = (window.CF_TOPICS || []).filter(t => (t.vocab || []).some(v => v && v.zh && v.de));
+const allTopics = (window.CF_TOPICS || []).filter(t => (t.vocab || []).some(v => v && v.zh && v.de));
 const $ = id => document.getElementById(id);
 const selected = new Set();
-let pool = [];
-let cards = [];
-let openCards = [];
-let locked = false;
-let pairsFound = 0;
-let moves = 0;
-let roundNo = 1;
-let soundOn = localStorage.getItem("cf_memory_global_sound") !== "0";
 const PAIRS_PER_ROUND = 6;
+let signedIn = false;
+let playMode = "solo";
+let soundOn = localStorage.getItem("cf_memory_global_sound") !== "0";
+let localState = null;
+let onlineState = null;
+let role = "";
+let room = "";
+let rtClient = null;
+let channel = null;
+let peerReady = false;
+let guestSignedIn = false;
+let joinTimer = null;
+const me = CF_REALTIME.playerId();
 
+function allowedTopics(){ return signedIn ? allTopics : allTopics.filter(t => t.id === "01"); }
 function shuffleLocal(list){
   const a = list.slice();
   for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
@@ -75,103 +114,259 @@ function shuffleLocal(list){
 }
 function writeZh(v){ return v.writeZh || v.zh || ""; }
 function writeDe(v){ return v.writeDe || v.de || ""; }
-function updateSoundButton(){
-  $("soundToggle").textContent = soundOn ? "Ton an" : "Ton aus";
-  $("soundToggle").classList.toggle("active",soundOn);
-}
+function setStatus(id,text,kind){ const el=$(id); el.textContent=text||""; el.className="cfOnlineStatus"+(kind?` ${kind}`:""); }
+function updateSoundButton(){ $("soundToggle").textContent = soundOn ? "Ton an" : "Ton aus"; $("soundToggle").classList.toggle("active",soundOn); }
 function speakZh(text){ if(soundOn && text) cfSpeakZh(text,{rate:.85}); }
 
-function saveSelection(){
-  try{ localStorage.setItem("cf_memory_selected_chapters_v2",JSON.stringify([...selected])); }catch(e){}
-}
+function saveSelection(){ try{ localStorage.setItem("cf_memory_selected_chapters_v2",JSON.stringify([...selected])); }catch(_err){} }
 function loadSelection(){
   try{
     const saved=JSON.parse(localStorage.getItem("cf_memory_selected_chapters_v2")||"[]");
-    saved.forEach(id=>{if(topics.some(t=>t.id===id))selected.add(id);});
-  }catch(e){}
-  if(!selected.size && topics[0]) selected.add(topics[0].id);
+    saved.forEach(id=>{if(allowedTopics().some(t=>t.id===id))selected.add(id);});
+  }catch(_err){}
+  if(!selected.size && allowedTopics()[0]) selected.add(allowedTopics()[0].id);
+}
+function selectedVocabCount(){
+  return allowedTopics().filter(t=>selected.has(t.id)).reduce((n,t)=>n+(t.vocab||[]).filter(v=>v&&v.zh&&v.de).length,0);
 }
 function renderPicker(){
   const mount=$("chapterPicker"); mount.innerHTML="";
-  topics.forEach(t=>{
+  allTopics.forEach(t=>{
+    const blocked = !signedIn && t.id !== "01";
     const b=document.createElement("button");
     b.type="button"; b.className="memoryChapterChoice"; b.dataset.id=t.id;
     b.classList.toggle("active",selected.has(t.id));
     b.innerHTML=`<strong>Kapitel ${escapeHtml(t.id)}</strong><span>${escapeHtml(t.title)}</span>`;
-    b.addEventListener("click",()=>{
-      if(selected.has(t.id))selected.delete(t.id);else selected.add(t.id);
-      saveSelection();renderPicker();
-    });
+    if(blocked){
+      b.classList.add("cfLoginLockedChapter");
+      b.dataset.cfAccessBlocked="1";
+      b.setAttribute("aria-disabled","true");
+    }else{
+      b.addEventListener("click",()=>{
+        if(selected.has(t.id))selected.delete(t.id);else selected.add(t.id);
+        saveSelection();renderPicker();
+      });
+    }
     mount.appendChild(b);
   });
-  const count=topics.filter(t=>selected.has(t.id)).reduce((n,t)=>n+(t.vocab||[]).filter(v=>v&&v.zh&&v.de).length,0);
+  const count=selectedVocabCount();
   $("selectionInfo").textContent=selected.size?`${selected.size} Kapitel · ${count} Vokabeln verfügbar`:"Noch kein Kapitel ausgewählt.";
-  $("startGame").disabled=count<2;
+  $("startSolo").disabled=count<2;
+  const needsLogin=[...selected].some(id=>id!=="01");
+  $("startOnline").disabled=!(count>=2 && peerReady && role==="host" && (!needsLogin || guestSignedIn));
+  if(role==="host" && peerReady && needsLogin && !guestSignedIn) setStatus("roomStatus","Die eingeladene Person muss sich für Kapitel ab 2 anmelden.","bad");
 }
-function buildPool(){
-  pool=[];
-  topics.filter(t=>selected.has(t.id)).forEach(t=>{
+function buildPool(chapters){
+  const wanted = new Set(chapters || [...selected]);
+  const pool=[];
+  allTopics.filter(t=>wanted.has(t.id)).forEach(t=>{
     (t.vocab||[]).filter(v=>v&&v.zh&&v.de).forEach((v,i)=>pool.push({...v,_chapter:t.id,_key:`${t.id}_${i}_${v.zh}`}));
   });
+  return pool;
 }
-function makeRound(){
-  buildPool();
-  if(pool.length<2)return;
+function createRound(roundNo,chapters){
+  const pool=buildPool(chapters);
   const picks=shuffleLocal(pool).slice(0,Math.min(PAIRS_PER_ROUND,pool.length));
-  cards=shuffleLocal(picks.flatMap((v,i)=>[
-    {id:`${Date.now()}_${i}_zh`,pair:i,type:"zh",text:writeZh(v),open:false,matched:false},
-    {id:`${Date.now()}_${i}_de`,pair:i,type:"de",text:writeDe(v),open:false,matched:false}
-  ]));
-  openCards=[];locked=false;pairsFound=0;moves=0;
-  $("roundDone").hidden=true;
-  renderGame();
+  const stamp=`${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+  return {
+    roundNo:roundNo||1,
+    chapters:chapters||[...selected],
+    cards:shuffleLocal(picks.flatMap((v,i)=>[
+      {id:`${stamp}_${i}_zh`,pair:i,type:"zh",text:writeZh(v),open:false,matched:false},
+      {id:`${stamp}_${i}_de`,pair:i,type:"de",text:writeDe(v),open:false,matched:false}
+    ])),
+    openIds:[],locked:false,pairsFound:0,moves:0,done:false
+  };
 }
+function activeState(){ return playMode==="online" ? onlineState : localState; }
 function renderGame(){
+  const state=activeState();
+  if(!state) return;
   updateSoundButton();
-  $("roundNo").textContent=String(roundNo);
-  $("pairCount").textContent=`${pairsFound}/${cards.length/2}`;
-  $("moveCount").textContent=String(moves);
+  $("roundNo").textContent=String(state.roundNo||1);
+  $("pairCount").textContent=`${state.pairsFound}/${state.cards.length/2}`;
+  $("moveCount").textContent=String(state.moves||0);
+  $("changeSelection").hidden=playMode==="online";
+  $("gameStatus").textContent=playMode==="online"?(role==="host"?"Gemeinsames Memory · Du hast den Raum erstellt.":"Gemeinsames Memory · Du bist beigetreten."):"";
   const grid=$("memoryGrid");grid.innerHTML="";
-  cards.forEach(card=>{
+  state.cards.forEach(card=>{
     const b=document.createElement("button");b.type="button";
     b.className="memoryCard"+((card.open||card.matched)?" open":"")+(card.matched?" matched":"");
     if(card.type==="zh")b.classList.add("zhCard");
     b.innerHTML=(card.open||card.matched)?`<span class="memoryText">${escapeHtml(card.text)}</span>`:'<span class="memoryText memoryHidden">?</span>';
     b.addEventListener("click",()=>flip(card.id));grid.appendChild(b);
   });
+  $("roundDone").hidden=!state.done;
+  if(state.done) $("roundDoneText").textContent=`${state.moves} Züge`;
+}
+function processFlip(state,id,after){
+  if(!state||state.locked||state.done)return;
+  const card=state.cards.find(c=>c.id===id);
+  if(!card||card.open||card.matched)return;
+  card.open=true;
+  state.openIds.push(card.id);
+  if(card.type==="zh")speakZh(card.text);
+  if(state.openIds.length===2){
+    state.moves++;
+    const a=state.cards.find(c=>c.id===state.openIds[0]);
+    const b=state.cards.find(c=>c.id===state.openIds[1]);
+    if(a&&b&&a.pair===b.pair&&a.type!==b.type){
+      a.matched=b.matched=true;state.pairsFound++;state.openIds=[];cfPlayFeedback(true);
+      if(state.pairsFound>=state.cards.length/2)state.done=true;
+      after();
+    }else{
+      state.locked=true;after();
+      setTimeout(()=>{
+        if(a)a.open=false;if(b)b.open=false;
+        state.openIds=[];state.locked=false;after();
+      },850);
+    }
+  }else after();
 }
 function flip(id){
-  if(locked||!$("roundDone").hidden)return;
-  const card=cards.find(c=>c.id===id);
-  if(!card||card.open||card.matched)return;
-  card.open=true;if(card.type==="zh")speakZh(card.text);openCards.push(card);
-  if(openCards.length===2){
-    moves++;
-    const [a,b]=openCards;
-    if(a.pair===b.pair&&a.type!==b.type){
-      a.matched=b.matched=true;pairsFound++;openCards=[];cfPlayFeedback(true);
-      if(pairsFound>=cards.length/2){
-        $("roundDoneText").textContent=`${moves} Züge`;
-        $("roundDone").hidden=false;
-      }
-    }else{
-      locked=true;
-      setTimeout(()=>{a.open=false;b.open=false;openCards=[];locked=false;renderGame();},800);
-    }
+  if(playMode==="solo"){
+    processFlip(localState,id,renderGame);
+  }else if(role==="host"){
+    processFlip(onlineState,id,()=>{renderGame();broadcastState();});
+  }else{
+    CF_REALTIME.send(channel,"flip",{id,player:me}).catch(()=>setStatus("gameStatus","Die Karte konnte nicht gesendet werden.","bad"));
   }
-  renderGame();
 }
-function start(){
-  saveSelection();roundNo=1;
-  $("setupCard").hidden=true;$("gameCard").hidden=false;makeRound();
+function startSolo(){
+  playMode="solo";saveSelection();
+  localState=createRound(1,[...selected]);
+  $("setupCard").hidden=true;$("gameCard").hidden=false;renderGame();
 }
-$("selectAll").onclick=()=>{topics.forEach(t=>selected.add(t.id));saveSelection();renderPicker();};
+function nextSolo(){ localState=createRound((localState?.roundNo||1)+1,[...selected]);renderGame(); }
+
+async function disconnect(){
+  clearInterval(joinTimer);joinTimer=null;
+  await CF_REALTIME.remove(rtClient,channel);
+  rtClient=null;channel=null;peerReady=false;guestSignedIn=false;role="";room="";
+}
+async function openChannel(code,nextRole){
+  await disconnect();
+  room=CF_REALTIME.normalizeRoom(code);
+  if(room.length!==6)throw new Error("Bitte einen vollständigen Raumcode eingeben.");
+  role=nextRole;
+  const pair=await CF_REALTIME.createChannel(`cf-memory-${room}`);
+  rtClient=pair.client;channel=pair.channel;
+  channel
+    .on("broadcast",{event:"join"},({payload})=>{
+      if(role!=="host"||!payload||payload.player===me)return;
+      peerReady=true;guestSignedIn=Boolean(payload.signedIn);renderPicker();
+      setStatus("roomStatus","Die zweite Person ist verbunden.","ok");
+      CF_REALTIME.send(channel,"welcome",{to:payload.player,host:me});
+      if(onlineState)broadcastState();
+    })
+    .on("broadcast",{event:"welcome"},({payload})=>{
+      if(role!=="guest"||!payload||payload.to!==me)return;
+      peerReady=true;clearInterval(joinTimer);
+      setStatus("roomStatus","Mit dem Raum verbunden. Warte auf den Start.","ok");
+    })
+    .on("broadcast",{event:"state"},({payload})=>{
+      if(role!=="guest"||!payload||payload.to&&payload.to!==me)return;
+      const incomingState=payload.state||null;
+      if(incomingState && !signedIn && (incomingState.chapters||[]).some(id=>id!=="01")){
+        setStatus("roomStatus","Bitte melde dich an, damit du Kapitel ab 2 mitspielen kannst.","bad");
+        return;
+      }
+      onlineState=incomingState;
+      if(onlineState){$("setupCard").hidden=true;$("gameCard").hidden=false;renderGame();}
+    })
+    .on("broadcast",{event:"flip"},({payload})=>{
+      if(role!=="host"||!payload)return;
+      processFlip(onlineState,payload.id,()=>{renderGame();broadcastState();});
+    })
+    .on("broadcast",{event:"next"},()=>{
+      if(role!=="host")return;
+      makeNextOnlineRound();
+    })
+    .subscribe(status=>{
+      if(status==="SUBSCRIBED"){
+        if(role==="guest"){
+          const announce=()=>CF_REALTIME.send(channel,"join",{player:me,signedIn}).catch(()=>{});
+          announce();joinTimer=setInterval(announce,1800);
+        }
+      }else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"){
+        setStatus(role==="host"?"roomStatus":"onlineStatus","Online-Verbindung nicht möglich.","bad");
+      }
+    });
+}
+function broadcastState(){
+  if(role!=="host"||!channel||!onlineState)return;
+  CF_REALTIME.send(channel,"state",{state:onlineState}).catch(()=>setStatus("gameStatus","Verbindung unterbrochen.","bad"));
+}
+async function createRoom(){
+  try{
+    playMode="online";peerReady=false;
+    await openChannel(CF_REALTIME.randomRoom(),"host");
+    $("roomBox").hidden=false;$("roomCode").textContent=room;
+    setStatus("roomStatus","Warte auf die zweite Person …");
+    renderPicker();
+  }catch(err){setStatus("onlineStatus",err.message||"Raum konnte nicht erstellt werden.","bad");}
+}
+async function joinRoom(){
+  try{
+    playMode="online";
+    const code=CF_REALTIME.normalizeRoom($("roomInput").value);
+    await openChannel(code,"guest");
+    $("roomBox").hidden=false;$("roomCode").textContent=room;
+    $("startOnline").hidden=true;
+    setStatus("roomStatus","Verbindung wird hergestellt …");
+  }catch(err){setStatus("onlineStatus",err.message||"Beitritt nicht möglich.","bad");}
+}
+function startOnline(){
+  if(role!=="host"||!peerReady)return;
+  saveSelection();onlineState=createRound(1,[...selected]);
+  $("setupCard").hidden=true;$("gameCard").hidden=false;renderGame();broadcastState();
+}
+function makeNextOnlineRound(){
+  if(role!=="host"||!onlineState)return;
+  onlineState=createRound((onlineState.roundNo||1)+1,onlineState.chapters||[...selected]);renderGame();broadcastState();
+}
+async function invite(copyOnly){
+  const url=CF_REALTIME.roomUrl("memory.html",room);
+  try{
+    if(copyOnly){await CF_REALTIME.copyText(url);setStatus("roomStatus","Einladungslink wurde kopiert.","ok");}
+    else{
+      const result=await CF_REALTIME.shareInvite("Memory – Chinesisch festigen",`Spiele mit mir Memory. Raumcode: ${room}`,url);
+      setStatus("roomStatus",result==="copied"?"Einladungslink wurde kopiert.":"Einladung geöffnet.","ok");
+    }
+  }catch(_err){setStatus("roomStatus","Der Link konnte nicht geteilt werden.","bad");}
+}
+function switchMode(next){
+  playMode=next;
+  $("soloMode").classList.toggle("active",next==="solo");
+  $("onlineMode").classList.toggle("active",next==="online");
+  $("soloPanel").hidden=next!=="solo";
+  $("onlinePanel").hidden=next!=="online";
+  if(next==="solo")$("roomBox").hidden=true;
+}
+
+$("selectAll").onclick=()=>{allowedTopics().forEach(t=>selected.add(t.id));saveSelection();renderPicker();};
 $("clearAll").onclick=()=>{selected.clear();saveSelection();renderPicker();};
-$("startGame").onclick=start;
-$("nextRound").onclick=()=>{roundNo++;makeRound();};
+$("startSolo").onclick=startSolo;
+$("soloMode").onclick=()=>switchMode("solo");
+$("onlineMode").onclick=()=>switchMode("online");
+$("createRoom").onclick=createRoom;
+$("joinRoom").onclick=joinRoom;
+$("copyInvite").onclick=()=>invite(true);
+$("shareInvite").onclick=()=>invite(false);
+$("startOnline").onclick=startOnline;
+$("nextRound").onclick=()=>{if(playMode==="solo")nextSolo();else if(role==="host")makeNextOnlineRound();else CF_REALTIME.send(channel,"next",{player:me});};
 $("changeSelection").onclick=()=>{$("gameCard").hidden=true;$("setupCard").hidden=false;renderPicker();};
 $("soundToggle").onclick=()=>{soundOn=!soundOn;localStorage.setItem("cf_memory_global_sound",soundOn?"1":"0");updateSoundButton();};
-loadSelection();renderPicker();updateSoundButton();
+$("roomInput").addEventListener("input",()=>{$("roomInput").value=CF_REALTIME.normalizeRoom($("roomInput").value);});
+window.addEventListener("beforeunload",()=>disconnect());
+
+(async function init(){
+  if(window.CF_SYNC&&CF_SYNC.ready){try{await CF_SYNC.ready;}catch(_err){}}
+  signedIn=Boolean(window.CF_SYNC&&CF_SYNC.getState&&CF_SYNC.getState().signedIn);
+  loadSelection();renderPicker();updateSoundButton();
+  const incoming=CF_REALTIME.normalizeRoom(new URLSearchParams(location.search).get("room"));
+  if(incoming){switchMode("online");$("roomInput").value=incoming;joinRoom();}
+})();
 </script>
 </body>
 </html>

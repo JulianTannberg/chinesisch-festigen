@@ -29,6 +29,7 @@
         </div>
       </div>
 
+      <div class="listenProgressLine" id="listenProgress">Fortschritt wird geladen …</div>
       <div id="panelVocab"><div id="vocabGrid" class="vocabList"></div></div>
       <div id="panelSentences"><div id="dialog" class="dialog"></div></div>
       <div id="panelStory" class="storyListenPanel">
@@ -105,7 +106,7 @@ function speakAndWait(text, token, speaker){
 }
 
 function hexToRgb(hex){
-  const h = hex.replace("#","");
+  const h = String(hex || "#03172B").replace("#","");
   return {r:parseInt(h.substring(0,2),16),g:parseInt(h.substring(2,4),16),b:parseInt(h.substring(4,6),16)};
 }
 function rgbToHex(r,g,b){ return "#" + [r,g,b].map(x => Math.max(0,Math.min(255,Math.round(x))).toString(16).padStart(2,"0")).join(""); }
@@ -120,12 +121,17 @@ function bubbleColor(speaker){ return isSuRan(speaker) ? mixWithWhite(topic.acce
 function bubbleSide(speaker){ return isSuRan(speaker) ? "left" : "right"; }
 
 const heardKey = `cf_hoeren_heard_${topic.id}`;
-let heard = {w:{},s:{}};
-try{
-  const st=JSON.parse(localStorage.getItem(heardKey)||"{}");
-  if(st&&typeof st==="object"){heard.w=st.w||{};heard.s=st.s||{};}
-}catch(e){}
 const storyDoneKey = `cf_hoeren_story_complete_v3_${topic.id}`;
+function readHeard(){
+  try{
+    const parsed = JSON.parse(localStorage.getItem(heardKey) || "{}");
+    return {
+      w: parsed && typeof parsed.w === "object" ? parsed.w : {},
+      s: parsed && typeof parsed.s === "object" ? parsed.s : {}
+    };
+  }catch(_err){ return {w:{},s:{}}; }
+}
+let heard = readHeard();
 let storyComplete = localStorage.getItem(storyDoneKey) === "1" || (cfGetScore("hoeren_geschichte", topic.id) || 0) >= 100;
 
 const vocabItems = [...(topic.vocab || []), ...(topic.understandingVocab || [])].filter(v => v && v.zh);
@@ -152,28 +158,63 @@ const fullStoryUnits = fullChapter && Array.isArray(fullChapter.units) && fullCh
   ? fullChapter.units.filter(x => x && x.zh)
   : sentenceData;
 
+const vocabZh = [...new Set(vocabItems.map(v => String(v.zh)))];
+const sentenceZh = [...new Set(sentenceData.map(v => String(v.zh)))];
+
+function counts(){
+  return {
+    heardW: vocabZh.filter(z => heard.w[z]).length,
+    heardS: sentenceZh.filter(z => heard.s[z]).length
+  };
+}
+function updateProgressLine(){
+  const c = counts();
+  const el = document.getElementById("listenProgress");
+  if(mode === "vocab"){
+    const pct = vocabZh.length ? Math.round(c.heardW / vocabZh.length * 100) : 0;
+    el.innerHTML = `<span>Gehört: <strong>${c.heardW} von ${vocabZh.length}</strong></span><span><strong>${pct} %</strong></span>`;
+  }else if(mode === "sentences"){
+    const pct = sentenceZh.length ? Math.round(c.heardS / sentenceZh.length * 100) : 0;
+    el.innerHTML = `<span>Gehört: <strong>${c.heardS} von ${sentenceZh.length}</strong></span><span><strong>${pct} %</strong></span>`;
+  }else{
+    el.innerHTML = storyComplete ? "<span>Geschichte vollständig angehört</span><span><strong>100 %</strong></span>" : "<span>Geschichte noch nicht vollständig angehört</span><span><strong>0 %</strong></span>";
+  }
+}
+function paintHeard(){
+  document.querySelectorAll("[data-heard-kind][data-heard-key]").forEach(el => {
+    const kind = el.dataset.heardKind;
+    const key = el.dataset.heardKey;
+    const done = kind === "w" ? heard.w[key] : heard.s[key];
+    el.classList.toggle("heard", Boolean(done));
+  });
+}
 function recomputeScores(){
-  const vocabZh = [...new Set(vocabItems.map(v=>v.zh))];
-  const sentenceZh = [...new Set(sentenceData.map(v=>v.zh))];
-  const heardW = vocabZh.filter(z=>heard.w[z]).length;
-  const heardS = sentenceZh.filter(z=>heard.s[z]).length;
-  const pv = vocabZh.length ? Math.round(heardW/vocabZh.length*100) : 0;
-  const ps = sentenceZh.length ? Math.round(heardS/sentenceZh.length*100) : 0;
+  const c = counts();
+  const pv = vocabZh.length ? Math.round(c.heardW/vocabZh.length*100) : 0;
+  const ps = sentenceZh.length ? Math.round(c.heardS/sentenceZh.length*100) : 0;
   cfSetScore("hoeren_vocab",pv,topic.id);
   cfSetScore("hoeren_saetze",ps,topic.id);
   cfSetScore("hoeren_geschichte",storyComplete ? 100 : 0,topic.id);
-  if(vocabZh.length && heardW>=vocabZh.length) cfMarkDone("hoeren_vocab",topic.id);
-  if(sentenceZh.length && heardS>=sentenceZh.length) cfMarkDone("hoeren_saetze",topic.id);
+  if(vocabZh.length && c.heardW >= vocabZh.length) cfMarkDone("hoeren_vocab",topic.id);
+  if(sentenceZh.length && c.heardS >= sentenceZh.length) cfMarkDone("hoeren_saetze",topic.id);
   if(storyComplete) cfMarkDone("hoeren_geschichte",topic.id);
+  updateProgressLine();
+  paintHeard();
+}
+function refreshFromStorage(){
+  heard = readHeard();
+  storyComplete = localStorage.getItem(storyDoneKey) === "1" || (cfGetScore("hoeren_geschichte", topic.id) || 0) >= 100;
+  recomputeScores();
+  setStoryProgress(storyComplete ? fullStoryUnits.length : 0, fullStoryUnits.length);
 }
 function markHeard(kind,keyText){
   if(!keyText) return;
   const bucket=kind==="s"?heard.s:heard.w;
   if(!bucket[keyText]){
     bucket[keyText]=1;
-    try{localStorage.setItem(heardKey,JSON.stringify(heard));}catch(e){}
-    recomputeScores();
+    try{localStorage.setItem(heardKey,JSON.stringify(heard));}catch(_err){}
   }
+  recomputeScores();
 }
 
 const vocabGrid=document.getElementById("vocabGrid");
@@ -184,8 +225,10 @@ function renderVocabSection(title,items){
   const grid=document.createElement("div");grid.className="vocabGrid";
   items.forEach(v=>{
     const card=document.createElement("button");card.className="vocabCard";card.type="button";
+    card.dataset.heardKind = "w";
+    card.dataset.heardKey = String(v.zh);
     card.innerHTML=`<div class="zh">${escapeHtml(v.zh)}</div><div class="pinyin">${escapeHtml(v.pinyin||"")}</div><div class="de">${escapeHtml(v.de||"")}</div>`;
-    card.addEventListener("click",()=>{speak(v.zh);markHeard("w",v.zh);});
+    card.addEventListener("click",()=>{speak(v.zh);markHeard("w",String(v.zh));});
     grid.appendChild(card);
   });
   section.append(h,grid);vocabGrid.appendChild(section);
@@ -205,7 +248,10 @@ if(mode === "sentences"){
     const color=bubbleColor(line.speaker);
     const row=document.createElement("div");row.className=`bubbleRow ${bubbleSide(line.speaker)}`;
     row.innerHTML=`<button type="button" class="speechBubble" style="background:${color};color:${readableText(color)}"><span class="speaker">${escapeHtml(line.speaker||"")}</span><span class="speechText">${escapeHtml(line.zh||"")}</span>${line.pinyin?`<span class="speechPinyin">${escapeHtml(line.pinyin)}</span>`:""}${line.de?`<span class="speechDe">${escapeHtml(line.de)}</span>`:""}</button>`;
-    row.querySelector(".speechBubble").addEventListener("click",()=>{speak(line.zh,line.speaker);markHeard("s",line.zh);});
+    const bubble = row.querySelector(".speechBubble");
+    bubble.dataset.heardKind = "s";
+    bubble.dataset.heardKey = String(line.zh);
+    bubble.addEventListener("click",()=>{speak(line.zh,line.speaker);markHeard("s",String(line.zh));});
     dialogEl.appendChild(row);
   });
 }
@@ -219,7 +265,6 @@ function setStoryProgress(done,total){
   storyProgress.style.width=`${p}%`;
   storyStatus.textContent = done >= total && total ? "Geschichte vollständig angehört" : (done ? `${done} von ${total} Abschnitten` : "Bereit");
 }
-setStoryProgress(storyComplete ? fullStoryUnits.length : 0,fullStoryUnits.length);
 async function playStory(){
   if(!fullStoryUnits.length){storyStatus.textContent="Für dieses Kapitel ist noch keine Geschichte eingetragen.";return;}
   stopAudio();
@@ -249,7 +294,12 @@ async function playStory(){
 playStoryBtn.onclick=playStory;
 stopStoryBtn.onclick=()=>{stopAudio();playStoryBtn.disabled=false;stopStoryBtn.style.display="none";storyStatus.textContent="Wiedergabe beendet";};
 window.addEventListener("beforeunload",stopAudio);
+window.addEventListener("cf-sync-applied", refreshFromStorage);
 recomputeScores();
+setStoryProgress(storyComplete ? fullStoryUnits.length : 0,fullStoryUnits.length);
+if(window.CF_SYNC && CF_SYNC.initialSync){
+  CF_SYNC.initialSync.then(refreshFromStorage).catch(() => {});
+}
 </script>
 </body>
 </html>

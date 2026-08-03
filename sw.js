@@ -1,7 +1,7 @@
 // Chinesisch festigen – Service Worker
 // Bei jeder Änderung an der Website die Versionsnummer erhöhen,
 // damit alle Geräte die neuen Dateien laden.
-const CACHE = "cf-v140-2-access-and-gap-fix";
+const CACHE = "cf-v141-fixes-profile-online-games";
 
 const SHELL = [
   "./",
@@ -15,12 +15,14 @@ const SHELL = [
   "./geschichte-data.js",
   "./hoeren.html",
   "./schreiben.html",
+  "./schreibtraining.html",
   "./sprechen.html",
   "./sprechsatz.html",
   "./flashkarten.html",
   "./memory.html",
   "./luecken.html",
   "./stirnspiel.html",
+  "./woerter-raten.html",
   "./jump-run.html",
   "./jump-run.js",
   "./station-bg-1.png",
@@ -41,11 +43,14 @@ const SHELL = [
   "./agb.html",
   "./impressum.html",
   "./style.css",
+  "./fixes-v141.css",
   "./topics.js",
   "./bausteine.js",
   "./common.js",
   "./sync.js",
   "./access.js",
+  "./fixes-v141.js",
+  "./realtime-games.js",
   "./profile.js",
   "./chatdata.js",
   "./avatars/suran.jpg",

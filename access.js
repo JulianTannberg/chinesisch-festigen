@@ -8,7 +8,7 @@
   const path = location.pathname.split("/").pop() || "index.html";
   const params = new URLSearchParams(location.search);
   const chapterPages = new Set([
-    "kapitel.html", "hoeren.html", "schreiben.html", "sprechen.html",
+    "kapitel.html", "hoeren.html", "schreiben.html", "schreibtraining.html", "sprechen.html",
     "sprechsatz.html", "ueben.html", "flashkarten.html", "luecken.html",
     "jump-run.html", "chat.html"
   ]);

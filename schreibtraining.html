@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Schreibtraining · Chinesisch festigen</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#03172B" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7/dist/hanzi-writer.min.js"></script>
+  <style>
+    .trainLevelRow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+    .trainLevelRow button{min-height:48px;white-space:normal}
+    .trainLevelRow button.active{background:var(--card-strong);outline:2px solid rgba(255,255,255,.28)}
+    .trainSummary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+    .trainSummary > div{padding:10px;border:1px solid var(--stroke);border-radius:13px;background:rgba(255,255,255,.07);text-align:center}
+    .trainSummary small{display:block;color:var(--muted);margin-bottom:3px}
+    .trainSummary strong{font-size:22px}
+    .trainPrompt{text-align:center;margin:12px 0}
+    .trainPromptDe{font-size:clamp(24px,6vw,38px);font-weight:900;line-height:1.2;overflow-wrap:anywhere}
+    .trainPromptPy{font-size:18px;color:var(--muted);margin-top:6px}
+    .trainPromptMeta{font-size:13px;color:var(--muted);margin-top:5px}
+    .trainCanvasWrap{display:flex;justify-content:center;margin:12px 0}
+    #trainTarget{width:min(300px,78vw);height:min(300px,78vw);background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 12px 35px rgba(0,0,0,.25);background-image:linear-gradient(to right,transparent calc(50% - .6px),rgba(0,0,0,.13) calc(50% - .6px),rgba(0,0,0,.13) calc(50% + .6px),transparent calc(50% + .6px)),linear-gradient(to bottom,transparent calc(50% - .6px),rgba(0,0,0,.13) calc(50% - .6px),rgba(0,0,0,.13) calc(50% + .6px),transparent calc(50% + .6px));touch-action:none}
+    .trainStatus{min-height:30px;text-align:center;font-weight:800;line-height:1.4}
+    .trainStatus.ok{color:#86efac}.trainStatus.bad{color:#fecaca}
+    .trainActions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:10px 0}
+    .trainOpenBox{display:none;text-align:center;padding:18px;border:1px solid var(--stroke);border-radius:18px;background:rgba(255,255,255,.08);margin-top:14px}
+    .trainOpenBox.show{display:block}
+    @media(max-width:520px){.trainSummary{grid-template-columns:1fr}.trainLevelRow{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="topbar topbarSticky"><a class="back" id="back">← Zurück</a><h1 class="pageTitleResponsive topbarPageTitle" id="title">Schreibtraining</h1></div>
+    <p class="subtitle">Schreibe die Zeichen selbst. Bereits gemeisterte Wörter bleiben erledigt; wiederholt werden nur falsche oder noch offene Wörter.</p>
+
+    <section class="card">
+      <div class="trainLevelRow" id="levelRow">
+        <button type="button" data-level="beginner">Anfänger</button>
+        <button type="button" data-level="advanced">Fortgeschritten</button>
+        <button type="button" data-level="pro">Profi</button>
+      </div>
+
+      <div id="empty" class="empty" hidden>Für dieses Kapitel sind keine Schreibzeichen hinterlegt.</div>
+      <div id="game">
+        <div class="trainSummary">
+          <div><small>Gemeistert</small><strong id="masteredCount">0/0</strong></div>
+          <div><small>Noch offen</small><strong id="openCount">0</strong></div>
+          <div><small>Fortschritt</small><strong id="scoreCount">0 %</strong></div>
+        </div>
+        <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
+
+        <div class="trainPrompt">
+          <div class="trainPromptDe" id="promptDe">–</div>
+          <div class="trainPromptPy" id="promptPy"></div>
+          <div class="trainPromptMeta" id="promptMeta"></div>
+        </div>
+
+        <div class="trainActions">
+          <button id="playBtn" type="button">▶ Anhören</button>
+          <button id="hintBtn" type="button">Hinweis zeigen</button>
+        </div>
+        <div class="trainCanvasWrap"><div id="trainTarget"></div></div>
+        <div class="trainStatus" id="status">Schreibe das Zeichen in das Feld.</div>
+
+        <div class="trainOpenBox" id="openBox">
+          <h2 id="openTitle">Noch offene Wörter</h2>
+          <p id="openText"></p>
+          <div class="toolbar" style="justify-content:center">
+            <button id="repeatOpen" type="button">Nur offene wiederholen</button>
+            <button id="resetLevel" type="button">Diese Stufe von vorne</button>
+            <a class="miniBtn" id="backChapter">Zurück zum Kapitel</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script src="topics.js"></script>
+<script src="bausteine.js"></script>
+<script src="config.js"></script>
+<script src="sync.js"></script>
+<script src="common.js"></script>
+<script>
+const topic = getTopic();
+const $ = id => document.getElementById(id);
+applyTheme(topic, "Schreibtraining");
+document.documentElement.classList.add("noScroll");
+$("title").textContent = `${Number(topic.id)}. ${topic.title}`;
+$("back").href = `kapitel.html?id=${topic.id}`;
+$("backChapter").href = `kapitel.html?id=${topic.id}`;
+
+const bau = window.CF_BAUSTEINE && window.CF_BAUSTEINE[topic.id] ? window.CF_BAUSTEINE[topic.id] : null;
+const words = (() => {
+  const out = [];
+  const seen = new Set();
+  function push(word, pinyin, de){
+    const clean = [...String(word || "")].filter(c => /[\u3400-\u9fff]/.test(c)).join("");
+    if(!clean || seen.has(clean)) return;
+    seen.add(clean);
+    out.push({key:clean, word:clean, chars:[...clean], pinyin:String(pinyin||""), de:String(de||clean)});
+  }
+  if(bau){
+    (bau.order || []).forEach(char => {
+      const d = bau.chars && bau.chars[char];
+      if(d) push(d.word || char, d.wordPy || d.py, d.wordDe || d.de);
+    });
+  }else{
+    (topic.vocab || []).forEach(v => push(v.writeZh || v.zh, v.writePinyin || v.pinyin, v.writeDe || v.de));
+  }
+  return out;
+})();
+
+const LEVELS = {
+  beginner: {label:"Anfänger", outline:true, hintAfter:1},
+  advanced: {label:"Fortgeschritten", outline:false, hintAfter:2},
+  pro: {label:"Profi", outline:false, hintAfter:3}
+};
+let level = localStorage.getItem(`cf_schreibtraining_level_${topic.id}`) || localStorage.getItem(`cf_train_level_${topic.id}`) || "beginner";
+if(!LEVELS[level]) level = "beginner";
+let mastered = new Set();
+let queue = [];
+let pos = 0;
+let charPos = 0;
+let writer = null;
+let wordHadMistake = false;
+let passStarted = false;
+
+function stateKey(lvl){ return `cf_schreibtraining_v3_${topic.id}_${lvl}`; }
+function readState(lvl){
+  try{
+    const raw = localStorage.getItem(stateKey(lvl));
+    if(!raw && localStorage.getItem(`cf_train_done_${topic.id}_${lvl}`) === "1"){
+      return {mastered:new Set(words.map(w => w.key)), round:1};
+    }
+    const s = JSON.parse(raw || "{}");
+    const valid = Array.isArray(s.mastered) ? s.mastered.filter(k => words.some(w => w.key === k)) : [];
+    return {mastered:new Set(valid), round:Math.max(1,Number(s.round)||1)};
+  }catch(_err){ return {mastered:new Set(),round:1}; }
+}
+function saveState(){
+  localStorage.setItem(`cf_schreibtraining_level_${topic.id}`, level);
+  localStorage.setItem(stateKey(level), JSON.stringify({mastered:[...mastered], updatedAt:Date.now()}));
+}
+function levelPercent(lvl){
+  if(!words.length) return 0;
+  return Math.round(readState(lvl).mastered.size / words.length * 100);
+}
+function updateGlobalScore(){
+  const best = Math.max(...Object.keys(LEVELS).map(levelPercent),0);
+  cfSetScore("schreibtraining",best,topic.id);
+  if(best >= 100) cfMarkDone("schreibtraining",topic.id);
+}
+function setStatus(text,kind){
+  $("status").textContent = text || "\u00a0";
+  $("status").className = "trainStatus" + (kind ? ` ${kind}` : "");
+}
+function currentWord(){ return queue[pos] || null; }
+function updateStats(){
+  const done = mastered.size;
+  const total = words.length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  $("masteredCount").textContent = `${done}/${total}`;
+  $("openCount").textContent = String(Math.max(0,total-done));
+  $("scoreCount").textContent = `${pct} %`;
+  $("progressFill").style.width = `${pct}%`;
+  document.querySelectorAll("#levelRow button").forEach(b => b.classList.toggle("active", b.dataset.level === level));
+  updateGlobalScore();
+}
+function rebuildQueue(){
+  queue = words.filter(w => !mastered.has(w.key));
+  pos = 0;
+  charPos = 0;
+  passStarted = false;
+}
+function destroyWriter(){
+  if(writer && typeof writer.cancelQuiz === "function"){
+    try{ writer.cancelQuiz(); }catch(_err){}
+  }
+  writer = null;
+  $("trainTarget").innerHTML = "";
+}
+function showFinish(){
+  destroyWriter();
+  const open = words.length - mastered.size;
+  $("openBox").classList.add("show");
+  if(open <= 0){
+    $("openTitle").textContent = "Stufe geschafft!";
+    $("openText").textContent = `Du hast alle ${words.length} Wörter dieser Stufe gemeistert.`;
+    $("repeatOpen").style.display = "none";
+    setStatus("Alle Wörter sind geschafft.","ok");
+    cfSetScore("schreibtraining",100,topic.id);
+    cfMarkDone("schreibtraining",topic.id);
+  }else{
+    $("openTitle").textContent = "Nur die offenen Wörter bleiben übrig";
+    $("openText").textContent = `${open} ${open===1?"Wort wird":"Wörter werden"} im nächsten Durchgang wiederholt. Bereits gemeisterte Wörter erscheinen nicht erneut.`;
+    $("repeatOpen").style.display = "";
+    setStatus("Der Durchgang ist beendet.");
+  }
+}
+function renderWord(){
+  updateStats();
+  $("openBox").classList.remove("show");
+  if(!queue.length || pos >= queue.length){ showFinish(); return; }
+  const word = currentWord();
+  wordHadMistake = false;
+  charPos = 0;
+  $("promptDe").textContent = word.de || word.word;
+  $("promptPy").textContent = word.pinyin || "";
+  $("promptMeta").textContent = `${LEVELS[level].label} · Wort ${pos+1} von ${queue.length} · ${word.chars.length} ${word.chars.length===1?"Zeichen":"Zeichen"}`;
+  startCharacter();
+}
+function startCharacter(){
+  const word = currentWord();
+  if(!word){ showFinish(); return; }
+  const char = word.chars[charPos];
+  destroyWriter();
+  setStatus(`Zeichen ${charPos+1} von ${word.chars.length}: Schreibe es in das Feld.`);
+  const size = Math.min(300,Math.max(220,Math.floor(window.innerWidth*.78)));
+  try{
+    writer = HanziWriter.create("trainTarget", char, {
+      width:size,
+      height:size,
+      padding:18,
+      showCharacter:false,
+      showOutline:LEVELS[level].outline,
+      strokeColor:"#18314f",
+      outlineColor:"#d5dbe2",
+      drawingColor:"#276fbf",
+      drawingWidth:16,
+      strokeAnimationSpeed:1,
+      delayBetweenStrokes:120
+    });
+    writer.quiz({
+      showHintAfterMisses:LEVELS[level].hintAfter,
+      highlightOnComplete:true,
+      onMistake:() => {
+        wordHadMistake = true;
+        setStatus("Noch nicht ganz – versuche den Strich noch einmal.","bad");
+      },
+      onComplete:() => {
+        setStatus("Richtig!", "ok");
+        setTimeout(() => {
+          charPos++;
+          if(charPos < word.chars.length){
+            startCharacter();
+          }else{
+            finishWord();
+          }
+        },450);
+      }
+    });
+  }catch(err){
+    setStatus("Das Zeichen konnte nicht geladen werden. Prüfe kurz die Internetverbindung.","bad");
+  }
+}
+function finishWord(){
+  const word = currentWord();
+  if(!word) return;
+  if(!wordHadMistake){
+    mastered.add(word.key);
+    saveState();
+    setStatus("Direkt richtig – dieses Wort ist gemeistert.","ok");
+  }else{
+    setStatus("Dieses Wort bleibt für die Wiederholung offen.","bad");
+  }
+  updateStats();
+  setTimeout(() => {
+    pos++;
+    renderWord();
+  },700);
+}
+function startLevel(lvl){
+  level = lvl;
+  const state = readState(level);
+  mastered = state.mastered;
+  rebuildQueue();
+  saveState();
+  updateStats();
+  renderWord();
+}
+function resetCurrentLevel(){
+  localStorage.removeItem(stateKey(level));
+  mastered = new Set();
+  rebuildQueue();
+  updateStats();
+  renderWord();
+}
+
+$("playBtn").onclick = () => { const w=currentWord(); if(w) cfSpeakZh(w.word,{rate:.82}); };
+$("hintBtn").onclick = () => {
+  if(!writer) return;
+  wordHadMistake = true;
+  setStatus("Hinweis wird gezeigt; das Wort bleibt danach noch offen.","bad");
+  try{
+    writer.animateCharacter({onComplete:() => setTimeout(startCharacter,300)});
+  }catch(_err){}
+};
+$("repeatOpen").onclick = () => { rebuildQueue(); renderWord(); };
+$("resetLevel").onclick = async () => {
+  const ok = typeof cfConfirm === "function"
+    ? await cfConfirm("Nur der Fortschritt dieser Schreibstufe wird gelöscht.",{title:"Stufe von vorne beginnen?",confirmText:"Von vorne",cancelText:"Abbrechen"})
+    : window.confirm("Diese Schreibstufe von vorne beginnen?");
+  if(ok) resetCurrentLevel();
+};
+document.querySelectorAll("#levelRow button").forEach(b => b.onclick = () => startLevel(b.dataset.level));
+
+if(!words.length){
+  $("empty").hidden = false;
+  $("game").hidden = true;
+}else{
+  startLevel(level);
+}
+</script>
+</body>
+</html>

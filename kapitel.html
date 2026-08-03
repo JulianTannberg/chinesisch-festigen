@@ -10,14 +10,6 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" href="icons/icon-192.png" />
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
-  <style>
-    /* Die fünf Bereichssymbole bleiben bewusst neutral weiß. */
-    .learningSectionIcon{
-      color:#fff !important;
-      background:rgba(255,255,255,.14) !important;
-      border:1px solid rgba(255,255,255,.22);
-    }
-  </style>
 </head>
 <body>
   <main class="app chapterHub">
@@ -28,7 +20,7 @@
 
     <section class="learningSections" aria-label="Lernschritte">
       <article class="learningSection sectionListen">
-        <header class="learningSectionHead"><div class="learningSectionIdentity"><h2>Hören</h2><span class="learningSectionIcon" aria-hidden="true">◖)))</span></div><p>Vom einzelnen Wort bis zur ganzen Geschichte.</p></header>
+        <header class="learningSectionHead"><div class="learningSectionIdentity"><h2>Hören</h2></div><p>Vom einzelnen Wort bis zur ganzen Geschichte.</p></header>
         <div class="learningLinks">
           <a class="learningLink" id="hearVocab"><span>Vokabeln</span><span class="activityScore"></span><i></i></a>
           <a class="learningLink" id="hearSentences"><span>Sätze</span><span class="activityScore"></span><i></i></a>
@@ -37,7 +29,7 @@
       </article>
 
       <article class="learningSection sectionWrite">
-        <header class="learningSectionHead"><div class="learningSectionIdentity"><h2>Schreiben</h2><span class="learningSectionIcon" aria-hidden="true">✎</span></div><p>Zeichen lernen, nachzeichnen und tippen.</p></header>
+        <header class="learningSectionHead"><div class="learningSectionIdentity"><h2>Schreiben</h2></div><p>Zeichen lernen, nachzeichnen und tippen.</p></header>
         <div class="learningLinks">
           <a class="learningLink" id="writeLearn"><span>Zeichen lernen</span><span class="activityScore"></span><i></i></a>
           <a class="learningLink" id="writeTrace"><span>Schreibtraining</span><span class="activityScore"></span><i></i></a>
@@ -46,7 +38,7 @@
       </article>
 
       <article class="learningSection sectionSpeak">
-        <header class="learningSectionHead"><div class="learningSectionIdentity"><h2>Sprechen</h2><span class="learningSectionIcon" aria-hidden="true">◡)))</span></div><p>Sätze anwenden und die Geschichte nachsprechen.</p></header>
+        <header class="learningSectionHead"><div class="learningSectionIdentity"><h2>Sprechen</h2></div><p>Sätze anwenden und die Geschichte nachsprechen.</p></header>
         <div class="learningLinks">
           <a class="learningLink" id="speakSentences"><span>Sätze sprechen</span><span class="activityScore"></span><i></i></a>
           <a class="learningLink" id="speakStory"><span>Geschichte nachsprechen</span><span class="activityScore"></span><i></i></a>
@@ -55,7 +47,7 @@
       </article>
 
       <article class="learningSection sectionSentences">
-        <header class="learningSectionHead"><div class="learningSectionIdentity"><h2>Sätze festigen</h2><span class="learningSectionIcon" aria-hidden="true">▤</span></div><p>Satzbau in drei Richtungen wiederholen.</p></header>
+        <header class="learningSectionHead"><div class="learningSectionIdentity"><h2>Sätze festigen</h2></div><p>Satzbau in drei Richtungen wiederholen.</p></header>
         <div class="learningLinks">
           <a class="learningLink" id="sentenceListen"><span>Chinesisch hören</span><span class="activityScore"></span><i></i></a>
           <a class="learningLink" id="sentenceZhDe"><span>Chinesisch → Deutsch</span><span class="activityScore"></span><i></i></a>
@@ -64,7 +56,7 @@
       </article>
 
       <article class="learningSection sectionVocab">
-        <header class="learningSectionHead"><div class="learningSectionIdentity"><h2>Vokabeln festigen</h2><span class="learningSectionIcon" aria-hidden="true">▱</span></div><p>In beide Richtungen abrufen und Lücken ergänzen.</p></header>
+        <header class="learningSectionHead"><div class="learningSectionIdentity"><h2>Vokabeln festigen</h2></div><p>In beide Richtungen abrufen und Lücken ergänzen.</p></header>
         <div class="learningLinks">
           <a class="learningLink" id="flashDeZh"><span>Deutsch → Chinesisch</span><span class="activityScore"></span><i></i></a>
           <a class="learningLink" id="flashZhDe"><span>Chinesisch → Deutsch</span><span class="activityScore"></span><i></i></a>
@@ -91,7 +83,7 @@
       hearSentences: [`hoeren.html?id=${topic.id}&mode=sentences`, "hoeren_saetze"],
       hearStory: [`hoeren.html?id=${topic.id}&mode=story`, "hoeren_geschichte"],
       writeLearn: [`schreiben.html?id=${topic.id}&mode=learn`, "lernen"],
-      writeTrace: [`schreiben.html?id=${topic.id}&mode=trace`, "schreibtraining"],
+      writeTrace: [`schreibtraining.html?id=${topic.id}`, "schreibtraining"],
       writeType: [`schreiben.html?id=${topic.id}&mode=type`, "tippen"],
       speakSentences: [`sprechen.html?id=${topic.id}&tab=satz`, "sprechen"],
       speakStory: [`sprechen.html?id=${topic.id}&tab=aussprache`, "aussprache"],
@@ -138,11 +130,20 @@
       if(p >= 100) el.classList.add("complete");
     }
 
-    Object.entries(links).forEach(([id, data]) => {
-      const el = document.getElementById(id);
-      el.href = data[0];
-      paintActivity(el, data[1]);
-    });
+    function paintAllActivities(){
+      Object.entries(links).forEach(([id, data]) => {
+        const el = document.getElementById(id);
+        if(!el) return;
+        el.href = data[0];
+        el.classList.remove("complete", "unavailable");
+        paintActivity(el, data[1]);
+      });
+    }
+    paintAllActivities();
+    window.addEventListener("cf-sync-applied", paintAllActivities);
+    if(window.CF_SYNC && CF_SYNC.initialSync){
+      CF_SYNC.initialSync.then(paintAllActivities).catch(() => {});
+    }
 
     (function(){
       const total = cfChapterPercent(topic);
