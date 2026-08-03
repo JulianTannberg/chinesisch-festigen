@@ -5,7 +5,7 @@
   <meta name="robots" content="noindex, nofollow" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Schreibtraining · Chinesisch festigen</title>
-  <link rel="stylesheet" href="style.css?v=146" />
+  <link rel="stylesheet" href="style.css?v=147" />
   <meta name="theme-color" content="#03172B" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" href="icons/icon-192.png" />
@@ -152,11 +152,11 @@
     </section>
   </main>
 
-<script src="topics.js?v=146"></script>
-<script src="bausteine.js?v=146"></script>
-<script src="config.js?v=146"></script>
-<script src="sync.js?v=146"></script>
-<script src="common.js?v=146"></script>
+<script src="topics.js?v=147"></script>
+<script src="bausteine.js?v=147"></script>
+<script src="config.js?v=147"></script>
+<script src="sync.js?v=147"></script>
+<script src="common.js?v=147"></script>
 <script>
 const topic = getTopic();
 const $ = id => document.getElementById(id);
@@ -294,7 +294,30 @@ function clearHintLayer(){
   hintWriter = null;
 }
 function showCompletedStroke(strokeIndex){
-  if(!completedWriter || !Number.isInteger(strokeIndex)) return;
+  if(!Number.isInteger(strokeIndex)) return;
+  if(!completedWriter){
+    const word = currentWord();
+    const char = word && word.chars ? word.chars[charPos] : "";
+    const layer = $("trainCompletedLayer");
+    if(!char || !layer) return;
+    const size = Math.min(300,Math.max(220,Math.floor(window.innerWidth*.78)));
+    try{
+      completedWriter = HanziWriter.create("trainCompletedLayer", char, {
+        width:size,
+        height:size,
+        padding:18,
+        showCharacter:false,
+        showOutline:false,
+        strokeColor:"#111111",
+        radicalColor:"#c0392b",
+        strokeAnimationSpeed:5,
+        delayBetweenStrokes:0
+      });
+    }catch(_err){
+      completedWriter = null;
+      return;
+    }
+  }
   try{
     const result = completedWriter.animateStroke(Math.max(0,strokeIndex));
     if(result && typeof result.catch === "function") result.catch(() => {});
@@ -385,8 +408,8 @@ function startCharacter(){
         padding:18,
         showCharacter:true,
         showOutline:false,
-        strokeColor:"#d5d9df",
-        radicalColor:"#d5d9df"
+        strokeColor:"#e7eaee",
+        radicalColor:"#e7eaee"
       });
     }catch(_err){}
   }
@@ -394,22 +417,6 @@ function startCharacter(){
   makeTrainLayer("trainQuizLayer");
   makeTrainLayer("trainCompletedLayer");
   makeTrainLayer("trainHintLayer");
-
-  try{
-    completedWriter = HanziWriter.create("trainCompletedLayer", char, {
-      width:size,
-      height:size,
-      padding:18,
-      showCharacter:false,
-      showOutline:false,
-      strokeColor:"#111111",
-      radicalColor:"#c0392b",
-      strokeAnimationSpeed:5,
-      delayBetweenStrokes:0
-    });
-  }catch(_err){
-    completedWriter = null;
-  }
 
   function beginQuiz(){
     if(token !== writerToken || !writer) return;

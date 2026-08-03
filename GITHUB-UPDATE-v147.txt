@@ -1,0 +1,37 @@
+CHINESISCH FESTIGEN – GITHUB-UPDATE v147
+
+GEÄNDERT
+
+1. HAUPTMENÜ UNTEN
+Das feste Menü erscheint jetzt auf genau diesen vier Hauptseiten:
+- Kapitelübersicht
+- Zeichen wiederholen
+- Spiele
+- Profil
+
+Innerhalb von Kapiteln, Übungen, Schreibtraining und Spielen wird es nicht eingeblendet.
+Auf Zeichen, Spiele und Profil wird der bisherige große Home-Knopf entfernt.
+
+2. PROFILBILD IM MENÜ
+Ist ein Profilbild gespeichert, erscheint es unten beim Menüpunkt „Profil“.
+Ohne Bild bleibt der Anfangsbuchstabe der E-Mail-Adresse beziehungsweise das
+neutrale Profil-Symbol sichtbar.
+
+3. SCHREIBTRAINING
+Bei Anfänger und Fortgeschritten ist das noch ungeschriebene Zeichen jetzt
+sehr hellgrau. Die schwarze beziehungsweise rote Ebene wird erst erzeugt,
+nachdem tatsächlich ein richtiger Strich geschrieben wurde.
+Profi bleibt ohne Vorlage.
+
+HOCHZULADEN
+- config.js
+- schreibtraining.html
+- sw.js
+
+COMMIT-NACHRICHT
+Hauptmenü Profilbild und Schreibvorlage korrigieren
+
+DANACH
+- 1 bis 3 Minuten warten.
+- Die installierte App vollständig schließen und neu öffnen.
+- Keine App-Daten löschen.
