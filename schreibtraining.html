@@ -5,7 +5,7 @@
   <meta name="robots" content="noindex, nofollow" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Schreibtraining · Chinesisch festigen</title>
-  <link rel="stylesheet" href="style.css?v=143" />
+  <link rel="stylesheet" href="style.css?v=144" />
   <meta name="theme-color" content="#03172B" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" href="icons/icon-192.png" />
@@ -140,11 +140,11 @@
     </section>
   </main>
 
-<script src="topics.js?v=143"></script>
-<script src="bausteine.js?v=143"></script>
-<script src="config.js?v=143"></script>
-<script src="sync.js?v=143"></script>
-<script src="common.js?v=143"></script>
+<script src="topics.js?v=144"></script>
+<script src="bausteine.js?v=144"></script>
+<script src="config.js?v=144"></script>
+<script src="sync.js?v=144"></script>
+<script src="common.js?v=144"></script>
 <script>
 const topic = getTopic();
 const $ = id => document.getElementById(id);
@@ -176,9 +176,30 @@ const words = (() => {
 })();
 
 const LEVELS = {
-  beginner: {label:"Anfänger", outline:true, hintAfter:1},
-  advanced: {label:"Fortgeschritten", outline:false, hintAfter:2},
-  pro: {label:"Profi", outline:false, hintAfter:3}
+  // Anfänger: Strichfolge wird zuerst animiert; danach bleibt das Zeichen sichtbar.
+  beginner: {
+    label:"Anfänger",
+    showCharacter:true,
+    showOutline:true,
+    previewStrokes:true,
+    hintAfter:1
+  },
+  // Fortgeschritten: Das vollständige Zeichen bleibt sichtbar, aber ohne Vorführung.
+  advanced: {
+    label:"Fortgeschritten",
+    showCharacter:true,
+    showOutline:false,
+    previewStrokes:false,
+    hintAfter:2
+  },
+  // Profi: Keine Vorlage; das Zeichen wird vollständig aus dem Gedächtnis geschrieben.
+  pro: {
+    label:"Profi",
+    showCharacter:false,
+    showOutline:false,
+    previewStrokes:false,
+    hintAfter:3
+  }
 };
 let level = localStorage.getItem(`cf_schreibtraining_level_${topic.id}`) || localStorage.getItem(`cf_train_level_${topic.id}`) || "beginner";
 if(!LEVELS[level]) level = "beginner";
@@ -274,29 +295,27 @@ function renderWord(){
   $("promptMeta").textContent = `${LEVELS[level].label} · Wort ${pos+1} von ${queue.length} · ${word.chars.length} ${word.chars.length===1?"Zeichen":"Zeichen"}`;
   startCharacter();
 }
-function startCharacter(){
+function startCharacter(skipBeginnerPreview=false){
   const word = currentWord();
   if(!word){ showFinish(); return; }
   const char = word.chars[charPos];
+  const cfg = LEVELS[level];
+  const previewNow = cfg.previewStrokes && !skipBeginnerPreview;
+
   destroyWriter();
-  setStatus(`Zeichen ${charPos+1} von ${word.chars.length}: Schreibe es in das Feld.`);
   const size = Math.min(300,Math.max(220,Math.floor(window.innerWidth*.78)));
-  try{
-    writer = HanziWriter.create("trainTarget", char, {
-      width:size,
-      height:size,
-      padding:18,
-      showCharacter:false,
-      showOutline:LEVELS[level].outline,
-      strokeColor:"#18314f",
-      outlineColor:"#d5dbe2",
-      drawingColor:"#276fbf",
-      drawingWidth:16,
-      strokeAnimationSpeed:1,
-      delayBetweenStrokes:120
-    });
+
+  function beginQuiz(){
+    if(level === "beginner"){
+      setStatus(`Zeichen ${charPos+1} von ${word.chars.length}: Schreibe die vorgezeigten Striche nach.`);
+    }else if(level === "advanced"){
+      setStatus(`Zeichen ${charPos+1} von ${word.chars.length}: Schreibe das sichtbare Zeichen nach.`);
+    }else{
+      setStatus(`Zeichen ${charPos+1} von ${word.chars.length}: Schreibe es aus dem Gedächtnis.`);
+    }
+
     writer.quiz({
-      showHintAfterMisses:LEVELS[level].hintAfter,
+      showHintAfterMisses:cfg.hintAfter,
       highlightOnComplete:true,
       onMistake:() => {
         wordHadMistake = true;
@@ -314,6 +333,39 @@ function startCharacter(){
         },450);
       }
     });
+  }
+
+  try{
+    writer = HanziWriter.create("trainTarget", char, {
+      width:size,
+      height:size,
+      padding:18,
+      // Beim Anfänger wird das Zeichen für die Animation zunächst ausgeblendet.
+      // Danach bleibt es als Vorlage sichtbar.
+      showCharacter:cfg.showCharacter && !previewNow,
+      showOutline:cfg.showOutline,
+      strokeColor:"#18314f",
+      outlineColor:"#d5dbe2",
+      drawingColor:"#276fbf",
+      drawingWidth:16,
+      strokeAnimationSpeed:1,
+      delayBetweenStrokes:120
+    });
+
+    if(previewNow){
+      setStatus(`Zeichen ${charPos+1} von ${word.chars.length}: Sieh dir zuerst die Strichfolge an.`);
+      writer.animateCharacter({
+        onComplete:() => {
+          if(typeof writer.showCharacter === "function"){
+            writer.showCharacter({duration:120,onComplete:beginQuiz});
+          }else{
+            beginQuiz();
+          }
+        }
+      });
+    }else{
+      beginQuiz();
+    }
   }catch(err){
     setStatus("Das Zeichen konnte nicht geladen werden. Prüfe kurz die Internetverbindung.","bad");
   }
@@ -357,7 +409,10 @@ $("hintBtn").onclick = () => {
   wordHadMistake = true;
   setStatus("Hinweis wird gezeigt; das Wort bleibt danach noch offen.","bad");
   try{
-    writer.animateCharacter({onComplete:() => setTimeout(startCharacter,300)});
+    if(typeof writer.cancelQuiz === "function") writer.cancelQuiz();
+    writer.animateCharacter({
+      onComplete:() => setTimeout(() => startCharacter(true),300)
+    });
   }catch(_err){}
 };
 $("repeatOpen").onclick = () => { rebuildQueue(); renderWord(); };
