@@ -1,7 +1,7 @@
 // Chinesisch festigen – Service Worker
 // Bei jeder Änderung an der Website die Versionsnummer erhöhen,
 // damit alle Geräte die neuen Dateien laden.
-const CACHE = "cf-v139-1-book-exact-responsive";
+const CACHE = "cf-v140-access-rules";
 
 const SHELL = [
   "./",
@@ -45,6 +45,7 @@ const SHELL = [
   "./bausteine.js",
   "./common.js",
   "./sync.js",
+  "./access.js",
   "./profile.js",
   "./chatdata.js",
   "./avatars/suran.jpg",

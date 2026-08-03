@@ -1,0 +1,28 @@
+CHINESISCH FESTIGEN – GitHub-Update v140
+
+Enthalten sind ausschließlich die geänderten Dateien:
+
+- access.js        neu
+- config.js        ersetzen
+- spiele.html      ersetzen
+- sw.js            ersetzen
+
+GitHub:
+1. ZIP entpacken.
+2. Im Repository JulianTannberg/chinesisch-festigen auf „Add file“ → „Upload files“ gehen.
+3. Diese vier Dateien gleichzeitig hochladen.
+4. Das Ersetzen der drei vorhandenen Dateien bestätigen und access.js neu hinzufügen.
+5. Commit-Nachricht: „Zugangsregeln Kapitel 1 und Anmeldung“
+6. Nach der Veröffentlichung die App einmal vollständig neu laden.
+
+Umgesetzt:
+- Kapitel 1 bleibt ohne Anmeldung vollständig frei.
+- Kapitel 2–15 benötigen eine Anmeldung.
+- Zeichen aus Kapitel 1 bleiben frei; spätere Kapitel werden gesperrt.
+- Alle drei Spiele sind mit Kapitel 1 frei.
+- Weitere Kapitel in Memory und Stirnraten benötigen eine Anmeldung.
+- Die vollständige chinesische Geschichte benötigt eine Anmeldung.
+- Nach der Anmeldung geht es zum zuvor angeklickten geschützten Inhalt zurück.
+
+Noch nicht enthalten:
+- Eine Freigabeliste, die nur vorher genehmigte Käufer-E-Mail-Adressen zulässt.
