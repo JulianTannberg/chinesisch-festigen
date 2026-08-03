@@ -5,7 +5,7 @@
   <meta name="robots" content="noindex, nofollow" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Memory · Chinesisch festigen</title>
-  <link rel="stylesheet" href="style.css?v=145" />
+  <link rel="stylesheet" href="style.css?v=146" />
   <meta name="theme-color" content="#03172B" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" href="icons/icon-192.png" />
@@ -29,10 +29,10 @@
   <main class="app memoryApp">
     <div class="topbar topbarSticky"><a class="back" href="spiele.html">← Zurück</a></div>
     <h1 class="pageTitleResponsive">Memory</h1>
-    <p class="subtitle">Spiele allein oder mit zwei bis vier Personen. Im Gruppenspiel wählt jede Person einen Namen und eine Farbe.</p>
+    <p class="subtitle">Spiele allein oder online mit zwei bis vier Personen. Im Online-Spiel wählt jede Person einen Namen und eine Farbe.</p>
 
     <section class="card" id="setupCard">
-      <div class="memModes"><button id="soloMode" class="active" type="button">Allein</button><button id="groupMode" type="button">2–4 Personen</button></div>
+      <div class="memModes"><button id="soloMode" class="active" type="button">Allein</button><button id="groupMode" type="button">Online: 2–4 Personen</button></div>
       <div class="memSetupGrid">
         <section class="memBlock">
           <h2>Kapitel auswählen</h2>
@@ -67,7 +67,7 @@
     </section>
   </main>
 
-<script src="topics.js?v=145"></script><script src="config.js?v=145"></script><script src="sync.js?v=145"></script><script src="common.js?v=145"></script><script src="realtime-games.js?v=145"></script>
+<script src="topics.js?v=146"></script><script src="config.js?v=146"></script><script src="sync.js?v=146"></script><script src="common.js?v=146"></script><script src="realtime-games.js?v=146"></script>
 <script>
 const $=id=>document.getElementById(id);const me=CF_REALTIME.playerId();
 const topics=(window.CF_TOPICS||[]).filter(t=>(t.vocab||[]).some(v=>v&&v.zh&&v.de));const selected=new Set();
