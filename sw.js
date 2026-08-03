@@ -1,7 +1,7 @@
 // Chinesisch festigen – Service Worker
 // Bei jeder Änderung an der Website die Versionsnummer erhöhen,
 // damit alle Geräte die neuen Dateien laden.
-const CACHE = "cf-v141-fixes-profile-online-games";
+const CACHE = "cf-v142-layout-bottom-nav";
 
 const SHELL = [
   "./",
@@ -44,6 +44,7 @@ const SHELL = [
   "./impressum.html",
   "./style.css",
   "./fixes-v141.css",
+  "./fixes-v142.css",
   "./topics.js",
   "./bausteine.js",
   "./common.js",
@@ -81,7 +82,7 @@ self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
   if(e.request.method !== "GET") return;
 
-  // Hanzi Writer + Zeichendaten vom CDN: einmal geladen, dann aus dem Cache (offline nachzeichnen)
+  // Hanzi Writer + Zeichendaten vom CDN: einmal geladen, dann aus dem Cache.
   if(url.hostname === "cdn.jsdelivr.net"){
     e.respondWith(
       caches.open(CACHE).then(async c => {
@@ -97,8 +98,7 @@ self.addEventListener("fetch", e => {
 
   if(url.origin !== location.origin) return;
 
-  // HTML, JS und CSS: erst Netz (damit Updates ankommen), sonst Cache.
-  // Nur große, selten geänderte Dateien (Bilder, Audio, Fonts) bleiben cache-first.
+  // HTML, JS und CSS: zuerst Netz, sonst Cache.
   const p = url.pathname;
   const isFresh = e.request.mode === "navigate" ||
                   p.endsWith(".html") || p.endsWith(".js") || p.endsWith(".css");
@@ -115,7 +115,7 @@ self.addEventListener("fetch", e => {
     return;
   }
 
-  // Rest: Cache zuerst, Netz als Ergänzung
+  // Rest: Cache zuerst, Netz als Ergänzung.
   e.respondWith(
     caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
       const copy = res.clone();

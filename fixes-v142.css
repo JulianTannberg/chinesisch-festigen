@@ -1,0 +1,221 @@
+/* Chinesisch festigen – Layoutkorrekturen v142 */
+
+/* =========================================================
+   1. Hauptnavigation unten
+   Kapitel, Zeichen, Spiele und Profil bleiben vollständig
+   innerhalb des festen Navigationsbalkens.
+   ========================================================= */
+.homeNav{
+  box-sizing:border-box!important;
+  height:calc(78px + env(safe-area-inset-bottom, 0px))!important;
+  min-height:calc(78px + env(safe-area-inset-bottom, 0px))!important;
+  max-height:calc(78px + env(safe-area-inset-bottom, 0px))!important;
+  grid-auto-rows:64px;
+  align-items:stretch!important;
+  padding:7px 8px calc(7px + env(safe-area-inset-bottom, 0px))!important;
+  overflow:hidden!important;
+}
+
+.homeNavItem{
+  box-sizing:border-box!important;
+  height:64px!important;
+  min-height:0!important;
+  max-height:64px!important;
+  align-self:stretch!important;
+  justify-content:center!important;
+  gap:2px!important;
+  padding:3px 2px 4px!important;
+  margin:0!important;
+  overflow:hidden!important;
+}
+
+.homeNavIcon{
+  flex:0 0 31px!important;
+  width:31px!important;
+  height:31px!important;
+}
+
+.homeNavItem > span:last-child{
+  display:block;
+  flex:0 0 auto;
+  max-width:100%;
+  line-height:1.05;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.homeWithNav{
+  padding-bottom:calc(96px + env(safe-area-inset-bottom, 0px))!important;
+}
+
+/* =========================================================
+   2. Kapitelansicht
+   Bereichsüberschrift und Erklärung beginnen gemeinsam links.
+   Die alten Bereichssymbole bleiben entfernt.
+   ========================================================= */
+.chapterHub .learningSectionHead{
+  grid-template-columns:minmax(0,1fr)!important;
+  justify-items:start!important;
+  align-items:start!important;
+  text-align:left!important;
+  gap:5px!important;
+}
+
+.chapterHub .learningSectionIdentity{
+  display:block!important;
+  width:100%;
+  text-align:left!important;
+}
+
+.chapterHub .learningSectionHead h2,
+.chapterHub .learningSectionHead p{
+  width:100%;
+  text-align:left!important;
+  margin-left:0!important;
+  margin-right:0!important;
+}
+
+.chapterHub .learningSectionIcon{
+  display:none!important;
+}
+
+/* =========================================================
+   3. Schreibtraining
+   Zuerst Aufgabe und Schreibfeld, darunter kompakt:
+   Gemeistert, noch offen und Fortschritt.
+   ========================================================= */
+#levelRow.trainLevelRow{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:6px!important;
+  margin:0 0 8px!important;
+}
+
+#levelRow.trainLevelRow button{
+  min-width:0!important;
+  min-height:42px!important;
+  padding:8px 4px!important;
+  font-size:clamp(11.5px,3.4vw,14px)!important;
+  line-height:1.15!important;
+  overflow-wrap:anywhere;
+}
+
+#game{
+  display:flex!important;
+  flex-direction:column!important;
+  min-height:0;
+}
+
+#game .trainPrompt{
+  order:10;
+  margin:6px 0 8px!important;
+}
+
+#game .trainPromptDe{
+  font-size:clamp(25px,7vw,39px)!important;
+}
+
+#game .trainPromptPy{
+  margin-top:3px!important;
+}
+
+#game .trainPromptMeta{
+  margin-top:3px!important;
+}
+
+#game .trainActions{
+  order:20;
+  margin:5px 0 7px!important;
+  gap:7px!important;
+}
+
+#game .trainActions button{
+  min-height:44px;
+  padding:9px 12px;
+}
+
+#game .trainCanvasWrap{
+  order:30;
+  margin:5px 0 7px!important;
+}
+
+#game .trainStatus{
+  order:40;
+  min-height:24px!important;
+  margin:0 0 5px;
+  font-size:14px;
+}
+
+#game .trainSummary{
+  order:50;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:6px!important;
+  margin:7px 0 6px!important;
+}
+
+#game .trainSummary > div{
+  min-width:0;
+  padding:6px 4px!important;
+  border-radius:11px!important;
+}
+
+#game .trainSummary small{
+  margin:0 0 2px!important;
+  font-size:10.5px!important;
+  line-height:1.1;
+  white-space:nowrap;
+}
+
+#game .trainSummary strong{
+  display:block;
+  font-size:15px!important;
+  line-height:1.1;
+  white-space:nowrap;
+}
+
+#game > .progressBar{
+  order:60;
+  height:8px!important;
+  margin:0 0 4px;
+}
+
+#game .trainOpenBox{
+  order:70;
+}
+
+@media(max-width:520px){
+  #levelRow.trainLevelRow{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+
+  #game .trainSummary{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+
+  #game .trainCanvasWrap{
+    margin-top:3px!important;
+  }
+
+  #trainTarget{
+    max-width:100%!important;
+  }
+}
+
+@media(max-height:720px) and (orientation:portrait){
+  #levelRow.trainLevelRow button{
+    min-height:38px!important;
+    padding:6px 3px!important;
+  }
+
+  #game .trainPrompt{
+    margin:3px 0 5px!important;
+  }
+
+  #game .trainActions{
+    margin:3px 0 5px!important;
+  }
+
+  #game .trainStatus{
+    font-size:13px;
+  }
+}

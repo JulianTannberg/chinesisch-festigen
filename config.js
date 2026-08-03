@@ -9,8 +9,7 @@ window.CF_CONFIG = {
 (function(){
   "use strict";
 
-  // Der alte Direktaufruf des Schreibtrainings startet im bisherigen
-  // schreiben.html zu früh. Neue und gespeicherte Links werden sauber umgeleitet.
+  // Das Schreibtraining bleibt auf der eigenen, zuverlässig initialisierten Seite.
   const page = location.pathname.split("/").pop() || "index.html";
   const params = new URLSearchParams(location.search);
   if(page === "schreiben.html" && params.get("mode") === "trace"){
@@ -19,34 +18,51 @@ window.CF_CONFIG = {
     return;
   }
 
-  if(window.CF_V141_LOADER_ADDED) return;
-  window.CF_V141_LOADER_ADDED = true;
+  if(window.CF_V142_LOADER_ADDED) return;
+  window.CF_V142_LOADER_ADDED = true;
+
+  function addStyles(){
+    if(!document.querySelector('link[data-cf-v141="1"]')){
+      const oldFixes = document.createElement("link");
+      oldFixes.rel = "stylesheet";
+      oldFixes.href = "fixes-v141.css?v=141";
+      oldFixes.dataset.cfV141 = "1";
+      (document.head || document.documentElement).appendChild(oldFixes);
+    }
+
+    if(!document.querySelector('link[data-cf-v142="1"]')){
+      const newFixes = document.createElement("link");
+      newFixes.rel = "stylesheet";
+      newFixes.href = "fixes-v142.css?v=142";
+      newFixes.dataset.cfV142 = "1";
+      (document.head || document.documentElement).appendChild(newFixes);
+    }
+  }
+
+  function addOldFixScript(){
+    if(document.querySelector('script[data-cf-v141="1"]')) return;
+    const script = document.createElement("script");
+    script.src = "fixes-v141.js?v=141";
+    script.defer = true;
+    script.dataset.cfV141 = "1";
+    (document.head || document.documentElement).appendChild(script);
+  }
 
   function addLate(){
-    if(!document.querySelector('link[data-cf-v141="1"]')){
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = "fixes-v141.css?v=141";
-      link.dataset.cfV141 = "1";
-      (document.head || document.documentElement).appendChild(link);
-    }
-    if(!document.querySelector('script[data-cf-v141="1"]')){
-      const script = document.createElement("script");
-      script.src = "fixes-v141.js?v=141";
-      script.defer = true;
-      script.dataset.cfV141 = "1";
-      (document.head || document.documentElement).appendChild(script);
-    }
+    addStyles();
+    addOldFixScript();
   }
 
   if(document.readyState === "loading"){
     document.write('<link rel="stylesheet" href="fixes-v141.css?v=141" data-cf-v141="1">');
-    document.write('<script src="access.js?v=141"><\/script>');
+    document.write('<link rel="stylesheet" href="fixes-v142.css?v=142" data-cf-v142="1">');
+    document.write('<script src="access.js?v=142"><\/script>');
     document.write('<script src="fixes-v141.js?v=141" defer data-cf-v141="1"><\/script>');
   }else{
     const access = document.createElement("script");
-    access.src = "access.js?v=141";
+    access.src = "access.js?v=142";
     access.onload = addLate;
+    access.onerror = addLate;
     (document.head || document.documentElement).appendChild(access);
   }
 })();
