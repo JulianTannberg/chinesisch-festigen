@@ -5,11 +5,34 @@
   <meta name="robots" content="noindex, nofollow" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Kapitel · Chinesisch festigen</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=143" />
   <meta name="theme-color" content="#03172B" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" href="icons/icon-192.png" />
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <style>
+    /* v143: Überschrift und Erklärung beginnen gemeinsam links. */
+    .chapterHub .learningSectionHead{
+      grid-template-columns:minmax(0,1fr)!important;
+      justify-items:start!important;
+      align-items:start!important;
+      text-align:left!important;
+      gap:5px!important;
+    }
+    .chapterHub .learningSectionIdentity{
+      display:block!important;
+      width:100%!important;
+      text-align:left!important;
+    }
+    .chapterHub .learningSectionHead h2,
+    .chapterHub .learningSectionHead p{
+      width:100%!important;
+      text-align:left!important;
+      margin-left:0!important;
+      margin-right:0!important;
+    }
+    .chapterHub .learningSectionIcon{display:none!important}
+  </style>
 </head>
 <body>
   <main class="app chapterHub">
@@ -66,11 +89,11 @@
     </section>
   </main>
 
-  <script src="topics.js"></script>
-  <script src="bausteine.js"></script>
-  <script src="config.js"></script>
-  <script src="sync.js"></script>
-  <script src="common.js"></script>
+  <script src="topics.js?v=143"></script>
+  <script src="bausteine.js?v=143"></script>
+  <script src="config.js?v=143"></script>
+  <script src="sync.js?v=143"></script>
+  <script src="common.js?v=143"></script>
   <script>
     const topic = getTopic();
     applyTheme(topic, "Chinesisch festigen");
@@ -97,9 +120,6 @@
     };
 
     function activityApplicable(scoreName){
-      // Das Lückenspiel erzeugt zusätzlich automatisch Aufgaben aus
-      // Dialogsätzen und aktiven Vokabeln. Deshalb darf der Link auch dann
-      // aktiv sein, wenn keine manuellen gapExercises hinterlegt sind.
       if(scoreName === "luecken"){
         const manual = (topic.gapExercises || []).length > 0;
         const automatic = (topic.storyDialog || []).length > 0 &&

@@ -1,7 +1,5 @@
 // Chinesisch festigen – Service Worker
-// Bei jeder Änderung an der Website die Versionsnummer erhöhen,
-// damit alle Geräte die neuen Dateien laden.
-const CACHE = "cf-v142-layout-bottom-nav";
+const CACHE = "cf-v143-direct-layout";
 
 const SHELL = [
   "./",
@@ -54,8 +52,6 @@ const SHELL = [
   "./realtime-games.js",
   "./profile.js",
   "./chatdata.js",
-  "./avatars/suran.jpg",
-  "./avatars/linyue.jpg",
   "./config.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
@@ -82,7 +78,6 @@ self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
   if(e.request.method !== "GET") return;
 
-  // Hanzi Writer + Zeichendaten vom CDN: einmal geladen, dann aus dem Cache.
   if(url.hostname === "cdn.jsdelivr.net"){
     e.respondWith(
       caches.open(CACHE).then(async c => {
@@ -98,7 +93,6 @@ self.addEventListener("fetch", e => {
 
   if(url.origin !== location.origin) return;
 
-  // HTML, JS und CSS: zuerst Netz, sonst Cache.
   const p = url.pathname;
   const isFresh = e.request.mode === "navigate" ||
                   p.endsWith(".html") || p.endsWith(".js") || p.endsWith(".css");
@@ -115,7 +109,6 @@ self.addEventListener("fetch", e => {
     return;
   }
 
-  // Rest: Cache zuerst, Netz als Ergänzung.
   e.respondWith(
     caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
       const copy = res.clone();

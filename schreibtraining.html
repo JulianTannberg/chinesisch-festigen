@@ -5,32 +5,91 @@
   <meta name="robots" content="noindex, nofollow" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Schreibtraining · Chinesisch festigen</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=143" />
   <meta name="theme-color" content="#03172B" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" href="icons/icon-192.png" />
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
   <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7/dist/hanzi-writer.min.js"></script>
   <style>
-    .trainLevelRow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
-    .trainLevelRow button{min-height:48px;white-space:normal}
-    .trainLevelRow button.active{background:var(--card-strong);outline:2px solid rgba(255,255,255,.28)}
-    .trainSummary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
-    .trainSummary > div{padding:10px;border:1px solid var(--stroke);border-radius:13px;background:rgba(255,255,255,.07);text-align:center}
-    .trainSummary small{display:block;color:var(--muted);margin-bottom:3px}
-    .trainSummary strong{font-size:22px}
-    .trainPrompt{text-align:center;margin:12px 0}
-    .trainPromptDe{font-size:clamp(24px,6vw,38px);font-weight:900;line-height:1.2;overflow-wrap:anywhere}
-    .trainPromptPy{font-size:18px;color:var(--muted);margin-top:6px}
-    .trainPromptMeta{font-size:13px;color:var(--muted);margin-top:5px}
-    .trainCanvasWrap{display:flex;justify-content:center;margin:12px 0}
-    #trainTarget{width:min(300px,78vw);height:min(300px,78vw);background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 12px 35px rgba(0,0,0,.25);background-image:linear-gradient(to right,transparent calc(50% - .6px),rgba(0,0,0,.13) calc(50% - .6px),rgba(0,0,0,.13) calc(50% + .6px),transparent calc(50% + .6px)),linear-gradient(to bottom,transparent calc(50% - .6px),rgba(0,0,0,.13) calc(50% - .6px),rgba(0,0,0,.13) calc(50% + .6px),transparent calc(50% + .6px));touch-action:none}
-    .trainStatus{min-height:30px;text-align:center;font-weight:800;line-height:1.4}
+    .trainLevelRow{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:6px;
+      margin:0 0 8px;
+    }
+    .trainLevelRow button{
+      min-width:0;
+      min-height:42px;
+      padding:8px 4px;
+      font-size:clamp(11.5px,3.4vw,14px);
+      line-height:1.15;
+      white-space:normal;
+      overflow-wrap:anywhere;
+    }
+    .trainLevelRow button.active{
+      background:var(--card-strong);
+      outline:2px solid rgba(255,255,255,.28);
+    }
+    #game{display:flex;flex-direction:column;min-height:0}
+    .trainPrompt{text-align:center;margin:5px 0 7px}
+    .trainPromptDe{font-size:clamp(25px,7vw,39px);font-weight:900;line-height:1.15;overflow-wrap:anywhere}
+    .trainPromptPy{font-size:18px;color:var(--muted);margin-top:3px}
+    .trainPromptMeta{font-size:13px;color:var(--muted);margin-top:3px}
+    .trainActions{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:4px 0 6px}
+    .trainActions button{min-height:44px;padding:9px 12px}
+    .trainCanvasWrap{display:flex;justify-content:center;margin:4px 0 6px}
+    #trainTarget{
+      width:min(300px,78vw);
+      height:min(300px,78vw);
+      background:#fff;
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow:0 12px 35px rgba(0,0,0,.25);
+      background-image:
+        linear-gradient(to right,transparent calc(50% - .6px),rgba(0,0,0,.13) calc(50% - .6px),rgba(0,0,0,.13) calc(50% + .6px),transparent calc(50% + .6px)),
+        linear-gradient(to bottom,transparent calc(50% - .6px),rgba(0,0,0,.13) calc(50% - .6px),rgba(0,0,0,.13) calc(50% + .6px),transparent calc(50% + .6px));
+      touch-action:none;
+    }
+    .trainStatus{min-height:24px;text-align:center;font-weight:800;font-size:14px;line-height:1.3;margin:0 0 5px}
     .trainStatus.ok{color:#86efac}.trainStatus.bad{color:#fecaca}
-    .trainActions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:10px 0}
-    .trainOpenBox{display:none;text-align:center;padding:18px;border:1px solid var(--stroke);border-radius:18px;background:rgba(255,255,255,.08);margin-top:14px}
+    .trainSummary{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:6px;
+      margin:6px 0;
+    }
+    .trainSummary>div{
+      min-width:0;
+      padding:6px 4px;
+      border:1px solid var(--stroke);
+      border-radius:11px;
+      background:rgba(255,255,255,.07);
+      text-align:center;
+    }
+    .trainSummary small{
+      display:block;
+      color:var(--muted);
+      margin:0 0 2px;
+      font-size:10.5px;
+      line-height:1.1;
+      white-space:nowrap;
+    }
+    .trainSummary strong{display:block;font-size:15px;line-height:1.1;white-space:nowrap}
+    #game>.progressBar{height:8px;margin:0 0 4px}
+    .trainOpenBox{display:none;text-align:center;padding:18px;border:1px solid var(--stroke);border-radius:18px;background:rgba(255,255,255,.08);margin-top:10px}
     .trainOpenBox.show{display:block}
-    @media(max-width:520px){.trainSummary{grid-template-columns:1fr}.trainLevelRow{grid-template-columns:1fr}}
+    @media(max-width:520px){
+      .trainLevelRow{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .trainSummary{grid-template-columns:repeat(3,minmax(0,1fr))}
+      #trainTarget{max-width:100%}
+    }
+    @media(max-height:720px) and (orientation:portrait){
+      .trainLevelRow button{min-height:38px;padding:6px 3px}
+      .trainPrompt{margin:2px 0 4px}
+      .trainActions{margin:2px 0 4px}
+      .trainStatus{font-size:13px}
+    }
   </style>
 </head>
 <body>
@@ -47,13 +106,6 @@
 
       <div id="empty" class="empty" hidden>Für dieses Kapitel sind keine Schreibzeichen hinterlegt.</div>
       <div id="game">
-        <div class="trainSummary">
-          <div><small>Gemeistert</small><strong id="masteredCount">0/0</strong></div>
-          <div><small>Noch offen</small><strong id="openCount">0</strong></div>
-          <div><small>Fortschritt</small><strong id="scoreCount">0 %</strong></div>
-        </div>
-        <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
-
         <div class="trainPrompt">
           <div class="trainPromptDe" id="promptDe">–</div>
           <div class="trainPromptPy" id="promptPy"></div>
@@ -64,8 +116,16 @@
           <button id="playBtn" type="button">▶ Anhören</button>
           <button id="hintBtn" type="button">Hinweis zeigen</button>
         </div>
+
         <div class="trainCanvasWrap"><div id="trainTarget"></div></div>
         <div class="trainStatus" id="status">Schreibe das Zeichen in das Feld.</div>
+
+        <div class="trainSummary" aria-label="Fortschritt dieser Stufe">
+          <div><small>Gemeistert</small><strong id="masteredCount">0/0</strong></div>
+          <div><small>Noch offen</small><strong id="openCount">0</strong></div>
+          <div><small>Fortschritt</small><strong id="scoreCount">0 %</strong></div>
+        </div>
+        <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
 
         <div class="trainOpenBox" id="openBox">
           <h2 id="openTitle">Noch offene Wörter</h2>
@@ -80,11 +140,11 @@
     </section>
   </main>
 
-<script src="topics.js"></script>
-<script src="bausteine.js"></script>
-<script src="config.js"></script>
-<script src="sync.js"></script>
-<script src="common.js"></script>
+<script src="topics.js?v=143"></script>
+<script src="bausteine.js?v=143"></script>
+<script src="config.js?v=143"></script>
+<script src="sync.js?v=143"></script>
+<script src="common.js?v=143"></script>
 <script>
 const topic = getTopic();
 const $ = id => document.getElementById(id);

@@ -5,13 +5,56 @@
   <meta name="robots" content="noindex, nofollow" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Chinesisch festigen</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=143" />
   <meta name="theme-color" content="#03172B" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" href="icons/icon-192.png" />
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Chinesisch" />
+  <style>
+    /* v143: Alle vier Schaltflächen bleiben vollständig im unteren Balken. */
+    .homeNav{
+      box-sizing:border-box!important;
+      height:calc(82px + env(safe-area-inset-bottom,0px))!important;
+      min-height:calc(82px + env(safe-area-inset-bottom,0px))!important;
+      max-height:calc(82px + env(safe-area-inset-bottom,0px))!important;
+      grid-template-columns:repeat(4,minmax(0,1fr))!important;
+      grid-auto-rows:66px!important;
+      align-items:stretch!important;
+      padding:7px 8px calc(9px + env(safe-area-inset-bottom,0px))!important;
+      overflow:hidden!important;
+    }
+    .homeNavItem{
+      box-sizing:border-box!important;
+      height:66px!important;
+      min-height:66px!important;
+      max-height:66px!important;
+      align-self:stretch!important;
+      justify-content:center!important;
+      gap:2px!important;
+      padding:3px 2px 5px!important;
+      margin:0!important;
+      overflow:hidden!important;
+    }
+    .homeNavIcon{
+      flex:0 0 31px!important;
+      width:31px!important;
+      height:31px!important;
+    }
+    .homeNavItem>span:last-child{
+      display:block;
+      flex:0 0 auto;
+      max-width:100%;
+      line-height:1.05;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .homeWithNav{
+      padding-bottom:calc(102px + env(safe-area-inset-bottom,0px))!important;
+    }
+  </style>
 </head>
 <body>
   <main class="app homeWithNav">
@@ -52,14 +95,12 @@
     </a>
   </nav>
 
-  <script src="topics.js"></script>
-  <script src="bausteine.js"></script>
-  <script src="config.js"></script>
-  <script src="sync.js"></script>
-  <script src="common.js"></script>
+  <script src="topics.js?v=143"></script>
+  <script src="bausteine.js?v=143"></script>
+  <script src="config.js?v=143"></script>
+  <script src="sync.js?v=143"></script>
+  <script src="common.js?v=143"></script>
   <script>
-    // Wenn beim ersten Cloud-Abgleich ein anderer Gerätestand geladen wurde,
-    // die Übersicht einmal neu aufbauen. Aktive Übungen werden nicht unterbrochen.
     if(window.CF_SYNC && CF_SYNC.initialSync){
       CF_SYNC.initialSync.then(() => {
         if(CF_SYNC.getState().needsRefresh) location.reload();
@@ -138,7 +179,6 @@
     `;
     storyMount.appendChild(storyCard);
 
-    // Profil-Symbol: leer ohne Anmeldung, Initiale bei angemeldetem Konto.
     function paintProfile(state){
       const icon = document.getElementById("homeProfileIcon");
       if(!icon) return;
