@@ -1,0 +1,25 @@
+CHINESISCH FESTIGEN – GitHub-Update v140.2
+
+Diese ZIP ersetzt die vorherige v140-ZIP. Bitte nur diese neue ZIP verwenden.
+
+Enthalten:
+- access.js        neu
+- config.js        ersetzen
+- spiele.html      ersetzen
+- kapitel.html     ersetzen
+- sw.js            ersetzen
+
+Umgesetzt:
+- Kapitel 1 ohne Anmeldung frei
+- Kapitel 2–15 nur nach Anmeldung
+- Spiele mit Kapitel 1 frei
+- vollständige chinesische Geschichte nur nach Anmeldung
+- „Lücken ergänzen“ bleibt auch bei automatisch erzeugten Lücken anklickbar
+- Symbole für Hören, Schreiben, Sprechen, Sätze festigen und Vokabeln festigen sind weiß
+- neue Cache-Version, damit die Änderungen auf den Geräten ankommen
+
+GitHub:
+1. ZIP entpacken.
+2. Add file → Upload files.
+3. Die fünf Dateien gemeinsam hochladen.
+4. Commit-Nachricht: „Zugangsregeln und Kapitelansicht korrigieren“

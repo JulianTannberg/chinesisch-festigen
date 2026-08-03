@@ -10,6 +10,14 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" href="icons/icon-192.png" />
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <style>
+    /* Die fünf Bereichssymbole bleiben bewusst neutral weiß. */
+    .learningSectionIcon{
+      color:#fff !important;
+      background:rgba(255,255,255,.14) !important;
+      border:1px solid rgba(255,255,255,.22);
+    }
+  </style>
 </head>
 <body>
   <main class="app chapterHub">
@@ -96,9 +104,22 @@
       gapLink: [`luecken.html?id=${topic.id}`, "luecken"]
     };
 
+    function activityApplicable(scoreName){
+      // Das Lückenspiel erzeugt zusätzlich automatisch Aufgaben aus
+      // Dialogsätzen und aktiven Vokabeln. Deshalb darf der Link auch dann
+      // aktiv sein, wenn keine manuellen gapExercises hinterlegt sind.
+      if(scoreName === "luecken"){
+        const manual = (topic.gapExercises || []).length > 0;
+        const automatic = (topic.storyDialog || []).length > 0 &&
+                          (topic.vocab || []).length > 0;
+        return manual || automatic;
+      }
+      return cfActivityApplicable(topic, scoreName);
+    }
+
     function paintActivity(el, scoreName){
       if(!el) return;
-      const applicable = cfActivityApplicable(topic, scoreName);
+      const applicable = activityApplicable(scoreName);
       if(!applicable){
         el.classList.add("unavailable");
         el.removeAttribute("href");
